@@ -28,62 +28,57 @@ package org.openelis.ui.widget.web;
 import java.util.ArrayList;
 
 import org.openelis.ui.event.BeforeCloseHandler;
+import org.openelis.ui.screen.Screen;
 import org.openelis.ui.widget.Confirm;
 import org.openelis.ui.widget.WindowInt;
 
 import com.allen_sauer.gwt.dnd.client.DragController;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This is an implementation of the ScreenWindowInt to be used by the Web portal of OpenELIS
  *
  */
-public class WebWindow extends ResizeComposite implements WindowInt {
+public class WebWindow extends FocusPanel implements WindowInt {
 	
-    @UiTemplate("WebWindow.ui.xml")
-    interface WebWindowUiBinder extends UiBinder<Widget, WebWindow>{};
-    private static WebWindowUiBinder uiBinder = GWT.create(WebWindowUiBinder.class);
-    
-	protected AbsolutePanel glass;
-	
-	@UiField
-	protected AbsolutePanel title;
-	
-	@UiField
-	protected LayoutPanel  content;
-	protected Widget screen;
+	protected AbsolutePanel glass,title,contentPanel;
+	protected Widget content;
 	private Confirm confirm;
+	private VerticalPanel vp;
 	private Label name;
 	
 	/**
 	 * No-Arg constructor that sets up the skeleton of the Window.
 	 */
 	public WebWindow() {
-	    
-	    initWidget(uiBinder.createAndBindUi(this));
-	    
+		vp = new VerticalPanel();
+		title = new AbsolutePanel();
 		name = new Label();
 		
 		title.setStyleName("crumbline");
 		name.setStyleName("webLabel");
-		content.setStyleName("ContentPanel");
 		title.add(name);
-						
+		
+		contentPanel = new AbsolutePanel();
+		contentPanel.setWidth("100%");
+		contentPanel.setHeight("100%");
+		
+		vp.add(title);
+		vp.add(contentPanel);
+		vp.setWidth("100%");
+		vp.setHeight("100%");
+		vp.setCellWidth(contentPanel, "100%");
+		vp.setCellHeight(contentPanel,"100%");
+		setWidget(vp);
+		
 	}
 
 	/**
@@ -105,17 +100,14 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	/**
 	 * Method is called when the windows content is changed through user actions
 	 */
-	public void setContent(Widget screen) {
-		content.clear();
-		content.add(screen);
-		this.screen = screen;
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-            @Override
-            public void execute() {
-                onResize();
-            }
-        });
+	public void setContent(Widget content) {
+		contentPanel.clear();
+		contentPanel.add(content);
+		this.content = content;
+		if(content instanceof Screen) {
+			((Screen)content).setWindow(this);
+			//setName(((Screen)content).getDefinition().getName());
+		}	
 	}
 
 	/**
@@ -194,7 +186,7 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	 */
 	public void setBusy(String message) {
 		confirm = new Confirm(Confirm.Type.BUSY,null,message,null);
-		confirm.show();
+		confirm.show(-1,80);
 	}
 
 	/**
@@ -216,9 +208,8 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	 * Pops up an Error confirmation with the passed message
 	 */
 	public void setError(String message) {
-	    clearStatus();
 		confirm = new Confirm(Confirm.Type.ERROR,"Error",message,"OK");
-		confirm.show();
+		confirm.show(-1,80);
 	}
 	
 	/**
@@ -245,47 +236,4 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 		// TODO Auto-generated method stub
 		
 	}
-
-
-    @Override
-    public Widget getContent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public HandlerRegistration addFocusHandler(FocusHandler handler) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int getTabIndex() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void setAccessKey(char key) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void setFocus(boolean focused) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void setTabIndex(int index) {
-        // TODO Auto-generated method stub   
-    }
-    
-    @Override
-    public void onResize() {
-        super.onResize();
-        if(!(screen instanceof RequiresResize))
-            screen.setSize(getOffsetWidth()+"px", getOffsetHeight()+"px");
-    }
 }

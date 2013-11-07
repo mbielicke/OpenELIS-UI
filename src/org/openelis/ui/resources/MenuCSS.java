@@ -19,6 +19,5 @@ public interface MenuCSS extends CssResource {
 	String MenuArrow();
 	String disabled();
 	String divider();
-	String open();
 
 }

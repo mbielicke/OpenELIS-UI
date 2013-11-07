@@ -25,9 +25,6 @@
 */
 package org.openelis.ui.common;
 
-import javax.ejb.ApplicationException;
-
-@ApplicationException
 public class NotFoundException extends Exception {
 
     private static final long serialVersionUID = 1L;

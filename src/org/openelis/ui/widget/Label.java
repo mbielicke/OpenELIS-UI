@@ -4,11 +4,9 @@ import java.util.ArrayList;
 
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Placement;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasValue;
 
 /**
@@ -24,8 +22,7 @@ import com.google.gwt.user.client.ui.HasValue;
  */
 public class Label<T> extends com.google.gwt.user.client.ui.Label implements HasValue<T>,
                                                                              HasHelper<T>,
-                                                                             HasExceptions,
-                                                                             HasBalloon {
+                                                                             HasExceptions {
 
     /*
      * value and helper fields
@@ -39,8 +36,6 @@ public class Label<T> extends com.google.gwt.user.client.ui.Label implements Has
      * Exceptions list
      */
     protected ArrayList<Exception> endUserExceptions, validateExceptions;
-    
-    protected Balloon.Options   options;
     
     protected TextCSS css;
 
@@ -130,7 +125,7 @@ public class Label<T> extends com.google.gwt.user.client.ui.Label implements Has
         if (endUserExceptions == null)
             endUserExceptions = new ArrayList<Exception>();
         endUserExceptions.add(error);
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
 
     protected void addValidateException(Exception error) {
@@ -157,24 +152,24 @@ public class Label<T> extends com.google.gwt.user.client.ui.Label implements Has
     public void clearExceptions() {
         endUserExceptions = null;
         validateExceptions = null;
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
     public void clearEndUserExceptions() {
         endUserExceptions = null;
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
     public void clearValidateExceptions() {
         validateExceptions = null;
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
 
     /**
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
+    	if(ExceptionHelper.isWarning(this))
     		addStyleName(css.InputError());
     	else
     		addStyleName(css.InputWarning());
@@ -212,33 +207,5 @@ public class Label<T> extends com.google.gwt.user.client.ui.Label implements Has
     		helper.setEnd((byte)2);
     		setHelper((WidgetHelper)helper);
     	}
-    }
-    
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
     }
 }

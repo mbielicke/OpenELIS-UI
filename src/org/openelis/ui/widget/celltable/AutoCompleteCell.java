@@ -29,13 +29,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableAutoCompleteCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.AutoComplete;
 import org.openelis.ui.widget.AutoCompleteValue;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -81,10 +79,10 @@ public class AutoCompleteCell implements CellRenderer,
     
     public void setEditor(AutoComplete editor) {
         this.editor = editor;
-        TableAutoCompleteCSS css = UIResources.INSTANCE.tableAutoComplete();
+        css = UIResources.INSTANCE.table();
         css.ensureInjected();
         editor.setEnabled(true);
-        editor.setCSS(css);
+        editor.setStyleName(css.TableDropdown());
         editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -145,7 +143,7 @@ public class AutoCompleteCell implements CellRenderer,
      * Returns the current widget set as this cells editor.
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, Container container, GwtEvent event) {
         query = false;
         editor.setQueryMode(false);
         if(value instanceof AutoCompleteValue)
@@ -158,7 +156,7 @@ public class AutoCompleteCell implements CellRenderer,
     }
 
     @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
+	public void startEditingQuery(QueryData qd, Container container, GwtEvent event) {
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);

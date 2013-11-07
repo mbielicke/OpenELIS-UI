@@ -25,8 +25,11 @@
 */
 package org.openelis.ui.event;
 
-import com.google.gwt.event.shared.EventHandler;
+import org.openelis.ui.screen.ScreenEventHandler;
+import org.openelis.ui.screen.ScreenHandler;
+
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class will fire events to registered objects for a DataChange action. If a target is passed
@@ -34,33 +37,54 @@ import com.google.gwt.event.shared.GwtEvent;
  * will be ignored. 
  *
  */
-public class DataChangeEvent extends GwtEvent<DataChangeEvent.Handler>{
+public class DataChangeEvent extends GwtEvent<DataChangeHandler>{
 	
-	private static Type<DataChangeEvent.Handler> TYPE;
+	private static Type<DataChangeHandler> TYPE;
+	private Widget target;
+	
+	/**
+	 * Passing a target to this methd will fire only the handler registered to that
+	 * widget and no other handlers will be called.
+	 * @param source
+	 * @param target
+	 */
+	public static void fire(HasDataChangeHandlers source, Widget target) {
+	    if (TYPE != null) {
+		    DataChangeEvent event = new DataChangeEvent(target);
+		    source.fireEvent(event);
+		}
+	}
+	
+    public static void fire(HasDataChangeHandlers source) {
+	    if (TYPE != null) {
+	      DataChangeEvent event = new DataChangeEvent(null);
+	      source.fireEvent(event);
+	    }
+    }
+    
+    public DataChangeEvent(Widget target) {
+    	this.target = target;
+    }
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected void dispatch(DataChangeHandler handler) {
+		if(target == null || (handler instanceof ScreenHandler && target == ((ScreenHandler)handler).widget))
+			handler.onDataChange(this);
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Type<DataChangeEvent.Handler> getAssociatedType() {
+	public Type<DataChangeHandler> getAssociatedType() {
 		return (Type) TYPE;
 	}
-	
-    @Override
-    protected void dispatch(Handler handler) {
-        handler.onDataChange(this);
-    }
 
-	public static Type<DataChangeEvent.Handler> getType() {
+	public static Type<DataChangeHandler> getType() {
 	   if (TYPE == null) {
-	      TYPE = new Type<DataChangeEvent.Handler>();
+	      TYPE = new Type<DataChangeHandler>();
 	    }
 	    return TYPE;
 	 }
-	
-	public static interface Handler extends EventHandler {
-	    public void onDataChange(DataChangeEvent event);
-	}
-
-
 	
 	
 }

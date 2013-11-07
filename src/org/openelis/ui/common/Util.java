@@ -25,6 +25,7 @@
 */
 package org.openelis.ui.common;
 
+
 public class Util {
 	
     /**
@@ -34,15 +35,6 @@ public class Util {
         if (obj == null)
             return "";
         return obj.toString();
-    }
-    
-    public static int stripUnits(String value, String... units) throws NumberFormatException {
-        value = value.trim();
-        for(String unit : units) {
-            if(value.endsWith(unit))
-                return Integer.parseInt(value.substring(0,value.length()-unit.length()));
-        }
-        return Integer.parseInt(value);
     }
     
     public static int stripUnits(String value) throws NumberFormatException {
@@ -71,5 +63,4 @@ public class Util {
     public static boolean isDifferent(Object a, Object b) {
         return (a == null && b != null) || (a != null && !a.equals(b));
     }
-    
 }

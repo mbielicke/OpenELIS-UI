@@ -67,7 +67,7 @@ public class DoubleHelper implements WidgetHelper<Double> {
 					// Do nothing to Fall through and throw the exception.
 				}
 			}
-			throw new Exception(Messages.get().exc_invalidNumeric());
+			throw new Exception(Messages.get().invalidNumeric());
 		}
 	}
 
@@ -122,7 +122,7 @@ public class DoubleHelper implements WidgetHelper<Double> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value)) 
-			exceptions.add(new Exception(Messages.get().exc_invalidNumeric()));
+			exceptions.add(new Exception(Messages.get().invalidNumeric()));
 		
 		return exceptions;
 			

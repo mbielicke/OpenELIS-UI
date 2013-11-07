@@ -3,12 +3,11 @@
 }
 
 .MonthBar {
+	width : 100%;
 	background : #CCC;
 	border : 1px solid #AAA;
 	border-radius : 4px;
-}
-.MonthBar Table{
-	border-spacing:0;
+
 }
 
 @sprite .PreviousMonth {
@@ -27,10 +26,6 @@
 
 @sprite .MonthSelect {
 	gwt-image:'monthSelect';
-}
-
-.MonthSelect:hover, .NextMonth:hover, .PreviousMonth:hover {
-	cursor:pointer;
 }
 
 @sprite .NextMonth {
@@ -71,16 +66,16 @@
 	
 }
 
-td.OffMonth span {
+td .OffMonth span {
 	background:#ddd8e8;
 	color:grey;
 }
 
-td.Current span{
+td .Current span {
 	background:#fff8e8;
 }
 
-td.selected span {
+td .selected span {
 	background:white;
 	color:balck;
 	border:1px solid black;
@@ -88,8 +83,4 @@ td.selected span {
 
 .MonthYearPanel {
 	width : 17em;
-}
-
-.TimeBorder {
-	border : 1px solid lightGrey;
 }

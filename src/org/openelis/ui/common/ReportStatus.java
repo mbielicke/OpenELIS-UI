@@ -27,6 +27,9 @@ package org.openelis.ui.common;
 
 import java.io.Serializable;
 
+import org.openelis.ui.common.DataBaseUtil;
+import org.openelis.ui.common.ReportStatus;
+
 
 /**
  * This class is used to update/send the status of report to the client (GWT and/or servlet).
@@ -40,7 +43,7 @@ public class ReportStatus implements Serializable {
     protected Status status;
         
     public enum Status {
-        RUNNING, SAVED, PRINTED, FAXED
+        RUNNING, SAVED, PRINTED
     };
     
     public ReportStatus() {

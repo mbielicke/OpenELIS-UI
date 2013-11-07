@@ -30,6 +30,7 @@ import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -42,18 +43,12 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
+public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 
     /**
      * Reference to the Table containing this column
      */
     protected Table        table;
-    
-    protected FieldGetter<T,?> fieldGetter;
-    
-    protected FieldUpdater<T,?> fieldUpdater;
-    
-    protected CellData<T,?> cellData;
     
     /**
      * Filter used for this column
@@ -71,9 +66,7 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     protected CellEditor   editor;
 
-
-
-	/**
+    /**
      * Render widget used for this column
      */
 	protected CellRenderer renderer = new LabelCell(new Label<String>());
@@ -137,30 +130,7 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 	public CellRenderer getCellRenderer(int row) {
         return renderer;
     }
-	
-    public FieldGetter<T, ?> getFieldGetter() {
-		return cellData != null ? cellData : fieldGetter;
-	}
 
-	public void setFieldGetter(FieldGetter<T, ?> fieldGetter) {
-		this.fieldGetter = fieldGetter;
-	}
-
-	public FieldUpdater<T, ?> getFieldUpdater() {
-		return cellData != null ? cellData : fieldUpdater;
-	}
-
-	public void setFieldUpdater(FieldUpdater<T, ?> fieldUpdater) {
-		this.fieldUpdater = fieldUpdater;
-	}
-
-	public void setCellData(CellData<T,?> cellData) {
-		this.cellData = cellData;
-	}
-	
-	public CellData<T,?> getCellData() {
-		return cellData;
-	}
     /**
      * Method will set the current renderer for this column
      * @param renderer
@@ -226,8 +196,8 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public void setLabel(String label) {
         this.label = label;
-        if(table != null && table.view != null && table.view.getHeader() != null)
-        	table.view.getHeader().layout();
+        if(table != null && table.view != null && table.view.header != null)
+        	table.view.header.layout();
     }
 
     public void setStyle(String style) {

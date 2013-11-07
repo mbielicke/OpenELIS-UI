@@ -88,7 +88,7 @@ public class StringHelper implements WidgetHelper<String> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value))
-			exceptions.add(new Exception(Messages.get().exc_invalidType()));
+			exceptions.add(new Exception(Messages.get().invalidType()));
 		
 		return exceptions;
 	}

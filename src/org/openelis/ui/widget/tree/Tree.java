@@ -34,24 +34,19 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TreeCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.HasExceptions;
-import org.openelis.ui.widget.HasBalloon;
 import org.openelis.ui.widget.Queryable;
 import org.openelis.ui.widget.ScreenWidgetInt;
-import org.openelis.ui.widget.Balloon.Options;
-import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
-import org.openelis.ui.widget.table.CellTipProvider;
+import org.openelis.ui.widget.table.Table.Scrolling;
 import org.openelis.ui.widget.table.event.BeforeCellEditedEvent;
 import org.openelis.ui.widget.table.event.BeforeCellEditedHandler;
 import org.openelis.ui.widget.table.event.CellClickedEvent;
 import org.openelis.ui.widget.table.event.CellClickedHandler;
 import org.openelis.ui.widget.table.event.CellEditedEvent;
 import org.openelis.ui.widget.table.event.CellEditedHandler;
-import org.openelis.ui.widget.table.event.CellMouseOutEvent;
-import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 import org.openelis.ui.widget.table.event.HasBeforeCellEditedHandlers;
 import org.openelis.ui.widget.table.event.HasCellClickedHandlers;
 import org.openelis.ui.widget.table.event.HasCellEditedHandlers;
@@ -84,8 +79,9 @@ import org.openelis.ui.widget.tree.event.NodeOpenedEvent;
 import org.openelis.ui.widget.tree.event.NodeOpenedHandler;
 
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -99,9 +95,9 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.logical.shared.VisibleEvent;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -122,7 +118,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                                     HasBeforeNodeAddedHandlers, HasNodeAddedHandlers,
                                     HasBeforeNodeDeletedHandlers, HasNodeDeletedHandlers,
                                     HasBeforeNodeOpenHandlers, HasNodeClosedHandlers,
-                                    HasBeforeNodeCloseHandlers, HasNodeOpenedHandlers, HasBalloon,
+                                    HasBeforeNodeCloseHandlers, HasNodeOpenedHandlers,
                                     HasValue<Node>, HasExceptions, FocusHandler, RequiresResize {
 
     /**
@@ -162,9 +158,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     protected HashMap<Node, HashMap<Integer, ArrayList<Exception>>> endUserExceptions,
                                                                     validateExceptions;
-    
-    protected Timer                       balloonTimer;
-
 
     /**
      * Tree state values
@@ -194,7 +187,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     /**
      * Reference to the View composite for this widget.
      */
-    protected ViewInt            view;
+    protected View               view;
 
 
     /**
@@ -211,24 +204,110 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     protected TreeCSS            css;
     
     protected HandlerRegistration visibleHandler;
+
     
-    protected CellTipProvider    tipProvider;
-    
-    protected Options     toolTip;
-    
-    protected int tipRow, tipCol;
-    
-    protected Tree source = this;
+    public static class Builder {
+    	int nodes,rowHeight = 18,width;
+    	Scrolling verticalScroll;
+    	Scrolling horizontalScroll;
+    	ArrayList<Column> columns = new ArrayList<Column>(5);
+    	HashMap<String, ArrayList<LeafColumn>> nodeDefs = new HashMap<String, ArrayList<LeafColumn>>();
+    	boolean enabled,multiselect,hasHeader,showRoot,fixScroll = true;
+    	
+    	
+    	public Builder(int nodes) {    		
+    		this.nodes = nodes;
+    	}
+    	
+    	public Builder rowHeight(int rowHeight) {
+    		this.rowHeight = rowHeight;
+    		return this;
+    	}
+    	
+    	public Builder verticalScroll(Scrolling vertical) {
+    		this.verticalScroll = vertical;
+    		return this;
+    	}
+    	
+    	public Builder horizontalScroll(Scrolling horizontal) {
+    		this.horizontalScroll = horizontal;
+    		return this;
+    	}
+    	
+    	public Builder column(Column col) {
+    		columns.add(col);
+    		return this;
+    	}
+    	
+    	public Builder node(String key, ArrayList<LeafColumn> cols) {
+    		nodeDefs.put(key,cols);
+    		return this;
+    	}
+    	
+    	public Builder enabled(boolean enabled) {
+    		this.enabled = enabled;
+    		return this;
+    	}
+    	
+    	public Builder multiSelect(boolean multi) {
+    		multiselect = multi;
+    		return this;
+    	}
+    	
+    	public Builder hasHeader(boolean header) {
+    		hasHeader = header;
+    		return this;
+    	}
+    	
+    	public Builder showRoot(boolean showRoot) {
+    		this.showRoot = showRoot;
+    		return this;
+    	}
+    	
+    	public Builder fixScrollbar(boolean fixScrollbar) {
+    		this.fixScroll = fixScrollbar;
+    		return this;
+    	}
+    	
+    	public Builder width(int width) {
+    		this.width = width;
+    		return this;
+    	}
+    	
+    	public Tree build() {
+    		return new Tree(this);
+    	}
+    }
 
     private Tree() {
-        css = UIResources.INSTANCE.tree();
-        css.ensureInjected();
-        
     	columns = new ArrayList<Column>(5);
     	nodeDefs = new HashMap<String, ArrayList<LeafColumn>>();
-    	rowHeight = 16;
-        view = new StaticView(this);
+    	rowHeight = 18;
+        view = new View(this);
         setWidget(view);
+    }
+    
+    private Tree(Builder builder) {
+    	css = UIResources.INSTANCE.tree();
+    	css.ensureInjected();
+    	
+    	visibleNodes = builder.nodes;
+        enabled = builder.enabled;
+        multiSelect = builder.multiselect;
+        verticalScroll = builder.verticalScroll;
+        horizontalScroll = builder.horizontalScroll;
+        hasHeader = builder.hasHeader;
+        showRoot = builder.showRoot;
+        fixScrollBar = builder.fixScroll;
+        rowHeight = builder.rowHeight;
+        
+        for(String key : builder.nodeDefs.keySet()) 
+        	addNodeDefinition(key, builder.nodeDefs.get(key));
+        
+        view = new View(this);
+        setWidget(view);
+        
+        setColumns(builder.columns);
 
         /*
          * This Handler takes care of all key events on the tree when editing
@@ -263,12 +342,11 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                                     row++ ;
                                     if (row >= getRowCount()) {
                                     	setFocus(true);
-                                    	finishEditing();
                                         break;
                                     }
 
                                 }
-                                if (startEditing(row, col, event.getNativeEvent())) {
+                                if (startEditing(row, col, event)) {
                                 	event.preventDefault();
                                     event.stopPropagation();
                                     break;
@@ -282,11 +360,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                                     row-- ;
                                     if (row < 0) {
                                     	setFocus(true);
-                                    	finishEditing();
                                         break;
                                     }
                                 }
-                                if (startEditing(row, col, event.getNativeEvent())) {
+                                if (startEditing(row, col, event)) {
                                 	event.preventDefault();
                                 	event.stopPropagation();
                                     break;
@@ -306,7 +383,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                                     if (row >= getRowCount())
                                         break;
                                     
-                                    selectNodeAt(row,event.getNativeEvent());
+                                    selectNodeAt(row,event);
                                     
                                     if(isNodeSelected(row))
                                     	break;
@@ -320,11 +397,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                             row++ ;
                             if (row >= getRowCount())
                                 break;
-                            if (startEditing(row, col, event.getNativeEvent())) {
-                                event.stopPropagation();
-                                event.preventDefault();
+                            if (startEditing(row, col, event))
                                 break;
-                            }
                         }
                         break;
                     case (KeyCodes.KEY_UP):
@@ -338,7 +412,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                                     if (row < 0)
                                         break;
                                     
-                                    selectNodeAt(row,event.getNativeEvent());
+                                    selectNodeAt(row,event);
                                     
                                     if(isNodeSelected(row))
                                         break;
@@ -352,11 +426,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                             row-- ;
                             if (row < 0)
                                 break;
-                            if (startEditing(row, col, event.getNativeEvent())) {
-                                event.stopPropagation();
-                                event.preventDefault();
+                            if (startEditing(row, col, event))
                                 break;
-                            }
                         }
                         break;
                     case (KeyCodes.KEY_ENTER):
@@ -374,7 +445,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                         
                         col = 0;
                         while (col < getColumnCount()) {
-                            if (startEditing(row, col, event.getNativeEvent()))
+                            if (startEditing(row, col, event))
                                 break;
                             col++ ;
                         }
@@ -438,11 +509,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void setRoot(Node root) {
         finishEditing();
-        
-        unselectAll();
-        
         this.root = root;
-        
         getDisplayedRows();
 
         renderView( -1, -1);
@@ -530,7 +597,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         for(int i = row; i < modelView.size(); i++) {
             nodeIndex.get(modelView.get(i)).index += adj;
         }
-            
     }
 
     /**
@@ -610,21 +676,12 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             nodeIndex.put(children.get(i), new NodeIndex(pos + i));
         }
         
-        if(children.size() > 0) {
+        if(children.size() > 0)
             adjustNodeIndexes(pos + children.size(),children.size());
-            
-            //Adjust selction indexes for multiselect so children are not mistaken for selected nodes
-            for(int i = 0; i < selections.size(); i++) {
-                if(selections.get(i) > row)
-                    selections.set(i, selections.get(i)+children.size());
-            }
-        }
         
         fireNodeOpenEvent(row);
         
-        view.addNodes(pos, pos + children.size() -1);
-        
-        view.renderView(row,row);
+        renderView(row, -1);
     }
     
     /**
@@ -645,7 +702,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void close(int row) {
-        int adj = 0,children;
+        int adj = 0;
         
         finishEditing();
         
@@ -665,22 +722,17 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         node.setOpen(false);
         
         pos = row + 1;
-        children = 0;
+        
         while (pos < modelView.size() && node.isNodeDescendent(getNodeAt(pos))) {
             nodeIndex.remove(modelView.remove(pos));
             adj--;
-            children++;
         }
        
         adjustNodeIndexes(pos,adj);
         
         fireNodeCloseEvent(row);
         
-        view.removeNodes(row+1,children);
-        
-        view.renderView(row,row);
-        
-        
+        renderView(row,-1);
     }
     
     /**
@@ -1075,7 +1127,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         	if(node.getCells().size() >= index)
         		node.getCells().add(index,null);
         }
-        view.addColumn(index);
+        layout();
 
         return column;
     }
@@ -1113,8 +1165,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         	if(index < node.getCells().size())
         		node.getCells().remove(index);
         }
-        view.removeColumn(index);
-
+        layout();
 
         return col;
     }
@@ -1133,10 +1184,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     public Node addNode(String type) {
-        if(root == null)
-            setRoot(new Node());
-        
-        return addNodeAt(type, root.getChildCount());
+        return addNodeAt(type, getRowCount());
     }
 
     /**
@@ -1150,9 +1198,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     	Node node;
     	
     	node = new Node(getNodeDefinition(type).size()).setType(type);
-    	
-    	if(root == null)
-    	    setRoot(new Node());
     
         return addNode(index, root, node);
     }
@@ -1164,10 +1209,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     public Node addNode(Node node) {
-        if(root == null)
-            setRoot(new Node());
-        
-        return addNode(root.getChildCount(), root, node);
+        return addNode(getRowCount(), root, node);
     }
 
     /**
@@ -1206,13 +1248,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             return null;
         
         if(parent.isOpen) {
-            if(parent == root) {
-                if(index == root.getChildCount())
-                    pos = getRowCount();
-                else
-                    pos = nodeIndex.get(root.getChildAt(index)).index - 1;
-                
-            }else if(parent.getChildCount() == 0)
+            if(parent.getChildCount() == 0)
             	pos = nodeIndex.get(parent).index +1;
             else if(index >= parent.getChildCount())
                 pos = nodeIndex.get(parent.getLastChild()).index + 1;
@@ -1233,7 +1269,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 
             adjustNodeIndexes(pos+children.size(), children.size()+1);
 
-            view.addNodes(pos-1,pos-1+children.size());
+            renderView(index, -1);
         }else
             parent.add(node,index);
         
@@ -1261,11 +1297,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      */
     public void addNodeAt(Node parent, Node child, int index) {
-        if(!isDisplayed(parent) || !parent.isOpen()) { 
+        if(!isDisplayed(parent) || !parent.isOpen()) 
             parent.add(child, index);
-            view.renderView(nodeIndex.get(parent).index,nodeIndex.get(parent).index);
-            fireRowAddedEvent(index, parent, child);
-        }else    
+        else    
             addNode(index, parent, child);
     }
 
@@ -1281,15 +1315,13 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         Node node;
 
         finishEditing();
-        
-        unselectNodeAt(index);
 
         node = getNodeAt(index);
 
         if ( !fireBeforeRowDeletedEvent(index, node))
             return null;
 
-        while (index < modelView.size() && node.isNodeDescendent(modelView.get(index))) {
+        while (node.isNodeDescendent(modelView.get(index))) {
             nodeIndex.remove(modelView.remove(index));
             adj--;
         }
@@ -1298,19 +1330,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         node.removeFromParent();
 
-        view.removeNodes(index, 1 + (node.isOpen ? node.getChildCount() : 0));
-        
-        if(endUserExceptions != null) {
-            endUserExceptions.remove(node);
-            if(endUserExceptions.size() == 0)
-                endUserExceptions = null;
-        }
-        
-        if(validateExceptions != null) {
-            validateExceptions.remove(node);
-            if(validateExceptions.size() == 0)
-                validateExceptions = null;
-        }
+        renderView(index, -1);
 
         
         fireRowDeletedEvent(index, node);
@@ -1340,7 +1360,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         unselectAll();
         root = null;
         modelView = null;
-        view.removeAllNodes();
+        renderView( -1, -1);
     }
 
     /**
@@ -1399,7 +1419,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * 
      * @param index
      */
-    public void selectNodeAt(int index, NativeEvent event) {
+    public void selectNodeAt(int index, GwtEvent event) {
     	boolean ctrlKey, shiftKey, selected = false;
     	int startSelect, endSelect,minSelected,maxSelected,i;
     	
@@ -1411,9 +1431,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 		 * If none apply the logic will fall throw to normal selection.
 		 */
 		if (isMultipleSelectionAllowed()) {
-			if(event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
-				ctrlKey = event.getCtrlKey();
-				shiftKey = event.getShiftKey();
+			if(event != null && event instanceof ClickEvent) {
+				ctrlKey = ((ClickEvent) event).getNativeEvent().getCtrlKey();
+				shiftKey = ((ClickEvent) event).getNativeEvent().getShiftKey();
 
 				if (ctrlKey) {
 					if (isNodeSelected(index)) {
@@ -1443,9 +1463,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 						}
 					}
 					unselectAll(event);
-				}else
-				    unselectAll(event);
-				
+				}
 			}
 		}else {
 			unselectAll(event);
@@ -1484,7 +1502,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * 
      * @param index
      */
-    public void selectNodeAt(Node node, NativeEvent event) {
+    public void selectNodeAt(Node node, GwtEvent event) {
         if(isDisplayed(node))
         	selectNodeAt(nodeIndex.get(node).index,event);
     }
@@ -1494,7 +1512,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 			selections = new ArrayList<Integer>();
 			for(int i = 0; i < getRowCount(); i++)
     			selections.add(i);
-			view.selectAll();
+			renderView(-1,-1);
 		}
     }
     
@@ -1510,7 +1528,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * 
      * @param index
      */
-    protected void unselectNodeAt(int index,NativeEvent event) {
+    protected void unselectNodeAt(int index,GwtEvent event) {
         if (selections.contains(index)) {
             finishEditing();
             if(event != null)
@@ -1580,10 +1598,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     /**
      * Clears all selections from the tree.
      */
-    protected void unselectAll(NativeEvent event) {
-        int count = selections.size();
-        for (int i = 0; i < count; i++ )
-            unselectNodeAt(selections.get(0),event);
+    protected void unselectAll(GwtEvent event) {
+        for (int i = 0; i < selections.size(); i++ )
+            unselectNodeAt(selections.get(i),event);
     }
 
     // ********* Event Firing Methods ********************
@@ -1825,7 +1842,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 		exceptions = column.getCellRenderer().validate(value);
 		
 		if(column.isRequired() && value == null)
-			exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+			exceptions.add(new Exception("exc.fieldRequired"));
 		
 		setValidateException(row,col,exceptions);
         
@@ -1884,7 +1901,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param col
      * @return
      */
-    public <T>  T getValueAt(int row, int col) {
+    public Object getValueAt(int row, int col) {
         if (modelView == null)
             return null;
         return modelView.get(row).getCell(col);
@@ -1912,7 +1929,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     @SuppressWarnings("rawtypes")
-	protected boolean startEditing(final int row, final int col, final NativeEvent event) {
+	protected boolean startEditing(final int row, final int col, final GwtEvent event) {
 
         /*
          * Return out if the tree is not enable or the passed cell is already
@@ -2129,11 +2146,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param col
      */
     protected void refreshCell(int row, int col) {
-        view.renderCell(row, col);
-    }
-    
-    public void refreshNode(Node node) {
-        view.renderView(nodeIndex.get(node).index,nodeIndex.get(node).index);
+        view.renderCell(getNodeAt(row).getType(),row, col);
     }
 
     // ************* Implementation of ScreenWidgetInt *************
@@ -2278,21 +2291,14 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
     
     public void addException(Node node, int col, Exception error) {
-        int r;
-        
-        getEndUserExceptionList(node,col).add(error);
-        
-        if(nodeIndex != null && nodeIndex.containsKey(node)) {
-            r = nodeIndex.get(node).index;
-            renderView(r,r);
-        }
+    	addException(nodeIndex.get(node).index,col,error);
     }
 
     /**
      * Adds a manual Exception to the widgets exception list.
      */
     public void addException(int row, int col, Exception error) {
-        getEndUserExceptionList(getNodeAt(row), col).add(error);
+        getEndUserExceptionList(row, col).add(error);
         renderView(row, row);
     }
 
@@ -2351,8 +2357,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public ArrayList<Exception> getValidateExceptions(int row, int col) {
         if (validateExceptions != null)
-            if(validateExceptions.containsKey(getNodeAt(row)))
-                return validateExceptions.get(getNodeAt(row)).get(col);
+            return validateExceptions.get(getNodeAt(row)).get(col);
         return null;
     }
 
@@ -2365,8 +2370,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public ArrayList<Exception> getEndUserExceptions(int row, int col) {
         if (endUserExceptions != null)
-            if(endUserExceptions.containsKey(getNodeAt(row)))
-                return endUserExceptions.get(getNodeAt(row)).get(col);
+            return endUserExceptions.get(getNodeAt(row)).get(col);
         return null;
     }
 
@@ -2377,27 +2381,26 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (endUserExceptions != null || validateExceptions != null) {
             endUserExceptions = null;
             validateExceptions = null;
-            view.renderExceptions( -1, -1);
+            renderView( -1, -1);
         }
     }
     
     public void clearEndUserExceptions() {
         if (endUserExceptions != null) {
             endUserExceptions = null;
-            view.renderExceptions( -1, -1);
+            renderView( -1, -1);
         }
     }
     
     public void clearValidateExceptions() {
         if (validateExceptions != null) {
             validateExceptions = null;
-            view.renderExceptions( -1, -1);
+            renderView( -1, -1);
         }
     }
     
-    public void clearExceptions(int row, int col) {
-        if(row < getRowCount())
-            clearExceptions(getNodeAt(row),col);
+    public void clearExceptions(Node node, int col) {
+    	clearExceptions(nodeIndex.get(node).index,col);
     }
 
     /**
@@ -2406,35 +2409,35 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @param col
      */
-    public void clearExceptions(Node node, int col) {
+    public void clearExceptions(int row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
+        Node key;
 
+        key = getNodeAt(row);
         if (endUserExceptions != null) {
-            cellExceptions = endUserExceptions.get(node);
+            cellExceptions = endUserExceptions.get(key);
             if (cellExceptions != null) {
                 cellExceptions.remove(col);
                 if (cellExceptions.size() == 0)
-                    endUserExceptions.remove(node);
+                    endUserExceptions.remove(key);
             }
         }
 
         if (validateExceptions != null) {
-            cellExceptions = validateExceptions.get(node);
+            cellExceptions = validateExceptions.get(key);
             if (cellExceptions != null) {
                 cellExceptions.remove(col);
                 if (cellExceptions.size() == 0)
-                    validateExceptions.remove(node);
+                    validateExceptions.remove(key);
             }
         }
 
-        if(nodeIndex != null && nodeIndex.containsKey(node))
-            view.renderExceptions(nodeIndex.get(node).index,nodeIndex.get(node).index);
+        renderView(row, row);
 
     }
     
-    public void clearEndUserExceptions(int row, int col) {
-        if(row < getRowCount())
-            clearEndUserExceptions(getNodeAt(row),col);
+    public void clearEndUserExceptions(Node node, int col) {
+    	clearEndUserExceptions(nodeIndex.get(node).index,col);
     }
 
     /**
@@ -2443,20 +2446,21 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @param col
      */
-    public void clearEndUserExceptions(Node node, int col) {
+    public void clearEndUserExceptions(int row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
+        Node key;
 
+        key = getNodeAt(row);
         if (endUserExceptions != null) {
-            cellExceptions = endUserExceptions.get(node);
+            cellExceptions = endUserExceptions.get(key);
             if (cellExceptions != null) {
                 cellExceptions.remove(col);
                 if (cellExceptions.size() == 0)
-                    endUserExceptions.remove(node);
+                    endUserExceptions.remove(key);
             }
         }
 
-        if(nodeIndex != null && nodeIndex.containsKey(node))
-            view.renderExceptions(nodeIndex.get(node).index,nodeIndex.get(node).index);
+        renderView(row, row);
 
     }
 
@@ -2468,18 +2472,20 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param col
      * @return
      */
-    private ArrayList<Exception> getEndUserExceptionList(Node node, int col) {
+    private ArrayList<Exception> getEndUserExceptionList(int row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
         ArrayList<Exception> list = null;
-        
+        Node key;
+
+        key = getNodeAt(row);
         if (endUserExceptions == null)
             endUserExceptions = new HashMap<Node, HashMap<Integer, ArrayList<Exception>>>();
 
-        cellExceptions = endUserExceptions.get(node);
+        cellExceptions = endUserExceptions.get(key);
 
         if (cellExceptions == null) {
             cellExceptions = new HashMap<Integer, ArrayList<Exception>>();
-            endUserExceptions.put(node, cellExceptions);
+            endUserExceptions.put(key, cellExceptions);
         }
 
         list = cellExceptions.get(col);
@@ -2540,7 +2546,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (row == editingRow && col == editingCol)
             return;
 
-        Balloon.drawExceptions(getEndUserExceptions(row, col), getValidateExceptions(row,
+        ExceptionHelper.drawExceptions(getEndUserExceptions(row, col), getValidateExceptions(row,
                                                                                              col),
                                        x, y);
     }
@@ -2713,7 +2719,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                 for (int row = 0; row < getRowCount(); row++ ) {
                     if (getValueAt(row, col) == null) {
 				        exceptions = getValidateExceptionList(row, col);
-				        exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+				        exceptions.add(new Exception(Messages.get().fieldRequired()));
 				        setValidateException(row, col, exceptions);
 						render = true;
                         render = true;
@@ -2770,37 +2776,13 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public ArrayList<Exception> getEndUserExceptions() {
-        ArrayList<Exception> exceptions;
-        
-        if(endUserExceptions == null)
-            return null;
-        
-        exceptions = new ArrayList<Exception>();
-        
-        for(HashMap<Integer,ArrayList<Exception>> row : endUserExceptions.values()) {
-            for(ArrayList<Exception> excs : row.values()) {
-                exceptions.addAll(excs);
-            }
-        }
-        
-        return exceptions;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public ArrayList<Exception> getValidateExceptions() {
-        ArrayList<Exception> exceptions;
-        
-        if(validateExceptions == null)
-            return null;
-        
-        exceptions = new ArrayList<Exception>();
-        
-        for(HashMap<Integer,ArrayList<Exception>> row : validateExceptions.values()) {
-            for(ArrayList<Exception> excs : row.values()) {
-                exceptions.addAll(excs);
-            }
-        }
-        
-        return exceptions;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public boolean hasExceptions() {
@@ -2832,87 +2814,71 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         }   
     }
     
-    public void onResize() {
-        Element parent = (Element) (getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this)
-                                                            : getParent().getElement());
-
-        int width = parent.getOffsetWidth();
-        int height = parent.getOffsetHeight();
-         
-        view.setSize(width+"px", height+"px");
-        view.onResize();
-    }
-    
-    @Override
-    public void setHeight(String height) {
-        super.setHeight(height);
-        onResize();
-    }
-    
-    public void setTipProvider(CellTipProvider tipProvider) {
-        this.tipProvider = tipProvider;
+    public void onResize(int width, int height) {
+        setWidth(width-16);
         
-        if(toolTip == null)
-            setBalloonOptions(new Options());
+        int rows;
+        
+        if(view.rowHeight > 0) 
+            rows = height / view.rowHeight;
+        else 
+            rows = height / rowHeight;
+        
             
-    }
-
-    @Override
-    public Options getBalloonOptions() {
-        return toolTip;
-    }
-
-    @Override
-    public void setBalloonOptions(Options options) {
-        toolTip = options;
+        if(rows != getRowCount()) 
+            setVisibleRows(rows);
         
-        options.setPlacement(Placement.MOUSE);
-        
-        view.table().addCellMouseOverHandler(new CellMouseOverEvent.Handler() {
-            
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() { 
             @Override
-            public void onCellMouseOver(CellMouseOverEvent event) {
-                tipRow = event.getRow();
-                tipCol = event.getCol();
-                final int x,y;
-                
-                x = event.getX();
-                y = event.getY();
-                
-                if(!hasExceptions(tipRow, tipCol)) {
-                    balloonTimer = new Timer() {
-                        public void run() {
-                            Balloon.show((HasBalloon)source, x, y);
-                        }
-                    };
-                    balloonTimer.schedule(500);
-                }
-                
+            public void execute() {
+                setHeight(view.getOffsetHeight()+"px");                            
             }
         });
-       
-       view.table().addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
         
-           @Override
-           public void onCellMouseOut(CellMouseOutEvent event) {
-               balloonTimer.cancel();
-               Balloon.hide();
-           }
-       });
-       
         
-       options.setTipProvider(new Balloon.TipProvider<Object>() {
-        
-           @Override
-           public Object getTip(HasBalloon target) {
-               
-               if(tipProvider != null)
-                   return tipProvider.getTip(tipRow, tipCol);
-               
-               return "No Tip Provider set";
-           }
-           
-       });
     }
+
+    
+    
+    public void onResize() {
+        
+        if(view.rowHeight <= 0) {
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                
+                @Override
+                public void execute() {
+                    onResize();
+                }
+            });
+            return;
+        }
+        
+        Element parent = getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this) : getParent().getElement();
+        
+        int width =  parent.getOffsetWidth();
+        int height = parent.getOffsetHeight();
+
+        if(height > 0) {    
+            if(hasHeader)
+                height -= view.header.getOffsetHeight();
+            if(horizontalScroll != Scrolling.NEVER)
+                height -= view.scrollBarHeight;
+       
+            onResize(width,height);
+        }else {
+           if(visibleHandler == null) {
+               visibleHandler = addVisibleHandler(new VisibleEvent.Handler() {
+                   @Override
+                   public void onVisibleOrInvisible(VisibleEvent event) {
+                       removeVisibleHandler();
+                       visibleHandler.removeHandler();
+                       visibleHandler = null;
+                       onResize();
+                   }
+               });
+           }
+        }
+    }
+
 
 }

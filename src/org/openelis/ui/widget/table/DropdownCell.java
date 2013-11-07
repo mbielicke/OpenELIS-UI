@@ -30,11 +30,8 @@ import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.DropdownCSS;
-import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Dropdown;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -77,10 +74,9 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     }
     
     public void setEditor(Dropdown editor) {
-        DropdownCSS css = UIResources.INSTANCE.tableDropdown();
         this.editor = editor;
         editor.setEnabled(true);
-        editor.setCSS(css);
+        editor.setStyleName("TableDropdown");
         editor.addBlurHandler(new BlurHandler() {
 			public void onBlur(BlurEvent event) {
 				column.finishEditing();
@@ -117,7 +113,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
    			editor.setValue(value);
         	return editor.getDisplay();
     	}else {
-    		return DataBaseUtil.toString(value);
+    		return DataBaseUtil.asString(value);
     	}
     }
 
@@ -136,20 +132,20 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
      * Returns the current widget set as this cells editor.
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, Container container, GwtEvent event) {
         query = false;
         editor.setQueryMode(false);
         editor.setValue(value);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
     }
 
     @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
+	public void startEditingQuery(QueryData qd, Container container, GwtEvent event) {
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
     }
     

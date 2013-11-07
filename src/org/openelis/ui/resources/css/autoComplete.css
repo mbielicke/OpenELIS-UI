@@ -2,15 +2,14 @@
 }
 
 @sprite .AutoDropdownButton{
-	background-position:0 4px;
 	gwt-image:'autoArrow';
-	height:18px;
 }
 
 .AutoBox {
-    font-family: inherit;
-    font-size: inherit;
    background:white;
+   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+   font-weight: normal;
+   font-size: 11px;
    height: 16px;
    cursor: default;
    border: none;

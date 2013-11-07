@@ -34,24 +34,23 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.CalendarCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.Button;
 import org.openelis.ui.widget.DateHelper;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.HasHelper;
-import org.openelis.ui.widget.HasBalloon;
 import org.openelis.ui.widget.Queryable;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.TextBase;
 import org.openelis.ui.widget.WidgetHelper;
-import org.openelis.ui.widget.Balloon.Placement;
-import org.openelis.ui.widget.datetimepicker.DatetimePicker;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
@@ -70,7 +69,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -95,8 +93,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
 												   HasFocusHandlers,
 												   HasValue<Datetime>,
 												   HasHelper<Datetime>,
-												   HasExceptions,
-												   HasBalloon {
+												   HasExceptions {
 												  
 	@UiTemplate("Select.ui.xml")
 	interface CalendarUiBinder extends UiBinder<Widget, Calendar>{};
@@ -110,7 +107,8 @@ public class Calendar extends Composite implements ScreenWidgetInt,
 	@UiField
     protected Button                                button;
     protected PopupPanel                            popup;
-    protected DatetimePicker                        picker;
+    protected CalendarWidget                      calendar;
+    protected MonthYearWidgetUI                     monthYearWidget;
     protected int                                   width;
     protected boolean                               showingCalendar,queryMode,required;
 
@@ -127,7 +125,6 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      * Exceptions list
      */
     protected Exceptions                            exceptions;
-    protected Balloon.Options                       options;
     
     protected CalendarCSS                           css;
     
@@ -213,45 +210,87 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      * This method will initialize and show the popup panel for this widget.
      */
     protected void showPopup() {
-        Datetime time = null;
-        
     	showingCalendar = true;
-       
-    	if (popup == null) {
+        if (popup == null) {
             popup = new PopupPanel(true);
             popup.setStyleName(css.Popup());
             popup.setPreviewingAllNativeEvents(false);
             popup.addCloseHandler(new CloseHandler<PopupPanel>() {
                 public void onClose(CloseEvent<PopupPanel> event) {
                 	showingCalendar = false;
-                	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                	    public void execute() {
-                	      	setText(helper.format(picker.getDatetime()));
-                	      	setFocus(true);
-                	    }
-                	});
+                	if(event.isAutoClosed())
+                		display.removeStyleName(css.Focus());
                 }
             });
         }
-    	
-    	
-        try {            
-            time = helper.getValue(textbox.getText());
-        } catch (Exception e) {
-            time = null;
-        }
-        
-        if(picker == null) {
-            picker = new DatetimePicker(((DateHelper)helper).getBegin(),
-                                        ((DateHelper)helper).getEnd(),
-                                        time);
-            popup.setWidget(picker);
-        }else
-            picker.setDatetime(time);
-        
-        
-        popup.showRelativeTo(source);
+        try {
+            if (calendar == null) {
+                /*
+                 * Set new CalendarWidget withe the precision used by this widget
+                 */
+                calendar = new CalendarWidget( ((DateHelper)helper).getBegin(),
+                                              ((DateHelper)helper).getEnd());
+                /*
+                 * CalendarWidget will fire a ValueChangeEvent<Datetime> when the user selects
+                 * a date.
+                 */
+                calendar.addValueChangeHandler(new ValueChangeHandler<Datetime>() {
+                    public void onValueChange(ValueChangeEvent<Datetime> event) {
+                        popup.hide();
+                        textbox.setText(helper.format(event.getValue()));
+                        textbox.setFocus(true);
+                    }
+                });
+                /*
+                 * Add a handler to the CalendarWidget for when the user selects the MonthSelect button.
+                 * We will then switch the popup view to the MonthYearWidget and setting it to the current 
+                 * month year displayed in the calendar widget. 
+                 */
+                calendar.addMonthSelectHandler(new ClickHandler() {
+                    public void onClick(ClickEvent event) {
+                        if (monthYearWidget == null) { 
+                            monthYearWidget = new MonthYearWidgetUI();
+                            /*
+                             * Set popup back to calendar with the selected month and year
+                             */
+                            monthYearWidget.addChangeHandler(new ChangeHandler() {
+								@Override
+								public void onChange(ChangeEvent event) {
+                                    calendar.drawMonth(monthYearWidget.getYear(),
+                                            monthYearWidget.getMonth());
+                                    popup.setWidget(calendar);
+									
+								}
+							});
+                        }
+                        monthYearWidget.setYear(calendar.getYear());
+                        monthYearWidget.setMonth(calendar.getMonth());
+                        popup.setWidget(monthYearWidget);
+                }
+                });
+            }
+            /*
+             * Sets the calendar to the current month and date entered in the widget.  If null 
+             * is passed then the current date from the server will be displayed and selected.
+             */
+            calendar.setDate(helper.getValue(textbox.getText()));
+            popup.setWidget(calendar);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        popup.showRelativeTo(this);
+
+        /*
+         * SetFocus to the popup so the calendar will take over the key events
+         
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			public void execute() {
+				 ((FocusPanel)calendar.def.getWidget("CalFocus")).setFocus(true);
+			}
+		});
+		*/
     }
     
     @Override
@@ -266,8 +305,8 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         /*
          * set the Textbox to width - 14 to account for button.
          */
-        display.getCellFormatter().setWidth(0,0,(width-25)+"px");
-        textbox.setWidth((width - 25) + "px");
+        display.getCellFormatter().setWidth(0,0,(width-16)+"px");
+        textbox.setWidth((width - 16) + "px");
         
     }
     
@@ -316,7 +355,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      */
     @Override
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
+    	if(ExceptionHelper.isWarning(this))
     		addStyleName(css.InputWarning());
     	else
     		addStyleName(css.InputError());
@@ -346,26 +385,9 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     	((DateHelper)getHelper()).setBegin(begin);
     	((DateHelper)getHelper()).setEnd(end);
     	
-    	picker = null;
+    	calendar = null;
     	
     	setDefaultMask();
-    	
-    }
-    
-    public void setBegin(int begin) {
-        ((DateHelper)getHelper()).setBegin((byte)begin);
-        
-        picker = null;
-        
-        setDefaultMask();
-    }
-    
-    public void setEnd(int end) {
-        ((DateHelper)getHelper()).setEnd((byte)end);
-        
-        picker = null;
-        
-        setDefaultMask();
     }
     
     private void setDefaultMask() {
@@ -378,11 +400,11 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     	 * xsl, but defaults are provided if none set.
     	 */
     	if(dh.getBegin() > Datetime.DAY) {
-    		textbox.setMask(Messages.get().gen_timeMask());
+    		textbox.setMask(Messages.get().timeMask());
     	} else if (dh.getEnd() < Datetime.HOUR){
-    		textbox.setMask(Messages.get().gen_dateMask());
+    		textbox.setMask(Messages.get().dateMask());
     	} else {
-    		textbox.setMask(Messages.get().gen_dateTimeMask());
+    		textbox.setMask(Messages.get().dateTimeMask());
     	}
     }
 
@@ -410,12 +432,6 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         if(!Util.isDifferent(this.value, value)) {
         	if(value != null)
         		textbox.setText(helper.format(value));
-        	else { 
-        	    // Here to make sure text and exceptions are cleared
-        	    // when null is set to calendar with invalid data
-        	    textbox.setText("");
-        	    clearExceptions();
-        	}
             return;
         }
         
@@ -463,11 +479,11 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     			try {
     				setValue(helper.getValue(text), fireEvents);
     				if (required && value == null) 
-    					addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+    					addValidateException(new Exception(Messages.get().fieldRequired()));
     			} catch (Exception e) {
     				addValidateException(e);
     			}
-    			Balloon.checkExceptionHandlers(this);
+    			ExceptionHelper.checkExceptionHandlers(this);
     		}
     	}
     }
@@ -482,7 +498,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         } catch (Exception e) {
             addValidateException(e);
         }
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
 	// ********** Implementation of HasException interface ***************
@@ -498,8 +514,8 @@ public class Calendar extends Composite implements ScreenWidgetInt,
 			return true;
 
 		if (!queryMode && required && getValue() == null) {
-			addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-			Balloon.checkExceptionHandlers(this);
+			addValidateException(new Exception(Messages.get().fieldRequired()));
+			ExceptionHelper.checkExceptionHandlers(this);
 		}
 
 		return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -510,7 +526,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
@@ -536,17 +552,17 @@ public class Calendar extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
     // ************* Implementation of Focusable ******************
 
@@ -721,35 +737,4 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         textbox.setStyleName(css.SelectText());
     }
 
-    public void setAsText(boolean asTextBox) {
-        button.setVisible(false);
-    }
-
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
 }

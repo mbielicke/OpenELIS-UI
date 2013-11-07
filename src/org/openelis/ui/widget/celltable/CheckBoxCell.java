@@ -34,14 +34,12 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Check;
 import org.openelis.ui.widget.CheckBox;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -110,24 +108,24 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
      * Returns the current widget set as this cells editor.
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, Container container, GwtEvent event) {
         query = false;
         editor.setQueryMode(false);
         editor.setValue((String)value);
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK)
-        	ClickEvent.fireNativeEvent(event, editor);
+        if(event instanceof ClickEvent)
+        	ClickEvent.fireNativeEvent(((ClickEvent) event).getNativeEvent(), editor);
             //editor.changeValue();
         container.setEditor(editor);
         DOM.setStyleAttribute(container.getElement(), "align", "center");  
     }
     
     @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
+	public void startEditingQuery(QueryData qd, Container container, GwtEvent event) {        
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK)
-        	ClickEvent.fireNativeEvent(event, editor);
+        if(event instanceof ClickEvent)
+        	ClickEvent.fireNativeEvent(((ClickEvent) event).getNativeEvent(), editor);
             //editor.changeValue();
         container.setEditor(editor);
         DOM.setStyleAttribute(container.getElement(), "align", "center");          

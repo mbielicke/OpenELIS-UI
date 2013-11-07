@@ -31,17 +31,13 @@ import java.util.Iterator;
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableCalendarCSS;
-import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.calendar.Calendar;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -77,10 +73,9 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     }
     
     public void setEditor(Calendar editor) {
-        TableCalendarCSS css = UIResources.INSTANCE.tableCalendar();
         this.editor = editor;
         editor.setEnabled(true);
-        editor.setCSS(css);
+       // editor.setStyleName("TableCalendar");
         editor.addBlurHandler(new BlurHandler() {
 			public void onBlur(BlurEvent event) {
 				column.finishEditing();
@@ -92,18 +87,18 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
      * Method to return the editor set for this cell
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, Container container, GwtEvent event) {
         if(value instanceof Datetime)
         	editor.setValue((Datetime)value);
         else
-        	editor.setText(DataBaseUtil.toString(value));
+        	editor.setText(DataBaseUtil.asString(value));
         editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
         editor.selectAll();
     }
 
     @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
+	public void startEditingQuery(QueryData qd, Container container, GwtEvent event) {
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
@@ -144,7 +139,7 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         if(value instanceof Datetime)
         	return editor.getHelper().format((Datetime)value);
         else
-        	return DataBaseUtil.toString(value);
+        	return DataBaseUtil.asString(value);
     }
 
     /**

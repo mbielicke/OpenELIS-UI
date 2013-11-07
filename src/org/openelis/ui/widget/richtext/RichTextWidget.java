@@ -27,7 +27,7 @@ package org.openelis.ui.widget.richtext;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.WidgetHelper;
@@ -46,7 +46,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
@@ -113,7 +112,7 @@ public class RichTextWidget extends Composite implements ScreenWidgetInt, Focusa
 	}
 
 	public void setText(String text){
-		area.setHTML((text));
+		area.setHTML(text);
 	}
 
 	public String getText(){
@@ -231,7 +230,7 @@ public class RichTextWidget extends Composite implements ScreenWidgetInt, Focusa
         setValue(area.getHTML(), fireEvents);
         if(required && value == null)
             addValidateException(new Exception("exc.fieldRequiredException"));
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
     /**
@@ -271,7 +270,7 @@ public class RichTextWidget extends Composite implements ScreenWidgetInt, Focusa
         if (endUserExceptions == null)
             endUserExceptions = new ArrayList<Exception>();
         endUserExceptions.add(error);
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
 
     protected void addValidateException(Exception error) {
@@ -298,24 +297,24 @@ public class RichTextWidget extends Composite implements ScreenWidgetInt, Focusa
     public void clearExceptions() {
         endUserExceptions = null;
         validateExceptions = null;
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
     public void clearEndUserExceptions() {
         endUserExceptions = null;
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
     public void clearValidateExceptions() {
         validateExceptions = null;
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
 
     /**
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
+    	if(ExceptionHelper.isWarning(this))
     		addStyleName("InputWarning");
     	else
     		addStyleName("InputError");

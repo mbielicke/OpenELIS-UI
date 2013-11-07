@@ -1,6 +1,7 @@
 package org.openelis.ui.server;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -24,25 +25,56 @@ public class FileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-                                                                                  IOException {
+                    IOException {
         List<FileItem> files;
+        FileItem file = null;
         FileItemFactory factory;
         ServletFileUpload upload;
+        String service = null, method = null;
+        Object serviceInst;
 
         try {
             factory = new DiskFileItemFactory();
             upload = new ServletFileUpload(factory);
             files = upload.parseRequest(req);
-            if (files.size() > 0)
-                req.getSession().setAttribute("upload", files.get(0));
+
+            /*
+             * File name, service, and method are required from front 
+             */
+            file = files.get(0);
+            for (int i = 1; i < files.size(); i++ ) {
+                if ("service".equals(files.get(i).getFieldName()))
+                    service = files.get(i).getString();
+                else if ("method".equals(files.get(i).getFieldName()))
+                    method = files.get(i).getString();
+            }
         } catch (Exception e) {
             throw (ServletException)e.getCause();
+        }
+
+        /*
+         * call the method with the file name parameter for processing
+         */
+        try {
+            serviceInst = Class.forName(service).newInstance();
+            serviceInst.getClass().getMethod(method, new Class[]{FileItem.class}).invoke(serviceInst, new Object[]{file});
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            if (e.getCause() != null)
+                throw new ServletException(e.getCause());
+            else
+                throw new ServletException(e.getTargetException());
+        } catch (NoSuchMethodException e) {
+            throw new ServletException("NoSuchMethodException: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServletException(e.getMessage());
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-                                                                                   IOException {
+                    IOException {
         doGet(req, resp);
     }
 }

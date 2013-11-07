@@ -21,15 +21,8 @@ public class Item<T> extends Row {
      */
     protected boolean enabled = true;
 
-    public Item(Item<T> item) {
-        super(item.cells.size());
+    public Item() {
         
-        key = item.key;
-        data = item.data;
-        
-        for(int i = 0; i < cells.size(); i++) {
-            cells.set(i, item.cells.get(i));
-        }
     }
     
     public Item(int size) {
@@ -73,6 +66,13 @@ public class Item<T> extends Row {
     		return null;
     	else
     		return "Disabled";
+    }
+    
+    @SuppressWarnings("unchecked")
+	public Object clone() {
+    	Item<T> clone = (Item<T>)super.clone();
+    	clone.setKey(key);
+    	return clone;
     }
 
 }

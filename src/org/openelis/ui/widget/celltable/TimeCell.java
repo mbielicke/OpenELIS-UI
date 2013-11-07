@@ -6,13 +6,12 @@ import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.TextBox;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,12 +25,12 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
     protected TableCSS      css;
 	
 	public TimeCell() {
-		TextCSS css = UIResources.INSTANCE.tableText();
+		css = UIResources.INSTANCE.table();
 		css.ensureInjected();
 		
 		editor = new TextBox<String>();
 		editor.setEnabled(true);
-		editor.setCSS(css);
+		editor.setStyleName(css.TableTextBox());
 		editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -41,11 +40,11 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
 	}
 	
 	@Override
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, Container container, GwtEvent event) {
 		if(value instanceof Double)
 			editor.setValue(getTime((Double)value));
 		else
-			editor.setText(DataBaseUtil.toString(value));
+			editor.setText(DataBaseUtil.asString(value));
 		editor.setWidth(container.getWidth()+"px");
 		container.setEditor(editor);
 		editor.selectAll();
@@ -53,7 +52,7 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
 
 	@Override
 	public void startEditingQuery(QueryData qd, Container container,
-			NativeEvent event) {
+			GwtEvent event) {
 		
 	}
 
@@ -75,7 +74,7 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(validate != null && !(validate instanceof Double))
-			exceptions.add(new Exception(Messages.get().exc_invalidNumeric()));
+			exceptions.add(new Exception(Messages.get().invalidNumeric()));
 		
 		return exceptions;
 			

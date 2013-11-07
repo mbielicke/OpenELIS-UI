@@ -144,7 +144,7 @@ public final class TreeDropController extends SimpleDropController implements
 
         dragItem = (DragItem)context.draggable;
 
-        tree.view.table().getRowFormatter().removeStyleName(targetRow, css.DropOnRow());
+        tree.view.flexTable.getRowFormatter().removeStyleName(targetRow, css.DropOnRow());
         
         super.onDrop(context);
 
@@ -187,16 +187,16 @@ public final class TreeDropController extends SimpleDropController implements
          * mouseY is based on overall window position, we need to adjust it from
          * the top of the flexTable
          */
-        adjY = context.mouseY - tree.view.table().getAbsoluteTop();
+        adjY = context.mouseY - tree.view.flexTable.getAbsoluteTop();
         if(targetRow > -1){
-            tree.view.table().getRowFormatter().removeStyleName(targetRow, css.DropOnRow());
+            tree.view.flexTable.getRowFormatter().removeStyleName(targetRow, css.DropOnRow());
             positioner.removeFromParent();
         }
         /*
          * Calculate the physical row and model indexes
          */
-        targetRow = adjY / tree.view.rowHeight();
-        //targetIndex = tree.view.firstVisibleRow + targetRow;
+        targetRow = adjY / tree.view.getRowHeight();
+        targetIndex = tree.view.firstVisibleRow + targetRow;
      
 
         /*
@@ -205,15 +205,15 @@ public final class TreeDropController extends SimpleDropController implements
         validDrop = true;
         if (tree.getRowCount() > 0) {
 
-            rowTop = targetRow * tree.view.rowHeight();
+            rowTop = targetRow * tree.view.getRowHeight();
             
             if(tree.getNodeAt(targetIndex).isLeaf()) {
-                if (adjY < (rowTop + (tree.view.rowHeight() / 2)))
+                if (adjY < (rowTop + (tree.view.getRowHeight() / 2)))
                     dropPos = DropPosition.ABOVE;
                 else
                     dropPos = DropPosition.BELOW;
             }else {
-                third = tree.view.rowHeight() / 3;
+                third = tree.view.getRowHeight() / 3;
                 if (adjY < rowTop + third)
                     dropPos = DropPosition.ABOVE;
                 else if(adjY > rowTop + (2 * third))
@@ -231,16 +231,16 @@ public final class TreeDropController extends SimpleDropController implements
                 positioner.removeFromParent();
             } else {
                 if(dropPos != DropPosition.ON) {
-                    posY = rowTop + tree.view.table().getAbsoluteTop();
+                    posY = rowTop + tree.view.flexTable.getAbsoluteTop();
                     if (dropPos == DropPosition.BELOW)
-                        posY += tree.view.rowHeight();
+                        posY += tree.view.rowHeight;
                     positioner.setPixelSize(tree.getWidthWithoutScrollbar(), 1);
-                    context.boundaryPanel.add(positioner, tree.view.table().getAbsoluteLeft(), posY);
+                    context.boundaryPanel.add(positioner, tree.view.flexTable.getAbsoluteLeft(), posY);
                     ((TreeDragController)context.dragController).setDropIndicator(true);
                 }else {
                 	positioner.removeFromParent();
                 	((TreeDragController)context.dragController).setDropIndicator(true);
-                    tree.view.table().getRowFormatter().addStyleName(targetRow, css.DropOnRow());
+                    tree.view.flexTable.getRowFormatter().addStyleName(targetRow, css.DropOnRow());
                 }
                     
                 
@@ -250,8 +250,8 @@ public final class TreeDropController extends SimpleDropController implements
                 (targetRow == tree.getVisibleRows() - 1 && dropPos == DropPosition.BELOW))
                 scroll();
         } else {
-            RootPanel.get().add(positioner, tree.view.table().getAbsoluteLeft(),
-                                tree.view.table().getAbsoluteTop());
+            RootPanel.get().add(positioner, tree.view.flexTable.getAbsoluteLeft(),
+                                tree.view.flexTable.getAbsoluteTop());
         }
 
     }

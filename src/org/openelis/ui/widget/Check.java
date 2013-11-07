@@ -74,7 +74,6 @@ public class Check extends FocusPanel implements HasValueChangeHandlers<Boolean>
         addHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 changeValue();
-                event.stopPropagation();
             }
         }, ClickEvent.getType());
 
@@ -179,9 +178,9 @@ public class Check extends FocusPanel implements HasValueChangeHandlers<Boolean>
     }
     
     protected void setStyle() {
-        if(this.value == null && mode == Mode.THREE_STATE) 
+        if(this.value == null) 
        		setStylePrimaryName(css.Unknown());
-        else if(value != null && value)
+        else if(value)
         	setStylePrimaryName(css.Checked());
         else
         	setStylePrimaryName(css.Unchecked());

@@ -38,7 +38,6 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.CheckBoxCell;
 import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.Row;
@@ -47,9 +46,6 @@ import org.openelis.ui.widget.table.event.CellClickedEvent;
 import org.openelis.ui.widget.table.event.CellClickedHandler;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -89,10 +85,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -111,8 +104,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 													  HasFocusHandlers,
 													  HasValue<T>, 
 													  HasHelper<T>,
-													  HasExceptions,
-													  HasBalloon {
+													  HasExceptions {
 	
 	@UiTemplate("Select.ui.xml")
 	interface DropdownUiBinder extends UiBinder<Widget, Dropdown>{};
@@ -132,11 +124,10 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	protected Button  					            button;
 	protected Button                                checkAll,uncheckAll,close;
 	protected Table                 				table;
-	protected PopupPanel 			     		    popup;
+	protected PopupPanel      					    popup;
 	protected int                   			    cellHeight = 19, itemCount = 10, width, maxDisplay = 3;
 	protected boolean 					            required,queryMode,showingOptions,enabled;
 	protected T                      				value;
-	protected String                                dropHeight = "150px",dropWidth;
 
 	@UiField 
 	protected TextBase                              textbox;
@@ -146,13 +137,11 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	protected ArrayList<SearchPair> 				searchText;
 	protected SearchPair 							searchPair;
-	protected String                                searchString = "";
 
 	/**
 	 * Exceptions list
 	 */
 	protected Exceptions                            exceptions;
-	protected Balloon.Options                       options;
 
 	/**
 	 * HashMap to set selections by key;
@@ -172,8 +161,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	
 	
 	protected DropdownCSS                           css;
-	
-	private Dropdown                                source = this;
 
 	/**
 	 * Default no-arg constructor
@@ -204,10 +191,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		 */
 		addFocusHandler(new FocusHandler() {
 			public void onFocus(FocusEvent event) {
-				if(isEnabled()){
+				if(isEnabled())
 					display.addStyleName(css.Focus());
-					textbox.selectAll();
-				}
 			}
 		});
 
@@ -217,10 +202,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		addBlurHandler(new BlurHandler() {
 			public void onBlur(BlurEvent event) {
 				display.removeStyleName(css.Focus());
-				textbox.setSelectionRange(0, 0);
 				
-				if(!queryMode)
-				    finishEditing();
+				finishEditing();
 			}
 		});
 
@@ -235,7 +218,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		
 		setCSS(UIResources.INSTANCE.dropdown());
 		
-		setPopupContext(new Table.Builder(10).column(new Column.Builder(10).build()).build());
+		setPopupContext(new Table.Builder(10).column(new Column.Builder(100).build()).build());
 		setHelper((WidgetHelper)new StringHelper());
 	}
 	
@@ -273,8 +256,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	protected void showPopup() {
 		/* Set to true for button mouse down hack */
 		showingOptions = true;
-		final LayoutPanel layout = new LayoutPanel();
-	
+		
 		/* create a popup instance first time it is used */
 		if (popup == null) {
 			popup = new PopupPanel(true);
@@ -282,26 +264,22 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 			
 			/* Draw popup for Multiselect when set */
 			if(queryMode) {
-				uncheckAll = new Button(css.Unchecked(),Messages.get().drop_uncheck());
-				checkAll = new Button(css.Checked(),Messages.get().drop_check());
+				uncheckAll = new Button(css.Unchecked(),Messages.get().all());
+				checkAll = new Button(css.Checked(),Messages.get().all());
+				close = new Button(css.CloseButton(),"");
 				
-				uncheckAll.setCss(UIResources.INSTANCE.button());
-				checkAll.setCss(UIResources.INSTANCE.button());
-				
-				multiHeader = new Grid(1,2);
+				multiHeader = new Grid(1,3);
 				multiHeader.setCellSpacing(0);
 				multiHeader.setCellPadding(0);
 				multiHeader.setWidget(0,0,checkAll);
 				multiHeader.setWidget(0,1,uncheckAll);
-
-				//multiHeader.getCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
-				//multiHeader.getCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+				multiHeader.setWidget(0,2,close);
+				multiHeader.getCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
+				multiHeader.getCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
 				multiHeader.setWidth("100%");
 				vp = new VerticalPanel();
 				vp.add(multiHeader);
-                layout.add(table);
-                
-				vp.add(layout);
+				vp.add(table);
 				popup.setWidget(vp);
 				
 				/* Handler to select All items when checked */
@@ -328,68 +306,35 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 				});
 				uncheckAll.setEnabled(true);
 
-			}else {
-			    
-			    layout.add(table);
-			    
-				popup.setWidget(layout);
-				
-			}
+				/* Handler to close the popup without affecting selection */
+				close.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						popup.hide();
+					}
+				});
+				close.setEnabled(true);
+			}else
+				popup.setWidget(table);
 			
 			popup.setPreviewingAllNativeEvents(false);
 			
-			/* Handler for closing of popup to set focus back to false and reset showingOptions */ 
+			/* Handler for closing of popup to set focus back to false and reset showingOptions */
 			popup.addCloseHandler(new CloseHandler<PopupPanel>() {
 				public void onClose(CloseEvent<PopupPanel> event) {
 					setFocus(true);
 					showingOptions = false;
 				}
 			});
-			
 		}
-		
-		/**
-		 * Draw and show outside of viewable so table will size correctly and 
-		 * and showRelative will work when close to browser border.
+
+		popup.showRelativeTo(this);
+
+		/*
+		 * Scroll if needed to make selection visible
 		 */
-		popup.setPopupPosition(-1000, -1000);
-		popup.show();
+		if (getSelectedIndex() > 0)
+			table.scrollToVisible(getSelectedIndex());
 
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
-		    @Override
-		    public void execute() {
-		        int modelHeight = table.getModel().size() * cellHeight;
-		        
-		        if(table.hasHeader())
-		            modelHeight += 19;
-		        
-		        int width = dropWidth == null ? getOffsetWidth() : Util.stripUnits(dropWidth);
-		        
-		        if(table.getTotalColumnWidth() > width)
-		            modelHeight += NativeHorizontalScrollbar.getNativeScrollbarHeight() + 1;
-		        
-		        if(queryMode) {
-		            if(multiHeader.getOffsetWidth() > width)
-		                width = multiHeader.getOffsetWidth();
-		                layout.setSize(width+"px", 
-		                               Util.stripUnits(dropHeight) > modelHeight ? modelHeight+"px" : dropHeight);
-		                
-		        }
-		        
-		        popup.setSize(width+"px", 
-		                       Util.stripUnits(dropHeight) > modelHeight ? modelHeight+"px" : dropHeight);
-		        table.onResize();
-		        popup.showRelativeTo(source);
-
-		        /*
-		         * Scroll if needed to make selection visible
-		         */ 
-		        if (getSelectedIndex() > 0)
-		            table.scrollToVisible(getSelectedIndex());
-
-		    }
-		});
 	}
 
 	/**
@@ -422,7 +367,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 			}
 			
 			if(selected > maxDisplay)
-				sb = new StringBuffer().append(selected+" "+Messages.get().drop_optionsSelected());
+				sb = new StringBuffer().append(selected+" "+Messages.get().optionSelected());
 		}
 
 		textbox.setText(sb.toString());
@@ -461,18 +406,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		display.setHeight(height);
 		button.setHeight(height);
 	}
-	
-	public void setDropHeight(String height) {
-	    dropHeight = height;
-	}
-	
-	public void setDropWidth(String width) {
-	    dropWidth = width;
-	}
-	
-	public void setCase(TextBase.Case textCase) {
-	    textbox.setCase(textCase);
-	}
 
 	/**
 	 * This method sets up the key hash which is used to search for the correct
@@ -482,10 +415,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	private void createKeyHash(ArrayList<Item<T>> model) {
 		keyHash = new HashMap<T, Integer>();
-		
-		if(model != null)
-		    for (int i = 0; i < model.size(); i++ )
-		        keyHash.put(model.get(i).key, i);
+
+		for (int i = 0; i < model.size(); i++ )
+			keyHash.put(model.get(i).key, i);
 	}
 
 
@@ -508,9 +440,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	@UiChild(limit=1,tagname="popup")
 	public void setPopupContext(Table tableDef) {
 		this.table = tableDef;
-		table.setCSS(UIResources.INSTANCE.dropTable());
-		
-		//table.setFixScrollbar(false);
+
+		table.setFixScrollbar(false);
 		table.setRowHeight(16);
 		table.setEnabled(true);
 		
@@ -533,7 +464,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 						table.setValueAt(event.getItem(),0,"Y");
 					setDisplay();
 					event.cancel();
-				}else if (!((Item)table.getModel().get(event.getItem())).isEnabled()) 
+				}
+				
+				if (!((Item)table.getModel().get(event.getItem())).isEnabled()) 
 					event.cancel();
 				
 			}
@@ -587,32 +520,18 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void setModel(ArrayList<Item<T>> model) {
 		assert table != null;
-		
-		if(model != null && model.size() > 0) {
-		    if(model.get(0).getCells().size() > table.getColumnCount()) {
-		        for (Item<T> item : model) 
-		            item.getCells().remove(0);
-		    }else if(model.get(0).getCells().size() < table.getColumnCount()) {
-		        for(Item<T> item : model)
-		            item.getCells().add(0,null);
-		    }
-		}
 
 		table.setModel(model);
-		
-		/*
+
 		if(model.size() < itemCount) 
 			table.setVisibleRows(model.size());
 		else
 			table.setVisibleRows(itemCount);
-        */
+
 
 		createKeyHash(model);
 
 		searchText = null;
-		
-		setValue(null);
-		setDisplay();
 
 	}
 
@@ -632,12 +551,10 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 * @param index
 	 */
 	public void setSelectedIndex(int index) {
-		if (index > -1) {
+		if (index > -1)
 			setValue(getModel().get(index).key);
-		}else {
+		else
 			setValue(null);
-			table.unselectAll();
-		}
 	}
 
 	/**
@@ -727,8 +644,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 
 		table.selectRowAt((index = keyHash.get(value)) != null ? index : -1);
 		
-		searchString = "";
-		
 		setDisplay();
 
 		this.value = value;
@@ -752,9 +667,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		clearValidateExceptions();
 
 		if (required && value == null) 
-			addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+			addValidateException(new Exception(Messages.get().fieldRequired()));
 		
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
@@ -793,21 +708,15 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		queryMode = query;
 		
 		popup = null;
-		value = null;
-		textbox.setText("");
-		table.unselectAll();
-		
 		
 		if(queryMode){
 			/*
-			 * If switching to multi select add checkbox column at position 0
-			 * Table will add the value to the model correctly
+			 * If switching to multi select and checkbox column at position 0
+			 * Table will add the value to te model correctly
 			 */
 			Column col = new Column.Builder(15).build();
 			col.setCellRenderer(new CheckBoxCell(new CheckBox()));
 			table.addColumnAt(0, col);
-			textbox.setReadOnly(true);
-			table.setAllowMultipleSelection(true);
 		}else{
 			/*
 			 * Remove Checkbox column if switching to single select
@@ -815,10 +724,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 			 */
 			table.removeColumnAt(0);
 			textbox.setText("");
-			textbox.setReadOnly(false);
-			table.setAllowMultipleSelection(false);
 		}
-		
 	}
 
 	/**
@@ -843,7 +749,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		/*
 		 * Return null if nothing selected
 		 */
-		if (values.isEmpty() || (values.size() == 1 && values.get(0) == null))
+		if (values == null || (values.size() == 1 && values.get(0) == null))
 			return null;
 
 		qd = new QueryData();
@@ -883,12 +789,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		if(!queryMode)
 			return;
 		
-		for(int i = 0; i < table.getRowCount(); i++)
-		    table.setValueAt(i,0,"N");
-		
 		table.unselectAll();
-		
-		setDisplay();
 
 		if(qd == null)
 			return;
@@ -991,6 +892,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 
 	protected class KeyboardHandler implements KeyDownHandler, KeyPressHandler {
 
+		String searchString = "";
+
 		/**
 		 * This method handles all key down events for this table
 		 */
@@ -1000,6 +903,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 				case KeyCodes.KEY_TAB:
 					if (popup != null && popup.isShowing())
 						popup.hide();
+					break;
+				case KeyCodes.KEY_BACKSPACE :
+					this.searchString = "";
 					break;
 			}
 
@@ -1014,15 +920,12 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 			
 			ch = event.getUnicodeCharCode() == 0 ? (char)event.getNativeEvent().getKeyCode() : event.getCharCode();
 			
-						
 			switch (event.getNativeEvent().getKeyCode()) {
 				case KeyCodes.KEY_DOWN:
 					table.selectRowAt(findNextActive(table.getSelectedRow()));
-					setDisplay();
 					break;
 				case KeyCodes.KEY_UP:
 					table.selectRowAt(findPrevActive(table.getSelectedRow()));
-					setDisplay();
 					break;
 				case KeyCodes.KEY_ENTER:
 					if (popup == null || !popup.isShowing())
@@ -1032,36 +935,19 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 					event.stopPropagation();
 					break;
 				case KeyCodes.KEY_TAB:
-					break;  
-				case KeyCodes.KEY_BACKSPACE :
-				    if(!queryMode) {
-				        
-				        if(searchString.length() > 1)
-				            searchString = searchString.substring(0,searchString.length()-1);
-				        else {
-				            searchString = "";
-				            table.selectRowAt(-1);
-				            return;
-				        }
-				    }
+					break;
+				case KeyCodes.KEY_BACKSPACE:
+					setSelectedIndex(-1);
+					break;
 				default:
-				    // Don't add backspace to search
-				    if(!queryMode) {
-				        if(ch != '\b')
-				            searchString += String.valueOf(ch);             
-	
-				        index = findIndexByTextValue(searchString);
+					searchString += String.valueOf(ch);             
+				
+					index = findIndexByTextValue(searchString);
 
-				        if (index > -1) {
-				            table.selectRowAt(index);
-				            setDisplay();
-				            textbox.setSelectionRange(searchString.length(), textbox.getText().length()-searchString.length());
-				        }
-				        else
-				            searchString = searchString.substring(0,searchString.length()-1);
-				        event.preventDefault();
-				        event.stopPropagation();
-				    }
+					if (index > -1)
+						setSelectedIndex(index);
+					else
+						searchString = searchString.substring(0,searchString.length()-1);
 			}
 		}
 
@@ -1122,8 +1008,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
     		return true;
     	  
     	if (!queryMode && required && getValue() == null) {
-            addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-            Balloon.checkExceptionHandlers(this);
+            addValidateException(new Exception(Messages.get().fieldRequired()));
+            ExceptionHelper.checkExceptionHandlers(this);
     	}
     	  
     	return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -1134,7 +1020,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
@@ -1166,7 +1052,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	/**
@@ -1174,7 +1060,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
@@ -1182,7 +1068,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 
@@ -1190,7 +1076,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 * Adds an exception CSS class to this widget.
 	 */
 	public void addExceptionStyle() {
-		if(Balloon.isWarning(this))
+		if(ExceptionHelper.isWarning(this))
 			display.addStyleName(css.InputWarning());
 		else
 			display.addStyleName(css.InputError());
@@ -1364,33 +1250,5 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		if(field.equals("Integer"))
 			setHelper((WidgetHelper<T>)new IntegerHelper());
 	}
-	
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
 
 }

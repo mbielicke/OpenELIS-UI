@@ -66,7 +66,7 @@ public class IntegerHelper implements WidgetHelper<Integer> {
 					// Do nothing to Fall through and throw the exception.
 				}
 			}
-			throw new Exception(Messages.get().exc_invalidNumeric());
+			throw new Exception(Messages.get().invalidNumeric());
 		}
 	}
 
@@ -117,7 +117,7 @@ public class IntegerHelper implements WidgetHelper<Integer> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value)) 
-			exceptions.add(new Exception(Messages.get().exc_invalidNumeric()));
+			exceptions.add(new Exception(Messages.get().invalidNumeric()));
 		
 		return exceptions;
 	}

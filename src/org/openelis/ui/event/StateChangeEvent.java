@@ -27,15 +27,14 @@ package org.openelis.ui.event;
 
 import org.openelis.ui.screen.State;
 
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
  * This class will fire events to registered objects for StateChange actions
  */
-public class StateChangeEvent extends GwtEvent<StateChangeEvent.Handler>{
+public class StateChangeEvent extends GwtEvent<StateChangeHandler>{
 	
-	private static Type<StateChangeEvent.Handler> TYPE;
+	private static Type<StateChangeHandler> TYPE;
 	private State state;
 	
 	@SuppressWarnings("rawtypes")
@@ -51,20 +50,20 @@ public class StateChangeEvent extends GwtEvent<StateChangeEvent.Handler>{
     }
     
 	@Override
-	protected void dispatch(StateChangeEvent.Handler handler) {
+	protected void dispatch(StateChangeHandler handler) {
 		handler.onStateChange(this);
 		
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public final Type<StateChangeEvent.Handler> getAssociatedType() {
+	public final Type<StateChangeHandler> getAssociatedType() {
 		return (Type) TYPE;
 	}
 
-	public static Type<StateChangeEvent.Handler> getType() {
+	public static Type<StateChangeHandler> getType() {
 	   if (TYPE == null) {
-	      TYPE = new Type<StateChangeEvent.Handler>();
+	      TYPE = new Type<StateChangeHandler>();
 	    }
 	    return TYPE;
 	 }
@@ -75,9 +74,5 @@ public class StateChangeEvent extends GwtEvent<StateChangeEvent.Handler>{
 	 */
 	public State getState() {
 		return state;
-	}
-	
-	public static interface Handler extends EventHandler {
-	    public void onStateChange(StateChangeEvent event);
 	}
 }

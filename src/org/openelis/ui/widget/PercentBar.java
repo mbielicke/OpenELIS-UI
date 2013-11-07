@@ -1,14 +1,9 @@
 package org.openelis.ui.widget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.openelis.ui.resources.PercentCSS;
 import org.openelis.ui.resources.UIResources;
 
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.uibinder.client.UiChild;
-import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
@@ -32,7 +27,7 @@ public class PercentBar extends Composite {
 	/**
 	 * This is an array of color thresholds for determining what color to fill the bar with 
 	 */
-	private ArrayList<ColorRange> colors;
+	private ColorRange[] colors;
 	
 	protected PercentCSS css;
 	/**
@@ -86,7 +81,7 @@ public class PercentBar extends Composite {
 			}
 		}
 		if(color == null)
-			color = colors.get(colors.size()-1);
+			color = colors[colors.length-1];
 		DOM.setStyleAttribute(panel.getElement(), "background", color.getColor());
 		grid.setText(0, 1, NumberFormat.getFormat("###0.0").format(percent)+"%");
 		grid.getCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
@@ -98,25 +93,14 @@ public class PercentBar extends Composite {
 	 * @param colors
 	 */
 	public void setColors(ColorRange... colors) {
-		this.colors = new ArrayList<ColorRange>();
-		
-		for(ColorRange color : colors) 
-		    this.colors.add(color);
-		
-	}
-	
-	@UiChild(tagname="range")
-	public void addRange(ColorRange color) {
-	    if(colors == null)
-	       colors = new ArrayList<ColorRange>();
-	    colors.add(color);
+		this.colors = colors;
 	}
 	
 	/**
 	 * Returns the Range of colors used by this Percent bar.
 	 * @return
 	 */
-	public ArrayList<ColorRange> getColors() {
+	public ColorRange[] getColors() {
 		return colors;
 	}
 	
@@ -147,7 +131,6 @@ public class PercentBar extends Composite {
 		 * @param threshHold
 		 * @param color
 		 */
-		@UiConstructor
 		public ColorRange(int threshHold, String color) {
 			this.threshHold = threshHold;
 			this.color = color;
@@ -161,20 +144,12 @@ public class PercentBar extends Composite {
 			return threshHold;
 		}
 		
-		public void setThreshHold(int threshHold) {
-		    this.threshHold = threshHold;
-		}
-		
 		/**
 		 * Returns the color to be used for this range.
 		 * @return
 		 */
 		public String getColor() {
 			return color;
-		}
-		
-		public void setColor(String color) {
-		    this.color = color;
 		}
 	}
 }
