@@ -34,5 +34,5 @@ import com.google.gwt.event.shared.HasHandlers;
  */
 public interface HasStateChangeHandlers extends HasHandlers {
 	
-	HandlerRegistration addStateChangeHandler(StateChangeEvent.Handler handler);
+	HandlerRegistration addStateChangeHandler(StateChangeHandler handler);
 }

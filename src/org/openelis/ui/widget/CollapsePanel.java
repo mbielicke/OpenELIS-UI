@@ -25,7 +25,6 @@
 */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.widget.CollapsePanel;
 import org.openelis.ui.resources.CollapseCSS;
 import org.openelis.ui.resources.UIResources;
 

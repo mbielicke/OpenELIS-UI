@@ -3,11 +3,9 @@ package org.openelis.ui.widget;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.ConfirmCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Window.Caption;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbsolutePositionDropController;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,20 +14,13 @@ import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,119 +31,153 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  *
  */
-public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>, ClickHandler, NativePreviewHandler {
-    
-    @UiTemplate("Confirm.ui.xml")
-    interface ConfirmUiBinder extends UiBinder<Widget, Confirm>{};
-    private static final ConfirmUiBinder uiBinder = GWT.create(ConfirmUiBinder.class);
-   
+public class Confirm extends Window implements HasSelectionHandlers<Integer>, ClickHandler, NativePreviewHandler {
+
     int active = -1;
-    
-    @UiField
-    HorizontalPanel buttonPanel;
-    
-    @UiField 
-    AbsolutePanel   icon;
-    
-    @UiField 
-    HTML           text;
-    
-    @UiField 
-    Caption        cap;
-    
-    @UiField 
-    FocusPanel     close;
-    
+    HorizontalPanel bp;
     HandlerRegistration keyHandler;
-    
     public enum Type {WARN,ERROR,QUESTION,BUSY};
-    
+    private int width = 400,height = -1,top = -1, left = -1;
+    private PickupDragController dragController;
+    private AbsolutePositionDropController dropController;
+    protected AbsolutePanel modalGlass,modalPanel;
     ConfirmCSS css; 
-    
-    public Confirm() {
         
-    }
-        
-    public Confirm(Type type, String caption, String message, String... buttons) {    	
-    	
-        setWidget(uiBinder.createAndBindUi(this));
-    	
-    	setModal(true);
+    public Confirm(Type type, String caption, String message, String... buttons) {
+    	super();
     	
     	css = UIResources.INSTANCE.confirm();
     	css.ensureInjected();
-    	    	
+    	
+    	
+    	VerticalPanel vp = new VerticalPanel();
+    	AbsolutePanel ap = new AbsolutePanel();
+    	HorizontalPanel hp = new HorizontalPanel();
+    	
     	switch(type) {
     		case WARN : {
-    			icon.setStyleName(css.largeWarnIcon());
+    			ap.setStyleName(css.largeWarnIcon());
     			if(caption == null || caption.equals(""))
-    				cap.add(new HTML(Messages.get().confirm_warning()));
+    				label.setText(Messages.get().warning());
     			break;
     		}
     		case ERROR : {
-        	    icon.setStyleName(css.largeErrorIcon());
+        		ap.setStyleName(css.largeErrorIcon());
         		if(caption == null || caption.equals(""))
-        			cap.add(new HTML(Messages.get().confirm_error()));
+        			label.setText(Messages.get().error());
         		break;
         	}
     		case QUESTION : {
-        		icon.setStyleName(css.largeQuestionIcon());
+        		ap.setStyleName(css.largeQuestionIcon());
         		if(caption == null || caption.equals(""))
-        			cap.add(new HTML(Messages.get().confirm_question()));
+        			label.setText(Messages.get().question());
         		break;
         	}
     		case BUSY : {
-    			icon.setStyleName(css.spinnerIcon());
+    			ap.setStyleName(css.spinnerIcon());
     			if(caption == null || caption.equals(""))
-    				cap.add(new HTML(Messages.get().confirm_busy()));
+    				label.setText(Messages.get().busy());
     			break;
     		}
     	}
    	    
-    	text.setText(message);
-    	text.setWordWrap(true);
-    	text.setStyleName(css.ScreenWindowLabel());
-    
-
-    	HTML label = new HTML(caption);
-    	label.setStyleName(css.ScreenWindowLabel());
-    	cap.add(label);
-    	
+    	hp.add(ap);
+    	hp.setCellVerticalAlignment(ap, HasAlignment.ALIGN_MIDDLE);
+    	Label<String> lb = new Label<String>();
+    	lb.setText(message);
+    	lb.setWordWrap(true);
+    	lb.setStyleName("Form ScreenLabel");
+    	hp.add(lb);
+    	vp.add(hp);
     	if(buttons != null && buttons[0] != null ){
     		createButtons(buttons);
-    	}else
-    	    buttonPanel.setVisible(false);
-    	    
-        close.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                hide();
-            }
-        });
-        
-        setSize("250px","125px");
-    	
-    }
-    
-    @Override
-    public void show() {
-        super.show();
-        center();
+    		vp.add(bp);
+    		vp.setCellHorizontalAlignment(bp, HasAlignment.ALIGN_CENTER);
+    	}
+    	setContent(vp);
     }
     
     public void hide() {
-        if(keyHandler != null) 
-            keyHandler.removeHandler();
-    	hide(false);
+    	dragController.unregisterDropController(dropController);
+    	dragController.makeNotDraggable(this);
+    	dragController = null;
+    	dropController = null;
+    	removeFromParent();
+    	unlockWindow();
+    	keyHandler.removeHandler();
+    	setVisible(false);
     }
     
-    private void createButtons(String[] buttons) {
+    public void show(int left, int top) {
+    	this.left = left;
+    	this.top = top;
+    	show();
+    }
+    
+    public void show() {
+    	setWidth(width+"px");
+    	if(height > -1)
+    		setHeight(height+"px");
+        modalGlass = new AbsolutePanel();
+        modalGlass.setStyleName(css.GlassPanel());
+        modalGlass.setHeight(com.google.gwt.user.client.Window.getClientHeight()+"px");
+        modalGlass.setWidth(com.google.gwt.user.client.Window.getClientWidth()+"px");
+        RootPanel.get().add(modalGlass, 0, 0);
+        DOM.setStyleAttribute(modalGlass.getElement(), "zIndex","1000");
+        modalPanel = new AbsolutePanel();
+        modalPanel.setStyleName(css.ModalPanel());
+        modalPanel.setHeight(com.google.gwt.user.client.Window.getClientHeight()+"px");
+        modalPanel.setWidth(com.google.gwt.user.client.Window.getClientWidth()+"px");
+        modalPanel.add(this, left > -1 ? left : com.google.gwt.user.client.Window.getClientWidth()/2 - 400/2,
+        		             top > -1 ? top : com.google.gwt.user.client.Window.getClientHeight()/2 - this.getOffsetHeight()/2);
+        RootPanel.get().add(modalPanel,0,0); 
+        DOM.setStyleAttribute(modalPanel.getElement(),"zIndex","1001");
+
+        keyHandler = Event.addNativePreviewHandler(this);
+    	
+    		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {			
+    			public void execute() {
+    				size();
+    				if(bp != null ){
+    					if(active > -1){
+    						((Button)bp.getWidget(active)).setFocus(false);
+    					}
+    					((Button)bp.getWidget(0)).setFocus(true);
+    					active = 0;
+    				}
+    			}
+    		
+    		});
+        //if(dragController == null) {
+        	dragController = new PickupDragController(modalPanel,true);
+        	dropController = new AbsolutePositionDropController(modalPanel);
+        	dragController.registerDropController(dropController);
+        	dragController.makeDraggable(this,cap);
+        //}
+    }
+    
+    private void size() {
+    	setVisible(true);
+    	if(bp != null) {
+    		if(bp.getOffsetWidth() > width)
+    			setWidth((bp.getOffsetWidth()+50)+"px");
+    	}
+    	modalPanel.setWidgetPosition(this, left > -1 ? left : com.google.gwt.user.client.Window.getClientWidth()/2 - this.getOffsetWidth()/2,
+    									   top > -1 ? top :  com.google.gwt.user.client.Window.getClientHeight()/2 - this.getOffsetHeight()/2);
+    	
+    }
+    
+    private Widget createButtons(String[] buttons) {
+    	bp = new HorizontalPanel();
     	for(int i = 0; i < buttons.length; i++) {
     		Button ab = new Button("",buttons[i]);
     		ab.setAction(String.valueOf(i));
     		ab.setEnabled(true);
-    		buttonPanel.add(ab);
+    		bp.add(ab);
     		ab.addClickHandler(this);
-    	}    
+    	}
+    	return bp;
+    
     }
 
 	public HandlerRegistration addSelectionHandler(
@@ -167,9 +192,9 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
 		SelectionEvent.fire(this,new Integer(((Button)event.getSource()).getAction()));
 		hide();
         if(active > -1)
-           	((Button)buttonPanel.getWidget(active)).setFocus(true);
+           	((Button)bp.getWidget(active)).setFocus(true);
         active = -1;
-        ((Button)buttonPanel.getWidget(clicked)).setFocus(false);
+        ((Button)bp.getWidget(clicked)).setFocus(false);
            
 		
 	}
@@ -177,17 +202,32 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
 	public void onPreviewNativeEvent(NativePreviewEvent event) {
 		if(event.getTypeInt() == Event.ONKEYDOWN){
 			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB){
-				((Button)buttonPanel.getWidget(active)).setFocus(false);
+				((Button)bp.getWidget(active)).setFocus(false);
 				active++;
-				if(active == buttonPanel.getWidgetCount())
+				if(active == bp.getWidgetCount())
 					active = 0;
-				((Button)buttonPanel.getWidget(active)).setFocus(true);
+				((Button)bp.getWidget(active)).setFocus(true);
 			}
 			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
 				SelectionEvent.fire(this, active);
 				hide();
 			}
 		}
+		//if(event.getTypeInt() != Event.ONCLICK)
+			//event.cancel();
+	}
+	
+	public void setSize(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+	
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
+	public void setHeight(int height) {
+		this.height = height;
 	}
     
 }

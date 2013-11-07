@@ -179,35 +179,29 @@ public final class TableDropController extends SimpleDropController implements
          * Cancel scroll since user moved the mouse
          */
         scroll.cancel();
-        
-        adjY = context.mouseY - table.view.table().getAbsoluteTop();
 
-        if(table.view instanceof StaticView) {
-            targetRow = table.getRowCount();
-            targetIndex = targetRow;
-        }else {
         /*
          * mouseY is based on overall window position, we need to adjust it from
          * the top of the flexTable
          */
-        
+        adjY = context.mouseY - table.view.flexTable.getAbsoluteTop();
 
         /*
          * Calculate the physical row and model indexes
          */
-        targetRow = adjY / table.view.rowHeight();
-        targetIndex = ((View)table.view).firstVisibleRow + targetRow;
+        targetRow = adjY / table.view.getRowHeight();
+        targetIndex = table.view.firstVisibleRow + targetRow;
      
-        }
+
         /*
          * Start with assumption of a valid drop
          */
         validDrop = true;
         if (table.getRowCount() > 0) {
 
-            rowTop = targetRow * 20;//table.view.getRowHeight();
+            rowTop = targetRow * table.view.getRowHeight();
 
-            if (adjY < (rowTop + (((View)table.view).getRowHeight() / 2)))
+            if (adjY < (rowTop + (table.view.getRowHeight() / 2)))
                 dropPos = DropPosition.ABOVE;
             else
                 dropPos = DropPosition.BELOW;
@@ -220,11 +214,11 @@ public final class TableDropController extends SimpleDropController implements
                 ((TableDragController)context.dragController).setDropIndicator(false);
                 positioner.removeFromParent();
             } else {
-                posY = rowTop + table.view.table().getAbsoluteTop();
+                posY = rowTop + table.view.flexTable.getAbsoluteTop();
                 if (dropPos == DropPosition.BELOW)
-                    posY += 20;//table.view.rowHeight;
+                    posY += table.view.rowHeight;
                 positioner.setPixelSize(table.getWidthWithoutScrollbar(), 1);
-                context.boundaryPanel.add(positioner, table.view.table().getAbsoluteLeft(), posY);
+                context.boundaryPanel.add(positioner, table.view.flexTable.getAbsoluteLeft(), posY);
                 ((TableDragController)context.dragController).setDropIndicator(true);
             }
 
@@ -232,7 +226,7 @@ public final class TableDropController extends SimpleDropController implements
                 (targetRow == table.getVisibleRows() - 1 && dropPos == DropPosition.BELOW))
                 scroll();
         } else {
-        	context.boundaryPanel.add(positioner, table.view.table().getAbsoluteLeft(),0);
+        	context.boundaryPanel.add(positioner, table.view.flexTable.getAbsoluteLeft(),0);
             event = DropEnterEvent.fire(this, (DragItem)context.draggable, 0,
                     DropPosition.ABOVE);
             if (event != null && event.isCancelled()) {

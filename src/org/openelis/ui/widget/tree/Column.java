@@ -30,7 +30,6 @@ import java.util.Iterator;
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
-import org.openelis.ui.widget.table.ColumnInt;
 import org.openelis.ui.widget.table.LabelCell;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -42,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class Column implements ColumnInt, IsWidget {
+public class Column implements IsWidget {
 
     /**
      * Reference to the Table containing this column
@@ -64,7 +63,7 @@ public class Column implements ColumnInt, IsWidget {
     /**
      * Boolean flags used by column
      */
-    protected boolean      enabled, resizable=true, isFiltered, isSorted, isSortable, isFilterable, required;
+    protected boolean      enabled, resizable, isFiltered, isSorted, isSortable, isFilterable, required;
 
 
     public static class Builder {
@@ -293,11 +292,6 @@ public class Column implements ColumnInt, IsWidget {
      */
     public boolean isResizable() {
         return resizable;
-    }
-    
-    @Override
-    public void finishEditing() {
-        tree.finishEditing();
     }
     
     /**

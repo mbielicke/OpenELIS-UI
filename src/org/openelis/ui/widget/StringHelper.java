@@ -2,7 +2,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 
@@ -88,7 +87,7 @@ public class StringHelper implements WidgetHelper<String> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value))
-			exceptions.add(new Exception(Messages.get().exc_invalidType()));
+			exceptions.add(new Exception(Messages.get().invalidType()));
 		
 		return exceptions;
 	}

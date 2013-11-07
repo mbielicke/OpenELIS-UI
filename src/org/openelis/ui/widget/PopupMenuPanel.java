@@ -25,7 +25,6 @@
 */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.PopupCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -46,7 +45,6 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class will display a group of MenuItems in a vertical display that pops up over 
@@ -229,32 +227,12 @@ public class PopupMenuPanel extends PopupPanel {
         });
     }
     
-    public void removeItem(Widget item) {
-        panel.remove(item);
-    }
-    
-    public int getWidgetCount() {
-        return panel.getWidgetCount();
-    }
-    
-    public Widget getWidget(int index) {
-        return panel.getWidget(index);
-    }
-    
     /**
      * Clears all MenuItems and widgets from this panel
      */
     public void clear(){
         panel.clear();
     } 
-    
-    /**
-     * Adds user defined widget to the panel
-     * @param w
-     */
-    public void addWidget(Widget w) {
-        panel.add(w);
-    }
     
     /**
      * Adds a line separating items in the panel

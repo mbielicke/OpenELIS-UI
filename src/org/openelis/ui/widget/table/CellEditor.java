@@ -27,7 +27,6 @@ package org.openelis.ui.widget.table;
 
 import org.openelis.ui.common.data.QueryData;
 
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,7 +43,7 @@ public interface CellEditor {
      * @return
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event);
+	public void startEditing(Object value, Container container, GwtEvent event);
     
     /**
      * Returns the widget used for querying this cell
@@ -52,7 +51,7 @@ public interface CellEditor {
      * @return
      */
     @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event); 
+	public void startEditingQuery(QueryData qd, Container container, GwtEvent event); 
     
     /**
      * Pulls the edited value from the editor and returns it.  If in Query mode and QueryData object will be returned 

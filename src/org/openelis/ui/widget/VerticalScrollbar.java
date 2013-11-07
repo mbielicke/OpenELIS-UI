@@ -34,7 +34,7 @@ public class VerticalScrollbar extends Composite implements HasScrollHandlers {
 	 * setScrollPosition is called the native bar will not report the correct
 	 * scroll position until the end of current event cycle.
 	 */
-	protected int position,lastFirePos,fireThreshold,scrollHeight;
+	protected int position,lastFirePos,fireThreshold;
 	
 	/** 
 	 * Constructor to create a VerticalScrollbar
@@ -59,7 +59,6 @@ public class VerticalScrollbar extends Composite implements HasScrollHandlers {
 	 * @param pixels
 	 */
 	public void  setScrollHeight(int pixels) {
-	    scrollHeight = pixels;
 		bar.setScrollHeight(pixels);
 	}
 	
@@ -97,8 +96,8 @@ public class VerticalScrollbar extends Composite implements HasScrollHandlers {
 		//Adjust position to be within limits
 		if(pos < 0)
 			pos = 0;
-		else if(pos > scrollHeight - bar.getElement().getClientHeight())
-			pos = scrollHeight - bar.getElement().getClientHeight();
+		else if(pos > bar.getMaximumVerticalScrollPosition())
+			pos = bar.getMaximumVerticalScrollPosition();
 		
 		position = pos;
 		

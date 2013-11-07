@@ -1,19 +1,14 @@
 
 .Button {
-    margin: 2px;
-    padding:1px 3px;
+	padding-top:2px;
 	border:1px solid transparent;
-	-moz-border-radius:2px;
-	border-radius:4px;
-    color:black;
+	-moz-border-radius:3px;
+	border-radius:3px;
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size:11px;
     display : inline-block;
-    text-shadow: 0 1px white;
 }
-
-.Button Table{border-spacing:0;}
 	
-.Button td{height:16px;}
-
 .ButtonPanelContainer {
 	height: 26px;
 	background-color:#d8e4f2;
@@ -33,24 +28,39 @@
 	gwt-image: 'buttonDivider';
 }
 
-.Button:hover, .Pressed {
+.Button:hover {
 	border:1px solid #7293be;
-	background:#e7f0f7;
-	cursor:pointer; 
-    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
-}
-.Pressed:hover {
-	cursor:default; 
 }
 
 @if user.agent gecko1_8 {
-	.Button:hover, .Pressed{ 
+	.Button:hover{
+		background-image: -moz-linear-gradient(top,#b4c9e2,#e7f0f7);
 	}
 }@elif user.agent ie6 ie8 ie9 {
-	.Button:hover, .Pressed {
+	.Button:hover {
+		background-image: -ms-linear-gradient(top,#b4c9e2,#e7f0f7);
 	}	
 }@elif user.agent safari {
-	.Button:hover, .Pressed {
+	.Button:hover {
+		background-image: -webkit-linear-gradient(top,#b4c9e2,#e7f0f7);
+	}
+}
+
+.Pressed {
+	border:1px solid #7293be;
+}
+
+@if user.agent gecko1_8 {
+	.Pressed {
+		background-image:-moz-linear-gradient(top,#8dc0f5,#c9ddf6);
+	}
+}@elif user.agent ie6 ie8 ie9 {
+	.Pressed {
+		background-image:-ms-linear-gradient(top,#8dc0f5,#c9ddf6);
+	}
+}@elif user.agent safari {
+	.Pressed {
+		background-image:-webkit-linear-gradient(top,#8dc0f5,#c9ddf6);
 	}
 }
 
@@ -61,9 +71,173 @@
 .Disabled:hover {
 	border:1px solid transparent;
 	background:none;
-	cursor:auto;
-    -moz-box-shadow: 1px 1px 1px rgba(0,0,0, .0), inset 1px 1px 1px rgba(255,255,255, .0);
-	-webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .0), inset 1px 1px 1px rgba(255,255,255, .0);
-	box-shadow: 1px 1px 1px rgba(0,0,0, .0), inset 1px 1px 1px rgba(255,255,255, .0);
 }
 
+@sprite .addTestButtonImage {
+	gwt-image:'calculatorAdd';
+}
+
+@sprite .Disabled .addTestButtonImage {
+	gwt-image:'calculatorAddDisabled';
+}
+
+@sprite .cancelTestButtonImage {
+	gwt-image:'calculatorDelete';
+}
+
+@sprite .Disabled .cancelTestButtonImage {
+	gwt-image: 'calculatorDeleteDisabled';
+}
+
+@sprite .expandButtonImage {
+	gwt-image:'arrowOut';
+}
+
+@sprite .Disabled .expandButtonImage {
+	gwt-image:'arrowOutDisabled';
+}
+
+@sprite .collapseButtonImage {
+	gwt-image:'arrowIn';
+}
+
+@sprite .Disabled .collapseButtonImage {
+	gwt-image:'arrowInDisabled';
+}
+
+@sprite .similarButtonImage {
+	gwt-image: 'find';
+}
+
+@sprite .Disabled .similarButtonImage {
+	gwt-image: 'findDisabled';
+}
+
+@sprite .privateWellWaterSampleLoginIcon {
+	gwt-image: 'house';
+}
+
+@sprite .QueryButtonImage {
+	gwt-image:'query';
+}
+
+@sprite .Disabled .QueryButtonImage {
+	gwt-image:'queryDisabled';
+}
+
+@sprite .Pressed .QueryButtonImage {
+	gwt-image: 'query';
+}
+
+@sprite .PreviousButtonImage {
+	gwt-image:'previous';
+}
+
+@sprite .Disabled .PreviousButtonImage {
+	gwt-image:'previousDisabled';
+}
+
+@sprite .NextButtonImage {
+	gwt-image: 'next';
+}
+
+@sprite .Disabled .NextButtonImage {
+	gwt-image:'nextDisabled';
+}
+
+@sprite .AddButtonImage {
+	gwt-image:'add';
+}
+
+@sprite .Disabled .AddButtonImage {
+	gwt-image:'addDisabled';
+}
+
+@sprite .Pressed .AddButtonImage {
+	gwt-image:'add';
+}
+
+@sprite .AddButtonIcon {
+	gwt-image:'addButton';
+}
+
+@sprite .Disabled .AddButtonIcon {
+	gwt-image:'addButtonDisabled';
+}
+
+@sprite .UpdateButtonImage {
+	gwt-image:'update';
+}
+
+@sprite .Disabled .UpdateButtonImage {
+	gwt-image:'updateDisabled';
+}
+
+@sprite .Pressed .UpdateButtonImage {
+	gwt-image:'update';
+}
+
+@sprite .DeleteButtonImage {
+	gwt-image:'delete';
+}
+
+@sprite .Disabled .DeleteButtonImage {
+	gwt-image:'deleteDisabled';
+}
+
+@sprite .DeleteButtonIcon {
+
+	gwt-image:'deleteIcon';
+}
+
+@sprite .Disabled .DeleteButtonIcon {
+	gwt-image:'deleteIconDisabled';
+}
+
+@sprite .CommitButtonImage {
+	gwt-image:'commit';
+}
+
+@sprite .Disabled .CommitButtonImage {
+	gwt-image:'commitDisabled';
+}
+
+@sprite .ProcessButtonImage {
+	gwt-image:'process';
+}
+
+@sprite .Disabled .ProcessButtonImage {
+	gwt-image:'processDisabled';
+}
+
+@sprite .AbortButtonImage {
+	gwt-image:'abort';
+}
+
+@sprite .Disabled .AbortButtonImage {
+	gwt-image:'abortDisabled';
+}
+
+@sprite .OptionsButtonImage {
+	gwt-image:'menuDown';
+}
+
+@sprite .Disabled .OptionsButtonImage {
+	gwt-image:'menuDown';
+}
+
+@sprite .DuplicateRowButtonImage{
+    gwt-image:'duplicateRowButtonImage';
+}
+
+@sprite .Disabled .DuplicateRowButtonImage{
+    gwt-image:'duplicateRowButtonImageDisabled';
+}
+
+@sprite .duplicateRecordIcon {
+	gwt-image:'duplicate';
+}
+
+@sprite .historyIcon {
+	gwt-image:'history';
+}

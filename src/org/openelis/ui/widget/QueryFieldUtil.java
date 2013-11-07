@@ -27,7 +27,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.DataBaseUtil;
 
 import com.google.gwt.i18n.client.DateTimeFormat;

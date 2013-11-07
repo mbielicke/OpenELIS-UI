@@ -2,7 +2,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 
@@ -64,7 +63,7 @@ public class LongHelper implements WidgetHelper<Long> {
 					// Do nothing to Fall through and throw the exception.
 				}
 			}
-			throw new Exception(Messages.get().exc_invalidNumeric());
+			throw new Exception(Messages.get().invalidNumeric());
 		}
 	}
 
@@ -120,7 +119,7 @@ public class LongHelper implements WidgetHelper<Long> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value)) 
-			exceptions.add(new Exception(Messages.get().exc_invalidNumeric()));
+			exceptions.add(new Exception(Messages.get().invalidNumeric()));
 		
 		return exceptions;
 	}

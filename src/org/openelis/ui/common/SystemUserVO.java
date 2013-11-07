@@ -27,8 +27,6 @@ package org.openelis.ui.common;
 
 import java.io.Serializable;
 
-import org.openelis.ui.common.DataBaseUtil;
-
 
 /**
  *  Class represents a system user object with the fields in the database 

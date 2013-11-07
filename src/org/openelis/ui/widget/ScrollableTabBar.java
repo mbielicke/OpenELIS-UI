@@ -25,8 +25,6 @@
 */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.widget.TabBarScroller;
-
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.HasBeforeSelectionHandlers;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;

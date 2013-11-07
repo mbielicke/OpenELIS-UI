@@ -7,23 +7,22 @@ public class CellClickedEvent extends GwtEvent<CellClickedHandler> {
 	private static Type<CellClickedHandler> TYPE;
 	private int row;
 	private int col;
-	private boolean cancelled,ctrlKey,shiftKey,doubleClick;
+	private boolean cancelled,ctrlKey,shiftKey;
 	
-	public static CellClickedEvent fire(HasCellEditedHandlers source, int row, int col, boolean ctrlKey, boolean shiftKey, boolean doubleClick) {
+	public static CellClickedEvent fire(HasCellEditedHandlers source, int row, int col, boolean ctrlKey, boolean shiftKey) {
 		if(TYPE != null) {
-			CellClickedEvent event = new CellClickedEvent(row, col,ctrlKey,shiftKey,doubleClick);
+			CellClickedEvent event = new CellClickedEvent(row, col,ctrlKey,shiftKey);
 			source.fireEvent(event);
 			return event;
 		}
 		return null;
 	}
 	
-	protected CellClickedEvent(int row, int col,boolean ctrlKey,boolean shiftKey, boolean doubleClick) {
+	protected CellClickedEvent(int row, int col,boolean ctrlKey,boolean shiftKey) {
 		this.row = row;
 		this.col = col;
 		this.ctrlKey = ctrlKey;
 		this.shiftKey = shiftKey;
-		this.doubleClick = doubleClick;
 	}
 
 	@Override
@@ -68,7 +67,4 @@ public class CellClickedEvent extends GwtEvent<CellClickedHandler> {
 		return shiftKey;
 	}
 
-	public boolean isDoubleClick() {
-		return doubleClick;
-	}
 }

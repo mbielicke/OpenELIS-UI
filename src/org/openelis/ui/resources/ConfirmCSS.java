@@ -1,22 +1,17 @@
 package org.openelis.ui.resources;
 
-import com.google.gwt.resources.client.CssResource;
 
 
-
-public interface ConfirmCSS extends CssResource {
+public interface ConfirmCSS extends WindowCSS {
 	
+	String ConfirmWindow();
+	String Button();
+	String ButtonLeftSide();
+	String ButtonContent();
 	String largeWarnIcon();
 	String largeErrorIcon();
 	String largeQuestionIcon();
-	String CloseButton();
-	String MinimizeButton();
-	String MaximizeButton();
-	String RestoreButton();
-	String WindowBody();
-	String WindowPanel();
-	String spinnerIcon();
-	String ScreenWindowLabel();
-	String top();
-	
+	String ConfirmCaption();
+	String ConfirmCaptionLabel();
+
 }

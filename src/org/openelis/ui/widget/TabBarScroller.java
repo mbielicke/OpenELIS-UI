@@ -1,6 +1,5 @@
 package org.openelis.ui.widget;
 
-import org.openelis.ui.widget.IconContainer;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.resources.TabBarScrollerCSS;
 import org.openelis.ui.resources.UIResources;

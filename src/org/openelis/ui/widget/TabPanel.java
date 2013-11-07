@@ -2,7 +2,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.TabBarScroller;
 import org.openelis.ui.resources.TabPanelCSS;
 import org.openelis.ui.resources.UIResources;
 

@@ -25,8 +25,6 @@
 */
 package org.openelis.ui.common;
 
-import org.openelis.ui.common.Meta;
-
 public interface MetaMap extends Meta {
     
     public String buildFrom(String where);

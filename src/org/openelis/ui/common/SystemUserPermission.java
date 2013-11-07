@@ -28,9 +28,6 @@ package org.openelis.ui.common;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.openelis.ui.common.ModulePermission;
-import org.openelis.ui.common.SectionPermission;
-import org.openelis.ui.common.SystemUserVO;
 import org.openelis.ui.common.ModulePermission.ModuleFlags;
 import org.openelis.ui.common.SectionPermission.SectionFlags;
 

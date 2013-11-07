@@ -27,7 +27,6 @@ package org.openelis.ui.widget;
 
 import java.util.Iterator;
 
-import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -38,19 +37,17 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -103,15 +100,9 @@ public class Menu extends Composite implements HasWidgets {
     	
         panel = new PopupMenuPanel();
         panel.addStyleName(css.MenuPanel());
-		panel.setVisible(false);	
-		panel.addCloseHandler(new CloseHandler<PopupPanel>() {  
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                removeStyleName(css.open());
-            }
-        });
+		panel.setVisible(false);		
 		
-		setEnabled(false);
+		setEnabled(true);
     }
 
     /**
@@ -233,20 +224,6 @@ public class Menu extends Composite implements HasWidgets {
         menu.setParentMenu(this);
     }
 
-    public void removeItem(Menu menu) {
-        panel.remove(menu);
-        if(panel.getWidgetCount() == 0) 
-            showPanel = false;
-    }
-    
-    public void removeItem(int index) { 
-        panel.getWidget(index);
-    }
-    
-    public void clearItems() {
-        panel.clear();
-    }
-    
     /**
      * Adds a line into the item's subMenu to create a separation in the panel
      */
@@ -277,12 +254,11 @@ public class Menu extends Composite implements HasWidgets {
         if(showBelow)
             panel.showRelativeTo(this);
         else{
+            
             panel.setPopupPosition(getAbsoluteLeft()+getOffsetWidth(),getAbsoluteTop());
             panel.show();
             panel.setVisible(true);
         }
-        
-        addStyleName(css.open());
 
         return panel;
     }
@@ -345,8 +321,6 @@ public class Menu extends Composite implements HasWidgets {
 			addItem((MenuItem)w);
 		else if(w instanceof Menu)
 			addItem((Menu)w);
-		else
-		    panel.addWidget(w);
 	}
 
 	@Override

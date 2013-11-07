@@ -2,12 +2,12 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.PassWordTextBox;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
+
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -224,11 +224,11 @@ public class PassWordTextBox extends Composite implements ScreenWidgetInt,
 		try {
 			setValue(helper.getValue(text), true);
 			if (required && getValue() == null) 
-				throw new Exception(Messages.get().exc_fieldRequired());
+				throw new Exception(Messages.get().fieldRequired());
 		} catch (Exception e) {
 			addValidateException(e);
 		}
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
@@ -241,7 +241,7 @@ public class PassWordTextBox extends Composite implements ScreenWidgetInt,
 		} catch (Exception e) {
 			addValidateException(e);
 		}
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	// ********** Implementation of HasException interface ***************
@@ -257,8 +257,8 @@ public class PassWordTextBox extends Composite implements ScreenWidgetInt,
 			return true;
 
 		if (required && getValue() == null) {
-			addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-			Balloon.checkExceptionHandlers(this);
+			addValidateException(new Exception(Messages.get().fieldRequired()));
+			ExceptionHelper.checkExceptionHandlers(this);
 		}
 
 		return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -269,7 +269,7 @@ public class PassWordTextBox extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
@@ -295,17 +295,17 @@ public class PassWordTextBox extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 
@@ -313,7 +313,7 @@ public class PassWordTextBox extends Composite implements ScreenWidgetInt,
 	 * Will add the style to the widget.
 	 */
 	public void addExceptionStyle() {
-		if(Balloon.isWarning(this))
+		if(ExceptionHelper.isWarning(this))
 			addStyleName(css.InputWarning());
 		else
 			addStyleName(css.InputError());

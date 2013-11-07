@@ -76,7 +76,7 @@ public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget
         if(editor.getHelper().isCorrectType(value))
         	return editor.getHelper().format(value);
         else
-        	return DataBaseUtil.toString(value);
+        	return DataBaseUtil.asString(value);
     }
 
     public void renderQuery(HTMLTable table,

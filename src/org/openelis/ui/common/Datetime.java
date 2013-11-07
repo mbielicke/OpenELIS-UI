@@ -28,8 +28,6 @@ package org.openelis.ui.common;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.openelis.ui.common.Datetime;
-
 /**
  * This class is used to manage date and date & time values. Because the class is
  * used in all 3 tiers, we can not use Java Calendar object therefore some of the

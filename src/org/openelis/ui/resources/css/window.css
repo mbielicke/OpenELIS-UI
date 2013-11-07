@@ -1,7 +1,7 @@
 @def borderWidth 5px;
 @def winColor #c4d3e5;
 @def topColor #edf2f4;
-@external .Columnar .gwt-SplitLayoutPanel-HDragger,.gwt-SplitLayoutPanel-VDragger,.gwt-TabLayoutPanel,.gwt-TabLayoutPanelTab,.gwt-TabLayoutPanelTab-selected;
+@external .gwt-SplitLayoutPanel-HDragger,.gwt-TabLayoutPanel,.gwt-TabLayoutPanelTab,.gwt-TabLayoutPanelTab-selected;
 
 .North {
 	background-color:winColor;
@@ -22,6 +22,7 @@
 
 .top {
 	background-color:winColor;
+    height:29px;
 }
 
 .Caption{
@@ -36,6 +37,7 @@
 
 .unfocused .Caption{
 	background-color:winColor;
+    height:29px;
 }
 .unfocused .StatusBar {
 	background-color:winColor;
@@ -43,6 +45,8 @@
 }
 
 .errorPopupLabel, .warnPopupLabel{
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size:12px;
     padding:0 4px 2px 0;
 }
 
@@ -54,6 +58,7 @@
 }
 
 @sprite .MinimizeButton {
+   padding-top:5px;
    gwt-image: 'minimizeButton';
    width:20px;
    height:20px;
@@ -75,21 +80,12 @@
 }
 
 .WindowBody{
-	box-shadow: 0 0 0 1px #99BBE8, 0 0 0 2px #E9F3F5;/*  
-	border:1px solid #E9F3F5;
-	outline:1px solid #99BBE8 */;
-	margin:2px;
+	background:white;
 }
 
 .WindowPanel{
-	box-shadow: 4px 4px 5px 3px #000000;
+	box-shadow: 4px 4px 5px 3px #000055;
     border:1px solid winColor;
-	border-radius: 5px 5px 5px 5px;
-}
-
-.LegacyWindowPanel {
-	box-shadow: 4px 4px 5px 3px #000000;
-    border:5px solid winColor;
 	border-radius: 5px 5px 5px 5px;
 }
 
@@ -132,12 +128,12 @@ user-select: none;
 
 .ScreenWindowLabel{
     color:#486095;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:12px;
     font-weight:bold;    
     padding-left:6px;
     padding-top:2px;
     -moz-user-select: none;
-    font-family:inherit;
-    font-size:inherit;
 }
 
 @sprite .ModalPanel{
@@ -172,19 +168,6 @@ user-select: none;
 	cursor:ew-resize;
 }
 
-.Columnar .gwt-SplitLayoutPanel-HDragger {
-	background-position: left center;
-	background : #d8e4f2;
-	height:100%;
-	width:3px;
-	cursor:ew-resize;
-}
-
-.gwt-SplitLayoutPanel-VDragger {
-	background-color : #d8e4f2;
-	width:100%;
-	cursor:ns-resize;
-}
 .ResizeWindow {
 	background:#d8e4f2;
 	opacity:0.30;

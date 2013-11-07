@@ -1,6 +1,7 @@
 package org.openelis.ui.util;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +13,8 @@ import org.openelis.ui.common.Meta;
 import org.openelis.ui.common.MetaMap;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.QueryFieldUtil;
+
+import sun.security.action.GetLongAction;
 
 public class QueryBuilderV2 {
 	private String selectStatement = "";
@@ -139,37 +142,28 @@ public class QueryBuilderV2 {
     }
     
     /**
-     * Constructs a sql "where" clause based on QueryData returned from the client.
-     * @param fields
-     * @throws Exception
-     */
-    public void constructWhere(QueryData field) throws Exception {
-        String where;
-        WhereClause whereClause;
-        QueryFieldUtil qField;
-        
-        if(! meta.hasColumn(field.getKey()))
-            throw new Exception("column not found [" + field.getKey() + "]");       
-            
-        qField = new QueryFieldUtil();
-        qField.parse(field.getQuery());
-        where = getQueryNoOperand(qField, field.getKey());
-        if(!"".equals(where)){
-            whereClause = new WhereClause();
-            whereClause.clause = where;
-            whereClause.logical = field.getLogical();
-            whereOperands.add(whereClause);     
-        }
-    }
-
-    /**
      * Constructs a sql "where" clause based on QueryData list returned from the client.
      * @param fields
      * @throws Exception
      */
     public void constructWhere(ArrayList<QueryData> fields) throws Exception{
-    	for (QueryData field : fields)
-    	    constructWhere(field);
+    	WhereClause whereClause;
+    	for (QueryData field : fields){
+            boolean columnFound = meta.hasColumn(field.getKey());
+
+            if(!columnFound)
+                throw new Exception("column not found [" + field.getKey() + "]");    	
+            
+            QueryFieldUtil qField = new QueryFieldUtil();
+            qField.parse(field.getQuery());
+            String where = getQueryNoOperand(qField, field.getKey());
+            if(!"".equals(where)){
+            	whereClause = new WhereClause();
+            	whereClause.clause = where;
+            	whereClause.logical = field.getLogical();
+                whereOperands.add(whereClause);		
+            }
+        }
     }
     
     /**

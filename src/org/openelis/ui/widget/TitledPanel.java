@@ -25,9 +25,6 @@
 */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.resources.TitledPanelCSS;
-import org.openelis.ui.resources.UIResources;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -87,10 +84,19 @@ public class TitledPanel extends SimplePanel {
   /**
    * The title.
    */
-  private Label<String> title;
+  private Widget title;
   
-  private TitledPanelCSS css;
- 
+  /**
+   * Constructor.
+   * 
+   * @param title the title to display
+   */
+  public TitledPanel(Widget title) {
+    super(DOM.createElement("fieldset"));
+    legend = DOM.createElement("legend");
+    DOM.appendChild(getElement(), legend);
+    setTitle(title);
+  }
   
   /**
    * Constructor.
@@ -99,20 +105,27 @@ public class TitledPanel extends SimplePanel {
    */
   public TitledPanel() {
 	  super(DOM.createElement("fieldset"));
-	  legend = DOM.createElement("legend");
-	  DOM.appendChild(getElement(), legend);
-	  title = new Label<String>("Title");
-	  
-	  setCSS(UIResources.INSTANCE.titledPanel());
+	    legend = DOM.createElement("legend");
+	    DOM.appendChild(getElement(), legend);
   }
- 
+  
+  /**
+   * Constructor.
+   * 
+   * @param title the title to display
+   * @param w the widget to add to the panel
+   */
+  public TitledPanel(Widget title, Widget w) {
+    this(title);
+    setWidget(w);
+  }
   
   /**
    * Get the current title.
    * 
    * @return the title of the panel
    */
-  public Label<String> getTitleWidget() {
+  public Widget getTitleWidget() {
 	    return this.title;
 	  }
   
@@ -122,15 +135,8 @@ public class TitledPanel extends SimplePanel {
    * 
    * @param title the new title
    */
-  public void setTitle(String text) {
-      title = new Label<String>(text);
-      impl.setTitle(getElement(),legend, title);
-  }
-  
-  public void setCSS(TitledPanelCSS css) {
-      this.css = css;
-      
-      title.setStyleName(css.Title());
-      legend.setClassName(css.Legend());
+  public void setTitle(Widget title) {
+    this.title = title;
+    impl.setTitle(getElement(),legend, title);
   }
 }

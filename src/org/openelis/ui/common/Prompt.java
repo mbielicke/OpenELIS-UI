@@ -53,10 +53,6 @@ package org.openelis.ui.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.openelis.ui.common.DataBaseUtil;
-import org.openelis.ui.common.OptionListItem;
-import org.openelis.ui.common.Prompt;
-
 /**
  * This class is used by reports to build a user input request. Reports may
  * combine multiple prompts to request for a wide variety of inputs.

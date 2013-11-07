@@ -88,13 +88,13 @@ public class TreeDragController extends PickupDragController implements
         BeforeDragStartEvent<DragItem> event;
 
         /* Select row before drag start and cancel drag if not selectable */
-        //tree.selectNodeAt(tree.view.lastRow);
+        tree.selectNodeAt(tree.view.lastRow);
         
-        //if(tree.isNodeSelected(tree.view.lastRow))
-          //  throw new VetoDragException();
+        if(tree.isNodeSelected(tree.view.lastRow))
+            throw new VetoDragException();
 
         /* Set the index of row being dragged into the DragItem */
-        //((DragItem)context.draggable).setIndex(tree.view.lastRow);
+        ((DragItem)context.draggable).setIndex(tree.view.lastRow);
 
         /* Notify the user that a Drag is to be started */
         event = BeforeDragStartEvent.fire(this, (DragItem)context.draggable);

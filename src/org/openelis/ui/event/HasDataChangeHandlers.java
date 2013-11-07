@@ -34,6 +34,6 @@ import com.google.gwt.event.shared.HasHandlers;
  */
 public interface HasDataChangeHandlers extends HasHandlers {
 	
-	HandlerRegistration addDataChangeHandler(DataChangeEvent.Handler handler);
+	HandlerRegistration addDataChangeHandler(DataChangeHandler handler);
 
 }

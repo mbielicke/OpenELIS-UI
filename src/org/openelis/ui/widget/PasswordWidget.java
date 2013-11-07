@@ -48,15 +48,15 @@ public class PasswordWidget extends Composite {
 
     public PasswordWidget() {
         initWidget(outer);
-        outer.setText(0, 0, Messages.get().pass_oldPass());
+        outer.setText(0, 0, Messages.get().oldPassword());
         outer.setWidget(0, 1, oldPass);
         outer.setWidget(1, 1, oldError);
         outer.getRowFormatter().setVisible(1, false);
-        outer.setText(2, 0, Messages.get().pass_newPass());
+        outer.setText(2, 0, Messages.get().newPassword());
         outer.setWidget(2, 1, newPass);
         outer.setWidget(3, 1, newError);
         outer.getRowFormatter().setVisible(3, false);
-        outer.setText(4, 0, Messages.get().pass_conPass());
+        outer.setText(4, 0, Messages.get().confirmPassword());
         outer.setWidget(4, 1, confirmPass);
         outer.setWidget(5, 1, confirmError);
         outer.getRowFormatter().setVisible(5, false);

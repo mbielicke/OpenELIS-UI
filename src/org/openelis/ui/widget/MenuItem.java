@@ -27,9 +27,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.MenuItem;
-import org.openelis.ui.widget.Balloon.Placement;
-import org.openelis.ui.resources.IconCSS;
 import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -38,15 +35,11 @@ import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Command;
@@ -54,7 +47,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 
-public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouseOutHandlers, HasBalloon {
+public class MenuItem extends Composite implements HasMouseOverHandlers {
 	@UiTemplate("MenuItem.ui.xml")
 	interface MenuItemUiBinder extends UiBinder<HTML, MenuItem>{};
 	public static final MenuItemUiBinder uiBinder = GWT.create(MenuItemUiBinder.class);
@@ -65,13 +58,10 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
 	protected TableRowElement bottomRow;
 	
 	protected MenuCSS css;
-	protected IconCSS iconCSS;
 	
 	protected ArrayList<Command> commands;
 	
 	protected String iconClass,label;
-	
-	protected Balloon.Options options;
 
     /**
      * Flags to determine if the MenuItem should autoClose all menus and 
@@ -84,13 +74,8 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
 	
 	public MenuItem() {
 		initWidget(uiBinder.createAndBindUi(this));    
-		
 		css = UIResources.INSTANCE.menuCss();
 		css.ensureInjected();
-		
-		iconCSS = UIResources.INSTANCE.icon();
-		iconCSS.ensureInjected();
-		
         setEnabled(true);
     }
 	
@@ -117,11 +102,9 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
         if(!enabled) {
             unsinkEvents(Event.ONCLICK);
             addStyleName(css.disabled());
-            addStyleName(iconCSS.Disabled());
         }else{
             sinkEvents(Event.ONCLICK);
             removeStyleName(css.disabled());
-            removeStyleName(iconCSS.Disabled());
         }
     }
     
@@ -219,39 +202,4 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler,MouseOverEvent.getType());
 	}
-	
-	
-    @Override
-    public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-        return addDomHandler(handler,MouseOutEvent.getType());
-    }
-	
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
-
 }

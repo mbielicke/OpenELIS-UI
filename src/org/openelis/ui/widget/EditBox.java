@@ -27,7 +27,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.EditBox;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
@@ -286,7 +285,7 @@ public class EditBox extends Composite implements ScreenWidgetInt,
     			} catch (Exception e) {
     				addValidateException(e);
     			}
-    			Balloon.checkExceptionHandlers(this);
+    			ExceptionHelper.checkExceptionHandlers(this);
     		}
     	}
     }
@@ -301,7 +300,7 @@ public class EditBox extends Composite implements ScreenWidgetInt,
         } catch (Exception e) {
             addValidateException(e);
         }
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
     
     // ******** Implementation of Queryable *****************
@@ -370,7 +369,7 @@ public class EditBox extends Composite implements ScreenWidgetInt,
     	  
     	if (required && getValue() == null) {
             addValidateException(new Exception("exc.fieldRequiredException"));
-            Balloon.checkExceptionHandlers(this);
+            ExceptionHelper.checkExceptionHandlers(this);
     	}
     	  
     	return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -381,7 +380,7 @@ public class EditBox extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
@@ -407,24 +406,24 @@ public class EditBox extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
     
     /**
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
+    	if(ExceptionHelper.isWarning(this))
     		addStyleName("InputWarning");
     	else
     		addStyleName("InputError");

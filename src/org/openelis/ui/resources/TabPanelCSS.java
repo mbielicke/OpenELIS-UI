@@ -12,6 +12,5 @@ public interface TabPanelCSS extends CssResource {
 	String TabContainer();
 	String angled();
 	String Popped();
-	String Vertical();
-	String TabDraggable();
+
 }

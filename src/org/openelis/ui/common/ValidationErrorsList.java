@@ -27,8 +27,6 @@ package org.openelis.ui.common;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.common.Warning;
-
 public class ValidationErrorsList extends Exception {
     
     private static final long serialVersionUID = 1L;

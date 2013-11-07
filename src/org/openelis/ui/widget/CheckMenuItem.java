@@ -25,7 +25,6 @@
 */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
 

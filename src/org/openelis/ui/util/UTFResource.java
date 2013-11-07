@@ -31,8 +31,6 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import org.openelis.ui.util.UTFResource;
-
 public class UTFResource {
     
     private ArrayList<PropertyResourceBundle> bundles;

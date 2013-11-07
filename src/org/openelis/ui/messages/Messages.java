@@ -2,6 +2,7 @@ package org.openelis.ui.messages;
 
 
 
+import com.google.gwt.core.client.GWT;
 
 public class Messages {
 
@@ -9,7 +10,7 @@ public class Messages {
 	
 	public static UIMessages get() {
 		if(consts == null)
-			consts = com.google.gwt.core.shared.GWT.create(UIMessages.class);
+			consts = GWT.create(UIMessages.class);
 		
 		return consts;
 	}

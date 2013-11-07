@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 public interface WindowInt extends HasCloseHandlers<WindowInt>, HasBeforeCloseHandlers<WindowInt>, IsWidget, HasFocusHandlers, Focusable {
 	
 	public void setMessagePopup(ArrayList<Exception> exceptions, String style);
-			
+	
 	public void clearMessagePopup(String style);
 	
 	public void setStatus(String text, String style);
@@ -44,7 +44,5 @@ public interface WindowInt extends HasCloseHandlers<WindowInt>, HasBeforeCloseHa
 	public void makeDragable(DragController controller);
 	
 	public void positionGlass();
-	
-	public Widget getContent();
 
 }

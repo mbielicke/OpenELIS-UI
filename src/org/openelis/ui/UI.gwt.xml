@@ -30,7 +30,6 @@
     <source path="screen" />
     <source path="server" />
     <source path="event" />
-    <source path="test"/>
 
     <replace-with
         class="org.openelis.ui.widget.fileupload.FileLoadButton.FileLoadButtonImplClick">

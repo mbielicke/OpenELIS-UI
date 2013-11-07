@@ -28,8 +28,6 @@ package org.openelis.ui.common.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.openelis.ui.common.data.QueryData;
-
 /**
  * Class used to transfer query fields and the page number to the query service.
  */

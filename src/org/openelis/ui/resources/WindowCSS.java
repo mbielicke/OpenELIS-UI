@@ -11,7 +11,6 @@ public interface WindowCSS extends CssResource {
 	String StatusBar();
 	String WindowBody();
 	String WindowPanel();
-	String LegacyWindowPanel();
 	String ScreenLoad();
 	String warnPopupLabel();
 	String errorPopupLabel();

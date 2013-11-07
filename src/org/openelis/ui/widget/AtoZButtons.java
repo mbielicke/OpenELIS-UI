@@ -1,7 +1,5 @@
 package org.openelis.ui.widget;
 
-import org.openelis.ui.widget.ButtonGroup;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;

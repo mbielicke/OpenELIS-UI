@@ -36,14 +36,10 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Placement;
-import org.openelis.ui.widget.table.CheckBoxCell;
-import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.Row;
 import org.openelis.ui.widget.table.Table;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -83,7 +79,6 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -103,8 +98,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 													  HasFocusHandlers,
 													  HasValue<ArrayList<T>>, 
 													  HasHelper<T>,
-													  HasExceptions,
-													  HasBalloon {
+													  HasExceptions {
 	@UiTemplate("Select.ui.xml")
 	interface MultiUiBinder extends UiBinder<Widget, MultiDropdown>{};
 	public static final MultiUiBinder uiBinder = GWT.create(MultiUiBinder.class);
@@ -140,7 +134,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * Exceptions list
 	 */
 	protected Exceptions                            exceptions;
-	protected Balloon.Options                       options;
 
 	/**
 	 * HashMap to set selections by key;
@@ -159,11 +152,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	protected WidgetHelper<T>                       helper;
 	
 	
-	protected DropdownCSS                           css;
-	
-	protected String                                dropHeight="150px",dropWidth;
-	
-	private MultiDropdown<T>                        source = this;
+	protected DropdownCSS css;
 
 	/**
 	 * Default no-arg constructor
@@ -178,8 +167,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		/* Image must be in a div instead of adding the style to cell itself to display correctly */
-		//image = new AbsolutePanel();
-		//button.setWidget(image);
+		image = new AbsolutePanel();
+		button.setWidget(image);
 
 		/*
 		 * Set the focus style when the Focus event is fired Externally
@@ -211,11 +200,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		exceptions = new Exceptions();
 		
 		setCSS(UIResources.INSTANCE.dropdown());
-		
-		setPopupContext(new Table.Builder(10).column(new Column.Builder(100).build()).build());
-        setHelper((WidgetHelper)new IntegerHelper());
-        
-        textbox.setReadOnly(true);
 	}
 
 	@UiHandler("textbox")
@@ -252,104 +236,80 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	protected void showPopup() {
 		/* Set to true for button mouse down hack */
 		showingOptions = true;
-		final LayoutPanel layout = new LayoutPanel();
-		final int modelHeight;
 		
-        if (popup == null) {
-            popup = new PopupPanel(true);
-            popup.setStyleName(css.Popup());
-            
-            uncheckAll = new Button(css.Unchecked(),Messages.get().drop_uncheck());
-            checkAll = new Button(css.Checked(),Messages.get().drop_check());
-                
-            uncheckAll.setCss(UIResources.INSTANCE.button());
-            checkAll.setCss(UIResources.INSTANCE.button());
-                
-            multiHeader = new Grid(1,2);
-            multiHeader.setCellSpacing(0);
-            multiHeader.setCellPadding(0);
-            multiHeader.setWidget(0,0,checkAll);
-            multiHeader.setWidget(0,1,uncheckAll);
-            //multiHeader.getCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
-            //multiHeader.getCellFormatter().setHorizontalAlignment(0, , HasAlignment.ALIGN_RIGHT);
-            multiHeader.setWidth("100%");
-            vp = new VerticalPanel();
-            vp.add(multiHeader);
+		/* create a popup instance first time it is used */
+		if (popup == null) {
+			popup = new PopupPanel(true);
+			popup.setStyleName(css.Popup());
+			
+			uncheckAll = new Button(css.Unchecked(),Messages.get().all());
+			checkAll = new Button(css.Checked(),Messages.get().all());
+			close = new Button(css.CloseButton(),"");
+				
+			multiHeader = new Grid(1,3);
+			multiHeader.setCellSpacing(0);
+			multiHeader.setCellPadding(0);
+			multiHeader.setWidget(0,0,checkAll);
+			multiHeader.setWidget(0,1,uncheckAll);
+			multiHeader.setWidget(0,2,close);
+			multiHeader.getCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
+			multiHeader.getCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+			multiHeader.setWidth("100%");
+			vp = new VerticalPanel();
+			vp.add(multiHeader);
+			vp.add(table);
+			popup.setWidget(vp);
+				
+			/* Handler to select All items when checked */
+			checkAll.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					for(Item<T> item : getModel()) {
+						if(item.enabled)
+							item.setCell(0, "Y");
+					}
+					setDisplay();
+					table.setModel(getModel());
+				}
+			});
+			checkAll.setEnabled(true);
 
-            layout.add(table);
-              
-           vp.add(layout);
-           popup.setWidget(vp);
-                
-           /* Handler to select All items when checked */
-           checkAll.addClickHandler(new ClickHandler() {
-             public void onClick(ClickEvent event) {
-                    for(Item<T> item : getModel()) {
-                        if(item.enabled)
-                            item.setCell(0, "Y");
-                    }
-                    setDisplay();
-                    table.setModel(getModel());
-                }
-            });
-           checkAll.setEnabled(true);
+			/* Handler to unselect All items when Checked */
+			uncheckAll.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					for(Item<T> item : getModel())
+						item.setCell(0, null);
+					setDisplay();
+					table.setModel(getModel());
+				}
+			});
+			uncheckAll.setEnabled(true);
 
-           /* Handler to unselect All items when Checked */
-           uncheckAll.addClickHandler(new ClickHandler() {
-               public void onClick(ClickEvent event) {
-                   for(Item<T> item : getModel())
-                       item.setCell(0, null);
-                   setDisplay();
-                   table.setModel(getModel());
-               }
-           });
-           uncheckAll.setEnabled(true);
+			/* Handler to close the popup without affecting selection */
+			close.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					popup.hide();
+				}
+			});
+			close.setEnabled(true);
+			
+			popup.setPreviewingAllNativeEvents(false);
+			
+			/* Handler for closing of popup to set focus back to false and reset showingOptions */
+			popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+				public void onClose(CloseEvent<PopupPanel> event) {
+					setFocus(true);
+					showingOptions = false;
+				}
+			});
+		}
 
-            
-            popup.setPreviewingAllNativeEvents(false);
-            
-            /* Handler for closing of popup to set focus back to false and reset showingOptions */
-            popup.addCloseHandler(new CloseHandler<PopupPanel>() {
-                public void onClose(CloseEvent<PopupPanel> event) {
-                    setFocus(true);
-                    showingOptions = false;
-                }
-            });
-        }
-        
-        /**
-         * Draw and show outside of viewable so table will size correctly and 
-         * and showRelative will work when close to browser border.
-         */
-        popup.setPopupPosition(-1000, -1000);
-        popup.show();
-        
-        modelHeight = table.getModel().size() * table.getRowHeight() + table.getModel().size();
-        
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-            @Override
-            public void execute() {
-                int width  = (dropWidth == null) ? getOffsetWidth() : Util.stripUnits(dropWidth);
-                
-                if(multiHeader.getOffsetWidth() > width)
-                    width = multiHeader.getOffsetWidth();
-                
-                layout.setSize(width+"px",Util.stripUnits(dropHeight) > modelHeight ? modelHeight+"px" : dropHeight);
-                
-                layout.forceLayout();
-                table.setModel(table.getModel());
-                
-                popup.showRelativeTo(source);
+		popup.showRelativeTo(this);
 
-                /*
-                 * Scroll if needed to make selection visible
-                 */
-                if (getSelectedIndex() > 0)
-                    table.scrollToVisible(getSelectedIndex());
-                
-            }
-        });
+		/*
+		 * Scroll if needed to make selection visible
+		 */
+		if (getSelectedIndex() > 0)
+			table.scrollToVisible(getSelectedIndex());
 
 	}
 
@@ -378,7 +338,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 			}
 			
 			if(selected > maxDisplay)
-				sb = new StringBuffer().append(selected+" "+Messages.get().drop_optionsSelected());
+				sb = new StringBuffer().append(selected+" "+Messages.get().optionSelected());
 		}
 
 		textbox.setText(sb.toString());
@@ -395,12 +355,10 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 			display.setWidth(width+"px");
 
 		/*
-         * set the Textbox to width - 16 to account for button.
-         */
+		 * set the Textbox to width - 16 to account for button.
+		 */
 
-        textbox.setWidth((width - 16) + "px");
-        display.getCellFormatter().setWidth(0, 0, (width - 16)+"px");
-        button.setWidth("16px");
+		textbox.setWidth((width - 16) + "px");
 
 		if(table != null) 
 			table.setWidth(width+"px");
@@ -492,10 +450,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 				setDisplay();
 			}
 		});
-		
-		Column col = new Column.Builder(15).build();
-        col.setCellRenderer(new CheckBoxCell(new CheckBox()));
-        table.addColumnAt(0, col);
+
 	}
 
 	/**
@@ -631,6 +586,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 
 		button.setEnabled(enabled);
 		table.setEnabled(enabled);
+		textbox.setEnabled(enabled);
 
 		if (enabled)
 			sinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
@@ -657,9 +613,9 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		clearValidateExceptions();
 
 		if (required && value == null) 
-			addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+			addValidateException(new Exception(Messages.get().fieldRequired()));
 		
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 
@@ -710,12 +666,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	protected void clearSelections() {
 
-	    if(getModel() != null) {
-	        for(Item<T> item : getModel())
-	            item.setCell(0, null);
-	    }
-		
-		table.unselectAll();
+		for(Item<T> item : getModel())
+			item.setCell(0, null);
 
 	}
 
@@ -948,10 +900,9 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 				case KeyCodes.KEY_TAB:
 					break;
 				case KeyCodes.KEY_BACKSPACE:
-					//setSelectedIndex(-1);
+					setSelectedIndex(-1);
 					break;
 				default:
-				    /*
 					searchString += String.valueOf(ch);             
 				
 					index = findIndexByTextValue(searchString);
@@ -960,8 +911,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 						setSelectedIndex(index);
 					else
 						searchString = searchString.substring(0,searchString.length()-1);
-				    */
-				    break;
 			}
 		}
 
@@ -1022,8 +971,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
     		return true;
     	  
     	if (!queryMode && required && getValue() == null) {
-            addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-            Balloon.checkExceptionHandlers(this);
+            addValidateException(new Exception(Messages.get().fieldRequired()));
+            ExceptionHelper.checkExceptionHandlers(this);
     	}
     	  
     	return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -1034,7 +983,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
@@ -1066,7 +1015,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	/**
@@ -1074,7 +1023,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
@@ -1082,7 +1031,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 
@@ -1090,7 +1039,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * Adds an exception CSS class to this widget.
 	 */
 	public void addExceptionStyle() {
-		if(Balloon.isWarning(this))
+		if(ExceptionHelper.isWarning(this))
 			display.addStyleName(css.InputWarning());
 		else
 			display.addStyleName(css.InputError());
@@ -1170,14 +1119,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
-	
-	public void setDropWidth(String width) {
-	    dropWidth = width;
-	}
-	
-	public void setDropHeight(String height) {
-	    dropHeight = height;
-	}
 
 
 	// ************ Handler Registration methods *********************
@@ -1218,13 +1159,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
 	
-	public void setField(String field) {
-	    if(field.equals("String"))
-	        setHelper((WidgetHelper)new StringHelper());
-	    else
-	        setHelper((WidgetHelper)new IntegerHelper());
-	}
-	
 	@Override
 	/**
 	 * Sets the Helper to be used for this widget
@@ -1261,40 +1195,10 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	}    
 	
 	public void setCSS(DropdownCSS css) {
-        css.ensureInjected();
-        this.css = css;
-        //image.setStyleName(css.SelectButton());
-        display.setStyleName(css.SelectBox());
-        textbox.setStyleName(css.SelectText());
-        button.setLeftIcon(css.SelectButton());
-    }
-	
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
+		css.ensureInjected();
+		this.css = css;
+		image.setStyleName(css.SelectButton());
+		textbox.setStyleName(css.SelectBox());
+	}
 
 }

@@ -3,7 +3,6 @@ package org.openelis.ui.widget;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
@@ -62,7 +61,7 @@ public class DateHelper implements WidgetHelper<Datetime> {
         try {
             date =  DateTimeFormat.getFormat(pattern).parseStrict(input);
         }catch(Exception e) {
-            throw new Exception(Messages.get().exc_invalidDate());
+            throw new Exception(Messages.get().invalidDate());
         }
         
         return Datetime.getInstance(begin,end,date);
@@ -147,11 +146,11 @@ public class DateHelper implements WidgetHelper<Datetime> {
     
     private void setDefaultPattern() {
        	if(begin > Datetime.DAY) {
-    		setPattern(Messages.get().gen_timePattern());
+    		setPattern(Messages.get().timePattern());
     	} else if (end < Datetime.HOUR){
-    		setPattern(Messages.get().gen_datePattern());
+    		setPattern(Messages.get().datePattern());
     	} else {
-    		setPattern(Messages.get().gen_dateTimePattern());
+    		setPattern(Messages.get().dateTimePattern());
     	}
     }
 
@@ -163,7 +162,7 @@ public class DateHelper implements WidgetHelper<Datetime> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value))
-			exceptions.add(new Exception(Messages.get().exc_invalidDate()));
+			exceptions.add(new Exception(Messages.get().invalidDate()));
 		
 		return exceptions;
 		
