@@ -1,0 +1,178 @@
+@def borderWidth 5px;
+@def winColor #c4d3e5;
+@def topColor #edf2f4;
+@external .gwt-SplitLayoutPanel-HDragger,.gwt-TabLayoutPanel,.gwt-TabLayoutPanelTab,.gwt-TabLayoutPanelTab-selected;
+
+.North {
+	background-color:winColor;
+	cursor:ns-resize;
+}
+.East {
+	background-color:winColor;
+	cursor:ew-resize;
+}
+.West {
+	background-color:winColor;
+	cursor:ww-resize;
+}
+.South {
+	background-color:winColor;
+	cursor:ns-resize;	
+}
+
+.top {
+	background-color:winColor;
+    height:29px;
+}
+
+.Caption{
+	float:left;
+}
+.StatusBar {
+	padding-top:3px;
+	background-color:winColor;
+    height:28px;
+    width:100%;
+}
+
+.unfocused .Caption{
+	background-color:winColor;
+    height:29px;
+}
+.unfocused .StatusBar {
+	background-color:winColor;
+    height:28px;
+}
+
+.errorPopupLabel, .warnPopupLabel{
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size:12px;
+    padding:0 4px 2px 0;
+}
+
+@sprite .CloseButton {
+	gwt-image: 'closeButton';
+	width:20px;
+    height:20px;
+    cursor:pointer;
+}
+
+@sprite .MinimizeButton {
+   padding-top:5px;
+   gwt-image: 'minimizeButton';
+   width:20px;
+   height:20px;
+   cursor:pointer;
+}
+
+@sprite .MaximizeButton {
+	gwt-image:'maxRestore';
+	width:20px;
+	height:20px;
+	cursor:pointer;
+}
+
+@sprite .RestoreButton {
+	gwt-image:'restore';
+	width:20px;
+	height:20px;
+	cursor:pointer;
+}
+
+.WindowBody{
+	background:white;
+}
+
+.WindowPanel{
+	box-shadow: 4px 4px 5px 3px #000055;
+    border:1px solid winColor;
+	border-radius: 5px 5px 5px 5px;
+}
+
+.ScreenLoad{
+  cursor:wait;
+}
+
+@sprite .Resizer {
+	gwt-image:'resizeHandle';
+	cursor:se-resize;
+	background-position :right bottom;
+	width:20px;
+	height:20px;
+}
+
+@sprite .GlassPanel{
+    gwt-image:'glass';
+}
+
+@sprite .spinnerIcon {
+	width:16px; 
+	height:16px;
+	gwt-image:'spinner';
+}
+
+@sprite .ErrorPanel {
+    width:16px;
+    height:16px;
+    gwt-image:'exclamation';
+}
+
+.NoSelect {
+	-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
+.ScreenWindowLabel{
+    color:#486095;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:12px;
+    font-weight:bold;    
+    padding-left:6px;
+    padding-top:2px;
+    -moz-user-select: none;
+}
+
+@sprite .ModalPanel{
+	gwt-image:'modal';
+}
+
+@sprite .WarnIcon {
+	width : 16px;
+	height : 17px;
+	gwt-image:'warn';
+}
+
+@sprite .ErrorIcon {
+	width : 16px;
+	height : 17px;
+	gwt-image:'error';
+}
+
+.InputError {
+	border-bottom:1px dashed red;
+}
+
+.InputWarning {
+	border-bottom:1px dashed #f5d852;
+}
+
+@sprite .gwt-SplitLayoutPanel-HDragger {
+	gwt-image:'openLeftBar';
+	background-position: left center;
+	background-color : #d8e4f2;
+	height:100%;
+	cursor:ew-resize;
+}
+
+.ResizeWindow {
+	background:#d8e4f2;
+	opacity:0.30;
+    border:1px dashed blue;
+}
+
+
+

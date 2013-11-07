@@ -1,0 +1,17 @@
+.AutoDropdown{
+}
+
+@sprite .AutoDropdownButton{
+	gwt-image:'autoArrow';
+}
+
+.AutoBox {
+   background:white;
+   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+   font-weight: normal;
+   font-size: 11px;
+   height: 16px;
+   cursor: default;
+   border: none;
+   tex-overflow: ellipsis;
+}

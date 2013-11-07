@@ -1,0 +1,45 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:w="urn:import:org.openelis.gwt.widget">
+
+
+  <g:LayoutPanel ui:field="outer">
+    <g:layer top="0px" height="25px">
+      <g:LayoutPanel ui:field="top">
+        <g:layer top="0px" bottom="0px" left="0px" right="48px">
+          <w:Window.Caption ui:field="cap" width="100%" />
+        </g:layer>
+        <g:layer right="32px" width="16px" top="0px" bottom="0px">
+          <g:FocusPanel ui:field="collapse" width="16px" />
+        </g:layer>
+        <g:layer right="16px" width="16px" top="0px" bottom="0px">
+          <g:FocusPanel ui:field="maximize" width="16px" />
+        </g:layer>
+        <g:layer right="0px" width="16px" top="0px" bottom="0px">
+          <g:FocusPanel ui:field="close" width="16px" />
+        </g:layer>
+      </g:LayoutPanel>
+    </g:layer>
+    <g:layer top="25px" bottom="25px">
+      <g:LayoutPanel ui:field="body" />
+    </g:layer>
+    <g:layer bottom="0px" height="25px">
+      <g:LayoutPanel ui:field="bottom">
+        <g:layer left="0px" height="25px" right="20px">
+          <g:Grid ui:field="statusContainer">
+            <g:row>
+              <g:customCell> 
+                <g:FocusPanel ui:field="statusImg" />
+              </g:customCell>
+              <g:customCell>
+                <g:Label ui:field="status" />
+              </g:customCell>
+            </g:row>
+          </g:Grid>
+        </g:layer>
+        <g:layer right="0px" height="25px" width="20px">
+          <g:FocusPanel ui:field="resizer" />
+        </g:layer>
+      </g:LayoutPanel>
+    </g:layer>
+  </g:LayoutPanel>
+
+</ui:UiBinder>

@@ -1,0 +1,170 @@
+@external .gwt-TabBar,.gwt-TabBarFirst,.gwt-TabPanelBottom,.gwt-TabBarItem,.gwt-TabBarItem-selected,.gwt-TabBarText,.gwt-TabBarRest,.gwt-TabCloseButton;
+
+@sprite .TabError {
+	gwt-image:'exclamation';
+	width:16px;
+	height:16px;
+}
+
+@sprite .TabData {
+	gwt-image:'data'; 
+	width:16px;
+	height:16px;
+}
+
+.gwt-TabPanelBottom{
+    background:#fbfbfb;
+    border:1px solid #8db2e3;
+}
+
+.TabPanelBottom{
+    background:#fbfbfb;
+    border:1px solid #8db2e3;
+}
+
+.ScreenTab{
+    margin:4px;
+}
+
+
+@sprite .gwt-TabCloseButton {
+    gwt-image: 'closeButton';
+    width:19px;
+    height:19px;
+    cursor:pointer;
+}
+
+.gwt-TabLayoutPanel {
+    margin: 4px 8px;
+}
+
+.TabContainer {
+    background:#fbfbfb;
+    border:1px solid #8db2e3;
+}
+
+.gwt-TabLayoutPanelTab {
+	color:#486095;
+    padding:0px 3px;
+    cursor:pointer;
+    border:1px solid #8db2e3;
+    border-radius : 4px 4px 0px 0px;	
+    top:5px;
+    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #DDDFE2 inset;
+    margin-right:2px;
+}
+
+.gwt-TabLayoutPanelTab td{
+	    height:16px;
+}
+	
+.gwt-TabLayoutPanelTab:hover{
+     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
+}
+
+.gwt-TabLayoutPanelTab:hover .dragdrop-handle{
+	     cursor:pointer;
+}
+.gwt-TabLayoutPanelTab:hover .Popped,.Popped:hover .dragdrop-handle{
+     box-shadow:none;
+     cursor:default;
+}
+.gwt-TabLayoutPanelTab Table{border-spacing:0;}
+
+
+
+
+@if user.agent gecko1_8 {
+	.gwt-TabLayoutPanelTab {/* 
+		background-image : -moz-linear-gradient(top,#ccdef6,#b9d0ee,#deecfd);
+		-moz-border-radius : 5px 5px 0px 0px;
+		-moz-user-select: none; */
+	}
+}@elif user.agent ie6 ie8 ie9 {
+	.gwt-TabLayoutPanelTab {
+/* 		background-image : -moz-linear-gradient(top,#ccdef6,#b9d0ee,#deecfd);
+ */	}
+}@elif user.agent safari {
+	.gwt-TabLayoutPanelTab {
+/* 		background-image : -webkit-linear-gradient(top,#ccdef6,#b9d0ee,#deecfd);
+ */	}
+}
+
+.gwt-TabLayoutPanelTab-selected {
+    cursor:default;
+    border-top : 1px solid #8db2e3;
+    border-right : 1px solid #8db2e3;
+    border-radius : 4px 4px 0px 0px;
+    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
+    text-shadow: 0 1px white;
+    color: #333333;
+}
+
+.gwt-TabLayoutPanelTab-selected:hover, .gwt-TabLayoutPanelTab-selected:hover .dragdrop-handle{
+	    cursor:default;
+}
+
+.gwt-TabLayoutPanelTab-selected .dragdrop-handle, .gwt-TabLayoutPanelTab-selected .Popped .dragdrop-handle{
+	cursor:default;
+}
+
+@if user.agent gecko1_8 {
+	.gwt-TabLayoutPanelTab-selected {/* 
+		background-image: -moz-linear-gradient(top,#ffffff,#deecfd);
+		-moz-border-radius : 5px 5px 0px 0px;
+		-moz-user-select: none; */
+	}
+}@elif user.agent ie6 ie8 ie9 {
+	.gwt-TabLayoutPanelTab-selected {
+/* 		background-image: -ms-linear-gradient(top,#ffffff,#deecfd);
+ */	}
+}@elif user.agent safari {
+	.gwt-TabLayoutPanelTab-selected {
+/* 	    background-image: -webkit-linear-gradient(top,#ffffff,#deecfd);
+ */	}
+}
+
+.angled {
+			background-color: #fbfbfb;
+			background-image: -webkit-gradient(linear, 0 100%, 100% 0,
+									color-stop(.25, #8db2e3), color-stop(.25, #C4D3E5),
+									color-stop(.5, #C4D3E5), color-stop(.5, #8db2e3),
+									color-stop(.75, #8db2e3), color-stop(.75, #C4D3E5),
+			 						to(#C4D3E5));
+			background-image: -webkit-linear-gradient(45deg, #8db2e3 25%, #C4D3E5 25%,
+								#C4D3E5 50%, #8db2e3 50%, #8db2e3 75%,
+								#C4D3E5 75%, #C4D3E5);
+			background-image: -moz-linear-gradient(45deg, #8db2e3 25%, #C4D3E5 25%,
+								#C4D3E5 50%, #8db2e3 50%, #8db2e3 75%,
+								#C4D3E5 75%, #C4D3E5);
+			background-image: -ms-linear-gradient(45deg, #8db2e3 25%, #C4D3E5 25%,
+								#C4D3E5 50%, #8db2e3 50%, #8db2e3 75%,
+								#C4D3E5 75%, #C4D3E5);
+			background-image: -o-linear-gradient(45deg, #8db2e3 25%, #C4D3E5 25%,
+								#C4D3E5 50%, #8db2e3 50%, #8db2e3 75%,#C4D3E5 75%, #C4D3E5);
+			background-image: linear-gradient(45deg, #8db2e3 25%, #C4D3E5 25%,
+								#C4D3E5 50%, #8db2e3 50%, #8db2e3 75%,#C4D3E5 75%, #C4D3E5);
+		    background-size : 45px 45px;
+		    border:1px solid #8db2e3;
+		}
+	
+.Popped, .Popped:hover{
+	box-shadow:none;
+	background:white;
+	cursor:default;
+	border:1px solid lightgray;
+	color:gray;
+}
+.Popped .ScreenLabel{
+	color:white;
+}
+.Vertical {
+	-moz-transform: rotate(-90deg);
+}
+
+.TabDraggable {
+	border-left:10px solid blue; 
+    box-shadow: 1px 1px 2px 0px #000000;
+    background: rgba(255, 255, 255, 0.9);
+	padding:2px 8px;
+}

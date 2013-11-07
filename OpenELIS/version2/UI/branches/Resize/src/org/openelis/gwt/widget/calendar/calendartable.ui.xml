@@ -1,0 +1,89 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+             ui:generateLocales="default">
+
+  <ui:with field="res" type="org.openelis.gwt.resources.UIResources"/>
+  <ui:with field="msg" type="org.openelis.gwt.messages.UIMessages"/>
+
+  <g:Grid ui:field="table" styleName="{res.calendarui.CalendarTable}" cellSpacing="2">
+    <g:row styleName="{res.calendarui.DayBar}">
+      <g:cell>
+        <ui:text from="{msg.day0}"/>
+      </g:cell>
+      <g:cell>
+        <ui:text from="{msg.day1}"/>
+      </g:cell>
+      <g:cell>
+        <ui:text from="{msg.day2}"/>
+      </g:cell>
+      <g:cell>
+        <ui:text from="{msg.day3}"/>
+      </g:cell>
+      <g:cell>
+        <ui:text from="{msg.day4}"/>
+      </g:cell>
+      <g:cell>
+        <ui:text from="{msg.day5}"/>
+      </g:cell>
+      <g:cell>
+        <ui:text from="{msg.day6}"/>
+      </g:cell>
+    </g:row>
+    <g:row>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+    </g:row>
+    <g:row>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+    </g:row>
+    <g:row>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+    </g:row>
+    <g:row>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+    </g:row>
+    <g:row>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+    </g:row>
+    <g:row>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+      <g:cell/>
+    </g:row>  
+  </g:Grid>
+
+</ui:UiBinder>

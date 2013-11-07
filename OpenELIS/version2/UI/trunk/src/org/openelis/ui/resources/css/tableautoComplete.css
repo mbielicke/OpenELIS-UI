@@ -1,0 +1,64 @@
+.AutoDropdown{
+}
+
+@sprite .AutoDropdownButton{
+	background-position:0 4px;
+	gwt-image:'autoArrow';
+	height:18px;
+	}
+
+.AutoBox {
+   background:white;
+    font-family: inherit;
+    font-size: inherit;
+   height: 16px;
+   cursor: default;
+   border: none;
+   tex-overflow: ellipsis;
+}
+
+.SelectBox {
+    border:none;
+    color:#000000;
+    font-family: inherit;
+    font-size: inherit;
+    cursor:default;
+    table-layout : fixed;
+    background:white;
+}
+
+.SelectText {
+   background:white;
+    font-family: inherit;
+    font-size: inherit;
+    height: 16px;
+   cursor: default;
+   border: none;
+   tex-overflow: ellipsis;
+}
+
+.Focus {
+	 border:none;
+}
+
+td.SelectBox {
+	text-overflow : ellipsis;
+	overflow : hidden;
+	white-space : nowrap;
+	border:none;
+}
+
+
+.Popup {
+    overflow:hidden;
+    background:#FFFFFF;
+    border: 1px solid #7eadd9;
+}
+
+.InputError {
+	border-bottom:1px dashed red;
+}
+
+.InputWarning {
+	border-bottom:1px dashed #f5d852;
+}
