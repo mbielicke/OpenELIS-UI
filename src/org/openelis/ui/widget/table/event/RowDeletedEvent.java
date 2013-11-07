@@ -4,43 +4,43 @@ import org.openelis.ui.widget.table.Row;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-public class RowDeletedEvent extends GwtEvent<RowDeletedHandler> {
+public class RowDeletedEvent<T> extends GwtEvent<RowDeletedHandler<T>> {
 	
-	private static Type<RowDeletedHandler> TYPE;
+	private static Type<RowDeletedHandler<?>> TYPE;
 	private int index;
-	private Row row;
+	private T row;
 	
-	public static void fire(HasRowDeletedHandlers source, int index, Row row) {
+	public static <T> void fire(HasRowDeletedHandlers<T> source, int index, T row) {
 		if(TYPE != null) {
-			RowDeletedEvent event = new RowDeletedEvent(index, row);
+			RowDeletedEvent<T> event = new RowDeletedEvent<T>(index, row);
 			source.fireEvent(event);
 		}
 	}
 	
-	protected RowDeletedEvent(int index, Row row) {
+	protected RowDeletedEvent(int index, T row) {
 		this.row = row;
 		this.index = index;
 	}
 
 	@Override
-	protected void dispatch(RowDeletedHandler handler) {
+	protected void dispatch(RowDeletedHandler<T> handler) {
 		handler.onRowDeleted(this);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<RowDeletedHandler> getAssociatedType() {
+	public com.google.gwt.event.shared.GwtEvent.Type<RowDeletedHandler<T>> getAssociatedType() {
 		return (Type) TYPE;
 	}
 	
-	public static Type<RowDeletedHandler> getType() {
+	public static Type<RowDeletedHandler<?>> getType() {
 		if(TYPE == null) {
-			TYPE = new Type<RowDeletedHandler>();
+			TYPE = new Type<RowDeletedHandler<?>>();
 		}
 		return TYPE;
 	}
 	
-	public Row getRow() {
+	public T getRow() {
 		return row;
 	}
 	

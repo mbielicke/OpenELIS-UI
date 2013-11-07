@@ -34,8 +34,6 @@ import java.util.logging.Logger;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
-import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.CheckBox;
 import org.openelis.ui.widget.Balloon;
@@ -118,14 +116,14 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
+public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
                                      HasBeforeSelectionHandlers<Integer>,
                                      HasSelectionHandlers<Integer>,
                                      HasUnselectionHandlers<Integer>, HasBeforeCellEditedHandlers,
                                      RequiresResize, HasCellEditedHandlers,
-                                     HasBeforeRowAddedHandlers, HasRowAddedHandlers,
-                                     HasBeforeRowDeletedHandlers, HasRowDeletedHandlers,
-                                     HasCellClickedHandlers, HasValue<ArrayList<? extends Row>>,
+                                     HasBeforeRowAddedHandlers<T>, HasRowAddedHandlers<T>,
+                                     HasBeforeRowDeletedHandlers<T>, HasRowDeletedHandlers<T>,
+                                     HasCellClickedHandlers, HasValue<ArrayList<T>>,
                                      HasExceptions, Focusable, FocusHandler, HasFilterHandlers, HasBalloon {
 
     /**
@@ -137,12 +135,12 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Table dimensions
      */
     protected int                         rowHeight, visibleRows = 10, viewWidth = -1,
-                    totalColumnWidth;
+                                          totalColumnWidth;
 
     /**
      * Model used by the Table
      */
-    protected ArrayList<Row>              model, modelView, modelSort;
+    protected ArrayList<T>                model, modelView, modelSort;
     protected HashMap<Object, RowIndexes> rowIndex;
     
     protected Timer                       balloonTimer;
@@ -160,7 +158,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     /**
      * Exception lists for the table
      */
-    protected HashMap<Row, HashMap<Integer, ArrayList<Exception>>> endUserExceptions,
+    protected HashMap<T, HashMap<Integer, ArrayList<Exception>>> endUserExceptions,
                     validateExceptions;
 
     /**
@@ -202,6 +200,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     protected CellTipProvider    tipProvider;
     
     protected Options     toolTip;
+    
+    protected CellModel<T>      cellModel;
 
     /**
      * Indicates direction for the Sort
@@ -210,7 +210,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
     protected Logger              logger         = Logger.getLogger("Widget");
     
-    protected Table source = this;
+    protected Table<T> source = this;
     
     protected int tipRow, tipCol;
 
@@ -440,9 +440,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                             finishEditing();
                             return;
                         }
-                    
-                        if(getRowCount() == 0)
-                            return;
 
                         // If not editing and a row is selected, focus on first
                         // editable cell
@@ -464,16 +461,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         addDomHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent event) {
-                //removeStyleName(UIResources.INSTANCE.text().Focus());
             }
         }, BlurEvent.getType());
 
-        addDomHandler(new FocusHandler() {
-            @Override
-            public void onFocus(FocusEvent event) {
-                //addStyleName(UIResources.INSTANCE.text().Focus());
-            }
-        }, FocusEvent.getType());
     }
 
     // ********* Table Definition Methods *************
@@ -526,7 +516,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends Row> ArrayList<T> getModel() {
+    public ArrayList<T> getModel() {
         return (ArrayList<T>)model;
     }
 
@@ -538,15 +528,16 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param model
      */
     @SuppressWarnings("unchecked")
-    public void setModel(ArrayList<? extends Row> model) {
+    public void setModel(ArrayList<T> model) {
         finishEditing();
         unselectAll();
         
-        this.model = (ArrayList<Row>)model;
+        this.model = model;
         modelView = this.model;
         rowIndex = null;
         
-        checkExceptions();
+        if(model != null && model.size() > 0 && model.get(0) instanceof Row)
+            cellModel = (CellModel<T>)new RowModel();
 
         // Clear any filter choices that may have been in force before model
         // changed
@@ -603,7 +594,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         /*
          * Reset the modelView and the rowIndex hash
          */
-        modelView = new ArrayList<Row>();
+        modelView = new ArrayList<T>();
         rowIndex = new HashMap<Object, RowIndexes>();
         for (int i = 0; i < model.size(); i++ )
             rowIndex.put(model.get(i), new RowIndexes(i, -1));
@@ -615,7 +606,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
             include = true;
             for (Filter filter : filters) {
                 if (filter != null && filter.isFilterSet() &&
-                    !filter.include(model.get(i).getCell(filter.getColumn()))) {
+                    !filter.include(cellModel.getValue(model.get(i),filter.getColumn()))) {
                     include = false;
                     break;
                 }
@@ -713,20 +704,20 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param sort
      * @param desc
      */
-    public void applySort(int col, int dir, Comparator<? super Row> comp) {
+    public void applySort(int col, int dir, Comparator<T> comp) {
         /*
          * Setup the modelView as its own object if not already
          */
         if (modelView == model) {
-            modelView = new ArrayList<Row>();
+            modelView = new ArrayList<T>();
             rowIndex = new HashMap<Object, RowIndexes>();
             for (int i = 0; i < model.size(); i++ ) {
                 modelView.add(model.get(i));
                 rowIndex.put(model.get(i), new RowIndexes(i, -1));
             }
         }
-
-        Collections.sort(modelView, new Sort<Row>(col, dir, comp));
+         
+        Collections.sort(modelView, new Sort(col, dir, comp));
 
         /*
          * Set the view index of the hash based on the sort
@@ -952,8 +943,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends Widget> T getColumnWidget(int index) {
-        return (T) (index > -1 ? getColumnAt(index).getCellEditor().getWidget() : null);
+    public <W extends Widget> W getColumnWidget(int index) {
+        return (W) (index > -1 ? getColumnAt(index).getCellEditor().getWidget() : null);
     }
 
     /**
@@ -963,8 +954,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends Widget> T getColumnWidget(String name) {
-        return (T)getColumnWidget(getColumnByName(name));
+    public <W extends Widget> W getColumnWidget(String name) {
+        return (W)getColumnWidget(getColumnByName(name));
     }
 
     /**
@@ -1085,8 +1076,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void addColumnAt(int index, Column column) {
         columns.add(index, column);
         column.setTable(this);
-        if (model != null) {
-            for (Row row : model)
+        if (model != null && model.size() > 0 && model.get(0) instanceof Row) {
+            for (Row row : (ArrayList<Row>)model)
                 row.cells.add(index, null);
         }
         computeColumnsWidth();
@@ -1102,8 +1093,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         Column col;
 
         col = columns.remove(index);
-        if (model != null) {
-            for (Row row : model)
+        if (model != null && model.size() > 0 && model.get(0) instanceof Row) {
+            for (Row row : (ArrayList<Row>)model)
                 row.cells.remove(index);
         }
         computeColumnsWidth();
@@ -1125,7 +1116,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * 
      * @return
      */
-    public <T extends Row> T addRow() {
+    public T addRow() {
         return addRow(getRowCount(), null);
     }
 
@@ -1136,7 +1127,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      * @return
      */
-    public <T extends Row> T addRowAt(int index) {
+    public T addRowAt(int index) {
         return addRow(index, null);
     }
 
@@ -1146,7 +1137,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @return
      */
-    public <T extends Row> T addRow(T row) {
+    public T addRow(T row) {
         return addRow(getRowCount(), row);
     }
 
@@ -1157,7 +1148,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @return
      */
-    public <T extends Row> T addRowAt(int index, T row) {
+    public T addRowAt(int index, T row) {
         return (T)addRow(index, row);
     }
 
@@ -1175,20 +1166,23 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      *         returned or if a Row is passed to the method it will echoed back.
      */
     @SuppressWarnings("unchecked")
-    private <T extends Row> T addRow(int index, T row) {
+    private T addRow(int index, T row) {
         int modelIndex;
 
         finishEditing();
 
-        if (row == null)
+        if (row == null) 
             row = (T)new Row(columns.size());
 
         if ( !fireBeforeRowAddedEvent(index, row))
             return null;
 
         /* if a model has not been set need to create an empty model */
-        if (model == null)
-            setModel(new ArrayList<Row>());
+        if (model == null) {
+            setModel(new ArrayList<T>());
+            if(cellModel == null)
+                cellModel = (CellModel<T>)new RowModel();
+        }
 
         /* Add row to model and then to view */
         if (rowIndex != null) {
@@ -1215,7 +1209,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      * @return
      */
-    public <T extends Row> T removeRowAt(int index) {
+    public T removeRowAt(int index) {
         int modelIndex;
         T row;
 
@@ -1276,7 +1270,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends Row> T getRowAt(int row) {
+    public T getRowAt(int row) {
         if (row < 0 || row >= getRowCount())
             return null;
         return (T)modelView.get(row);
@@ -1561,8 +1555,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @return
      */
-    private boolean fireBeforeRowAddedEvent(int index, Row row) {
-        BeforeRowAddedEvent event = null;
+    private boolean fireBeforeRowAddedEvent(int index, T row) {
+        BeforeRowAddedEvent<T> event = null;
 
         if ( !queryMode)
             event = BeforeRowAddedEvent.fire(this, index, row);
@@ -1578,7 +1572,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @return
      */
-    private boolean fireRowAddedEvent(int index, Row row) {
+    private boolean fireRowAddedEvent(int index, T row) {
 
         if ( !queryMode)
             RowAddedEvent.fire(this, index, row);
@@ -1596,8 +1590,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @return
      */
-    private boolean fireBeforeRowDeletedEvent(int index, Row row) {
-        BeforeRowDeletedEvent event = null;
+    private boolean fireBeforeRowDeletedEvent(int index, T row) {
+        BeforeRowDeletedEvent<T> event = null;
 
         if ( !queryMode)
             event = BeforeRowDeletedEvent.fire(this, index, row);
@@ -1613,7 +1607,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      * @return
      */
-    private boolean fireRowDeletedEvent(int index, Row row) {
+    private boolean fireRowDeletedEvent(int index,T row) {
 
         if ( !queryMode)
             RowDeletedEvent.fire(this, index, row);
@@ -1659,22 +1653,19 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param col
      * @param value
      */
-    public <T> void setValueAt(int row, int col, T value) {
+    public <V> void setValueAt(int row, int col, V value) {
         Column column;
         ArrayList<Exception> exceptions;
 
         finishEditing();
-        modelView.get(row).setCell(col, value);
+        cellModel.setValue(modelView.get(row), col, value);
 
         column = getColumnAt(col);
         
         exceptions = column.getCellRenderer().validate(value);
         
-        if (column.isRequired() && value == null) {
-            if(exceptions == null)
-                exceptions = new ArrayList<Exception>();
+        if (column.isRequired() && value == null) 
             exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
-        }
         
         setValidateException(row,col,exceptions);
 
@@ -1687,7 +1678,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      * @param row
      */
-    public <T extends Row> void setRowAt(int index, T row) {
+    public void setRowAt(int index, T row) {
         finishEditing();
         modelView.set(index, row);
         renderView(index, index);
@@ -1700,10 +1691,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param col
      * @return
      */
-    public <T> T getValueAt(int row, int col) {
+    public <V> V getValueAt(int row, int col) {
         if (modelView == null || row >= modelView.size())
             return null;
-        return (T)modelView.get(row).getCell(col);
+        return (V)cellModel.getValue(modelView.get(row),col);
     }
 
     /**
@@ -2022,7 +2013,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void setQueryMode(boolean query) {
 
-        ArrayList<Row> model;
         Row row;
 
         if (query == queryMode)
@@ -2030,10 +2020,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         this.queryMode = query;
         if (query) {
-            model = new ArrayList<Row>();
-            row = new Row(getColumnCount());
-            model.add(row);
-            setModel(model);
+            //qmodel = new ArrayList<Row>();
+            //row = new Row(getColumnCount());
+            //qmodel.add(row);
+            //setModel(qmodel);
         } else
             setModel(null);
     }
@@ -2069,7 +2059,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     public boolean hasExceptions(int row, int col) {
-        Row key;
+        T key;
 
         key = getRowAt(row);
         return (endUserExceptions != null && (endUserExceptions.containsKey(key) && endUserExceptions.get(key)
@@ -2078,16 +2068,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                                                                                                         .containsKey(col)));
     }
 
-    public <T extends Row> void addException(T row, int col, Exception error) {
-        ArrayList<Exception> exceptions;
+    public void addException(T row, int col, Exception error) {
         int r;
   
-        exceptions = getEndUserExceptionList(row, col);
-        
-        if(exceptions.contains(error))
-            return;
-        
-        exceptions.add(error);
+        getEndUserExceptionList(row, col).add(error);
   
         if(rowIndex != null && rowIndex.containsKey(row)) {
             r = rowIndex.get(row).view;
@@ -2099,15 +2083,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Adds a manual Exception to the widgets exception list.
      */
     public void addException(int row, int col, Exception error) {
-        ArrayList<Exception> exceptions;
-        
-        exceptions = getEndUserExceptionList(getRowAt(row), col);
-        
-        if(exceptions.contains(error))
-            return;
-        
-        exceptions.add(error);
-        
+        getEndUserExceptionList(getRowAt(row), col).add(error);
         renderView(row, row);
     }
 
@@ -2122,7 +2098,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
         HashMap<Integer, ArrayList<Exception>> rowExceptions;
-        Row row;
+        T row;
 
         row = getRowAt(rw);
 
@@ -2145,7 +2121,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         // If list is null we need to create the Hash to add the errors
         if (validateExceptions == null) {
-            validateExceptions = new HashMap<Row, HashMap<Integer, ArrayList<Exception>>>();
+            validateExceptions = new HashMap<T, HashMap<Integer, ArrayList<Exception>>>();
             cellExceptions = new HashMap<Integer, ArrayList<Exception>>();
 
             validateExceptions.put(row, cellExceptions);
@@ -2228,7 +2204,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void clearExceptions(int row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
-        Row key;
+        T key;
 
         key = getRowAt(row);
         if (endUserExceptions != null) {
@@ -2253,7 +2229,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
     }
 
-    public <T extends Row> void clearEndUserExceptions(T row, int col) {
+    public void clearEndUserExceptions(T row, int col) {
 
         if (rowIndex != null && rowIndex.containsKey(row))
             clearEndUserExceptions(rowIndex.get(row).model, col);
@@ -2269,7 +2245,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void clearEndUserExceptions(int row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
-        Row key;
+        T key;
 
         key = getRowAt(row);
         if (endUserExceptions != null) {
@@ -2293,12 +2269,12 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param col
      * @return
      */
-    private ArrayList<Exception> getEndUserExceptionList(Row row, int col) {
+    private ArrayList<Exception> getEndUserExceptionList(T row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
         ArrayList<Exception> list = null;
 
         if (endUserExceptions == null)
-            endUserExceptions = new HashMap<Row, HashMap<Integer, ArrayList<Exception>>>();
+            endUserExceptions = new HashMap<T, HashMap<Integer, ArrayList<Exception>>>();
 
         cellExceptions = endUserExceptions.get(row);
 
@@ -2329,11 +2305,11 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     private ArrayList<Exception> getValidateExceptionList(int row, int col) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
         ArrayList<Exception> list;
-        Row key;
+        T key;
 
         key = getRowAt(row);
         if (validateExceptions == null)
-            validateExceptions = new HashMap<Row, HashMap<Integer, ArrayList<Exception>>>();
+            validateExceptions = new HashMap<T, HashMap<Integer, ArrayList<Exception>>>();
 
         cellExceptions = validateExceptions.get(key);
 
@@ -2522,7 +2498,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void validate() {
         boolean render = false;
         ArrayList<Exception> exceptions;
-        Exception exception;
 
         finishEditing();
         
@@ -2534,11 +2509,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 for (int row = 0; row < getRowCount(); row++ ) {
                     if (getValueAt(row, col) == null) {
                         exceptions = getValidateExceptionList(row, col);
-                        exception = new Exception(Messages.get().exc_fieldRequired());
-                        if(!exceptions.contains(exception)) {
-                            setValidateException(row, col, exceptions);
-                            render = true;
-                        }
+                        exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+                        setValidateException(row, col, exceptions);
+                        render = true;
                     }
                 }
             }
@@ -2551,14 +2524,14 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     /**
      * Returns the model as part of the HasValue interface
      */
-    public ArrayList<? extends Row> getValue() {
+    public ArrayList<T> getValue() {
         return getModel();
     }
 
     /**
      * Sets the model as part of the HasValue interface
      */
-    public void setValue(ArrayList<? extends Row> value) {
+    public void setValue(ArrayList<T> value) {
         setValue(value, false);
     }
 
@@ -2566,7 +2539,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Sets the model and will fire ValueChangeEvent if fireEvents is true as
      * part of the HasValue interface
      */
-    public void setValue(ArrayList<? extends Row> value, boolean fireEvents) {
+    public void setValue(ArrayList<T> value, boolean fireEvents) {
         setModel(value);
 
         if (fireEvents)
@@ -2577,7 +2550,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     /**
      * Handler Registration for ValueChangeEvent
      */
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ArrayList<? extends Row>> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ArrayList<T>> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
@@ -2589,61 +2562,12 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
     }
 
-    public void checkExceptions() {
-        if(endUserExceptions != null) {
-            for(Row row : endUserExceptions.keySet()) {
-                if(!model.contains(row))
-                    endUserExceptions.remove(row);
-            }
-            
-            if(endUserExceptions.size() == 0) 
-                endUserExceptions = null;
-        }
-        
-        if(validateExceptions != null) {
-            for(Row row : validateExceptions.keySet()) {
-                if(!model.contains(row))
-                    validateExceptions.remove(row);
-            }
-            
-            if(validateExceptions.size() == 0) 
-                validateExceptions = null;
-        }
-        
-    }
-    
     public ArrayList<Exception> getEndUserExceptions() {
-        ArrayList<Exception> exceptions;
-        
-        if(endUserExceptions == null)
-            return null;
-        
-        exceptions = new ArrayList<Exception>();
-        
-        for(HashMap<Integer,ArrayList<Exception>> row : endUserExceptions.values()) {
-            for(ArrayList<Exception> excs : row.values()) {
-                exceptions.addAll(excs);
-            }
-        }
-        
-        return exceptions;
+        return null;
     }
 
     public ArrayList<Exception> getValidateExceptions() {
-        ArrayList<Exception> exceptions;
-        
-        if(validateExceptions == null)
-            return null;
-        
-        exceptions = new ArrayList<Exception>();
-        
-        for(HashMap<Integer,ArrayList<Exception>> row : validateExceptions.values()) {
-            for(ArrayList<Exception> excs : row.values()) {
-                exceptions.addAll(excs);
-            }
-        }
-        
-        return exceptions;
+        return null;
     }
 
     public boolean hasExceptions() {
@@ -2674,25 +2598,25 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * sort the table model using the Collections.sort() method
      */
 
-    private class Sort<T extends Row> implements Comparator<T> {
+    private class Sort implements Comparator<T> {
         int        col, dir;
 
         @SuppressWarnings("rawtypes")
         Comparator comparator;
 
         @SuppressWarnings("rawtypes")
-        public Sort(int col, int dir, Comparator comparator) {
+        public Sort(int col, int dir, Comparator<T> comparator) {
             this.col = col;
             this.dir = dir;
             this.comparator = comparator;
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
-        public int compare(Row o1, Row o2) {
+        public int compare(T o1, T o2) {
             Comparable c1,c2;
             
-            c1 = o1.getCell(col);
-            c2 = o2.getCell(col);
+            c1 = cellModel.getValue(o1,col);
+            c2 = cellModel.getValue(o2,col);
             
             if (comparator != null)
                 return dir * comparator.compare(c1, c2);
@@ -2700,7 +2624,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
             if(c1 == null && c2 == null)
                 return 0;
             else if(c1 != null && c2 != null)
-                return dir * ((Comparable)o1.getCell(col)).compareTo((Comparable)o2.getCell(col));
+                return dir * (c1).compareTo(c2);
             else{
                 if(c1 == null && c2 != null)
                     return 1;
@@ -2794,7 +2718,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
     @Override
     public void setFocus(boolean focused) {
-        super.setFocus(focused);
+        // TODO Auto-generated method stub
 
     }
 
@@ -2895,9 +2819,28 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
        });
     }
     
-    public void setCSS(TableCSS css) {
-        css.ensureInjected();
-        view.setCSS(css);
+    public void setCellModel(CellModel<T> cellModel) {
+        this.cellModel = cellModel;
+    }
+    
+    public static interface CellModel<T> {
+        public <V> V getValue(T row, int index);
+        
+        public <V> void setValue(T row, int index, V value);
+    }
+    
+    public static class RowModel implements CellModel<Row> {
+
+        @Override
+        public <V> V getValue(Row row, int index) {
+            return row.getCell(index);
+        }
+
+        @Override
+        public <V> void setValue(Row row, int index, V value) {
+            row.setCell(index,value);
+        }
+        
     }
 
    

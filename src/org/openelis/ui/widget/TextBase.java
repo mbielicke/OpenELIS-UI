@@ -365,8 +365,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_LEFT ||
 				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_RIGHT ||
 				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_DELETE ||
-				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_BACKSPACE ||
-				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER )
+				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_BACKSPACE)
 			return;
 
 

@@ -40,6 +40,8 @@
 }
 
 .errorPopupLabel, .warnPopupLabel{
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size:12px;
     padding:0 4px 2px 0;
 }
 
@@ -127,8 +129,8 @@
 
 @sprite .ErrorIcon {
 	width : 16px;
-	height : 16px;
-	gwt-image:'exclamation';
+	height : 17px;
+	gwt-image:'error';
 }
 
 .InputError {

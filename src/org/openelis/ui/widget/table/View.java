@@ -498,12 +498,14 @@ public class View extends ViewInt {
      * method or the selection style if the row is selected
      */
     protected void applyRowStyle(int r, int rc) {
-        String style;
+        String style = null;
         
         if(r >= table.getRowCount())
         	return;
         
-        style = table.getRowAt(r).getStyle(r);
+        if(table.getRowAt(r) instanceof Row)
+            style = ((Row)table.getRowAt(r)).getStyle(r);
+        
         if (style != null)
             flexTable.getRowFormatter().setStyleName(rc, style);
 
@@ -609,8 +611,8 @@ public class View extends ViewInt {
         else if (x2 > v2)
             scrollView.setHorizontalScrollPosition(x2 - table.getWidthWithoutScrollbar());
         
-        container.setWidth( (table.getColumnAt(c).getWidth() - 1));
-        container.setHeight( (table.getRowHeight()));
+        container.setWidth( (table.getColumnAt(c).getWidth() - 3));
+        container.setHeight( (table.getRowHeight() - 3));
         flexTable.setWidget(rc, c, container);
 
         if (table.getQueryMode())

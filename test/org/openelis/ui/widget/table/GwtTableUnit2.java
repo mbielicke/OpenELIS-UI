@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 
 public class GwtTableUnit2 extends GWTTestCase {
 
-    Table test;
+    Table<Row> test;
 
     @Override
     public String getModuleName() {

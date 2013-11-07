@@ -1,49 +1,47 @@
 package org.openelis.ui.widget.table.event;
 
-import org.openelis.ui.widget.table.Row;
-
 import com.google.gwt.event.shared.GwtEvent;
 
-public class BeforeRowDeletedEvent extends GwtEvent<BeforeRowDeletedHandler> {
+public class BeforeRowDeletedEvent<T> extends GwtEvent<BeforeRowDeletedHandler<T>> {
 	
-	private static Type<BeforeRowDeletedHandler> TYPE;
+	private static Type<BeforeRowDeletedHandler<?>> TYPE;
 	private int index;
-	private Row row;
+	private T row;
 	private boolean cancelled;
 	
-	public static BeforeRowDeletedEvent fire(HasBeforeRowDeletedHandlers source, int index, Row row) {
+	public static <T> BeforeRowDeletedEvent<T> fire(HasBeforeRowDeletedHandlers<T> source, int index, T row) {
 		if(TYPE != null) {
-			BeforeRowDeletedEvent event = new BeforeRowDeletedEvent(index, row);
+			BeforeRowDeletedEvent<T> event = new BeforeRowDeletedEvent<T>(index, row);
 			source.fireEvent(event);
 			return event;
 		}
 		return null;
 	}
 	
-	protected BeforeRowDeletedEvent(int index, Row row) {
+	protected BeforeRowDeletedEvent(int index, T row) {
 		this.row = row;
 		this.index = index;
 	}
 
 	@Override
-	protected void dispatch(BeforeRowDeletedHandler handler) {
+	protected void dispatch(BeforeRowDeletedHandler<T> handler) {
 		handler.onBeforeRowDeleted(this);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<BeforeRowDeletedHandler> getAssociatedType() {
+	public com.google.gwt.event.shared.GwtEvent.Type<BeforeRowDeletedHandler<T>> getAssociatedType() {
 		return (Type) TYPE;
 	}
 	
-	public static Type<BeforeRowDeletedHandler> getType() {
+	public static Type<BeforeRowDeletedHandler<?>> getType() {
 		if(TYPE == null) {
-			TYPE = new Type<BeforeRowDeletedHandler>();
+			TYPE = new Type<BeforeRowDeletedHandler<?>>();
 		}
 		return TYPE;
 	}
 	
-	public Row getRow() {
+	public T getRow() {
 		return row;
 	}
 	

@@ -465,12 +465,14 @@ public class InfiniteView extends ViewInt {
      * method or the selection style if the row is selected
      */
     protected void applyRowStyle(int r, int rc) {
-        String style;
+        String style = null;
         
         if(r >= table.getRowCount())
         	return;
         
-        style = table.getRowAt(r).getStyle(r);
+        if(table.getRowAt(r) instanceof Row)
+            style = ((Row)table.getRowAt(r)).getStyle(r);
+        
         if (style != null)
             flexTable.getRowFormatter().setStyleName(rc, style);
 

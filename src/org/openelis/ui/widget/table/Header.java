@@ -289,7 +289,7 @@ public class Header extends FocusPanel {
             if(column.getLabel() !=  null)
             	header = column.getLabel().replaceAll("\\n", "<br/>");
             else
-            	header = "";
+            	header = "Header";
             flexTable.setHTML(0, i, header);
             flexTable.getColumnFormatter().setWidth(i, column.getWidth() + "px");
             flexTable.getCellFormatter().setVerticalAlignment(0, i, HasVerticalAlignment.ALIGN_BOTTOM);
