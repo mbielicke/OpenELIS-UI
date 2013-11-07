@@ -27,7 +27,6 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
@@ -40,16 +39,12 @@ import org.openelis.ui.event.HasGetMatchesHandlers;
 import org.openelis.ui.messages.UIMessages;
 import org.openelis.ui.resources.AutoCompleteCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Options;
-import org.openelis.ui.widget.Balloon.Placement;
-import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.Row;
 import org.openelis.ui.widget.table.Table;
 import org.openelis.ui.widget.table.event.CellClickedEvent;
 import org.openelis.ui.widget.table.event.CellClickedHandler;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -87,8 +82,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -109,8 +102,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 													   HasHelper<String>,
 													   HasExceptions,
 													   HasGetMatchesHandlers,
-													   HasBeforeGetMatchesHandlers, 
-													   HasBalloon {
+													   HasBeforeGetMatchesHandlers {
 	@UiTemplate("Select.ui.xml")
 	interface ACUiBinder extends UiBinder<Widget, AutoComplete>{};
 	public static final ACUiBinder uiBinder = GWT.create(ACUiBinder.class);
@@ -125,7 +117,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     protected Button                                button;
     protected Table                                 table;
     protected PopupPanel                            popup;
-    protected int                                   cellHeight = 19, delay = 350, itemCount = 10, width;
+    protected int                                   cellHeight = 21, delay = 350, itemCount = 10, width;
     protected Timer                                 timer;
     protected boolean                               required,queryMode,showingOptions;
     protected String                                prevText;
@@ -139,7 +131,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      * Exceptions list
      */
     protected Exceptions                           exceptions;
-    protected Balloon.Options                      options;
     
     final AutoComplete                             source;
 
@@ -151,12 +142,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     
     protected WidgetHelper<String>                  helper    = new StringHelper();
     
-    protected UIMessages                            consts    = GWT.create(UIMessages.class);
+    protected UIMessages                      consts    = GWT.create(UIMessages.class);
     
     protected AutoCompleteCSS                       css;
-    
-    protected String                                dropHeight = "150px", dropWidth;
-    
 
     /**
      * Default no-arg constructor
@@ -175,10 +163,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          */
         addFocusHandler(new FocusHandler() {
         	public void onFocus(FocusEvent event) {
-        		if(isEnabled()) {
-        		    display.addStyleName(css.Focus());
+        		display.addStyleName(css.Focus());
+        		if(isEnabled()) 
         			selectAll();
-        		}
         	}
         });
 
@@ -225,13 +212,10 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                 if(textbox.getText().length() > cursorPos)
                 	textbox.setSelectionRange(cursorPos, textbox.getText().length() - cursorPos);
                 
-                
             }
         };
         
         exceptions = new Exceptions();
-        
-        setPopupContext(new Table.Builder(10).column(new Column.Builder(10).build()).build());
         
         setCSS(UIResources.INSTANCE.autocomplete());
     }
@@ -253,7 +237,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         		item = getSelectedItem();
 
         		if (item != null)
-        			setValue(item.key, renderer.getDisplay(item),item.getData(),true);
+        			setValue(item.key, renderer.getDisplay(item),true);
         	}
         	BlurEvent.fireNativeEvent(event.getNativeEvent(), this);
         }
@@ -278,8 +262,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     
     @UiHandler("button")
     protected void onMouseDown(MouseDownEvent event) {
-        if(!queryMode)
-            showingOptions = true;
+    	showingOptions = true;
     }
     
     /**
@@ -289,65 +272,27 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      * is in the current table view.
      */
     protected void showPopup() {
-        if(queryMode)
-            return;
-        
     	showingOptions = true;
-        final LayoutPanel layout = new LayoutPanel();
-        
         if (popup == null) {
             popup = new PopupPanel(true);
             popup.setStyleName(css.Popup());
-            
+            popup.setWidget(table);
             popup.setPreviewingAllNativeEvents(false);
             popup.addCloseHandler(new CloseHandler<PopupPanel>() {
                 public void onClose(CloseEvent<PopupPanel> event) {
                 	showingOptions = false;
-                	setDisplay();
                 	setFocus(true);
                 }
             });
-           
-            layout.add(table);
-            
-            popup.setWidget(layout);
         }
 
-        /**
-         * Draw and show outside of viewable so table will size correctly and 
-         * and showRelative will work when close to browser border.
+        popup.showRelativeTo(this);
+
+        /*
+         * Scroll if needed to make selection visible
          */
-        popup.setPopupPosition(-1000, -1000);
-        popup.show();
-
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                int modelHeight = table.getModel().size() * cellHeight;
-                
-                if(table.hasHeader())
-                    modelHeight += 19;
-                
-                int width = dropWidth == null ? getOffsetWidth() : Util.stripUnits(dropWidth);
-                
-                if(table.getTotalColumnWidth() > width)
-                    modelHeight += NativeHorizontalScrollbar.getNativeScrollbarHeight() + 1;
-                
-                popup.setSize(width+"px", 
-                               Util.stripUnits(dropHeight) > modelHeight ? modelHeight+"px" : dropHeight);
-                
-                table.onResize();
-                popup.showRelativeTo(source);
-
-                /*
-                 * Scroll if needed to make selection visible
-                 */ 
-                if (getSelectedIndex() > 0)
-                    table.scrollToVisible(getSelectedIndex());
-
-            }
-        });
+        if (getSelectedIndex() > 0)
+            table.scrollToVisible(getSelectedIndex());
     }
 
     /**
@@ -361,7 +306,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
     @Override
     public void setWidth(String w) {        
-        width = Util.stripUnits(w);
+        width = Util.stripUnits(w) - 5;
 
         /*
          * Set the outer panel to full width;
@@ -418,7 +363,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     public void setPopupContext(Table tableDef) {
         this.table = tableDef;
         table.setFixScrollbar(false);
-        table.setRowHeight(18);
+        table.setRowHeight(16);
         table.setEnabled(true);
         
         /*
@@ -471,7 +416,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     public void setModel(ArrayList<Item<Integer>> model) {
         assert table != null;
         
-        //table.setVisibleRows(Math.min(model.size(),itemCount));        
+        table.setVisibleRows(Math.min(model.size(),itemCount));        
         table.setModel(model);
         table.selectRowAt(0);
         
@@ -561,9 +506,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     public void setQueryMode(boolean query) {
     	if(query == queryMode)
     		return;
-    	
-    	queryMode = query;
-    	
     	if(query)
     		unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
     	else if(isEnabled())
@@ -578,15 +520,11 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      * @param display
      */
     public void setValue(Integer value, String display) {
-        setValue(value != null ? new AutoCompleteValue(value,display) : null,false);
+        setValue(new AutoCompleteValue(value,display),false);
     }
     
     public void setValue(Integer value, String display, boolean fireEvents) {
-    	setValue(value != null ? new AutoCompleteValue(value,display) : null,fireEvents);
-    }
-    
-    public void setValue(Integer value, String display, Object data, boolean fireEvents) {
-        setValue(value != null ? new AutoCompleteValue(value,display,data) : null,fireEvents);
+    	setValue(new AutoCompleteValue(value,display),fireEvents);
     }
     
     public void setValue(AutoCompleteValue av) {
@@ -603,8 +541,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
         if(!Util.isDifferent(this.value, value))
             return;
-        
-        table.setModel(null);
 
         if (value != null) {
             textbox.setText(value.getDisplay());
@@ -614,6 +550,8 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         }
 
         this.value = value;
+        
+        table.setModel(null);
 
         if (fireEvents) {
             ValueChangeEvent.fire(this, value);
@@ -631,19 +569,14 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         	if(queryMode)
         		validateQuery();
         	else{
-  
-        	    if(textbox.getText().isEmpty()) { 
-        	        setValue(null,true);
-        	    }else {
-        	        item = getSelectedItem();
-        		    if (item != null)
-        		        setValue(item.key, renderer.getDisplay(item),item.getData(),true);
-        	    }
+        		item = getSelectedItem();
+        		if (item != null)
+        			setValue(new AutoCompleteValue(item.key, renderer.getDisplay(item)),true);
         		
         		if (required && value == null) 
-        		    addValidateException(new Exception(consts.exc_fieldRequired()));
-        	   
-        		Balloon.checkExceptionHandlers(this);
+        			addValidateException(new Exception(consts.exc_fieldRequired()));
+        		
+        		ExceptionHelper.checkExceptionHandlers(this);
         	}
         }
     }
@@ -661,7 +594,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * user has moved on from the widget so the first entry in the results
          * will be selected and displayed
          */
-        if (getStyleName().indexOf(css.Focus()) > -1 && model != null && model.size() > 0)
+        if (textbox.getStyleName().indexOf(css.Focus()) > -1 && model != null && model.size() > 0)
             showPopup();
         else  if(popup != null) 
         	popup.hide();
@@ -690,8 +623,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * This method handles all key down events for this table
          */
         public void onKeyDown(KeyDownEvent event) {
-            int start;
-            
             prevText = textbox.getText();
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_TAB:
@@ -700,19 +631,16 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                     //event.stopPropagation();
                     break;
                 case KeyCodes.KEY_BACKSPACE:
-                    
                     int selectLength;
                     /*
                      * If text is selected we want to select one more position back so the correct 
                      * text will be received in the key up event.
-                     */ 
+                     */
                     selectLength = textbox.getSelectionLength();
-                    if (selectLength > 1 && selectLength < textbox.getText().length()) {
+                    if (selectLength > 0) {
                         selectLength++ ;
-                        start = textbox.getText().length() - selectLength;
-                        textbox.setSelectionRange(start > -1 ? start : 0, selectLength);
+                        textbox.setSelectionRange(textbox.getText().length() - selectLength, selectLength);
                     }
-                    
             }
         }
         
@@ -721,29 +649,19 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          */
         public void onKeyUp(KeyUpEvent event) {
             String text;
-            BeforeGetMatchesEvent bgme;
 
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_DOWN:
-                    if (popup != null && popup.isShowing()) { 
+                    if (popup != null && popup.isShowing()) 
                         table.selectRowAt(findNextActive(table.getSelectedRow()));
-                        setDisplay();
-                    }
                     break;
                 case KeyCodes.KEY_UP:
-                    if (popup != null && popup.isShowing()) { 
+                    if (popup != null && popup.isShowing()) 
                         table.selectRowAt(findPrevActive(table.getSelectedRow()));
-                        setDisplay();
-                    }
                     break;
                 case KeyCodes.KEY_ENTER:
                     if (popup == null || !popup.isShowing()) {
                         text = textbox.getText();
-                        
-                        bgme = BeforeGetMatchesEvent.fire(source, text);
-                        if(bgme != null && bgme.isCancelled())
-                            return;
-                        
                         GetMatchesEvent.fire(source, text);
                     } else
                         popup.hide();
@@ -761,7 +679,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                      * setSelected 0 so that if user tabs off the value is
                      * selected correctly
                      */
-                    if (DataBaseUtil.isEmpty(text)){    
+                    if (text.equals("")){    
                         setSelectedIndex( -1);
                         if(popup != null)
                             popup.hide();
@@ -849,7 +767,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
 		if (!queryMode && required && getValue() == null) {
 			addValidateException(new Exception(consts.exc_fieldRequired()));
-			Balloon.checkExceptionHandlers(this);
+			ExceptionHelper.checkExceptionHandlers(this);
 		}
 
 		return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -860,7 +778,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
@@ -886,22 +804,22 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 	
 	@Override
 	public void addExceptionStyle() {
-		if(Balloon.isWarning(this))
+		if(ExceptionHelper.isWarning(this))
 			addStyleName(css.InputWarning());
 		else
 			addStyleName(css.InputError());
@@ -983,7 +901,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         } catch (Exception e) {
             addValidateException(e);
         }
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
 
 
@@ -1046,48 +964,5 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         display.setStyleName(css.SelectBox());
         textbox.setStyleName(css.AutoBox());
     }
-    
-    /**
-     * Will set the width of the popup with results
-     * @param width
-     */
-    public void setDropWidth(String width) {
-        dropWidth = width;
-    }
 
-    /**
-     * Will set the height of the popup with results
-     * @param height
-     */
-    public void setDropHeight(String height) {
-        dropHeight = height;
-    }
-
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
 }

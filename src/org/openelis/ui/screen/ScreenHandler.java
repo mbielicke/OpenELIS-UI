@@ -4,9 +4,7 @@ import org.openelis.ui.common.FieldErrorException;
 import org.openelis.ui.common.TableFieldErrorException;
 import org.openelis.ui.event.DataChangeEvent;
 import org.openelis.ui.event.StateChangeEvent;
-import org.openelis.ui.screen.Screen.Validation;
-import org.openelis.ui.screen.Screen.Validation.Status;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.event.StateChangeHandler;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.Queryable;
 import org.openelis.ui.widget.table.Table;
@@ -24,14 +22,10 @@ public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateCh
 	}
 
 	public void onDataChange(DataChangeEvent event) {
-	    if(widget instanceof Screen)
-	        ((Screen)widget).fireDataChange();
 		
 	}
 
 	public void onStateChange(StateChangeEvent event) {
-	    if(widget instanceof Screen)
-	        ((Screen)widget).setState(event.getState());
 
 	}
 	
@@ -41,27 +35,17 @@ public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateCh
 
 	
 	public Object getQuery() {
-	    if(widget instanceof Screen) 
-	        return ((Screen)widget).getQueryFields();
-	    else if(widget instanceof Queryable)
+		if(widget instanceof Queryable)
 			if(((Queryable)widget).isQueryMode())
 				return ((Queryable)widget).getQuery();
 		
 		return null;
 	}
 	
-	public void isValid(Validation validation) {
-	    HasExceptions he;
-	
-	    if(widget instanceof HasExceptions) {
-	        he = (HasExceptions)widget;
-	        if(he.hasExceptions()) {
-	            if(Balloon.isWarning(he))
-	                validation.setStatus(Validation.Status.WARNINGS);
-	            else
-	                validation.setStatus(Status.ERRORS);
-	        }
-	    }
+	public boolean isValid() {
+		if(widget instanceof HasExceptions)
+			return !((HasExceptions)widget).hasExceptions();
+		return true;
 	}
 	
 	public void showError(Exception ex) {
@@ -78,9 +62,7 @@ public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateCh
 	}
 	
 	public void clearError() {
-	    if(widget instanceof Screen) 
-	        ((Screen)widget).clearErrors();
-		else if(widget instanceof HasExceptions) 
+		if(widget instanceof HasExceptions) 
 			((HasExceptions)widget).clearExceptions();
 	}
 

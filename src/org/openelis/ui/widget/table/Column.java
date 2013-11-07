@@ -25,12 +25,10 @@
  */
 package org.openelis.ui.widget.table;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
-import org.openelis.ui.widget.MenuItem;
 
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -88,9 +86,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     protected boolean      enabled=true, resizable=true, isFiltered, isSorted, isSortable, isFilterable, required, display=true;
 
+
     protected String style;
-    
-    protected ArrayList<MenuItem> menus;
     
     public static class Builder {
     	
@@ -191,6 +188,13 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     }
 
     /**
+     * Returns the Editor currently being used by this Column
+     */
+	public CellEditor getCellEditor(int row) {
+        return editor;
+    }
+
+    /**
      * Sets the Editor widget to be used by this Column. This method will also
      * set Cell Renderer if the passed editor also implements the CellRenderer
      * interface. If you need a different Cell Renderer make sure to call
@@ -204,6 +208,14 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     
     
 	public CellRenderer getCellRenderer() {
+        return renderer;
+    }
+
+	/**
+     * Method will return the currently set Renderer for this column
+     * @return
+     */
+	public CellRenderer getCellRenderer(int row) {
         return renderer;
     }
 
@@ -539,17 +551,6 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 	public void add(Widget w) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	public void addMenuItem(MenuItem item) {
-	    if(menus == null)
-	        menus = new ArrayList<MenuItem>();
-	    
-	    menus.add(item);
-	}
-	
-	public ArrayList<MenuItem> getMenuItems() {
-	    return menus;
 	}
 	
 

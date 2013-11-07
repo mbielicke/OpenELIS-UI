@@ -28,13 +28,11 @@ package org.openelis.ui.server;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.services.CalendarServiceInt;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 /**
  * This class provides a service to the client to pull the current time from the server.
  *
  */
-public class CalendarServlet extends RemoteServiceServlet implements CalendarServiceInt {
+public class CalendarServlet extends RemoteServlet implements CalendarServiceInt {
 
     private static final long serialVersionUID = 1L;
     

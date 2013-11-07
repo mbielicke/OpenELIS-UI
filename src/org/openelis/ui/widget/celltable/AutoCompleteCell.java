@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableAutoCompleteCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.AutoComplete;
@@ -81,10 +80,10 @@ public class AutoCompleteCell implements CellRenderer,
     
     public void setEditor(AutoComplete editor) {
         this.editor = editor;
-        TableAutoCompleteCSS css = UIResources.INSTANCE.tableAutoComplete();
+        css = UIResources.INSTANCE.table();
         css.ensureInjected();
         editor.setEnabled(true);
-        editor.setCSS(css);
+        editor.setStyleName(css.TableDropdown());
         editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {

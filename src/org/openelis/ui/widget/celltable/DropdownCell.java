@@ -114,7 +114,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
    			editor.setValue(value);
         	return editor.getDisplay();
     	}else {
-    		return DataBaseUtil.toString(value);
+    		return DataBaseUtil.asString(value);
     	}
     }
 

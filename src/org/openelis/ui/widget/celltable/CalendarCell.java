@@ -31,9 +31,6 @@ import java.util.Iterator;
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.CalendarCSS;
-import org.openelis.ui.resources.TableCalendarCSS;
-import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.calendar.Calendar;
 
 import com.google.gwt.dom.client.NativeEvent;
@@ -77,10 +74,9 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     }
     
     public void setEditor(Calendar editor) {
-        TableCalendarCSS css = UIResources.INSTANCE.tableCalendar();
         this.editor = editor;
         editor.setEnabled(true);
-        editor.setCSS(css);
+       // editor.setStyleName("TableCalendar");
         editor.addBlurHandler(new BlurHandler() {
 			public void onBlur(BlurEvent event) {
 				column.finishEditing();
@@ -96,7 +92,7 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         if(value instanceof Datetime)
         	editor.setValue((Datetime)value);
         else
-        	editor.setText(DataBaseUtil.toString(value));
+        	editor.setText(DataBaseUtil.asString(value));
         editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
         editor.selectAll();
@@ -144,7 +140,7 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         if(value instanceof Datetime)
         	return editor.getHelper().format((Datetime)value);
         else
-        	return DataBaseUtil.toString(value);
+        	return DataBaseUtil.asString(value);
     }
 
     /**

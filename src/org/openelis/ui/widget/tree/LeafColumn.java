@@ -77,7 +77,7 @@ public class LeafColumn implements ColumnInt,IsWidget, HasWidgets.ForIsWidget {
         return tree;
     }
     
-    public void setRequired(boolean required) {
+    public void setRquierd(boolean required) {
         this.required = required;
     }
     
@@ -108,9 +108,8 @@ public class LeafColumn implements ColumnInt,IsWidget, HasWidgets.ForIsWidget {
 
     @Override
     public void finishEditing() {
-        //if(editor != null)
-        //    editor.finishEditing();
-        tree.finishEditing();
+        if(editor != null)
+            editor.finishEditing();
     }
     
     public boolean hasEditor() {

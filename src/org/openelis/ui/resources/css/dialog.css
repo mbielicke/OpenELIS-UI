@@ -40,6 +40,8 @@
 }
 
 .errorPopupLabel, .warnPopupLabel{
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size:12px;
     padding:0 4px 2px 0;
 }
 
@@ -65,14 +67,14 @@
 .WindowPanel{
 	border:borderWidth solid #c4d3e5;
 	border-radius:5px;
-	box-shadow: 4px 4px 5px 3px #000000;
+	box-shadow: 4px 4px 5px 3px #000055;
 	background-color:#c4d3ef;
 }
 
 .LegacyWindowPanel{
 	border:borderWidth solid #c4d3e5;
 	border-radius:5px;
-	box-shadow: 4px 4px 5px 3px #000000;
+	box-shadow: 4px 4px 5px 3px #000055;
 	background-color:#c4d3ef;
 }
 
@@ -127,8 +129,8 @@
 
 @sprite .ErrorIcon {
 	width : 16px;
-	height : 16px;
-	gwt-image:'exclamation';
+	height : 17px;
+	gwt-image:'error';
 }
 
 .InputError {

@@ -1,9 +1,11 @@
 package org.openelis.ui.widget.tree;
 
 import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.widget.table.FlexTable;
 
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 

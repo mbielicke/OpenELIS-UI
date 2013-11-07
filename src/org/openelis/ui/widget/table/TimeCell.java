@@ -6,7 +6,6 @@ import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.TextBox;
 
@@ -27,12 +26,12 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
     protected TableCSS      css;
 	
 	public TimeCell() {
-		TextCSS css = UIResources.INSTANCE.tableText();
+		css = UIResources.INSTANCE.table();
 		css.ensureInjected();
 		
 		editor = new TextBox<String>();
 		editor.setEnabled(true);
-		editor.setCSS(css);
+		editor.setStyleName(css.TableTextBox());
 		editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -46,7 +45,7 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
 		if(value instanceof Double)
 			editor.setValue(getTime((Double)value));
 		else
-			editor.setText(DataBaseUtil.toString(value));
+			editor.setText(DataBaseUtil.asString(value));
 		editor.setWidth(container.getWidth()+"px");
 		container.setEditor(editor);
 		editor.selectAll();

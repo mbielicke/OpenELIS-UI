@@ -38,11 +38,11 @@ import org.openelis.ui.common.GridFieldErrorException;
 import org.openelis.ui.common.TableFieldErrorException;
 import org.openelis.ui.common.ValidationErrorsList;
 
+
 public class DataBaseUtil {
 
-    private DataBaseUtil() {
-    } // Disallows creating an instance;
-
+	private DataBaseUtil() {} // Disallows creating an instance;
+	
     /*
      * Removed blanks from both sides of the string and nullifies empty strings
      */
@@ -60,8 +60,7 @@ public class DataBaseUtil {
      * precision.
      */
     public static Datetime toYD(Datetime yearToDay) {
-        if (yearToDay != null &&
-            (yearToDay.getStartCode() != Datetime.YEAR || yearToDay.getEndCode() != Datetime.DAY))
+        if (yearToDay != null && (yearToDay.getStartCode() != Datetime.YEAR || yearToDay.getEndCode() != Datetime.DAY))
             yearToDay = toYD(yearToDay.getDate());
         return yearToDay;
     }
@@ -77,8 +76,7 @@ public class DataBaseUtil {
     }
 
     public static Datetime toYM(Datetime yearToMinute) {
-        if (yearToMinute != null &&
-            (yearToMinute.getStartCode() != Datetime.YEAR || yearToMinute.getEndCode() != Datetime.MINUTE))
+        if (yearToMinute != null && (yearToMinute.getStartCode() != Datetime.YEAR || yearToMinute.getEndCode() != Datetime.MINUTE))
             yearToMinute = toYM(yearToMinute.getDate());
         return yearToMinute;
     }
@@ -94,8 +92,7 @@ public class DataBaseUtil {
     }
 
     public static Datetime toYS(Datetime yearToSecond) {
-        if (yearToSecond != null &&
-            (yearToSecond.getStartCode() != Datetime.YEAR || yearToSecond.getEndCode() != Datetime.SECOND))
+        if (yearToSecond != null && (yearToSecond.getStartCode() != Datetime.YEAR || yearToSecond.getEndCode() != Datetime.SECOND))
             yearToSecond = toYS(yearToSecond.getDate());
         return yearToSecond;
     }
@@ -111,8 +108,7 @@ public class DataBaseUtil {
     }
 
     public static Datetime toHM(Datetime hourToMinute) {
-        if (hourToMinute != null &&
-            (hourToMinute.getStartCode() != Datetime.HOUR || hourToMinute.getEndCode() != Datetime.MINUTE))
+        if (hourToMinute != null && (hourToMinute.getStartCode() != Datetime.HOUR || hourToMinute.getEndCode() != Datetime.MINUTE))
             hourToMinute = toHM(hourToMinute.getDate());
 
         return hourToMinute;
@@ -127,7 +123,7 @@ public class DataBaseUtil {
 
         return dt;
     }
-
+    
     public static Date toDate(Datetime datetime) {
         if (datetime != null)
             return datetime.getDate();
@@ -209,121 +205,71 @@ public class DataBaseUtil {
     public static boolean isDifferentDT(Datetime a, Datetime b) {
         return isDifferent(toHM(a), toHM(b));
     }
-
+    
     public static Double getPercentHoldingUsed(Datetime startedDate, Datetime collectionDate,
                                                Datetime collectionTime, Integer timeHolding) {
-        Long hour, diff;
-        Double numHrs;
-        Date scd;
-        Datetime stdt;
+       Long hour, diff;
+       Double numHrs;
+       Date scd;
+       Datetime stdt;
+       
+       if (collectionDate == null) 
+           return 0.0;
+       
+       scd = collectionDate.getDate();
+       if (collectionTime == null) {
+           scd.setHours(0);
+           scd.setMinutes(0);
+       } else {
+           scd.setHours(collectionTime.getDate().getHours());
+           scd.setMinutes(collectionTime.getDate().getMinutes());
+       }
+       
+       stdt = startedDate != null ? startedDate : Datetime.getInstance();
+       diff = (stdt.getDate().getTime() - scd.getTime());
+       hour = 3600000L;
+       numHrs = diff.doubleValue() / hour.doubleValue();
 
-        if (collectionDate == null)
-            return 0.0;
+       return (numHrs / timeHolding.doubleValue()) * 100;        
+   }
+   
+   public static Double getPercentExpectedCompletion(Datetime collectionDate, Datetime collectionTime,
+                                                     Datetime receivedDate, Integer priority,
+                                                     Integer timeTaAverage) {
+       Long day, diff;
+       Double numDays, factor;
+       Date scd;
+       Datetime now, begin;
 
-        scd = collectionDate.getDate();
-        if (collectionTime == null) {
-            scd.setHours(0);
-            scd.setMinutes(0);
-        } else {
-            scd.setHours(collectionTime.getDate().getHours());
-            scd.setMinutes(collectionTime.getDate().getMinutes());
-        }
+       if (collectionDate == null && receivedDate == null)
+           return 0.0;
 
-        stdt = startedDate != null ? startedDate : Datetime.getInstance();
-        diff = (stdt.getDate().getTime() - scd.getTime());
-        hour = 3600000L;
-        numHrs = diff.doubleValue() / hour.doubleValue();
+       if (collectionDate != null) {
+           scd = collectionDate.getDate();
+           if (collectionTime == null) {
+               scd.setHours(0);
+               scd.setMinutes(0);
+           } else {
+               scd.setHours(collectionTime.getDate().getHours());
+               scd.setMinutes(collectionTime.getDate().getMinutes());
+           }
+           begin = collectionDate;
+       } else {
+           begin = receivedDate;
+       }
 
-        return (numHrs / timeHolding.doubleValue()) * 100;
-    }
+       now = Datetime.getInstance();
+       diff = now.getDate().getTime() - begin.getDate().getTime();
+       day = 86400000L;
+       numDays = diff.doubleValue() / day.doubleValue();
 
-    public static Double getPercentExpectedCompletion(Datetime collectionDate,
-                                                      Datetime collectionTime,
-                                                      Datetime receivedDate, Integer priority,
-                                                      Integer timeTaAverage) {
-        Long day, diff;
-        Double numDays, factor;
-        Date scd;
-        Datetime now, begin;
+       factor = priority != null ? priority.doubleValue() : timeTaAverage.doubleValue();
 
-        if (collectionDate == null && receivedDate == null)
-            return 0.0;
-
-        if (collectionDate != null) {
-            scd = collectionDate.getDate();
-            if (collectionTime == null) {
-                scd.setHours(0);
-                scd.setMinutes(0);
-            } else {
-                scd.setHours(collectionTime.getDate().getHours());
-                scd.setMinutes(collectionTime.getDate().getMinutes());
-            }
-            begin = collectionDate;
-        } else {
-            begin = receivedDate;
-        }
-
-        now = Datetime.getInstance();
-        diff = now.getDate().getTime() - begin.getDate().getTime();
-        day = 86400000L;
-        numDays = diff.doubleValue() / day.doubleValue();
-
-        factor = priority != null ? priority.doubleValue() : timeTaAverage.doubleValue();
-
-        return (numDays / factor) * 100;
-    }
-
-    /*
-     * Compute the number of days before the analysis is expected to be finshed
-     */
-    public static Integer getDueDays(Datetime received, Integer expectedDays) {
-        long due;
-        Datetime now, expectedDate;
-
-        if (received == null || expectedDays == null)
-            return null;
-
-        now = Datetime.getInstance(Datetime.YEAR, Datetime.MINUTE);
-
-        expectedDate = received.add(expectedDays);
-
-        due = expectedDate.getDate().getTime() - now.getDate().getTime();
-
-        // convert from milliseconds to days
-        due = due / 1000 / 60 / 60 / 24;
-
-        return (int)due;
-    }
-
-    /*
-     * Compute the Datetime after which the sample is no longer viable for
-     * analysis
-     */
-    public static Datetime getExpireDate(Datetime collectionDate, Datetime collectionTime,
-                                         int holdingHours) {
-        Date tempDate;
-        Datetime expireDate;
-
-        expireDate = null;
-        if (collectionDate != null) {
-            tempDate = collectionDate.getDate();
-            if (collectionTime != null) {
-                tempDate.setHours(collectionTime.get(Datetime.HOUR));
-                tempDate.setMinutes(collectionTime.get(Datetime.MINUTE));
-            } else {
-                tempDate.setHours(0);
-                tempDate.setMinutes(0);
-            }
-            tempDate.setTime(tempDate.getTime() + holdingHours * 60 * 60 * 1000);
-            expireDate = new Datetime(Datetime.YEAR, Datetime.MINUTE, tempDate);
-        }
-
-        return expireDate;
-    }
-
+       return (numDays / factor) * 100;
+   }
+   
     /**
      * Compares the two parameters to see if they are the same
-     * 
      * @return true if object is the same; otherwise false
      */
     public static boolean isSame(Object a, Object b) {
@@ -337,13 +283,13 @@ public class DataBaseUtil {
      */
     public static boolean isEmpty(Object a) {
         if (a instanceof String)
-            return ((String)a).trim().length() == 0;
+            return ((String)a).length() == 0;
         return a == null;
     }
-
+    
     /**
-     * Compares to see if the first date is after the second date
-     * 
+     * Compares to see if the first date is after the second date 
+     *
      * @return true if first date is after the second date
      */
     public static boolean isAfter(Datetime a, Datetime b) {
@@ -384,41 +330,39 @@ public class DataBaseUtil {
      * Convenience methods to unwrap and merge error lists
      */
     public static void mergeException(ValidationErrorsList list, Exception e) {
-        int i;
-        ArrayList<Exception> el;
-        FieldErrorException fe;
-
         if (e instanceof ValidationErrorsList) {
+            int i;
+            ArrayList<Exception> el;
+
             el = ((ValidationErrorsList)e).getErrorList();
             for (i = 0; i < el.size(); i++ )
                 mergeException(list, el.get(i));
         } else if (e instanceof FieldErrorException) {
+            FieldErrorException fe;
+
             fe = (FieldErrorException)e;
-            if (!isEmpty(fe.getFieldName()))
+            if (! isEmpty(fe.getFieldName()))
                 list.add(fe);
             else
                 list.add(new FormErrorException(fe.getMessage()));
-        } else if (e instanceof FormErrorException) {
-            list.add(e);
         } else {
             list.add(new DatabaseException(e.getMessage()));
         }
     }
 
     public static void mergeException(ValidationErrorsList list, Exception e, String table, int row) {
-        int i;
-        ArrayList<Exception> el;
-        FieldErrorException fe;
-
         if (e instanceof ValidationErrorsList) {
+            int i;
+            ArrayList<Exception> el;
+
             el = ((ValidationErrorsList)e).getErrorList();
             for (i = 0; i < el.size(); i++ )
                 mergeException(list, el.get(i), table, row);
         } else if (e instanceof FieldErrorException) {
+            FieldErrorException fe;
+
             fe = (FieldErrorException)e;
             list.add(new TableFieldErrorException(fe.getMessage(), row, fe.getFieldName(), table));
-        } else if (e instanceof FormErrorException) {
-            list.add(e);
         } else {
             list.add(new DatabaseException(e.getMessage()));
         }
@@ -426,25 +370,23 @@ public class DataBaseUtil {
 
     public static void mergeException(ValidationErrorsList list, Exception e, String table,
                                       int key1, int key2) {
-        int i;
-        ArrayList<Exception> el;
-        FieldErrorException fe;
-
         if (e instanceof ValidationErrorsList) {
+            int i;
+            ArrayList<Exception> el;
+
             el = ((ValidationErrorsList)e).getErrorList();
             for (i = 0; i < el.size(); i++ )
                 mergeException(list, el.get(i), table, key1, key2);
         } else if (e instanceof FieldErrorException) {
+            FieldErrorException fe;
+
             fe = (FieldErrorException)e;
-            list.add(new GridFieldErrorException(fe.getMessage(), key1, key2,
-                                                 fe.getFieldName(), table));
-        } else if (e instanceof FormErrorException) {
-            list.add(e);
+            list.add(new GridFieldErrorException(fe.getMessage(), key1, key2, fe.getFieldName(), table));
         } else {
             list.add(new DatabaseException(e.getMessage()));
         }
     }
-
+    
     /**
      * Concats two strings together. Null parameters are ignored.
      */
@@ -459,7 +401,7 @@ public class DataBaseUtil {
 
         return buf.toString();
     }
-
+    
     /**
      * Concats two strings together with the specified delimiter. Null
      * parameters are ignored and the delimiter is not used.
@@ -477,7 +419,7 @@ public class DataBaseUtil {
         }
         return buf.toString();
     }
-
+    
     /**
      * Concats a list of objects together using delimiter.
      */
@@ -494,25 +436,18 @@ public class DataBaseUtil {
         }
         return buf.toString();
     }
-
-    /**
-     * Returns the string representation of the argument if it is not null
-     * otherwise returns the empty string
-     */
+    
     public static String toString(Object obj) {
-        if (obj == null)
-            return "";
-
-        return obj.toString();
+    	if(obj == null)
+    		return "";
+    	
+    	return obj.toString();
     }
-
-    /**
-     * Returns the argument if it is not null otherwise returns zero
-     */
-    public static Integer toInteger(Integer integer) {
-        if (integer == null)
-            return 0;
-
-        return integer;
+    
+    public static String asString(Object obj) {
+    	if(obj == null)
+    		return "";
+    	
+    	return obj.toString();
     }
 }

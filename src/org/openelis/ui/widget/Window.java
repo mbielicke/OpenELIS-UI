@@ -172,33 +172,22 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
             public void onClick(ClickEvent event) {
                 
                 if(view.getBody().isVisible()) {
-                    userHeight = getOffsetHeight();// + (css.borderWidth());
+                    userHeight = getOffsetHeight();
                     view.getOuter().setHeight("25px");
                 }else
-                    view.getOuter().setHeight((userHeight-2)+"px");
-                
+                    setHeight(userHeight-(css.borderWidth()*2)+"px");
                 if(source.resize) {
-                    boolean visible = view.getBody().isVisible();
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()),!visible);
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()), !visible);
+                    UIObject.setVisible(((DockLayoutPanel)view.getOuter()).getWidgetContainerElement(view.getBody()),!view.getBody().isVisible());
+                    UIObject.setVisible(((DockLayoutPanel)view.getOuter()).getWidgetContainerElement(view.getBottom()), !view.getBottom().isVisible());
                 }
                 view.getBody().setVisible(!view.getBody().isVisible());
                 view.getBottom().setVisible(!view.getBottom().isVisible());
-                
             }
         });
         
         if(resize) {
         view.getMaximize().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                
-                if(!view.getBody().isVisible()) {
-                    view.getOuter().setHeight((userHeight-2)+"px");
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()), true);
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()), true);
-                    view.getBody().setVisible(true);
-                    view.getBottom().setVisible(true);
-                }
                 
                 if(!maximized) {
                     userWidth = getOffsetWidth();
@@ -365,47 +354,21 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
      * @param content
      */
     public void setContent(final Widget content) {
-        source.content = content;
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+        this.content = content;
+        ((Panel)view.getBody()).clear();
+        ((Panel)view.getBody()).add(content);
+        setKeyHandling();
+        setDone(Messages.get().window_done());
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() { 
             @Override
             public void execute() {
-                ((Panel)view.getBody()).clear();
-                ((Panel)view.getBody()).add(content);
-                setKeyHandling();
-                setDone(Messages.get().window_done());
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() { 
-                    @Override
-                    public void execute() {
-                       onResize();
-                    }
-                });
-                
+               onResize();
             }
         });
-
     }
 
     public Widget getContent() {
         return content;
-    }
-    
-    public void setContentSize(final int width, final int height) {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() { 
-            @Override
-            public void execute() {
-                int wth = width,hgt = height;
-                if(resize) {
-                    hgt += view.getCap().getOffsetHeight();
-                    hgt += view.getBottom().getOffsetHeight();
-                    hgt += CSSUtils.getAddedBorderHeight(resizeWindow.getElement()) * 2;
-                    wth += CSSUtils.getAddedBorderWidth(resizeWindow.getElement()) * 2;
-                    setSize(wth+"px",hgt+"px");
-                } else {
-                    content.setSize(width+"px", height+"px");
-                }
-            }
-        });
-
     }
     
     public void setKeyHandling() {
@@ -613,9 +576,9 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
     @Override
     public void onResize() {
         if(resize) {
-            if(maximized)
-                setSize(getParent().getOffsetWidth()-(css.borderWidth()*2)+"px",getParent().getOffsetHeight()-(css.borderWidth()*2)+"px");
-            ((LayoutPanel)view.getBody()).onResize();
+        if(maximized)
+            setSize(getParent().getOffsetWidth()-(css.borderWidth()*2)+"px",getParent().getOffsetHeight()-(css.borderWidth()*2)+"px");
+        ((LayoutPanel)view.getBody()).onResize();
         }
     }
 

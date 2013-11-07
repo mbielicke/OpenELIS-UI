@@ -84,7 +84,7 @@ public class Header extends FocusPanel {
     /**
      * Position where the resize started.
      */
-    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 18;
+    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 20;
     
     /**
      * Widget that used to display a then position due to resizing.

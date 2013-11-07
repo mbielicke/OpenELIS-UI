@@ -3,7 +3,7 @@
 
 
     <g:LayoutPanel ui:field="inner">
-      <g:layer top="0px" height="20px" left="0px" right="0px">
+      <g:layer top="0px" height="25px" left="0px" right="0px">
         <table:Header ui:field="header"/>
       </g:layer>
       <g:layer top="25px" bottom="0px" left="0px" right="0px">

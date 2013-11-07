@@ -81,7 +81,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
         addFocusHandler(new FocusHandler() {
         	public void onFocus(FocusEvent event) {
         		if(isEnabled()) {
-        			//textarea.selectAll();
+        			textarea.selectAll();
         			addStyleName(css.Focus());
         		}
         	}
@@ -90,7 +90,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
         addBlurHandler(new BlurHandler() {			
 			@Override
 			public void onBlur(BlurEvent event) {
-				//textarea.setSelectionRange(0,0);
+				textarea.setSelectionRange(0,0);
 				removeStyleName(css.Focus());
 				finishEditing();
             }
@@ -194,7 +194,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
         		} catch (Exception e) {
         			addValidateException(e);
         		}
-        		Balloon.checkExceptionHandlers(this);
+        		ExceptionHelper.checkExceptionHandlers(this);
         	}
         }
     }
@@ -209,7 +209,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
         } catch (Exception e) {
             addValidateException(e);
         }
-        Balloon.checkExceptionHandlers(this);
+        ExceptionHelper.checkExceptionHandlers(this);
     }
    
     
@@ -231,7 +231,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     	  
     	if (required && getValue() == null) {
             addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-            Balloon.checkExceptionHandlers(this);
+            ExceptionHelper.checkExceptionHandlers(this);
     	}
     	  
     	return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -242,7 +242,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
@@ -268,24 +268,24 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
     /**
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
+    	if(ExceptionHelper.isWarning(this))
     		addStyleName(css.InputWarning());
     	else
     		addStyleName(css.InputError());

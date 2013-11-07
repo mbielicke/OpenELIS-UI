@@ -29,7 +29,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.VerticalScrollbar;
 import org.openelis.ui.widget.celltable.Table.Scrolling;
 
@@ -207,7 +207,7 @@ public class View extends ViewInt {
         if (mr == lastRow && c == lastCol)
             return;
 
-        Balloon.hide();
+        ExceptionHelper.closePopup();
 
         timer.cancel();
 

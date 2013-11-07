@@ -28,9 +28,7 @@ package org.openelis.ui.widget.table;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableAutoCompleteCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.AutoComplete;
@@ -82,10 +80,10 @@ public class AutoCompleteCell implements CellRenderer,
     
     public void setEditor(AutoComplete editor) {
         this.editor = editor;
-        TableAutoCompleteCSS css = UIResources.INSTANCE.tableAutoComplete();
+        css = UIResources.INSTANCE.table();
         css.ensureInjected();
         editor.setEnabled(true);
-        editor.setCSS(css);
+        editor.setStyleName(css.TableDropdown());
         editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -128,7 +126,7 @@ public class AutoCompleteCell implements CellRenderer,
         	editor.setValue((AutoCompleteValue)value);
         	return editor.getDisplay();
         }else
-        	return DataBaseUtil.toString(value);
+        	return value.toString(); 
     }
 
     /**
@@ -152,7 +150,7 @@ public class AutoCompleteCell implements CellRenderer,
         if(value instanceof AutoCompleteValue)
         	editor.setValue((AutoCompleteValue)value);
         else
-        	editor.setValue(null,DataBaseUtil.toString(value));
+        	editor.setValue(null,value.toString());
         editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
         editor.selectAll();
@@ -189,9 +187,8 @@ public class AutoCompleteCell implements CellRenderer,
 
 	@Override
 	public void add(Widget w) {
-        assert w instanceof AutoComplete;
-        
-        setEditor((AutoComplete)w);
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

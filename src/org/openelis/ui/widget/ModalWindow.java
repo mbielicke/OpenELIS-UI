@@ -30,9 +30,8 @@ import org.openelis.ui.resources.WindowCSS;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbsolutePositionDropController;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ModalWindow extends org.openelis.ui.widget.Window {
@@ -46,28 +45,25 @@ public class ModalWindow extends org.openelis.ui.widget.Window {
     protected WindowCSS css;
     
     public ModalWindow() {
-        this(true);
-    }
-    
-    public ModalWindow(boolean resize) {
-        super(resize);
+        super(true);
         css = UIResources.INSTANCE.window();
         css.ensureInjected();
         
         modalGlass = new AbsolutePanel();
-        modalGlass.setSize("100%", "100%");
         modalGlass.setStyleName(css.GlassPanel());
-        RootLayoutPanel.get().add(modalGlass);
-        RootLayoutPanel.get().setWidgetTopBottom(modalGlass, 0, Unit.PX, 0, Unit.PX);
+        modalGlass.setHeight(com.google.gwt.user.client.Window.getClientHeight()+"px");
+        modalGlass.setWidth(com.google.gwt.user.client.Window.getClientWidth()+"px");
         
+        RootPanel.get().add(modalGlass);
+        RootPanel.get().setWidgetPosition(modalGlass, 0, 0);
         modalPanel = new AbsolutePanel();
-        modalPanel.setSize("100%","100%");
         modalPanel.setStyleName(css.ModalPanel());
-        RootLayoutPanel.get().add(modalPanel); 
-        RootLayoutPanel.get().setWidgetTopBottom(modalPanel,0,Unit.PX,0,Unit.PX);
-        
+        modalPanel.setHeight(com.google.gwt.user.client.Window.getClientHeight()+"px");
+        modalPanel.setWidth(com.google.gwt.user.client.Window.getClientWidth()+"px");
         modalPanel.add(this,position,position);
-        
+        RootPanel.get().add(modalPanel); 
+        RootPanel.get().setWidgetPosition(modalPanel,0,0);
+        setVisible(true);
         dragController = new PickupDragController(modalPanel,true);
         dropController = new AbsolutePositionDropController(modalPanel);
         dragController.registerDropController(dropController);
@@ -84,18 +80,11 @@ public class ModalWindow extends org.openelis.ui.widget.Window {
     public void close() {
         if(modalGlass != null) {
             removeFromParent();
-            RootLayoutPanel.get().remove(modalGlass);
-            RootLayoutPanel.get().remove(modalPanel);
+            RootPanel.get().remove(modalGlass);
+            RootPanel.get().remove(modalPanel);
+            //return;
         }
         super.close();
     }
 
-    /**
-     * Trying this method to size table correctly for when Modal Window is set.
-     */
-    @Override
-    protected void onAttach() {
-        super.onAttach();
-        onResize();
-    }
 }

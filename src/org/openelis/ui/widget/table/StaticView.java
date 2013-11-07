@@ -30,22 +30,16 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -53,10 +47,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -144,36 +134,27 @@ public class StaticView extends ViewInt {
                                       (0 - scrollView.getHorizontalScrollPosition()) + "px");
             }
         });
-        
+
+        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+            @Override
+            public void onCellMouseOver(CellMouseOutEvent event) {
+                ExceptionHelper.closePopup();
+            }
+        });
+
     }
 
-    
     @UiHandler("flexTable")
-    protected void handleDoubleClick(DoubleClickEvent event) {
-        int r,c;
+    protected void handleClick(ClickEvent event) {
+        int r, c;
 
         // if x < 0 the user moused out of table before letting up button
         // ignore event in this case
-        if (event.getClientX() < 0)
+        if (event.getX() < 0)
             return;
-        
-        r = flexTable.getRowForEvent(event.getNativeEvent());
-        c = flexTable.getColForEvent(event.getNativeEvent());
-        
-        table.fireCellDoubleClickedEvent(r,c);
-    }
-    
-    @UiHandler("flexTable")
-    protected void cellClick(ClickEvent event) {
-        int r,c;
-     
-        // if x < 0 the user moused out of table before letting up button
-        // ignore event in this case
-        if (event.getClientX() < 0)
-            return;
-        
-        r = flexTable.getRowForEvent(event.getNativeEvent());
-        c = flexTable.getColForEvent(event.getNativeEvent());
+
+        c = flexTable.getCellForEvent(event).getCellIndex();
+        r = flexTable.getCellForEvent(event).getRowIndex();
 
         if (table.fireCellClickedEvent(r, c, event.isControlKeyDown(), event.isShiftKeyDown()))
             table.startEditing(r, c, event.getNativeEvent());
@@ -184,8 +165,6 @@ public class StaticView extends ViewInt {
      * attached and when attributes affecting layout are changed in the table
      */
     protected void layout() {
-        
-        Node colgroup;
 
         /*
          * If View is not attached to DOM yet get out. onAttach will call
@@ -194,23 +173,12 @@ public class StaticView extends ViewInt {
 
         if ( !attached)
             return;
-        
-        colgroup = flexTable.getElement().getElementsByTagName("colgroup").getItem(0);
-        
-        
-        if(colgroup != null) {
-            while(colgroup.getChildCount() > table.getColumnCount())
-                colgroup.removeChild(colgroup.getChild(0));
-        }
 
         for (int c = 0; c < table.getColumnCount(); c++ ) {
             flexTable.getColumnFormatter().setWidth(c, table.getColumnAt(c).getWidth() + "px");
             if (table.getColumnAt(c).getStyle() != null)
                 flexTable.getColumnFormatter().setStyleName(c, table.getColumnAt(c).getStyle());
         }
-        
-       
-        
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
         flexTable.setHeight("1px");
         DOM.setStyleAttribute(flexTable.getElement(), "backgroundColor", "transparent");
@@ -248,7 +216,6 @@ public class StaticView extends ViewInt {
     private void createRow(int rc) {
         flexTable.insertRow(rc);
         flexTable.getCellFormatter().setHeight(rc, 0, table.getRowHeight() + "px");
-        flexTable.getRowFormatter().setVerticalAlign(rc, HasVerticalAlignment.ALIGN_TOP);
         flexTable.getRowFormatter().getElement(rc).setAttribute("index", "" + rc);
 
         if (table.getDragController() != null)
@@ -267,7 +234,9 @@ public class StaticView extends ViewInt {
     protected void renderView(int smr, int emr) {
         int r, startMax;
 
-        
+        if ( !attached)
+            return;
+
         table.finishEditing();
 
         if (smr < 0)
@@ -345,11 +314,9 @@ public class StaticView extends ViewInt {
     }
 
     protected void removeColumn(int c) {
-     
         for (int i = 0; i < flexTable.getRowCount(); i++ ) {
             flexTable.removeCell(i, c);
         }
-        
         layout();
     }
 
@@ -456,7 +423,7 @@ public class StaticView extends ViewInt {
     protected void renderCell(int r, int c) {
         CellRenderer renderer;
 
-        renderer = table.getColumnAt(c).getCellRenderer();
+        renderer = table.getColumnAt(c).getCellRenderer(r);
 
         if (table.getQueryMode())
             renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
@@ -464,7 +431,7 @@ public class StaticView extends ViewInt {
             renderer.render(flexTable, r, c, table.getValueAt(r, c));
 
         if (table.hasExceptions(r, c)) {
-            flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
+            flexTable.getCellFormatter().addStyleName(r, c, css.InputError());
             flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
                 @Override
                 public void onCellMouseOver(CellMouseOverEvent event) {
@@ -474,7 +441,6 @@ public class StaticView extends ViewInt {
             });
         } else {
             flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
-            flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
             flexTable.removeHandler(r, c);
         }
 
@@ -492,16 +458,16 @@ public class StaticView extends ViewInt {
      */
     protected void startEditing(int r, final int c, Object value, NativeEvent event) {
         container.setWidth( (table.getColumnAt(c).getWidth() - 3));
-        container.setHeight( (table.getRowHeight()));
+        container.setHeight( (table.getRowHeight() - 3));
         flexTable.setWidget(r, c, container);
 
         if (table.getQueryMode())
             table.getColumnAt(c)
-                 .getCellEditor()
+                 .getCellEditor(r)
                  .startEditingQuery((QueryData)table.getValueAt(r, c), container, event);
         else
             table.getColumnAt(c)
-                 .getCellEditor()
+                 .getCellEditor(r)
                  .startEditing(table.getValueAt(r, c), container, event);
     }
 
@@ -515,7 +481,7 @@ public class StaticView extends ViewInt {
     protected Object finishEditing(int r, int c) {
         CellEditor cellEditor;
 
-        cellEditor = table.getColumnAt(c).getCellEditor();
+        cellEditor = table.getColumnAt(c).getCellEditor(r);
 
         return cellEditor.finishEditing();
     }
@@ -587,9 +553,6 @@ public class StaticView extends ViewInt {
 
         super.onAttach();
 
-        if(attached)
-            return;
-            
         attached = true;
         layout();
         flexTable.setVisible(false);
@@ -599,13 +562,6 @@ public class StaticView extends ViewInt {
             public void execute() {
                 flexTable.setVisible(true);
                 Element svEl = inner.getWidgetContainerElement(scrollView);
-                
-                if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                    table.setWidth(CSSUtils.getWidth(svEl) - 1);
-                else
-                    table.setWidth(CSSUtils.getWidth(svEl) -
-                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
-                
                 if (CSSUtils.getWidth( (svEl)) > 0) {
                     table.setWidth(CSSUtils.getWidth(svEl) - 1);
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
@@ -691,7 +647,6 @@ public class StaticView extends ViewInt {
         super.onResize();
 
         Element svEl = inner.getWidgetContainerElement(scrollView);
-      
 
         if (CSSUtils.getWidth(svEl) > 0) {
 
@@ -704,16 +659,9 @@ public class StaticView extends ViewInt {
             scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                 CSSUtils.getAddedBorderWidth(table.getElement()) + "px");
 
-            if (CSSUtils.getHeight(inner) > 0) {
-                int height = CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
-                                CSSUtils.getAddedBorderHeight(table.getElement());
-                /*
-                 * This check is here only for Unit Testing.  If not done Unit test on the
-                 * table will fail here with assertion check from the widget.
-                 */
-                if(height > 0)
-                    scrollView.setHeight(height + "px");
-            }
+            if (CSSUtils.getHeight(svEl) > 0)
+                scrollView.setHeight(CSSUtils.getHeight(svEl) -
+                                     CSSUtils.getAddedBorderHeight(table.getElement()) + "px");
 
         }
     }
@@ -725,25 +673,6 @@ public class StaticView extends ViewInt {
                            "px");
         else if (before > 0 && scrollView.getMaximumVerticalScrollPosition() == 0)
             table.setWidth(table.getOffsetWidth() - 1 + "px");
-    }
-    
-    /*
-     * This public method added for unit testing 
-     */
-    public String getCellDisplay(int row, int col) {
-        return flexTable.getText(row, col);
-    }
-    
-    public Widget getCellWidget(int row, int col) {
-        Widget wid;
-        
-        wid = flexTable.getWidget(row, col);
-       
-        if(wid == container)
-            return container.editor;
-        
-        return wid;
-       
     }
 
 }

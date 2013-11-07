@@ -3,10 +3,10 @@
 
 
     <g:LayoutPanel ui:field="inner">
-      <g:layer top="0px" height="20px" left="0px" right="0px">
+      <g:layer top="0px" height="25px" left="0px" right="0px">
         <r:Header ui:field="header"/>
       </g:layer>
-      <g:layer top="20px" bottom="0px" left="0px" right="0px">
+      <g:layer top="25px" bottom="0px" left="0px" right="0px">
         <g:ScrollPanel ui:field="scrollView">
           <t:FlexTable ui:field="flexTable" />
         </g:ScrollPanel>

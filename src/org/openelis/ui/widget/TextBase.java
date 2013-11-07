@@ -71,7 +71,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     	super.setStyleName(style);
     	setCase(this.textCase);
     }
-    
+
     /**
      * Set the text case for input.
      */
@@ -180,8 +180,6 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     		});
     		
     	}
-    	
-    	setMaxLength(mask.length());
     }
     	
     
@@ -192,11 +190,6 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
      */
     public void enforceMask(boolean enforce) {
     	enforceMask = enforce;
-    	
-    	if(enforce && mask != null)
-    	    setMaxLength(mask.length());
-    	else
-    	    setMaxLength(255);
     }
     
     public boolean isMaskEnforced() {
@@ -365,8 +358,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_LEFT ||
 				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_RIGHT ||
 				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_DELETE ||
-				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_BACKSPACE ||
-				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER )
+				event.getNativeEvent().getKeyCode() == KeyCodes.KEY_BACKSPACE)
 			return;
 
 
@@ -446,11 +438,6 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     public void setCSS(TextCSS css) {
     	css.ensureInjected();
     	this.css = css;
-    }
-    
-    @Override
-    public void setEnabled(boolean enabled) {
-        setReadOnly(!enabled);
     }
 
 }

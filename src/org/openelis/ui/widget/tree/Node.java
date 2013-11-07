@@ -37,11 +37,6 @@ public class Node extends Row {
     protected String type;
     protected Integer key;
     
-    public Node(String type, int columns) {
-        this(columns);
-        this.type = type;
-    }
-    
     public Node(int columns) {
         super(columns);
     }

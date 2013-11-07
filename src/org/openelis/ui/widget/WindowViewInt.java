@@ -41,8 +41,6 @@ public interface WindowViewInt extends IsWidget {
     public Widget getWest();
 
     public Widget getBody();
-    
-    public Widget getInner();
 
     public Grid getStatusContainer();
 

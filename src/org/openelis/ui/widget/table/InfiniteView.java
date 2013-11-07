@@ -31,28 +31,36 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.VerticalScrollbar;
 import org.openelis.ui.widget.table.Table.Scrolling;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.VisibleEvent;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -195,7 +203,7 @@ public class InfiniteView extends ViewInt {
         if (mr == lastRow && c == lastCol)
             return;
 
-        Balloon.hide();
+        ExceptionHelper.closePopup();
 
         timer.cancel();
 
@@ -527,7 +535,7 @@ public class InfiniteView extends ViewInt {
     private void renderCell(int rc, int c, int r) {
     	CellRenderer renderer;
     	
-    	renderer = table.getColumnAt(c).getCellRenderer();
+    	renderer = table.getColumnAt(c).getCellRenderer(r);
 
     	if (table.getQueryMode())
     		renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
@@ -582,11 +590,11 @@ public class InfiniteView extends ViewInt {
 
         if (table.getQueryMode())
             table.getColumnAt(c)
-                 .getCellEditor()
+                 .getCellEditor(r)
                  .startEditingQuery((QueryData)table.getValueAt(r, c),container,
                                     event);
         else
-            table.getColumnAt(c).getCellEditor().startEditing(table.getValueAt(r, c), container, event);
+            table.getColumnAt(c).getCellEditor(r).startEditing(table.getValueAt(r, c), container, event);
     }
 
     /**
@@ -600,7 +608,7 @@ public class InfiniteView extends ViewInt {
 	protected Object finishEditing(int r, int c) {
         CellEditor cellEditor;
 
-        cellEditor = table.getColumnAt(c).getCellEditor();
+        cellEditor = table.getColumnAt(c).getCellEditor(r);
 
         return cellEditor.finishEditing();
     }

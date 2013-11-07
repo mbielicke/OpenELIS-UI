@@ -39,7 +39,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -69,7 +68,7 @@ public class Header extends FocusPanel {
     /**
      * Position where the resize started.
      */
-    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 16;
+    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 20;
     
     /**
      * Widget that used to display a then position due to resizing.
@@ -172,10 +171,6 @@ public class Header extends FocusPanel {
                 
                 popResize.setPopupPosition(startX, ((Widget)event.getSource()).getAbsoluteTop());
                 popResize.show();
-                if(tree.view.scrollView().getMaximumHorizontalScrollPosition() > 0)
-                    bar.setHeight(tree.view.scrollView().getOffsetHeight() + getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()+"px");
-                else
-                    bar.setHeight((tree.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
                 /*
                  * We set the capture of mouse events now to the resize bar itself.  This allows us
                  * to simplify the logic of dragging the bar, as well as provide smoother dragging and 

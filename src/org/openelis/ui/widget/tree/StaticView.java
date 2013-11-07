@@ -31,21 +31,18 @@ import org.openelis.ui.resources.TreeCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.table.FlexTable;
 import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
-import org.openelis.ui.widget.tree.View.TreeGrid;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -56,10 +53,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -140,10 +135,7 @@ public class StaticView extends ViewInt {
 
         toggleHandler = new ClickHandler() {
             public void onClick(ClickEvent event) {
-                Cell cell = ((Grid)event.getSource()).getCellForEvent(event);
-                String cellType = cell.getElement().getClassName();
-                
-                if ( cellType.equals(css.treeOpenImage()) || cellType.equals(css.treeClosedImage())) {
+                if ( ((Grid)event.getSource()).getCellForEvent(event).getCellIndex() == 0) {
                     tree.toggle(flexTable.getRowForEvent(event.getNativeEvent()));
                     event.stopPropagation();
                 }
@@ -163,7 +155,14 @@ public class StaticView extends ViewInt {
                                       (0 - scrollView.getHorizontalScrollPosition()) + "px");
             }
         });
-        
+
+        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+            @Override
+            public void onCellMouseOver(CellMouseOutEvent event) {
+                ExceptionHelper.closePopup();
+            }
+        });
+
     }
 
     @UiHandler("flexTable")
@@ -187,8 +186,6 @@ public class StaticView extends ViewInt {
      * attached and when attributes affecting layout are changed in the table
      */
     protected void layout() {
-        
-        com.google.gwt.dom.client.Node colgroup;
 
         /*
          * If View is not attached to DOM yet get out. onAttach will call
@@ -197,12 +194,6 @@ public class StaticView extends ViewInt {
 
         if ( !attached)
             return;
-        
-        colgroup = flexTable.getElement().getElementsByTagName("colgroup").getItem(0);
-        if(colgroup != null){
-            while(colgroup.getChildCount() > tree.getColumnCount())
-                colgroup.removeChild(colgroup.getChild(0));
-        }
 
         for (int c = 0; c < tree.getColumnCount(); c++ ) {
             flexTable.getColumnFormatter().setWidth(c, tree.getColumnAt(c).getWidth() + "px");
@@ -354,9 +345,9 @@ public class StaticView extends ViewInt {
 
     protected void removeNodes(int start, int count) {
         int startMax = scrollView.getMaximumVerticalScrollPosition();
-        for(int r = 0; r < count; r++) {
+        
+        for(int r = 0; r < count; r++)
             flexTable.removeRow(start);
-        }
 
         adjustForScroll(startMax);
     }
@@ -476,7 +467,7 @@ public class StaticView extends ViewInt {
         if(c == 0) {
             table = getTreeCell(node,r,c);
             row = 0; 
-            col = table.getCellCount(0) - 1;
+            col = 2;
         }
         
         
@@ -486,7 +477,7 @@ public class StaticView extends ViewInt {
             renderer.render(table, row, col, tree.getValueAt(r, c));
 
         if (tree.hasExceptions(r, c)) {
-            flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(tree.getEndUserExceptions(r,c),tree.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
+            flexTable.getCellFormatter().addStyleName(r, c, css.InputError());
             flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
                 @Override
                 public void onCellMouseOver(CellMouseOverEvent event) {
@@ -496,7 +487,6 @@ public class StaticView extends ViewInt {
             });
         } else {
             flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
-            flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
             flexTable.removeHandler(r, c);
         }
 
@@ -513,18 +503,9 @@ public class StaticView extends ViewInt {
      * @param event
      */
     protected void startEditing(int r, final int c, Object value, NativeEvent event) {
-        if(c > 0) {
-            container.setWidth( (tree.getColumnAt(c).getWidth() - 3));
-            container.setHeight( (tree.getRowHeight() - 3));
-            flexTable.setWidget(r, c, container);
-        } else {
-            TreeGrid grid = (TreeGrid)flexTable.getWidget(r, c);
-            int width = grid.getCellFormatter().getElement(0, 3).getOffsetWidth() - 3;
-            if(width > 0)
-                container.setWidth(width);
-            container.setHeight(tree.getRowHeight() - 3);
-            grid.setWidget(0, 3, container);
-        }
+        container.setWidth( (tree.getColumnAt(c).getWidth() - 3));
+        container.setHeight( (tree.getRowHeight() - 3));
+        flexTable.setWidget(r, c, container);
 
         if (tree.getQueryMode())
             tree.getCellEditor(r,c)
@@ -615,9 +596,6 @@ public class StaticView extends ViewInt {
     protected void onAttach() {
 
         super.onAttach();
-        
-        if(attached)
-            return;
 
         attached = true;
         layout();
@@ -628,14 +606,8 @@ public class StaticView extends ViewInt {
             public void execute() {
                 flexTable.setVisible(true);
                 Element svEl = inner.getWidgetContainerElement(scrollView);
-                if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                    tree.setWidth(CSSUtils.getWidth(svEl) - 1);
-                else
-                    tree.setWidth(CSSUtils.getWidth(svEl) -
-                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
-                
                 if (CSSUtils.getWidth( (svEl)) > 0) {
-                    tree.setWidth(CSSUtils.getWidth(svEl) - 2);
+                    tree.setWidth(CSSUtils.getWidth(svEl) - 1);
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(tree.getElement()) + "px");
                 }
@@ -645,7 +617,6 @@ public class StaticView extends ViewInt {
                                          CSSUtils.getAddedBorderHeight(tree.getElement()) + "px");
 
                 }
-
             }
         });
 
@@ -731,24 +702,17 @@ public class StaticView extends ViewInt {
         if (CSSUtils.getWidth(svEl) > 0) {
 
             if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                tree.setWidth(CSSUtils.getWidth(svEl) - 2);
+                tree.setWidth(CSSUtils.getWidth(svEl) - 1);
             else
                 tree.setWidth(CSSUtils.getWidth(svEl) -
-                               NativeVerticalScrollbar.getNativeScrollbarWidth() - 2);
+                               NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
 
             scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                 CSSUtils.getAddedBorderWidth(tree.getElement()) + "px");
 
-            if (CSSUtils.getHeight(inner) > 0) {
-                int height = CSSUtils.getHeight(inner) - CSSUtils.getHeight(header) -
-                                CSSUtils.getAddedBorderHeight(tree.getElement());
-                /*
-                 * This check is here only for Unit Testing.  If not done Unit test on the
-                 * table will fail here with assertion check from the widget.
-                 */
-                if(height > 0)
-                    scrollView.setHeight(height + "px");
-            }
+            if (CSSUtils.getHeight(svEl) > 0)
+                scrollView.setHeight(CSSUtils.getHeight(svEl) -
+                                     CSSUtils.getAddedBorderHeight(tree.getElement()) + "px");
 
         }
     }
@@ -756,10 +720,10 @@ public class StaticView extends ViewInt {
     private void adjustForScroll(int before) {
         if (before == 0 && scrollView.getMaximumVerticalScrollPosition() > 0)
             tree.setWidth( (tree.getOffsetWidth() -
-                             NativeVerticalScrollbar.getNativeScrollbarWidth() - 2) +
+                             NativeVerticalScrollbar.getNativeScrollbarWidth() - 1) +
                            "px");
         else if (before > 0 && scrollView.getMaximumVerticalScrollPosition() == 0)
-            tree.setWidth(tree.getOffsetWidth() - 2 + "px");
+            tree.setWidth(tree.getOffsetWidth() - 1 + "px");
     }
     
     protected TreeGrid getTreeCell(Node node, int row, int col) {
@@ -767,111 +731,47 @@ public class StaticView extends ViewInt {
         int level;
         String image;
         Widget widget;
-        AbsolutePanel lineDiv,line;
 
         image = node.getImage();
         level = tree.showRoot() ? node.getLevel() : node.getLevel() - 1;
+        
+        DOM.setStyleAttribute(flexTable.getCellFormatter().getElement(row, col), "paddingLeft", (level * indent) + "px");
 
-        /**
-         * Seems something has changed in GWT jars where we need to create a new TreeGrid everytime to ensure that the correct tree grid is displayed
-         * May need to revisit if performance is compromised. 
-         */
-        //grid = (widget = flexTable.getWidget(row, col)) instanceof TreeGrid ? (TreeGrid)widget : new TreeGrid(level);
+        grid = (widget = flexTable.getWidget(row, col)) instanceof TreeGrid ? (TreeGrid)widget : new TreeGrid();
         
-        grid = new TreeGrid(level);
-        
-        // Set the new tree grid into table when drawing first time otherwise re-use grid;
-        //if(widget != grid)   
+        if(widget != grid)   
             flexTable.setWidget(row, col, grid);
          
         if ( !node.isLeaf()) {
             if (node.isOpen)
-                grid.getCellFormatter().setStyleName(0, 1, css.treeOpenImage());
+                grid.getCellFormatter().setStyleName(0, 0, css.treeOpenImage());
             else
-                grid.getCellFormatter().setStyleName(0, 1, css.treeClosedImage());
-        }
-
-        //if at top level of tree set line cell to invisible;
-        if(level == 0) {
-            if(node.isLeaf())
-                grid.getCellFormatter().setWidth(0, 0, "15px");
-            else
-                grid.getCellFormatter().setVisible(0, 0, false);
+                grid.getCellFormatter().setStyleName(0, 0, css.treeClosedImage());
+            grid.getCellFormatter().setVisible(0, 0, true);
         } else {
-            /*
-             * Create div to draw lines and set cell to appropiate width
-             */
-            grid.getCellFormatter().setWidth(0, 0, (level*15)+"px");
-            
-            lineDiv = new AbsolutePanel();
-            
-            lineDiv.setWidth("100%");
-            lineDiv.setHeight(tree.rowHeight+"px");
-            
-            grid.setWidget(0,0,lineDiv);
-            
-            int i = 0;
-            
-            //Loop for drawing lines
-            while (i < level) {
-                
-                // Check if lines lower then current node level should be drawn
-                if(i+1 < level) {
-                    Node parent = node.getParent();
-                    while(parent != tree.root && parent.getParent().getLastChild() == parent)
-                        parent = parent.getParent();
-                    if(parent.getParent() == tree.root) {
-                        i++;
-                        continue;
-                    }
-                }
-                
-                // Draw vertical for all levels up to current level
-                if(i < level) {
-                    line = new AbsolutePanel();
-                
-                    line.getElement().getStyle().setWidth(1, Unit.PX);
-                    line.getElement().getStyle().setBackgroundColor("black");
-                    if(node.getParent().getLastChild() == node && i + 1 == level) {
-                        line.getElement().getStyle().setHeight(tree.rowHeight/2,Unit.PX);
-                        line.getElement().getStyle().setTop(-((tree.rowHeight/2)-1),Unit.PX);
-                    }else
-                        line.getElement().getStyle().setHeight(tree.rowHeight, Unit.PX);
-                
-                    lineDiv.add(line,(i*15)+8,0);
+            grid.getCellFormatter().setVisible(0, 0, false);
 
-                }
-                
-                //If loop is on current level then draw dash to node
-                if(i+1 == level) {
-                    line = new AbsolutePanel();
-                    
-                    line.getElement().getStyle().setWidth(5, Unit.PX);
-                    line.getElement().getStyle().setBackgroundColor("black");
-                    line.getElement().getStyle().setHeight(1, Unit.PX);
-                    lineDiv.add(line,(i*15)+8,(tree.rowHeight/2));
-
-                }
-                
-                i++;
-            }
         }
+        
 
-        // Draw node image if one is set in the model
-        if (image != null)
-            grid.getCellFormatter().setStyleName(0, 2, image);
-        else
-            grid.getCellFormatter().setVisible(0,2,false);
+        if (image == null)
+            grid.getCellFormatter().setVisible(0, 1, false);
+        else {
+            grid.getCellFormatter().setVisible(0, 1, true);
+            grid.getCellFormatter().setStyleName(0, 1, image);
+        }
         
         return grid;
     }
     
     protected class TreeGrid extends Grid {
-        public TreeGrid(int level) {
-            super(1,4);
+        public TreeGrid() {
+            super(1,3);
             addStyleName(css.TreeCell());
             setWidth("100%");
-            getCellFormatter().setWidth(0,3, "100%");
+            //getCellFormatter().setWidth(0, 0, "10px");
+            //getCellFormatter().setWidth(0, 1, "10px");
+            getCellFormatter().setWidth(0, 2, "100%");
             addClickHandler(toggleHandler);
             setCellPadding(0);
             setCellSpacing(0);

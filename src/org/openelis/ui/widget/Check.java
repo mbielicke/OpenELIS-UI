@@ -74,7 +74,6 @@ public class Check extends FocusPanel implements HasValueChangeHandlers<Boolean>
         addHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 changeValue();
-                event.stopPropagation();
             }
         }, ClickEvent.getType());
 

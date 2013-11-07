@@ -29,7 +29,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.VerticalScrollbar;
 import org.openelis.ui.widget.table.Table.Scrolling;
 
@@ -49,6 +49,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -195,7 +196,7 @@ public class View extends ViewInt {
         if (mr == lastRow && c == lastCol)
             return;
 
-        Balloon.hide();
+        ExceptionHelper.closePopup();
 
         timer.cancel();
 
@@ -560,7 +561,7 @@ public class View extends ViewInt {
     private void renderCell(int rc, int c, int r) {
     	CellRenderer renderer;
     	
-    	renderer = table.getColumnAt(c).getCellRenderer();
+    	renderer = table.getColumnAt(c).getCellRenderer(r);
 
     	if (table.getQueryMode())
     		renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
@@ -609,17 +610,17 @@ public class View extends ViewInt {
         else if (x2 > v2)
             scrollView.setHorizontalScrollPosition(x2 - table.getWidthWithoutScrollbar());
         
-        container.setWidth( (table.getColumnAt(c).getWidth() - 1));
-        container.setHeight( (table.getRowHeight()));
+        container.setWidth( (table.getColumnAt(c).getWidth() - 3));
+        container.setHeight( (table.getRowHeight() - 3));
         flexTable.setWidget(rc, c, container);
 
         if (table.getQueryMode())
             table.getColumnAt(c)
-                 .getCellEditor()
+                 .getCellEditor(r)
                  .startEditingQuery((QueryData)table.getValueAt(r, c),container,
                                     event);
         else
-            table.getColumnAt(c).getCellEditor().startEditing(table.getValueAt(r, c), container, event);
+            table.getColumnAt(c).getCellEditor(r).startEditing(table.getValueAt(r, c), container, event);
     }
 
     /**
@@ -633,7 +634,7 @@ public class View extends ViewInt {
 	protected Object finishEditing(int r, int c) {
         CellEditor cellEditor;
 
-        cellEditor = table.getColumnAt(c).getCellEditor();
+        cellEditor = table.getColumnAt(c).getCellEditor(r);
 
         return cellEditor.finishEditing();
     }

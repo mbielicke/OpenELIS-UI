@@ -46,13 +46,13 @@ public class CellMouseOutEvent extends MouseEvent<CellMouseOutEvent.Handler> {
     @Override
     protected void dispatch(Handler handler) {
         if(handler.row < 0 || (handler.row == row && col == handler.col))
-            handler.onCellMouseOut(this);
+            handler.onCellMouseOver(this);
     }
     
     public static abstract class Handler implements EventHandler {
         public int row = -1,col = -1;
         
-        public abstract void onCellMouseOut(CellMouseOutEvent event);
+        public abstract void onCellMouseOver(CellMouseOutEvent event);
        
     }
 

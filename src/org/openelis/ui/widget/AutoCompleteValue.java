@@ -52,10 +52,6 @@ public class AutoCompleteValue {
         
     }
     
-    public AutoCompleteValue(AutoCompleteValue value) {
-        this(value.id,value.display,value.data);
-    }
-    
     /**
      * Constructor that takes an integer key and a String display value
      * @param id
@@ -64,12 +60,6 @@ public class AutoCompleteValue {
     public AutoCompleteValue(Integer id, String display){
         this.id = id;
         this.display = display;
-    }
-    
-    public AutoCompleteValue(Integer id, String display, Object data){
-        this.id = id;
-        this.display = display;
-        this.data = data;
     }
 
     /**

@@ -31,6 +31,7 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.celltable.event.CellMouseOutEvent;
 import org.openelis.ui.widget.celltable.event.CellMouseOverEvent;
 
@@ -138,8 +139,8 @@ public class StaticView extends ViewInt {
 
         flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
             @Override
-            public void onCellMouseOut(CellMouseOutEvent event) {
-                //ExceptionHelper.closePopup();
+            public void onCellMouseOver(CellMouseOutEvent event) {
+                ExceptionHelper.closePopup();
             }
         });
 

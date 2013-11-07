@@ -51,7 +51,6 @@
  
 .TreeCell td {
 	border : none;
-	padding : 0px;
 }
 
 .Tree tr.Selection .TreeCell tr {
@@ -75,15 +74,15 @@
 }
 
 @sprite .treeClosedImage{
-	gwt-image:'treeClosed';
+	gwt-image:'treePlus';
     height:10px;
-    width:16px;
+    width:10px;
     cursor:pointer;
 }
 
 @sprite .treeOpenImage{
-    gwt-image:'treeOpen';
+    gwt-image:'treeMinus';
     height:10px;
-    width:16px;
+    width:10px;
     cursor:pointer;
 }

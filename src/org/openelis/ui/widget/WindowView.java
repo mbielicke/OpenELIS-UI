@@ -116,10 +116,6 @@ public class WindowView extends Composite implements WindowViewInt{
     public AbsolutePanel getBody() {
         return body;
     }
-    
-    public Widget getInner() {
-        return null;
-    }
 
     @Override
     public Grid getStatusContainer() {

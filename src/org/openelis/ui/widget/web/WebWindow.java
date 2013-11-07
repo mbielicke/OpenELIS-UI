@@ -193,16 +193,17 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	 * Pops up a busy confirmation window with a spinngin icon and and the passed message
 	 */
 	public void setBusy(String message) {
-		confirm = new Confirm(Confirm.Type.BUSY,null,message,null);
-		confirm.show();
+		//confirm = new Confirm(Confirm.Type.BUSY,null,message,null);
+		//confirm.setSize("400px", "200px");
+		//confirm.show();
 	}
 
 	/**
 	 * Hides the confirmation dialog if showing
 	 */
 	public void clearStatus() {
-		if(confirm != null)
-			confirm.hide();
+		//if(confirm != null)
+			//confirm.hide();
 	}
 
 	/**
@@ -216,9 +217,9 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	 * Pops up an Error confirmation with the passed message
 	 */
 	public void setError(String message) {
-	    clearStatus();
-		confirm = new Confirm(Confirm.Type.ERROR,"Error",message,"OK");
-		confirm.show();
+		//confirm = new Confirm(Confirm.Type.ERROR,"Error",message,"OK");
+		//confirm.setSize("400px","200px");
+		//confirm.show();
 	}
 	
 	/**
