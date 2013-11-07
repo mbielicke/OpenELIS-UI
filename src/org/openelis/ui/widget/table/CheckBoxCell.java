@@ -46,7 +46,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,7 +63,6 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
     private CheckBox  editor;
     private boolean   query;
     private ColumnInt column;
-    private String    align = "center";
     
     protected CheckboxCSS css;
     
@@ -124,7 +122,7 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         }
 
         container.setEditor(editor);
-        DOM.setStyleAttribute(container.getElement(), "align", align); 
+        DOM.setStyleAttribute(container.getElement(), "align", "center"); 
         editor.setFocus(true);
     }
     
@@ -145,7 +143,7 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
             });
         } else {
             container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", align); 
+            DOM.setStyleAttribute(container.getElement(), "align", "center"); 
         }
     }
     
@@ -217,19 +215,9 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         div = new AbsolutePanel();
         div.setStyleName(style);
         table.setWidget(row, col, div);
-        if(align.equalsIgnoreCase("left"))
-            table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_LEFT);
-        else if(align.equalsIgnoreCase("right"))
-            table.getCellFormatter().setHorizontalAlignment(row, col, HasHorizontalAlignment.ALIGN_RIGHT);
-        else
-            table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_CENTER);
-            
+        table.getCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_CENTER);
 	}
 
-	public void setAlign(String align) {
-	    this.align = align;
-	}
-	
 	@Override
 	public void add(Widget w) {
 		// TODO Auto-generated method stub

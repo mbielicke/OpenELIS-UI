@@ -180,8 +180,6 @@ public class Header extends FocusPanel {
                 popResize.show();
                 if(columnar.view.scrollView.getMaximumHorizontalScrollPosition() > 0)
                     bar.setHeight(columnar.view.scrollView.getOffsetHeight() + getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()+"px");
-                else
-                    bar.setHeight((columnar.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
                 /*
                  * We set the capture of mouse events now to the resize bar itself.  This allows us
                  * to simplify the logic of dragging the bar, as well as provide smoother dragging and 

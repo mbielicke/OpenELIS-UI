@@ -109,7 +109,9 @@ public class PercentBar extends Composite {
 	public void addRange(ColorRange color) {
 	    if(colors == null)
 	       colors = new ArrayList<ColorRange>();
+	    
 	    colors.add(color);
+	    
 	}
 	
 	/**

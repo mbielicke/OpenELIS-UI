@@ -609,8 +609,8 @@ public class View extends ViewInt {
         else if (x2 > v2)
             scrollView.setHorizontalScrollPosition(x2 - table.getWidthWithoutScrollbar());
         
-        container.setWidth( (table.getColumnAt(c).getWidth() - 1));
-        container.setHeight( (table.getRowHeight()));
+        container.setWidth( (table.getColumnAt(c).getWidth() - 3));
+        container.setHeight( (table.getRowHeight() - 3));
         flexTable.setWidget(rc, c, container);
 
         if (table.getQueryMode())

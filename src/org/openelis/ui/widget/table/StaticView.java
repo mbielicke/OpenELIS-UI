@@ -56,7 +56,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -197,7 +196,6 @@ public class StaticView extends ViewInt {
         
         colgroup = flexTable.getElement().getElementsByTagName("colgroup").getItem(0);
         
-        
         if(colgroup != null) {
             while(colgroup.getChildCount() > table.getColumnCount())
                 colgroup.removeChild(colgroup.getChild(0));
@@ -248,7 +246,6 @@ public class StaticView extends ViewInt {
     private void createRow(int rc) {
         flexTable.insertRow(rc);
         flexTable.getCellFormatter().setHeight(rc, 0, table.getRowHeight() + "px");
-        flexTable.getRowFormatter().setVerticalAlign(rc, HasVerticalAlignment.ALIGN_TOP);
         flexTable.getRowFormatter().getElement(rc).setAttribute("index", "" + rc);
 
         if (table.getDragController() != null)
@@ -491,8 +488,8 @@ public class StaticView extends ViewInt {
      * @param event
      */
     protected void startEditing(int r, final int c, Object value, NativeEvent event) {
-        container.setWidth( (table.getColumnAt(c).getWidth() - 3));
-        container.setHeight( (table.getRowHeight()));
+        container.setWidth( (table.getColumnAt(c).getWidth() - 5));
+        container.setHeight( (table.getRowHeight() - 3));
         flexTable.setWidget(r, c, container);
 
         if (table.getQueryMode())

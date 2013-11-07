@@ -20,9 +20,6 @@ public interface UIResources extends ClientBundle {
 	@Source("css/atozButton.css")
 	AtozButtonCSS atozButton();
 	
-	@Source("css/icon.css")
-	IconCSS icon();
-	
 	@Source("css/window.css")
 	WindowCSS window();
 	
@@ -60,7 +57,7 @@ public interface UIResources extends ClientBundle {
 	MenuCSS menuCss();
 	
 	@Source("css/note.css")
-	NoteCSS noteCSS();
+	NoteCSS note();
 	
 	@Source("css/popup.css")
 	PopupCSS popup();
@@ -87,12 +84,6 @@ public interface UIResources extends ClientBundle {
 	@Source("css/table.css")
 	TableCSS table();
 	
-	@Source("css/droptable.css")
-    DropTableCSS dropTable();
-	
-	@Source("css/columnar.css")
-	ColumnarCSS columnar();
-	
 	@Source("css/dragdrop.css")
 	DragDropCSS dragDrop();
 	
@@ -112,10 +103,7 @@ public interface UIResources extends ClientBundle {
 	CalendarUICSS calendarui();
 	
 	@Source("css/lookupbutton.css")
-	LookupButtonCSS lookupButton();	
-	
-	@Source("css/formfieldbutton.css")
-	FormFieldButtonCSS FormFieldButton();
+	LookupButtonCSS lookupButton();
 	
 	@Source("css/titledpanel.css")
 	TitledPanelCSS titledPanel();
@@ -125,9 +113,6 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("css/cal.css")
 	CalCSS cal();
-	
-	@Source("css/link.css")
-	LinkCSS link();
 	
 	@Source("images/close.png")
 	ImageResource closeButton();
@@ -192,9 +177,6 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("images/menudown.gif")
 	ImageResource menuDown();
-	
-	@Source("images/menudowndisabled.gif")
-	ImageResource menuDownDisabled();
 	
 	@Source("images/moveright.gif")
 	ImageResource moveRight();
@@ -431,17 +413,4 @@ public interface UIResources extends ClientBundle {
     @Source("images/nextpagebuttonimagedisabled.gif")
     ImageResource nextPageDisabled();
 	
-    @Source("images/arrow_down.png")
-    ImageResource arrowDownButtonImage();
-    
-    @Source("images/arrow_downdisabled.png")
-    ImageResource arrowDownButtonImageDisabled();
-    
-    @Source("images/arrow_up.png")
-    ImageResource arrowUpButtonImage();
-    
-    @Source("images/arrow_updisabled.png")
-    ImageResource arrowUpButtonImageDisabled();
-    
-    
 }

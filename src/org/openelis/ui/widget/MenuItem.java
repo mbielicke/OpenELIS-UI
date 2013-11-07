@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.widget.Balloon.Placement;
-import org.openelis.ui.resources.IconCSS;
 import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -65,7 +64,6 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
 	protected TableRowElement bottomRow;
 	
 	protected MenuCSS css;
-	protected IconCSS iconCSS;
 	
 	protected ArrayList<Command> commands;
 	
@@ -84,13 +82,8 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
 	
 	public MenuItem() {
 		initWidget(uiBinder.createAndBindUi(this));    
-		
 		css = UIResources.INSTANCE.menuCss();
 		css.ensureInjected();
-		
-		iconCSS = UIResources.INSTANCE.icon();
-		iconCSS.ensureInjected();
-		
         setEnabled(true);
     }
 	
@@ -117,11 +110,9 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
         if(!enabled) {
             unsinkEvents(Event.ONCLICK);
             addStyleName(css.disabled());
-            addStyleName(iconCSS.Disabled());
         }else{
             sinkEvents(Event.ONCLICK);
             removeStyleName(css.disabled());
-            removeStyleName(iconCSS.Disabled());
         }
     }
     

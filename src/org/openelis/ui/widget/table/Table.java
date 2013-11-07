@@ -34,8 +34,6 @@ import java.util.logging.Logger;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
-import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.CheckBox;
 import org.openelis.ui.widget.Balloon;
@@ -440,9 +438,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                             finishEditing();
                             return;
                         }
-                    
-                        if(getRowCount() == 0)
-                            return;
 
                         // If not editing and a row is selected, focus on first
                         // editable cell
@@ -464,16 +459,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         addDomHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent event) {
-                //removeStyleName(UIResources.INSTANCE.text().Focus());
             }
         }, BlurEvent.getType());
 
-        addDomHandler(new FocusHandler() {
-            @Override
-            public void onFocus(FocusEvent event) {
-                //addStyleName(UIResources.INSTANCE.text().Focus());
-            }
-        }, FocusEvent.getType());
     }
 
     // ********* Table Definition Methods *************
@@ -545,8 +533,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         this.model = (ArrayList<Row>)model;
         modelView = this.model;
         rowIndex = null;
-        
-        checkExceptions();
 
         // Clear any filter choices that may have been in force before model
         // changed
@@ -1670,11 +1656,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         exceptions = column.getCellRenderer().validate(value);
         
-        if (column.isRequired() && value == null) {
-            if(exceptions == null)
-                exceptions = new ArrayList<Exception>();
+        if (column.isRequired() && value == null) 
             exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
-        }
         
         setValidateException(row,col,exceptions);
 
@@ -2079,15 +2062,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public <T extends Row> void addException(T row, int col, Exception error) {
-        ArrayList<Exception> exceptions;
         int r;
   
-        exceptions = getEndUserExceptionList(row, col);
-        
-        if(exceptions.contains(error))
-            return;
-        
-        exceptions.add(error);
+        getEndUserExceptionList(row, col).add(error);
   
         if(rowIndex != null && rowIndex.containsKey(row)) {
             r = rowIndex.get(row).view;
@@ -2099,15 +2076,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Adds a manual Exception to the widgets exception list.
      */
     public void addException(int row, int col, Exception error) {
-        ArrayList<Exception> exceptions;
-        
-        exceptions = getEndUserExceptionList(getRowAt(row), col);
-        
-        if(exceptions.contains(error))
-            return;
-        
-        exceptions.add(error);
-        
+        getEndUserExceptionList(getRowAt(row), col).add(error);
         renderView(row, row);
     }
 
@@ -2522,7 +2491,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void validate() {
         boolean render = false;
         ArrayList<Exception> exceptions;
-        Exception exception;
 
         finishEditing();
         
@@ -2534,11 +2502,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 for (int row = 0; row < getRowCount(); row++ ) {
                     if (getValueAt(row, col) == null) {
                         exceptions = getValidateExceptionList(row, col);
-                        exception = new Exception(Messages.get().exc_fieldRequired());
-                        if(!exceptions.contains(exception)) {
-                            setValidateException(row, col, exceptions);
-                            render = true;
-                        }
+                        exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+                        setValidateException(row, col, exceptions);
+                        render = true;
                     }
                 }
             }
@@ -2589,61 +2555,12 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
     }
 
-    public void checkExceptions() {
-        if(endUserExceptions != null) {
-            for(Row row : endUserExceptions.keySet()) {
-                if(!model.contains(row))
-                    endUserExceptions.remove(row);
-            }
-            
-            if(endUserExceptions.size() == 0) 
-                endUserExceptions = null;
-        }
-        
-        if(validateExceptions != null) {
-            for(Row row : validateExceptions.keySet()) {
-                if(!model.contains(row))
-                    validateExceptions.remove(row);
-            }
-            
-            if(validateExceptions.size() == 0) 
-                validateExceptions = null;
-        }
-        
-    }
-    
     public ArrayList<Exception> getEndUserExceptions() {
-        ArrayList<Exception> exceptions;
-        
-        if(endUserExceptions == null)
-            return null;
-        
-        exceptions = new ArrayList<Exception>();
-        
-        for(HashMap<Integer,ArrayList<Exception>> row : endUserExceptions.values()) {
-            for(ArrayList<Exception> excs : row.values()) {
-                exceptions.addAll(excs);
-            }
-        }
-        
-        return exceptions;
+        return null;
     }
 
     public ArrayList<Exception> getValidateExceptions() {
-        ArrayList<Exception> exceptions;
-        
-        if(validateExceptions == null)
-            return null;
-        
-        exceptions = new ArrayList<Exception>();
-        
-        for(HashMap<Integer,ArrayList<Exception>> row : validateExceptions.values()) {
-            for(ArrayList<Exception> excs : row.values()) {
-                exceptions.addAll(excs);
-            }
-        }
-        
-        return exceptions;
+        return null;
     }
 
     public boolean hasExceptions() {
@@ -2794,7 +2711,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
     @Override
     public void setFocus(boolean focused) {
-        super.setFocus(focused);
+        // TODO Auto-generated method stub
 
     }
 
@@ -2893,11 +2810,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
            }
            
        });
-    }
-    
-    public void setCSS(TableCSS css) {
-        css.ensureInjected();
-        view.setCSS(css);
     }
 
    

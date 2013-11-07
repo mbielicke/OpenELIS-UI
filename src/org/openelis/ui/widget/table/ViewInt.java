@@ -51,7 +51,5 @@ public abstract class ViewInt extends ResizeComposite {
     abstract ScrollPanel scrollView();
     
     abstract TableCSS css();
-    
-    abstract void setCSS(TableCSS css);
 
 }

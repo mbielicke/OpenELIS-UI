@@ -2,10 +2,8 @@
 }
 
 @sprite .AutoDropdownButton{
-	background-position:0 4px;
 	gwt-image:'autoArrow';
-	height:18px;
-	}
+}
 
 .AutoBox {
    background:white;
@@ -22,6 +20,7 @@
     color:#000000;
     font-family: inherit;
     font-size: inherit;
+    height:20px;
     cursor:default;
     table-layout : fixed;
     background:white;

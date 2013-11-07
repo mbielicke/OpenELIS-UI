@@ -1,6 +1,5 @@
 package org.openelis.ui.widget.columnar;
 
-import org.openelis.ui.resources.ColumnarCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
@@ -12,12 +11,10 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -57,7 +54,7 @@ public class View extends ResizeComposite {
     
     protected Columnar columnar;
     
-    protected ColumnarCSS               css;
+    protected TableCSS               css;
 
     protected View             source   = this;
     
@@ -101,9 +98,7 @@ public class View extends ResizeComposite {
         
         initWidget(uiBinder.createAndBindUi(this));
         
-        setCSS(UIResources.INSTANCE.columnar());
-        
-        
+        setCSS(UIResources.INSTANCE.table());
         
         scrollView.addScrollHandler(new ScrollHandler() {
 
@@ -116,23 +111,6 @@ public class View extends ResizeComposite {
         });
         
        
-    }
-    
-    @UiHandler("flexTable")
-    protected void cellClick(ClickEvent event) {
-        int r,c;
-     
-        // if x < 0 the user moused out of table before letting up button
-        // ignore event in this case
-        if (event.getClientX() < 0)
-            return;
-        
-        r = flexTable.getRowForEvent(event.getNativeEvent());
-        c = flexTable.getColForEvent(event.getNativeEvent());
-
-        columnar.selectItemAt(c,event.getNativeEvent());
-        //if (columnar.fireBeforeSelCellClickedEvent(r, c, event.isControlKeyDown(), event.isShiftKeyDown()))
-          //  table.startEditing(r, c, event.getNativeEvent());
     }
     
     protected void layout() {
@@ -297,17 +275,6 @@ public class View extends ResizeComposite {
         //flexTable.getCellFormatter().setVisible(l, d, table.getColumnAt(c).isDisplayed());
     }
     
-    protected void applySelectionStyle(int index) {
-        for(int i = 0; i < columnar.getLineCount(); i++)
-            flexTable.getCellFormatter().addStyleName(i,index, css.Selection());
-        flexTable.getColumnFormatter().addStyleName(index, css.Selection());
-    }
-    
-    protected void applyUnselectionStyle(int index) {
-        for(int i = 0; i < columnar.getLineCount(); i++)
-            flexTable.getCellFormatter().removeStyleName(i,index, css.Selection());
-    }
-    
     public void addLine(int index) {
         flexTable.insertRow(index);
         layout();
@@ -391,16 +358,14 @@ public class View extends ResizeComposite {
         return header;
     }
     
-    public void setCSS(ColumnarCSS css) {
+    public void setCSS(TableCSS css) {
         css.ensureInjected();
 
         for (int i = 0; i < flexTable.getRowCount(); i++ ) {
-            /*
             if (flexTable.getRowFormatter().getStyleName(i).contains(this.css.Selection())) {
                 flexTable.getRowFormatter().removeStyleName(i, this.css.Selection());
                 flexTable.getRowFormatter().addStyleName(i, css.Selection());
             }
-            */
             for (int j = 0; j < flexTable.getCellCount(i); j++ ) {
                 if (flexTable.getCellFormatter().getStyleName(i, j).contains(this.css.InputError())) {
                     flexTable.getCellFormatter().removeStyleName(i, j, this.css.InputError());
@@ -431,7 +396,7 @@ public class View extends ResizeComposite {
         return scrollView;
     }
 
-    ColumnarCSS css() {
+    TableCSS css() {
         return css;
     }
 

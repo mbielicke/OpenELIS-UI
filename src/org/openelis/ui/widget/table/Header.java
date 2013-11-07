@@ -203,8 +203,6 @@ public class Header extends FocusPanel {
                 popResize.show();
                 if(table.view.scrollView().getMaximumHorizontalScrollPosition() > 0)
                     bar.setHeight(table.view.scrollView().getOffsetHeight() + getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()+"px");
-                else
-                    bar.setHeight((table.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
                 /*
                  * We set the capture of mouse events now to the resize bar itself.  This allows us
                  * to simplify the logic of dragging the bar, as well as provide smoother dragging and 
@@ -289,7 +287,7 @@ public class Header extends FocusPanel {
             if(column.getLabel() !=  null)
             	header = column.getLabel().replaceAll("\\n", "<br/>");
             else
-            	header = "";
+            	header = "Header";
             flexTable.setHTML(0, i, header);
             flexTable.getColumnFormatter().setWidth(i, column.getWidth() + "px");
             flexTable.getCellFormatter().setVerticalAlignment(0, i, HasVerticalAlignment.ALIGN_BOTTOM);

@@ -324,7 +324,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
             @Override
             public void execute() {
-                int modelHeight = table.getModel().size() * cellHeight;
+                int modelHeight = table.getModel().size() * 19;
                 
                 if(table.hasHeader())
                     modelHeight += 19;
@@ -361,7 +361,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
     @Override
     public void setWidth(String w) {        
-        width = Util.stripUnits(w);
+        width = Util.stripUnits(w) - 5;
 
         /*
          * Set the outer panel to full width;

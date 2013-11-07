@@ -2,20 +2,26 @@
 .ScreenTextBox {
 	border: none;
 	cursor: default;
-	font-family: inherit;
-    font-size: inherit;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	outline: none;
 }
 
 .ScreenTextArea {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 11px;
 	height: 120px;
 	border: 1px solid #d8d8d8;
 	cursor: default;
 	tex-overflow: ellipsis;
-	font-family: inherit;
-    font-size: inherit;
+	outline : none;
 }
 
 .ScreenLabel {
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size:11px;
 }
 
 .InputError {

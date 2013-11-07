@@ -192,14 +192,6 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
         view.getMaximize().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
                 
-                if(!view.getBody().isVisible()) {
-                    view.getOuter().setHeight((userHeight-2)+"px");
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()), true);
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()), true);
-                    view.getBody().setVisible(true);
-                    view.getBottom().setVisible(true);
-                }
-                
                 if(!maximized) {
                     userWidth = getOffsetWidth();
                     userHeight = getOffsetHeight();
