@@ -33,7 +33,6 @@ import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Check;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -115,38 +114,22 @@ public class CheckCell implements CellEditor, CellRenderer, IsWidget, HasWidgets
         else
         	editor.uncheck();
 
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-            ClickEvent.fireNativeEvent(event, editor);
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-                @Override
-                public void execute() {
-                    column.finishEditing();
-                }
-            });
-        } else {
-            container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", "center"); 
-        }
+        if(Event.getTypeInt(event.getType()) == Event.ONCLICK)
+        	ClickEvent.fireNativeEvent(event, editor);
+
+        container.setEditor(editor);
+        DOM.setStyleAttribute(container.getElement(), "align", "center");  
     }
     
     @SuppressWarnings("rawtypes")
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
         query = true;
 
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-            ClickEvent.fireNativeEvent(event, editor);
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-                @Override
-                public void execute() {
-                    column.finishEditing();
-                }
-            });
-        } else {
-            container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", "center"); 
-        }        
+        if(Event.getTypeInt(event.getType()) == Event.ONCLICK)
+        	ClickEvent.fireNativeEvent(event, editor);
+            //editor.changeValue();
+        container.setEditor(editor);
+        DOM.setStyleAttribute(container.getElement(), "align", "center");          
     }
     
     /**

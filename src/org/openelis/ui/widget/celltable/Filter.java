@@ -26,7 +26,6 @@
 package org.openelis.ui.widget.celltable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This interface is for classes that will implement a Column Filter in the Table.
@@ -46,7 +45,7 @@ public interface Filter {
      * @param model
      * @return
      */
-    public ArrayList<FilterChoice> getChoices(List<? extends Row> model);
+    public ArrayList<FilterChoice> getChoices(ArrayList<? extends Row> model);
     
     /**
      * Method used to set the column that this Filter should be applied to

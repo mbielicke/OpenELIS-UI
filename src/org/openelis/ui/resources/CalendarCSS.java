@@ -1,8 +1,6 @@
 package org.openelis.ui.resources;
 
-import com.google.gwt.resources.client.CssResource;
-
-public interface CalendarCSS extends CssResource {
+public interface CalendarCSS extends SelectCSS {
 	
 	String CalendarWidget();
 	String navbar();
@@ -47,12 +45,5 @@ public interface CalendarCSS extends CssResource {
     String prevNavIndex();
     String nextNavIndex();
     String Divider();
-    String TimeBorder();
-    String SelectBox();
-    String SelectText();
-    String Focus();
-    String Popup();
-    String InputError();
-    String InputWarning();
 
 }

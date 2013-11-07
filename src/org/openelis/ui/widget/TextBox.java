@@ -3,8 +3,6 @@ package org.openelis.ui.widget;
 import java.util.ArrayList;
 
 import org.openelis.ui.widget.TextBox;
-import org.openelis.ui.widget.Balloon.Options;
-import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
@@ -18,9 +16,6 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.HasFocusHandlers;
-import com.google.gwt.event.dom.client.HasKeyUpHandlers;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -28,7 +23,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -39,13 +33,14 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
  * and in table cells. TextBox is parameterized to handle different data types
  * with the help of an implementation of WidgetHelper<T>.
  * 
+ * @author tschmidt
  * 
  * @param <T>
  */
 @SuppressWarnings("unchecked")
 public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		Queryable, Focusable, HasBlurHandlers, HasFocusHandlers, HasValue<T>,
-		HasHelper<T>, HasExceptions, HasKeyUpHandlers, HasBalloon {
+		HasHelper<T>, HasExceptions {
 
 	/**
 	 * Wrapped GWT TextBox
@@ -57,9 +52,8 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * Data moved from Field to the widget
 	 */
 	protected int maxLength;
-	protected boolean queryMode, required, tipSet;
+	protected boolean queryMode, required;
 	protected T value;
-	protected Balloon.Options options;
 
 	/**
 	 * This class replaces the functionality that Field used to provide but now
@@ -159,19 +153,19 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 
 	// ************** Implementation of ScreenWidgetInt ********************
 
-    /**
-     * Enables or disables the textbox for editing.
-     */
-    public void setEnabled(boolean enabled) {
-        textbox.setReadOnly(!enabled);
-    }
+	/**
+	 * Enables or disables the textbox for editing.
+	 */
+	public void setEnabled(boolean enabled) {
+		textbox.setReadOnly(!enabled);
+	}
 
-    /**
-     * Returns whether the text is enabled for editing
-     */
-    public boolean isEnabled() {
-        return !textbox.isReadOnly();
-    }
+	/**
+	 * Returns whether the text is enabled for editing
+	 */
+	public boolean isEnabled() {
+		return !textbox.isReadOnly();
+	}
 
 	// ******** Implementation of Queryable *****************
 	/**
@@ -319,7 +313,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		} catch (Exception e) {
 			addValidateException(e);
 		}
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	// ********** Implementation of HasException interface ***************
@@ -336,7 +330,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		
 		if (!queryMode && required && getValue() == null) {
 			addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-			Balloon.checkExceptionHandlers(this);
+			ExceptionHelper.checkExceptionHandlers(this);
 		}
 
 		return getEndUserExceptions() != null || getValidateExceptions() != null;
@@ -347,12 +341,12 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
-		exceptions.addValidateException(error);   
-		Balloon.checkExceptionHandlers(this);
+		exceptions.addValidateException(error);
+
 	}
 
 	/**
@@ -374,24 +368,24 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		exceptions.clearExceptions();
 		removeExceptionStyle();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	/**
 	 * Will add the style to the widget.
 	 */
 	public void addExceptionStyle() {
-		if(Balloon.isWarning(this))
+		if(ExceptionHelper.isWarning(this))
 			addStyleName(css.InputWarning());
 		else
 			addStyleName(css.InputError());
@@ -518,42 +512,5 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
-
-	@Override
-	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-		return textbox.addKeyUpHandler(handler);
-	}
-	
-	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-	    return textbox.addKeyPressHandler(handler);
-	}
-
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
 
 }

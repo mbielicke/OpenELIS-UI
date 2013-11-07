@@ -26,9 +26,7 @@
 package org.openelis.ui.widget;
 
 import org.openelis.ui.resources.ButtonCSS;
-import org.openelis.ui.resources.IconCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Placement;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -39,7 +37,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Event;
@@ -57,7 +54,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
  * All buttons are defaulted to enabled true. If a button needs to be ensured to
  * be disabled on the initial state of the screen set enable="false" in the xsl.
  */
-public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
+public class Button extends FocusPanel implements ScreenWidgetInt {
 	@UiTemplate("Button.ui.xml")
 	interface ButtonUiBinder extends UiBinder<HTMLPanel,Button>{};
 	public static final ButtonUiBinder uiBinder = GWT.create(ButtonUiBinder.class);
@@ -69,13 +66,10 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     private boolean toggles, enabled, pressed, locked;
     private String  action;
     private ButtonCSS css;
-    private IconCSS icon;
     int eventsToSink;
     
     @UiField
     protected TableCellElement leftIcon,text,rightIcon;
-    
-    protected Balloon.Options   options;
        
     /**
      * Default no-arg constructor
@@ -119,9 +113,6 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
             }
         });
         
-        icon = UIResources.INSTANCE.icon();
-        icon.ensureInjected();
-        
         setCss(UIResources.INSTANCE.button());
     }
     
@@ -144,6 +135,9 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
      */
     public void init() {
         final Button source = this;
+
+
+        
     }
 
     /**
@@ -155,8 +149,14 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         if(!toggles)
         	return;
 
+        /*
+         * Do nothing if pressed state is the same as what 
+         * was passed to us
+         */
+        if (this.pressed == pressed)
+            return;
+
         this.pressed = pressed;
-        
         if (pressed){
             addStyleName(css.Pressed());
         }else {
@@ -190,20 +190,12 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
               
-        removeStyleName(css.Pressed());
-        
         if (enabled) {
             unlock();
             removeStyleName(css.Disabled());
-            removeStyleName(icon.Disabled());
-            //leftIcon.removeClassName(icon.Disabled());
-            //rightIcon.removeClassName(icon.Disabled());
         } else {
             lock();
             addStyleName(css.Disabled());
-            addStyleName(icon.Disabled());
-            //leftIcon.addClassName(icon.Disabled());
-            //rightIcon.removeClassName(icon.Disabled());
         }
     }
 
@@ -311,10 +303,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	}
 	
 	public void setCss(ButtonCSS css) {
-		if(!isEnabled() && this.css != null) {
+		if(!isEnabled() && this.css != null)
 			removeStyleName(this.css.Disabled());
-			removeStyleName(icon.Disabled());
-		}
 		
 		if(pressed && this.css != null)
 			removeStyleName(this.css.Pressed());
@@ -335,32 +325,5 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		setCss(css);
 	}
     
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
     
 }

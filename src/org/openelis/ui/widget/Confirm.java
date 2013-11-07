@@ -67,6 +67,9 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
     
     public enum Type {WARN,ERROR,QUESTION,BUSY};
     
+    private PickupDragController dragController;
+    private AbsolutePositionDropController dropController;
+   
     ConfirmCSS css; 
     
     public Confirm() {
@@ -111,13 +114,7 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
    	    
     	text.setText(message);
     	text.setWordWrap(true);
-    	text.setStyleName(css.ScreenWindowLabel());
-    
 
-    	HTML label = new HTML(caption);
-    	label.setStyleName(css.ScreenWindowLabel());
-    	cap.add(label);
-    	
     	if(buttons != null && buttons[0] != null ){
     		createButtons(buttons);
     	}else
@@ -128,20 +125,15 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
                 hide();
             }
         });
-        
-        setSize("250px","125px");
     	
     }
     
-    @Override
-    public void show() {
-        super.show();
-        center();
-    }
-    
     public void hide() {
-        if(keyHandler != null) 
-            keyHandler.removeHandler();
+    	dragController.unregisterDropController(dropController);
+    	dragController.makeNotDraggable(this);
+    	dragController = null;
+    	dropController = null;
+    	keyHandler.removeHandler();
     	hide(false);
     }
     

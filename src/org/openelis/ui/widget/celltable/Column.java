@@ -53,8 +53,6 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     
     protected FieldUpdater<T,?> fieldUpdater;
     
-    protected CellData<T,?> cellData;
-    
     /**
      * Filter used for this column
      */
@@ -139,7 +137,7 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     }
 	
     public FieldGetter<T, ?> getFieldGetter() {
-		return cellData != null ? cellData : fieldGetter;
+		return fieldGetter;
 	}
 
 	public void setFieldGetter(FieldGetter<T, ?> fieldGetter) {
@@ -147,20 +145,13 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 	}
 
 	public FieldUpdater<T, ?> getFieldUpdater() {
-		return cellData != null ? cellData : fieldUpdater;
+		return fieldUpdater;
 	}
 
 	public void setFieldUpdater(FieldUpdater<T, ?> fieldUpdater) {
 		this.fieldUpdater = fieldUpdater;
 	}
 
-	public void setCellData(CellData<T,?> cellData) {
-		this.cellData = cellData;
-	}
-	
-	public CellData<T,?> getCellData() {
-		return cellData;
-	}
     /**
      * Method will set the current renderer for this column
      * @param renderer
@@ -226,8 +217,8 @@ public class Column<T> implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public void setLabel(String label) {
         this.label = label;
-        if(table != null && table.view != null && table.view.getHeader() != null)
-        	table.view.getHeader().layout();
+        if(table != null && table.view != null && table.view.header != null)
+        	table.view.header.layout();
     }
 
     public void setStyle(String style) {

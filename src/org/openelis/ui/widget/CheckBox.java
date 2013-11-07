@@ -28,7 +28,6 @@ package org.openelis.ui.widget;
 import java.util.ArrayList;
 
 import org.openelis.ui.widget.CheckBox;
-import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
@@ -46,7 +45,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasValue;
 
@@ -63,8 +61,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 													HasFocusHandlers, 
 													HasValueChangeHandlers<String>,
 													HasValue<String>, 
-													HasExceptions,
-													HasBalloon {
+													HasExceptions {
 
     /*
      * Fields for query mode
@@ -79,10 +76,6 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
     protected Check                          check;
      
     protected CheckBox                       source = this;
-    
-    protected Balloon.Options                options;
-    
-    protected String                         value = "N";
     
 
     /**
@@ -107,10 +100,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
     	
     	check.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
     		public void onValueChange(ValueChangeEvent<Boolean> event) {
-    		    if(!queryMode) {
-    		        setValue(event.getValue() != null ? (event.getValue() ? "Y" : "N") : null,true);
-    		        //fireValueChange(event.getValue() != null ? (event.getValue() ? "Y" : "N") : null);
-    		    }
+    			fireValueChange(event.getValue() != null ? (event.getValue() ? "Y" : "N") : null);
     		}
 		});
         
@@ -173,13 +163,10 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
         
         queryMode = query;
         
-        if(query) {
+        if(query)
         	check.setMode(Check.Mode.THREE_STATE);
-        	setValue(null);
-        }else {
+        else
         	check.setMode(Check.Mode.TWO_STATE);
-        	setValue("N");
-        }
         	
     }
 
@@ -220,7 +207,12 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
      * Returns the current value for this widget
      */
     public String getValue() {
-        return value;
+        if(check.isChecked())
+        	return "Y";
+        if(check.isUnchecked())
+        	return "N";
+        
+        return null;
     }
 
 
@@ -237,6 +229,9 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
      * passed as true and the new value is not equals to old value
      */
     public void setValue(String value, boolean fireEvents) {
+
+        if(!Util.isDifferent(value, getValue()))
+            return;
         
         if(value == null) {
         	if(check.getMode() == Check.Mode.TWO_STATE)
@@ -247,13 +242,8 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
         	check.check();
         else
         	check.uncheck();
-        
-        if(!Util.isDifferent(value,this.value))
-            return;
-                          
-        this.value = value;
 
-        if (fireEvents && !queryMode)
+        if (fireEvents)
             ValueChangeEvent.fire(this, value);
     }
 
@@ -282,7 +272,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 	 */
 	public void addException(Exception error) {
 		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	protected void addValidateException(Exception error) {
@@ -308,23 +298,23 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 	public void clearExceptions() {
 		exceptions.clearExceptions();
 		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
+		ExceptionHelper.clearExceptionHandlers(this);
 	}
 
 	public void clearEndUserExceptions() {
 		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
 
 	public void clearValidateExceptions() {
 		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
+		ExceptionHelper.checkExceptionHandlers(this);
 	}
     /**
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
+    	if(ExceptionHelper.isWarning(this))
     		addStyleName(check.css.InputWarning());
     	else
     		addStyleName(check.css.InputError());
@@ -366,12 +356,12 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return addDomHandler(handler, FocusEvent.getType());
+		return check.addFocusHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
-		return addDomHandler(handler, BlurEvent.getType());
+		return check.addBlurHandler(handler);
 	}
 
 	@Override
@@ -383,37 +373,5 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 	public void setCSS(CheckboxCSS css) {
 		check.setCSS(css);
 	}
-	
-	public Check getCheck() {
-	    return check;
-	}
-	
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
 
 }

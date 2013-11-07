@@ -84,7 +84,7 @@ public class Header extends FocusPanel {
     /**
      * Position where the resize started.
      */
-    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 18;
+    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 20;
     
     /**
      * Widget that used to display a then position due to resizing.
@@ -145,7 +145,7 @@ public class Header extends FocusPanel {
                     popResize = new PopupPanel();
                     bar = new FocusPanel();
                     bar.setWidth("1px");
-                    bar.setHeight((table.view.table().getOffsetHeight() + getOffsetHeight())+"px");
+                    bar.setHeight((table.view.flexTable.getOffsetHeight() + getOffsetHeight())+"px");
                     DOM.setStyleAttribute(bar.getElement(), "background", "red");
                     popResize.add(bar);
                     /*
@@ -336,7 +336,7 @@ public class Header extends FocusPanel {
              * then just return
              */
             if (x > table.getWidthWithoutScrollbar() +
-                    table.view.scrollView().getHorizontalScrollPosition())
+                    table.view.scrollView.getHorizontalScrollPosition())
                 return;
             x -= 17;
             /*

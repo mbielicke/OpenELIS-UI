@@ -20,8 +20,5 @@ public interface CalendarUICSS extends CssResource {
 	String NextMonth();
 	
 	String MonthYearPanel();
-	
-	String TimeBorder();
-	
 
 }

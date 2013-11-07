@@ -17,6 +17,5 @@ public interface ConfirmCSS extends CssResource {
 	String WindowPanel();
 	String spinnerIcon();
 	String ScreenWindowLabel();
-	String top();
 	
 }

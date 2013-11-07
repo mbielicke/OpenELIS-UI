@@ -34,7 +34,6 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Check;
 import org.openelis.ui.widget.CheckBox;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -46,7 +45,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,7 +62,6 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
     private CheckBox  editor;
     private boolean   query;
     private ColumnInt column;
-    private String    align = "center";
     
     protected CheckboxCSS css;
     
@@ -88,11 +85,11 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         css.ensureInjected();
         
         editor.setEnabled(true);
-        //editor.addBlurHandler(new BlurHandler() {
-		//	public void onBlur(BlurEvent event) {
-		//		column.finishEditing();
-	//		}
-	//	});
+        editor.addBlurHandler(new BlurHandler() {
+			public void onBlur(BlurEvent event) {
+				column.finishEditing();
+			}
+		});
     }
     
     public Object finishEditing() {
@@ -117,15 +114,11 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         query = false;
         editor.setQueryMode(false);
         editor.setValue((String)value);
-        
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-        	ClickEvent.fireNativeEvent(event, editor.getCheck());
-   	        column.finishEditing();
-        }
-
+        if(Event.getTypeInt(event.getType()) == Event.ONCLICK)
+        	ClickEvent.fireNativeEvent(event, editor);
+            //editor.changeValue();
         container.setEditor(editor);
-        DOM.setStyleAttribute(container.getElement(), "align", align); 
-        editor.setFocus(true);
+        DOM.setStyleAttribute(container.getElement(), "align", "center");  
     }
     
     @SuppressWarnings("rawtypes")
@@ -133,20 +126,11 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-       
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-            ClickEvent.fireNativeEvent(event, editor.getCheck());
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-                @Override
-                public void execute() {
-                    column.finishEditing();
-                }
-            });
-        } else {
-            container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", align); 
-        }
+        if(Event.getTypeInt(event.getType()) == Event.ONCLICK)
+        	ClickEvent.fireNativeEvent(event, editor);
+            //editor.changeValue();
+        container.setEditor(editor);
+        DOM.setStyleAttribute(container.getElement(), "align", "center");          
     }
     
     /**
@@ -217,19 +201,9 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         div = new AbsolutePanel();
         div.setStyleName(style);
         table.setWidget(row, col, div);
-        if(align.equalsIgnoreCase("left"))
-            table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_LEFT);
-        else if(align.equalsIgnoreCase("right"))
-            table.getCellFormatter().setHorizontalAlignment(row, col, HasHorizontalAlignment.ALIGN_RIGHT);
-        else
-            table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_CENTER);
-            
+        table.getCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_CENTER);
 	}
 
-	public void setAlign(String align) {
-	    this.align = align;
-	}
-	
 	@Override
 	public void add(Widget w) {
 		// TODO Auto-generated method stub

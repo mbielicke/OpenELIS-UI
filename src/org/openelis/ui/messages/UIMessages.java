@@ -448,13 +448,13 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   String confirm_warning();
 
   /**
-   * Translated "Check All".
+   * Translated "All".
    * 
-   * @return translated "Check All"
+   * @return translated "All"
    */
-  @DefaultMessage("Check All")
-  @Key("drop.check")
-  String drop_check();
+  @DefaultMessage("All")
+  @Key("drop.all")
+  String drop_all();
 
   /**
    * Translated "options selected".
@@ -464,15 +464,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("options selected")
   @Key("drop.optionsSelected")
   String drop_optionsSelected();
-
-  /**
-   * Translated "Uncheck All".
-   * 
-   * @return translated "Uncheck All"
-   */
-  @DefaultMessage("Uncheck All")
-  @Key("drop.uncheck")
-  String drop_uncheck();
 
   /**
    * Translated "This record is locked by {0} until {1,time,full}".
@@ -491,60 +482,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Your Lock on this record has expired; Please abort and try again")
   @Key("exc.expiredLock")
   String exc_expiredLock();
-
-  /**
-   * Translated "Date is too far in the future".
-   * 
-   * @return translated "Date is too far in the future"
-   */
-  @DefaultMessage("Date is too far in the future")
-  @Key("exc.fieldFuture")
-  String exc_fieldFuture();
-
-  /**
-   * Translated "Field exceeded maximum length".
-   * 
-   * @return translated "Field exceeded maximum length"
-   */
-  @DefaultMessage("Field exceeded maximum length")
-  @Key("exc.fieldMaxLength")
-  String exc_fieldMaxLength();
-
-  /**
-   * Translated "Field exceeded maximum value".
-   * 
-   * @return translated "Field exceeded maximum value"
-   */
-  @DefaultMessage("Field exceeded maximum value")
-  @Key("exc.fieldMaxValue")
-  String exc_fieldMaxValue();
-
-  /**
-   * Translated "Field is below minimum length".
-   * 
-   * @return translated "Field is below minimum length"
-   */
-  @DefaultMessage("Field is below minimum length")
-  @Key("exc.fieldMinLength")
-  String exc_fieldMinLength();
-
-  /**
-   * Translated "Field is below minimum value".
-   * 
-   * @return translated "Field is below minimum value"
-   */
-  @DefaultMessage("Field is below minimum value")
-  @Key("exc.fieldMinValue")
-  String exc_fieldMinValue();
-
-  /**
-   * Translated "Date is too far in the past".
-   * 
-   * @return translated "Date is too far in the past"
-   */
-  @DefaultMessage("Date is too far in the past")
-  @Key("exc.fieldPast")
-  String exc_fieldPast();
 
   /**
    * Translated "Field is required".
@@ -590,15 +527,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("The entered text is not a valid numeric")
   @Key("exc.invalidNumeric")
   String exc_invalidNumeric();
-
-  /**
-   * Translated "Input is not a valid query.".
-   * 
-   * @return translated "Input is not a valid query."
-   */
-  @DefaultMessage("Input is not a valid query.")
-  @Key("exc.invalidQuery")
-  String exc_invalidQuery();
 
   /**
    * Translated "The wrong type of Object was passed to the cell".

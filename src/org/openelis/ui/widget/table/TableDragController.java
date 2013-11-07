@@ -87,17 +87,15 @@ public class TableDragController extends PickupDragController implements
     @Override
     public void previewDragStart() throws VetoDragException {
         BeforeDragStartEvent<DragItem> event;
-        
-        int index = Integer.parseInt(context.draggable.getElement().getAttribute("index"));
-        
+
         /* Select row before drag start and cancel drag if not selectable */
-        table.selectRowAt(index);
+        table.selectRowAt(table.view.lastRow);
         
-        if (!table.isRowSelected(index))
+        if (!table.isRowSelected(table.view.lastRow))
             throw new VetoDragException();
 
         /* Set the index of row being dragged into the DragItem */
-        ((DragItem)context.draggable).setIndex(index);
+        ((DragItem)context.draggable).setIndex(table.view.lastRow);
 
         /* Notify the user that a Drag is to be started */
         event = BeforeDragStartEvent.fire(this, (DragItem)context.draggable);

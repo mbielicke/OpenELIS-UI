@@ -79,15 +79,6 @@ public class Row {
             cells.add(objs[i]);
     }
     
-    public Row(Row row) {
-        data = row.data;
-        
-        cells = new ArrayList<Object>(row.cells.size());
-        
-        for(Object cell : row.cells)
-            cells.add(cell);
-    }
-    
     /**
      * Returns the number of values in this row
      * @return
@@ -150,4 +141,15 @@ public class Row {
         return null;
     }
     
+    public Object clone() {
+    	Row clone;
+    
+    	clone = new Row(cells.size());
+    	for(int i = 0; i < cells.size(); i++) {
+    		clone.setCell(i,cells.get(i));
+    	}
+    	clone.setData(data);
+    	
+    	return clone;
+    }
 }

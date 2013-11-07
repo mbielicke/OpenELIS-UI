@@ -27,7 +27,6 @@ package org.openelis.ui.screen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +38,7 @@ import org.openelis.ui.event.DataChangeEvent;
 import org.openelis.ui.event.HasDataChangeHandlers;
 import org.openelis.ui.event.HasStateChangeHandlers;
 import org.openelis.ui.event.StateChangeEvent;
+import org.openelis.ui.event.StateChangeHandler;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.resources.WindowCSS;
 import org.openelis.ui.widget.Button;
@@ -59,29 +59,25 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing.Validation;
 
 /**
  * This class is used to bring together widgets into a logical unit of work that
  * is presented to the user.
  * 
  */
-public class Screen extends ResizeComposite implements FocusHandler, 
-                                                       HasDataChangeHandlers,
-                                                       HasStateChangeHandlers {
+public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
+                                           HasStateChangeHandlers {
 
     private Focusable                           focused;
 
     protected HashMap<String, ScreenHandler<?>> handlers;
     protected HashMap<Widget, ScreenHandler<?>> widgets;
     protected HashMap<Shortcut, Focusable>      shortcuts;
-    protected HashMap<String, Screen>           tabs;
 
     protected AbsolutePanel                     glass;
     protected int                               busy;
@@ -95,7 +91,8 @@ public class Screen extends ResizeComposite implements FocusHandler,
     protected WindowCSS css;
     protected WindowInt window;
     protected State     state;
-    
+
+    @SuppressWarnings("rawtypes")
     public Screen() {
         css = UIResources.INSTANCE.window();
         css.ensureInjected();
@@ -103,7 +100,6 @@ public class Screen extends ResizeComposite implements FocusHandler,
         handlers = new HashMap<String, ScreenHandler<?>>();
         widgets = new HashMap<Widget, ScreenHandler<?>>();
         shortcuts = new HashMap<Shortcut, Focusable>();
-        tabs = new HashMap<String,Screen>();
 
         bus = new SimpleEventBus();
 
@@ -193,52 +189,29 @@ public class Screen extends ResizeComposite implements FocusHandler,
     public void finishEditing() {
         if (focused != null && focused instanceof ScreenWidgetInt)
             ((ScreenWidgetInt)focused).finishEditing();
-        
-        for(Screen tab : tabs.values()) 
-            tab.finishEditing();
     }
 
-    public Validation validate() {
-        Validation validation = new Validation();
+    public boolean validate() {
+        boolean valid = true;
 
-        for (ScreenHandler<?> wid : handlers.values()) {
-            wid.isValid(validation);
-        }
-        
-        for(Screen tab : tabs.values()) {
-            Validation tabValid = tab.validate();
-            
-            if(tabValid.status.value > validation.status.value)
-                validation.status = tabValid.status;
-            
-            if(tabValid.getExceptions() != null) {
-                for(Exception exception : tabValid.exceptions)
-                    validation.addException(exception);
-            }
-        }
+        for (ScreenHandler<?> wid : handlers.values())
+            valid = wid.isValid();
 
-        return validation;
+        return valid;
     }
 
     public void showErrors(ValidationErrorsList errors) {
         ArrayList<Exception> formErrors;
         FormErrorException formE;
-        ValidationErrorsList tabErrors;
 
         formErrors = new ArrayList<Exception>();
-        tabErrors = new ValidationErrorsList();
         for (Exception ex : errors.getErrorList()) {
             if (ex instanceof FormErrorException) {
                 formE = (FormErrorException)ex;
                 formErrors.add(formE);
-            } else if (ex instanceof FieldErrorException){
-                String field = ((FieldErrorException)ex).getFieldName();
-                if(handlers.containsKey(field))
-                    handlers.get(field).showError(ex);
-                else
-                    tabErrors.add(ex);
-            } else
-                Window.alert(ex.getMessage());
+            } else {
+                handlers.get( ((FieldErrorException)ex).getFieldName()).showError(ex);
+            }
         }
 
         if (formErrors.size() == 0)
@@ -249,24 +222,14 @@ public class Screen extends ResizeComposite implements FocusHandler,
             setError("(Error 1 of " + formErrors.size() + ") " + formErrors.get(0).getMessage());
             window.setMessagePopup(formErrors, "ErrorPanel");
         }
-        
-        if(tabErrors.size() > 0) {
-            for(Screen tab : tabs.values()) {
-                tab.showErrors(tabErrors);
-            }
-        }
-        
-        
     }
 
     public void clearErrors() {
         for (ScreenHandler<?> wid : handlers.values())
             wid.clearError();
 
-        if(window != null) {
-            window.clearStatus();
-            window.clearMessagePopup("");
-        }
+        window.clearStatus();
+        window.clearMessagePopup("");
     }
 
     /**
@@ -314,9 +277,6 @@ public class Screen extends ResizeComposite implements FocusHandler,
 
         handlers.put(meta, screenHandler);
         widgets.put(widget, screenHandler);
-        
-        if(widget instanceof Screen) 
-            tabs.put(meta, (Screen)widget);
     }
 
     /**
@@ -329,7 +289,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
     /**
      * Registers a StateChangeHandler to the Screen.
      */
-    public HandlerRegistration addStateChangeHandler(StateChangeEvent.Handler handler) {
+    public HandlerRegistration addStateChangeHandler(StateChangeHandler handler) {
         return bus.addHandlerToSource(StateChangeEvent.getType(), this, handler);
     }
 
@@ -353,8 +313,8 @@ public class Screen extends ResizeComposite implements FocusHandler,
         }
     }
 
-    public boolean isState(State... states) {
-        return states.length > 1 ? EnumSet.of(states[0],states).contains(state) : state == states[0];
+    protected boolean isState(State... states) {
+        return states.length > 1 ? Arrays.asList(states).contains(state) : state == states[0];
     }
 
     public void setBusy() {
@@ -365,7 +325,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
 
         busy++ ;
 
-        lockWindow();
+        lock();
 
         window.setStatus(message, css.spinnerIcon());
 
@@ -391,7 +351,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
         }
     }
 
-    public void lockWindow() {
+    public void lock() {
         if (glass == null) {
             glass = new AbsolutePanel();
             glass.setStyleName(css.GlassPanel());
@@ -419,10 +379,6 @@ public class Screen extends ResizeComposite implements FocusHandler,
     public void setWindow(WindowInt window) {
         this.window = window;
     }
-    
-    public WindowInt getWindow() {
-        return window;
-    }
 
     public void setEventBus(EventBus bus) {
         this.bus = bus;
@@ -430,47 +386,6 @@ public class Screen extends ResizeComposite implements FocusHandler,
 
     public EventBus getEventBus() {
         return bus;
-    }
-    
-    public static class Validation {
-        
-        public enum Status {
-            VALID(0), WARNINGS(1), FLAGGED(2), ERRORS(3);
-            
-            int value;
-            
-            private Status(int value){
-                this.value = value;
-            }
-        };
-        
-        public Validation() {
-            status = Status.VALID;
-        }
-        
-        private Status status;
-        
-        private ArrayList<Exception> exceptions;
-        
-        public void setStatus(Status status) {
-            if(status.value > this.status.value)
-                this.status = status;
-        }
-        
-        public Status getStatus() {
-            return status;
-        }
-        
-        public void addException(Exception exception) {
-            if(exceptions == null)
-                exceptions = new ArrayList<Exception>();
-            
-            exceptions.add(exception);
-        }
-        
-        public ArrayList<Exception> getExceptions() {
-            return exceptions;
-        }
     }
 
 }

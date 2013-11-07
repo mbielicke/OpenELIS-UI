@@ -38,7 +38,6 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.GeneralCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.screen.Screen;
 import org.openelis.ui.widget.Button;
 import org.openelis.ui.widget.CheckBox;
 import org.openelis.ui.widget.DateHelper;
@@ -65,7 +64,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -109,11 +107,8 @@ public abstract class ReportScreen<T> extends Screen {
 		
 	    main = new VerticalPanel();
 	    main.setStyleName(css.WhiteContentPanel());
-	    
-	    LayoutPanel layout = new LayoutPanel();
-	    layout.add(main);
 
-	    initWidget(layout);
+	    initWidget(main);
 		
 		initialize();
 
@@ -180,7 +175,6 @@ public abstract class ReportScreen<T> extends Screen {
             createReportWindow();
             window.setDone("loadCompleteMessage");
         } catch (Exception e) {
-        	e.printStackTrace();
             window.close();
             Window.alert("Failed to get parameters for " + name);
         }      
@@ -304,7 +298,7 @@ public abstract class ReportScreen<T> extends Screen {
 	protected void runReport() {
 		Query query;
 
-		if (validate().getStatus() != Validation.Status.VALID) {
+		if (!validate()) {
 			window.setError(Messages.get().msg_correctErrors());
 			return;
 		}
@@ -328,7 +322,7 @@ public abstract class ReportScreen<T> extends Screen {
                 String url;
 
                 if (status.getStatus() == ReportStatus.Status.SAVED) {
-                    url = "/timetracker/report?file=" + status.getMessage();
+                    url = "report?file=" + status.getMessage();
                     if (attachmentName != null)
                         url += "&attachment=" + attachmentName;
 

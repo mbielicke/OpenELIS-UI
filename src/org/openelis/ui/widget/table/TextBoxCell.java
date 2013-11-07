@@ -31,7 +31,6 @@ import java.util.Iterator;
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.TextBox;
 
@@ -79,11 +78,11 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     }
     
     public void setEditor(TextBox editor) {
-    	TextCSS css = UIResources.INSTANCE.tableText();
+    	css = UIResources.INSTANCE.table();
     	css.ensureInjected();
         this.editor = editor;
         editor.setEnabled(true);
-        editor.setCSS(css);
+        editor.setStyleName(css.TableTextBox());
         editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -97,7 +96,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
         if(editor.getHelper().isCorrectType(value))
         	return editor.getHelper().format(value);
         else
-        	return DataBaseUtil.toString(value);
+        	return DataBaseUtil.asString(value);
     }
 
     /**
@@ -106,7 +105,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
     	if(!editor.getHelper().isCorrectType(value))
-    		editor.setText(DataBaseUtil.toString(value));
+    		editor.setText(DataBaseUtil.asString(value));
     	else 
     		editor.setValue(value);
         editor.setWidth(container.getWidth()+"px");
@@ -125,18 +124,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     }
 
     public ArrayList<Exception> validate(Object value) {
-        ArrayList<Exception> exceptions;
-        if(query && value != null) {
-            try {
-                editor.getHelper().validateQuery(((QueryData)value).getQuery());
-                return null;
-            }catch(Exception e) {
-                exceptions = new ArrayList<Exception>();
-                exceptions.add(e);
-                return exceptions;
-            }
-        }else
-            return editor.getHelper().validate(value);
+        return editor.getHelper().validate(value);
     }
 
     public Object finishEditing() {

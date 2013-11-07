@@ -1,8 +1,9 @@
 .SelectBox {
     border:1px solid #d8d8d8;
     color:#000000;
-    font-family: inherit;
-    font-size: inherit;
+    font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-size:11px;
     height:20px;
     cursor:default;
     table-layout : fixed;
@@ -10,9 +11,10 @@
 
 .SelectText {
    background:white;
-    font-family: inherit;
-    font-size: inherit;
-    height: 16px;
+   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+   font-weight: normal;
+   font-size: 11px;
+   height: 16px;
    cursor: default;
    border: none;
    tex-overflow: ellipsis;
@@ -33,6 +35,7 @@
     overflow:hidden;
     background:#FFFFFF;
     border: 1px solid #7eadd9;
+    border-radius : 5px;
 }
 
 .InputError {

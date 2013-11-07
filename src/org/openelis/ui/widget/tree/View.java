@@ -29,7 +29,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TreeCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.VerticalScrollbar;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
@@ -39,7 +39,6 @@ import org.openelis.ui.widget.tree.Tree.Scrolling;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -221,7 +220,7 @@ public class View extends Composite {
             if (mr == lastRow && c == lastCol)
                 return;
 
-            Balloon.hide();
+            ExceptionHelper.closePopup();
 
             timer.cancel();
 
@@ -825,17 +824,14 @@ public class View extends Composite {
     protected TreeGrid getTreeCell(Node node, int row, int col) {
         TreeGrid grid = null;
         int level;
-        double pad;
         String image;
         Widget widget;
 
         image = node.getImage();
         level = tree.showRoot() ? node.getLevel() : node.getLevel() - 1;
         
-        pad = level == 0 && node.isLeaf() ? 18.0 : level * indent;
+        DOM.setStyleAttribute(flexTable.getCellFormatter().getElement(row, col), "paddingLeft", (level * indent) + "px");
 
-        flexTable.getCellFormatter().getElement(row, col).getStyle().setPaddingLeft(pad, Unit.PX);
-        
         grid = (widget = flexTable.getWidget(row, col)) instanceof TreeGrid ? (TreeGrid)widget : new TreeGrid();
         
         if(widget != grid)   

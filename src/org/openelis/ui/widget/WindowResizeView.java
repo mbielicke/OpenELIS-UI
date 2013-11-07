@@ -34,7 +34,7 @@ public class WindowResizeView extends ResizeComposite implements WindowViewInt {
     protected FocusPanel               statusImg,close, collapse, maximize,resizer,
                                        north,south,east,west;
     @UiField
-    protected LayoutPanel              body,inner;
+    protected LayoutPanel              body;
     @UiField
     protected Grid                     statusContainer;
 
@@ -100,10 +100,6 @@ public class WindowResizeView extends ResizeComposite implements WindowViewInt {
 
     public LayoutPanel getBody() {
         return body;
-    }
-    
-    public LayoutPanel getInner() {
-        return inner;
     }
 
     public Grid getStatusContainer() {

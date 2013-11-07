@@ -29,7 +29,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.ExceptionHelper;
 import org.openelis.ui.widget.VerticalScrollbar;
 import org.openelis.ui.widget.table.Table.Scrolling;
 
@@ -49,6 +49,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -62,7 +63,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class View extends ViewInt {
+public class View extends Composite {
 	@UiTemplate("view.ui.xml")
 	interface ViewUiBinder extends UiBinder<Widget, View>{};
 	public static final ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -163,8 +164,8 @@ public class View extends ViewInt {
         
         container = new Container();
         
-        setCSS(UIResources.INSTANCE.table());
         
+        setCSS(UIResources.INSTANCE.table());
     }
 
     @UiHandler("flexTable")
@@ -195,7 +196,7 @@ public class View extends ViewInt {
         if (mr == lastRow && c == lastCol)
             return;
 
-        Balloon.hide();
+        ExceptionHelper.closePopup();
 
         timer.cancel();
 
@@ -560,7 +561,7 @@ public class View extends ViewInt {
     private void renderCell(int rc, int c, int r) {
     	CellRenderer renderer;
     	
-    	renderer = table.getColumnAt(c).getCellRenderer();
+    	renderer = table.getColumnAt(c).getCellRenderer(r);
 
     	if (table.getQueryMode())
     		renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
@@ -585,7 +586,7 @@ public class View extends ViewInt {
      * @param event
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void startEditing(int r, final int c, Object value, NativeEvent event) {
+    public void startEditing(int r, final int c, Object value, NativeEvent event) {
         int rc, x1, x2, v1, v2;
 
         rc = getFlexTableIndex(r);
@@ -609,17 +610,17 @@ public class View extends ViewInt {
         else if (x2 > v2)
             scrollView.setHorizontalScrollPosition(x2 - table.getWidthWithoutScrollbar());
         
-        container.setWidth( (table.getColumnAt(c).getWidth() - 1));
-        container.setHeight( (table.getRowHeight()));
+        container.setWidth( (table.getColumnAt(c).getWidth() - 3));
+        container.setHeight( (table.getRowHeight() - 3));
         flexTable.setWidget(rc, c, container);
 
         if (table.getQueryMode())
             table.getColumnAt(c)
-                 .getCellEditor()
+                 .getCellEditor(r)
                  .startEditingQuery((QueryData)table.getValueAt(r, c),container,
                                     event);
         else
-            table.getColumnAt(c).getCellEditor().startEditing(table.getValueAt(r, c), container, event);
+            table.getColumnAt(c).getCellEditor(r).startEditing(table.getValueAt(r, c), container, event);
     }
 
     /**
@@ -633,7 +634,7 @@ public class View extends ViewInt {
 	protected Object finishEditing(int r, int c) {
         CellEditor cellEditor;
 
-        cellEditor = table.getColumnAt(c).getCellEditor();
+        cellEditor = table.getColumnAt(c).getCellEditor(r);
 
         return cellEditor.finishEditing();
     }
@@ -787,7 +788,7 @@ public class View extends ViewInt {
         return rowHeight;
     }
     
-    protected void setCSS(TableCSS css) {
+    public void setCSS(TableCSS css) {
     	css.ensureInjected();
     	
     	for(int i = 0; i < flexTable.getRowCount(); i++) {
@@ -811,60 +812,5 @@ public class View extends ViewInt {
     	
     	flexTable.setStyleName(css.Table());
     	
-    }
-
-    @Override
-    protected void addColumn(int index) {
-        layout();
-    }
-
-    @Override
-    protected void removeColumn(int index) {
-        layout();
-    }
-
-    @Override
-    protected void addRow(int index) {
-        adjustScrollBarHeight();
-        renderView(-1,-1);
-        
-    }
-
-    @Override
-    protected void removeRow(int index) {
-        adjustScrollBarHeight();
-        renderView(-1,-1);
-    }
-
-    @Override
-    protected void removeAllRows() {
-        adjustScrollBarHeight();
-        renderView(-1,-1);
-    }
-
-    @Override
-    protected void renderExceptions(int start, int end) {
-        adjustScrollBarHeight();
-        renderView(-1,-1);
-    }
-
-    @Override
-    protected int rowHeight() {
-        return rowHeight;
-    }
-
-    @Override
-    FlexTable table() {
-        return flexTable;
-    }
-
-    @Override
-    ScrollPanel scrollView() {
-        return scrollView;
-    }
-
-    @Override
-    TableCSS css() {
-        return css;
     }
 }

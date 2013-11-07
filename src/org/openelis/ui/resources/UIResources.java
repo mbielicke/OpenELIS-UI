@@ -2,7 +2,6 @@ package org.openelis.ui.resources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
@@ -20,26 +19,17 @@ public interface UIResources extends ClientBundle {
 	@Source("css/atozButton.css")
 	AtozButtonCSS atozButton();
 	
-	@Source("css/icon.css")
-	IconCSS icon();
-	
 	@Source("css/window.css")
 	WindowCSS window();
 	
 	@Source("css/windownocap.css")
 	WindowNoCap windowNoCap();
 	
-	@Source("css/popupwindow.css")
-	WindowNoCap popupWindow();
-	
 	@Source("css/dialog.css")
 	DialogCSS dialog();
 	
 	@Source({"css/autoComplete.css","css/select.css"})
 	AutoCompleteCSS autocomplete();
-	
-	@Source("css/tableautoComplete.css")
-	TableAutoCompleteCSS tableAutoComplete();
 	
 	@Source("css/checkbox.css")
 	CheckboxCSS checkbox();
@@ -50,17 +40,14 @@ public interface UIResources extends ClientBundle {
 	@Source("css/confirm.css")
 	ConfirmCSS confirm();
 	
-	@Source("css/dropdown.css")
+	@Source({"css/dropdown.css","css/select.css","css/checkbox.css"})
 	DropdownCSS dropdown();
-	
-	@Source("css/tabledropdown.css")
-	TableDropdownCSS tableDropdown(); 
 	
 	@Source("css/menu.css")
 	MenuCSS menuCss();
 	
 	@Source("css/note.css")
-	NoteCSS noteCSS();
+	NoteCSS note();
 	
 	@Source("css/popup.css")
 	PopupCSS popup();
@@ -75,23 +62,11 @@ public interface UIResources extends ClientBundle {
 	@Source("css/text.css")
 	TextCSS text();
 	
-	@Source("css/tabletext.css")
-	TableTextCSS tableText();
-	
-	@Source("css/calendar.css")
+	@Source({"css/calendar.css","css/select.css"})
 	CalendarCSS calendar();
-	
-	@Source("css/tablecalendar.css")
-	TableCalendarCSS tableCalendar();
 	
 	@Source("css/table.css")
 	TableCSS table();
-	
-	@Source("css/droptable.css")
-    DropTableCSS dropTable();
-	
-	@Source("css/columnar.css")
-	ColumnarCSS columnar();
 	
 	@Source("css/dragdrop.css")
 	DragDropCSS dragDrop();
@@ -112,22 +87,7 @@ public interface UIResources extends ClientBundle {
 	CalendarUICSS calendarui();
 	
 	@Source("css/lookupbutton.css")
-	LookupButtonCSS lookupButton();	
-	
-	@Source("css/formfieldbutton.css")
-	FormFieldButtonCSS FormFieldButton();
-	
-	@Source("css/titledpanel.css")
-	TitledPanelCSS titledPanel();
-	
-	@Source("css/tooltip.css")
-    ToolTipCSS toolTip();
-	
-	@Source("css/cal.css")
-	CalCSS cal();
-	
-	@Source("css/link.css")
-	LinkCSS link();
+	LookupButtonCSS lookupButton();
 	
 	@Source("images/close.png")
 	ImageResource closeButton();
@@ -184,7 +144,7 @@ public interface UIResources extends ClientBundle {
 	@Source("images/go-down.png")
 	ImageResource descending();
 	
-	@Source("images/submenu.gif")
+	@Source("images/nextbuttonimage.gif")
 	ImageResource menuArrow();
 	
 	@Source("images/menuup.gif")
@@ -192,9 +152,6 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("images/menudown.gif")
 	ImageResource menuDown();
-	
-	@Source("images/menudowndisabled.gif")
-	ImageResource menuDownDisabled();
 	
 	@Source("images/moveright.gif")
 	ImageResource moveRight();
@@ -403,45 +360,5 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("images/restore.gif")
 	ImageResource restore();
-
-    @Source("org/openelis/ui/resources/images/treeOpen.gif")
-    ImageResource treeOpen();
-
-    @Source("org/openelis/ui/resources/images/treeClosed.gif")
-    ImageResource treeClosed();
-    
-    @Source("images/calprevious.png")
-    ImageResource calPrevious();
-    
-    @Source("images/calnext.png")
-    ImageResource calNext();
-    
-    @Source("images/clock.jpg")
-    ImageResource clock();
-    
-    @Source("images/previouspagebuttonimage.gif")
-    ImageResource previousPage();
-    
-    @Source("images/previouspagebuttonimagedisabled.gif")
-    ImageResource previousPageDisabled();
-    
-    @Source("images/nextpagebuttonimage.gif")
-    ImageResource nextPage();
-    
-    @Source("images/nextpagebuttonimagedisabled.gif")
-    ImageResource nextPageDisabled();
 	
-    @Source("images/arrow_down.png")
-    ImageResource arrowDownButtonImage();
-    
-    @Source("images/arrow_downdisabled.png")
-    ImageResource arrowDownButtonImageDisabled();
-    
-    @Source("images/arrow_up.png")
-    ImageResource arrowUpButtonImage();
-    
-    @Source("images/arrow_updisabled.png")
-    ImageResource arrowUpButtonImageDisabled();
-    
-    
 }

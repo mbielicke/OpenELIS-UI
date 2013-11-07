@@ -55,7 +55,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -85,7 +84,7 @@ public class Header extends FocusPanel {
     /**
      * Position where the resize started.
      */
-    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 16;
+    protected int        startX, resizeColumn, showingFilterFor,headerHeight = 20;
     
     /**
      * Widget that used to display a then position due to resizing.
@@ -104,8 +103,6 @@ public class Header extends FocusPanel {
     
     protected TableCSS   css;
     protected MenuCSS    menuCss;
-    
-    protected Command    closeCommand;
 
     /**
      * Constructor that takes the containing table as a parameter
@@ -148,7 +145,7 @@ public class Header extends FocusPanel {
                     popResize = new PopupPanel();
                     bar = new FocusPanel();
                     bar.setWidth("1px");
-                    bar.setHeight((table.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
+                    bar.setHeight((table.view.flexTable.getOffsetHeight() + getOffsetHeight())+"px");
                     DOM.setStyleAttribute(bar.getElement(), "background", "red");
                     popResize.add(bar);
                     /*
@@ -201,10 +198,6 @@ public class Header extends FocusPanel {
                 
                 popResize.setPopupPosition(startX, ((Widget)event.getSource()).getAbsoluteTop());
                 popResize.show();
-                if(table.view.scrollView().getMaximumHorizontalScrollPosition() > 0)
-                    bar.setHeight(table.view.scrollView().getOffsetHeight() + getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()+"px");
-                else
-                    bar.setHeight((table.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
                 /*
                  * We set the capture of mouse events now to the resize bar itself.  This allows us
                  * to simplify the logic of dragging the bar, as well as provide smoother dragging and 
@@ -241,12 +234,6 @@ public class Header extends FocusPanel {
             }
         });
         
-        closeCommand = new Command() {
-            public void execute() {
-                popFilter.hide();
-            }
-        };
-        
         layout();
     }
 
@@ -261,9 +248,8 @@ public class Header extends FocusPanel {
         
         renderView(-1,-1);
         
-
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
-        flexTable.getCellFormatter().setHeight(0, 0, headerHeight+"px");
+        flexTable.getCellFormatter().setHeight(0, 0, table.getRowHeight()+"px");
         
         flexTable.getCellFormatter().addStyleName(0, 0, css.First());
     }
@@ -289,7 +275,7 @@ public class Header extends FocusPanel {
             if(column.getLabel() !=  null)
             	header = column.getLabel().replaceAll("\\n", "<br/>");
             else
-            	header = "";
+            	header = "Header";
             flexTable.setHTML(0, i, header);
             flexTable.getColumnFormatter().setWidth(i, column.getWidth() + "px");
             flexTable.getCellFormatter().setVerticalAlignment(0, i, HasVerticalAlignment.ALIGN_BOTTOM);
@@ -349,14 +335,14 @@ public class Header extends FocusPanel {
         if (column < 0)
             return;
 
-        if (table.getColumnAt(column).isFilterable() || table.getColumnAt(column).isSortable || table.getColumnAt(column).getMenuItems() != null) {
+        if (table.getColumnAt(column).isFilterable() || table.getColumnAt(column).isSortable) {
             x = table.getXForColumn(column) + table.getColumnAt(column).getWidth();
             /*
              * if the position of the filter button is off the currently scrolled view
              * then just return
              */
             if (x > table.getWidthWithoutScrollbar() +
-                    table.view.scrollView().getHorizontalScrollPosition())
+                    table.view.scrollView.getHorizontalScrollPosition())
                 return;
             x -= 17;
             /*
@@ -407,7 +393,7 @@ public class Header extends FocusPanel {
             /*
              * Position and show filter button
              */
-            popFilter.setPopupPosition(x + getAbsoluteLeft(), getAbsoluteTop());
+            popFilter.setPopupPosition(x + getAbsoluteLeft(), getAbsoluteTop()+getOffsetHeight()-20);
             popFilter.show();
             showingFilter = true;
             showingFilterFor = column;
@@ -450,7 +436,7 @@ public class Header extends FocusPanel {
             showFilter(col1);
         }
 
-        if (resizeColStyle && col1 > -1) {
+        if (resizeColStyle) {
             flexTable.getCellFormatter().removeStyleName(0, col1, css.ResizeCol());
             flexTable.getCellFormatter().removeStyleName(0, col2, css.ResizeCol());
             resizeColStyle = false;
@@ -471,7 +457,6 @@ public class Header extends FocusPanel {
         final Column column;
         final ArrayList<FilterChoice> choices;
         Filter filter;
-        
                
         panel = new PopupMenuPanel();
         panel.setStyleName(menuCss.MenuPanel());
@@ -541,15 +526,6 @@ public class Header extends FocusPanel {
                 panel.addItem(filterItem);
             }
         }
-        
-        if(column.getMenuItems() != null) {
-            for(MenuItem colItem : column.getMenuItems()) {
-                if(!colItem.getCommands().contains(closeCommand))
-                    colItem.addCommand(closeCommand);
-                panel.addItem(colItem);
-            }
-        }
-        
         return panel;
     }
     
