@@ -48,6 +48,8 @@ import org.openelis.ui.widget.table.event.CellClickedHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -283,8 +285,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 				uncheckAll = new Button(css.Unchecked(),Messages.get().drop_uncheck());
 				checkAll = new Button(css.Checked(),Messages.get().drop_check());
 				
-				uncheckAll.setCss(UIResources.INSTANCE.buttonPanel());
-				checkAll.setCss(UIResources.INSTANCE.buttonPanel());
+				uncheckAll.setCss(UIResources.INSTANCE.button());
+				checkAll.setCss(UIResources.INSTANCE.button());
 				
 				multiHeader = new Grid(1,2);
 				multiHeader.setCellSpacing(0);
@@ -357,7 +359,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 
 		    @Override
 		    public void execute() {
-		        int modelHeight = table.getModel().size() * 17;
+		        int modelHeight = table.getModel().size() * cellHeight;
 		        
 		        if(table.hasHeader())
 		            modelHeight += 19;
@@ -506,7 +508,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	@UiChild(limit=1,tagname="popup")
 	public void setPopupContext(Table tableDef) {
 		this.table = tableDef;
-
+		table.setCSS(UIResources.INSTANCE.dropTable());
+		
 		//table.setFixScrollbar(false);
 		table.setRowHeight(16);
 		table.setEnabled(true);
@@ -794,6 +797,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 		textbox.setText("");
 		table.unselectAll();
 		
+		
 		if(queryMode){
 			/*
 			 * If switching to multi select add checkbox column at position 0
@@ -803,6 +807,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 			col.setCellRenderer(new CheckBoxCell(new CheckBox()));
 			table.addColumnAt(0, col);
 			textbox.setReadOnly(true);
+			table.setAllowMultipleSelection(true);
 		}else{
 			/*
 			 * Remove Checkbox column if switching to single select
@@ -811,6 +816,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 			table.removeColumnAt(0);
 			textbox.setText("");
 			textbox.setReadOnly(false);
+			table.setAllowMultipleSelection(false);
 		}
 		
 	}
@@ -876,6 +882,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 
 		if(!queryMode)
 			return;
+		
+		for(int i = 0; i < table.getRowCount(); i++)
+		    table.setValueAt(i,0,"N");
 		
 		table.unselectAll();
 		
@@ -1025,29 +1034,34 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 				case KeyCodes.KEY_TAB:
 					break;  
 				case KeyCodes.KEY_BACKSPACE :
-                    if(searchString.length() > 1)
-                        searchString = searchString.substring(0,searchString.length()-1);
-                    else {
-                        searchString = "";
-                        table.selectRowAt(-1);
-                        return;
-                    }
+				    if(!queryMode) {
+				        
+				        if(searchString.length() > 1)
+				            searchString = searchString.substring(0,searchString.length()-1);
+				        else {
+				            searchString = "";
+				            table.selectRowAt(-1);
+				            return;
+				        }
+				    }
 				default:
 				    // Don't add backspace to search
-				    if(ch != '\b')
-			            searchString += String.valueOf(ch);             
+				    if(!queryMode) {
+				        if(ch != '\b')
+				            searchString += String.valueOf(ch);             
 	
-					index = findIndexByTextValue(searchString);
+				        index = findIndexByTextValue(searchString);
 
-					if (index > -1) {
-					    table.selectRowAt(index);
-					    setDisplay();
-						textbox.setSelectionRange(searchString.length(), textbox.getText().length()-searchString.length());
-					}
-					else
-						searchString = searchString.substring(0,searchString.length()-1);
-					event.preventDefault();
-					event.stopPropagation();
+				        if (index > -1) {
+				            table.selectRowAt(index);
+				            setDisplay();
+				            textbox.setSelectionRange(searchString.length(), textbox.getText().length()-searchString.length());
+				        }
+				        else
+				            searchString = searchString.substring(0,searchString.length()-1);
+				        event.preventDefault();
+				        event.stopPropagation();
+				    }
 			}
 		}
 

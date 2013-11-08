@@ -1133,7 +1133,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     public Node addNode(String type) {
-        return addNodeAt(type, getRowCount());
+        if(root == null)
+            setRoot(new Node());
+        
+        return addNodeAt(type, root.getChildCount());
     }
 
     /**
@@ -1161,6 +1164,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     public Node addNode(Node node) {
+        if(root == null)
+            setRoot(new Node());
+        
         return addNode(root.getChildCount(), root, node);
     }
 
@@ -1200,9 +1206,13 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             return null;
         
         if(parent.isOpen) {
-            if(parent == root)
-                pos = index;
-            else if(parent.getChildCount() == 0)
+            if(parent == root) {
+                if(index == root.getChildCount())
+                    pos = getRowCount();
+                else
+                    pos = nodeIndex.get(root.getChildAt(index)).index - 1;
+                
+            }else if(parent.getChildCount() == 0)
             	pos = nodeIndex.get(parent).index +1;
             else if(index >= parent.getChildCount())
                 pos = nodeIndex.get(parent.getLastChild()).index + 1;
@@ -2760,13 +2770,37 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public ArrayList<Exception> getEndUserExceptions() {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<Exception> exceptions;
+        
+        if(endUserExceptions == null)
+            return null;
+        
+        exceptions = new ArrayList<Exception>();
+        
+        for(HashMap<Integer,ArrayList<Exception>> row : endUserExceptions.values()) {
+            for(ArrayList<Exception> excs : row.values()) {
+                exceptions.addAll(excs);
+            }
+        }
+        
+        return exceptions;
     }
 
     public ArrayList<Exception> getValidateExceptions() {
-        // TODO Auto-generated method stub
-        return null;
+        ArrayList<Exception> exceptions;
+        
+        if(validateExceptions == null)
+            return null;
+        
+        exceptions = new ArrayList<Exception>();
+        
+        for(HashMap<Integer,ArrayList<Exception>> row : validateExceptions.values()) {
+            for(ArrayList<Exception> excs : row.values()) {
+                exceptions.addAll(excs);
+            }
+        }
+        
+        return exceptions;
     }
 
     public boolean hasExceptions() {

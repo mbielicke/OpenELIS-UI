@@ -157,7 +157,9 @@ public abstract class ScreenNavigator<T extends Serializable> {
         }
 
         row = 0;
+        
         this.result = result;
+        
         if (table != null)
             table.setModel(getModel());
         //
@@ -185,7 +187,9 @@ public abstract class ScreenNavigator<T extends Serializable> {
         if (atozPrev != null)
             atozPrev.setEnabled(enable && result != null);
         this.enable = enable;
-        table.setEnabled(enable);
+        
+        if(table != null)
+            table.setEnabled(enable);
     }
 
     /**

@@ -211,9 +211,9 @@ public class Screen extends ResizeComposite implements FocusHandler,
             if(tabValid.status.value > validation.status.value)
                 validation.status = tabValid.status;
             
-            if(tabValid.getMessages() != null) {
-                for(String message : tabValid.messages)
-                    validation.addMessage(message);
+            if(tabValid.getExceptions() != null) {
+                for(Exception exception : tabValid.exceptions)
+                    validation.addException(exception);
             }
         }
 
@@ -435,7 +435,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
     public static class Validation {
         
         public enum Status {
-            VALID(0), FLAGGED(1), WARNINGS(2), ERRORS(3);
+            VALID(0), WARNINGS(1), FLAGGED(2), ERRORS(3);
             
             int value;
             
@@ -450,7 +450,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
         
         private Status status;
         
-        private ArrayList<String> messages;
+        private ArrayList<Exception> exceptions;
         
         public void setStatus(Status status) {
             if(status.value > this.status.value)
@@ -461,15 +461,15 @@ public class Screen extends ResizeComposite implements FocusHandler,
             return status;
         }
         
-        public void addMessage(String message) {
-            if(messages == null)
-                messages = new ArrayList<String>();
+        public void addException(Exception exception) {
+            if(exceptions == null)
+                exceptions = new ArrayList<Exception>();
             
-            messages.add(message);
+            exceptions.add(exception);
         }
         
-        public ArrayList<String> getMessages() {
-            return messages;
+        public ArrayList<Exception> getExceptions() {
+            return exceptions;
         }
     }
 

@@ -26,6 +26,7 @@
 package org.openelis.ui.widget;
 
 import org.openelis.ui.resources.ButtonCSS;
+import org.openelis.ui.resources.IconCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 
@@ -68,6 +69,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     private boolean toggles, enabled, pressed, locked;
     private String  action;
     private ButtonCSS css;
+    private IconCSS icon;
     int eventsToSink;
     
     @UiField
@@ -116,6 +118,9 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
            		}
             }
         });
+        
+        icon = UIResources.INSTANCE.icon();
+        icon.ensureInjected();
         
         setCss(UIResources.INSTANCE.button());
     }
@@ -190,9 +195,15 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         if (enabled) {
             unlock();
             removeStyleName(css.Disabled());
+            removeStyleName(icon.Disabled());
+            //leftIcon.removeClassName(icon.Disabled());
+            //rightIcon.removeClassName(icon.Disabled());
         } else {
             lock();
             addStyleName(css.Disabled());
+            addStyleName(icon.Disabled());
+            //leftIcon.addClassName(icon.Disabled());
+            //rightIcon.removeClassName(icon.Disabled());
         }
     }
 
@@ -300,8 +311,10 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	}
 	
 	public void setCss(ButtonCSS css) {
-		if(!isEnabled() && this.css != null)
+		if(!isEnabled() && this.css != null) {
 			removeStyleName(this.css.Disabled());
+			removeStyleName(icon.Disabled());
+		}
 		
 		if(pressed && this.css != null)
 			removeStyleName(this.css.Pressed());

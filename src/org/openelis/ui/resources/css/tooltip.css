@@ -64,12 +64,11 @@
 }
 
 .Content {
-	padding:5px 8px;
+	padding:2px 4px;
 	text-align:center;
 	text-decoration: none;
 	background-color :#333;
 	color:white;
 	border-radius : 4px;
 	font-wheight:bold;
-	font-size : 11px;
 }
