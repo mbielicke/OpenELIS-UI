@@ -7,21 +7,33 @@
 	border: 0px solid white;
 }
 
-.Table>tbody>tr {
-	background: white;
+	.Table tr:hover {
+	cursor:pointer;
+	color:white;
+	}
+@if user.agent gecko1_8 {
+	.Table tr:hover {
+background-image: -moz-linear-gradient(center top , rgba(99, 136, 246, 1), rgba(34,94,243, 1));
+	}
 }
+
+@elif user.agent ie6 ie8 ie9 {
+	.Table tr:hover {
+		background-image: -ms-linear-gradient(top, #ebf3fd, #d9e8fb);
+	}
+}
+
+@elif user.agent safari {
+	.Table tr:hover {
+		background-image: -webkit-linear-gradient(top, #ebf3fd, #d9e8fb);
+	}
+}
+
 
 .Table>tbody>tr>td {
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: pre;
-	border-color: #FFFFFF #EDEDED #EDEDED;
-	border-style: solid;
-	border-width: 0px 1px 1px 0px;
-	color: black;
-	cursor: pointer;
-/*	padding: 0px 2px 2px 2px;  fixed row cellpadding*/
-	padding: 0px 2px 2px;
+	vertical-align:middle;
 }
 
 .Table>tbody>tr>td.InputError {
@@ -43,7 +55,7 @@
 .Table>tbody>tr.Selection>td {
 	border-color: #FFFFFF #A9BFD3 #A9BFD3;
 	border-style: solid;
-	border-width: 0px 1px 0px 0px;
+	border-width: 0px 0px 0px 0px;
 }
 
 .Table>tbody>tr.SubHeader td {

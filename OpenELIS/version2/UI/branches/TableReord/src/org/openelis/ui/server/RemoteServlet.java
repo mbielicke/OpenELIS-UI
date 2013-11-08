@@ -39,18 +39,23 @@ public class RemoteServlet extends XsrfProtectedServiceServlet {
      * Throws or wraps the EJB exceptions so it can be forwarded to GWT
      */
     protected Exception serializeForGWT(Throwable t) {
+        Throwable nt;
+        
         if (t instanceof ValidationErrorsList)
             return (ValidationErrorsList)t;
+
+        nt = t;
+        do {
+            try {
+                sPolicy.validateSerialize(nt.getClass());
+                return (Exception)nt;
+            } catch (SerializationException se) {
+                nt = nt.getCause();
+            }
+        } while (nt != null);
         
-        while (t.getCause() != null)
-            t = t.getCause();
-        try {
-            sPolicy.validateSerialize(t.getClass());
-            return (Exception) t;
-        } catch (SerializationException se) {
-            return new Exception(t.toString());
-        }
-    }
+        return new Exception(t.toString());
+    }        
 
     /*
      * @see

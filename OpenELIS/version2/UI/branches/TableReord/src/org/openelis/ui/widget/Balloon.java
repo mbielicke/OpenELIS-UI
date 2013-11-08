@@ -476,7 +476,9 @@ public class Balloon extends Composite {
             HasExceptions source;
 
             source = (HasExceptions)event.getSource();
-
+            
+            setTarget((HasBalloon)source,event);
+            
             if (source.getEndUserExceptions() != null || source.getValidateExceptions() != null) {
                 drawExceptions(source, x, y);
 

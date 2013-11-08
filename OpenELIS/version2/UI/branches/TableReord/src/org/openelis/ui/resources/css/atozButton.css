@@ -4,7 +4,7 @@
 }
 
 .Button {
-    margin: 0 2px 0 0;
+    margin:2px;
     padding:1px;
 	border:1px solid transparent;
 	-moz-border-radius:2px;

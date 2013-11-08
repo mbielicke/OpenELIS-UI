@@ -1,8 +1,7 @@
 @sprite .SelectButton {
 	gwt-image:'autoArrow';
-	
 	background-position:0 4px;
-		height:18px;
+	height:18px;
 }
 
 @sprite .CloseButton {
@@ -11,6 +10,7 @@
     height:20px;
     cursor:pointer;
 }
+
 
 .ScreenLabel{}
 
@@ -61,18 +61,12 @@
 }
 
 @sprite .Checked {
-    height:13px;
-    width:13px;
-	gwt-image:'apply';
+	gwt-image:'commit';
     cursor:pointer;
-    border:1px solid white;
 }
 @sprite .Unchecked {
-    height:13px;
-    width:13px;
-	gwt-image:'unapply';
+	gwt-image:'abort';
     cursor:pointer;
-    border:1px solid white;
 }
 @sprite .Unknown {
     height:13px;

@@ -262,8 +262,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
             uncheckAll = new Button(css.Unchecked(),Messages.get().drop_uncheck());
             checkAll = new Button(css.Checked(),Messages.get().drop_check());
                 
-            uncheckAll.setCss(UIResources.INSTANCE.buttonPanel());
-            checkAll.setCss(UIResources.INSTANCE.buttonPanel());
+            uncheckAll.setCss(UIResources.INSTANCE.button());
+            checkAll.setCss(UIResources.INSTANCE.button());
                 
             multiHeader = new Grid(1,2);
             multiHeader.setCellSpacing(0);
@@ -948,9 +948,10 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 				case KeyCodes.KEY_TAB:
 					break;
 				case KeyCodes.KEY_BACKSPACE:
-					setSelectedIndex(-1);
+					//setSelectedIndex(-1);
 					break;
 				default:
+				    /*
 					searchString += String.valueOf(ch);             
 				
 					index = findIndexByTextValue(searchString);
@@ -959,6 +960,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 						setSelectedIndex(index);
 					else
 						searchString = searchString.substring(0,searchString.length()-1);
+				    */
+				    break;
 			}
 		}
 
