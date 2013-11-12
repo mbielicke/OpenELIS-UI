@@ -92,7 +92,7 @@ public class Calendar extends Composite {
                         
                     date = selected.get(Datetime.DAY);
                     
-                    if(month != selected.get(Datetime.MONTH)) {
+                    if(month != selected.get(Datetime.MONTH) || year != selected.get(Datetime.YEAR)) {
                         setDate(selected);
                         return;
                     }
@@ -132,8 +132,6 @@ public class Calendar extends Composite {
     }
     
     protected void changeCalendar(Datetime datetime) {
-        
-        int year,month;
         
         displayYear = datetime.get(Datetime.YEAR);
         displayMonth = datetime.get(Datetime.MONTH);
