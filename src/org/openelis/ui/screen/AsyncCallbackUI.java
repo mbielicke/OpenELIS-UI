@@ -57,7 +57,7 @@ public abstract class AsyncCallbackUI<T> implements AsyncCallback<T> {
     public void onFailure(Throwable caught) {
         if(caught instanceof ValidationErrorsList)
             validationErrors((ValidationErrorsList)caught);
-        if(caught instanceof LastPageException)
+        else if(caught instanceof LastPageException)
             lastPage();
         else if(caught instanceof NotFoundException)
             notFound();
