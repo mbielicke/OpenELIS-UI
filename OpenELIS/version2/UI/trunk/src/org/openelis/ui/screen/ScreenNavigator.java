@@ -273,11 +273,15 @@ public abstract class ScreenNavigator<T extends Serializable> {
                 if (atozPrev != null)
                     atozPrev.setEnabled(true);
             } else {
-                selection = -1;
-                if (table != null)
-                    table.unselectRowAt(selection);
+                clearSelection();
             }
         }
+    }
+    
+    public void clearSelection() {
+        selection = -1;
+        if (table != null)
+            table.unselectRowAt(selection);
     }
 
     /*
