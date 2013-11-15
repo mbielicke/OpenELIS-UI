@@ -383,7 +383,7 @@ public class StaticView extends ViewInt {
         for (int r = start; r <= end; r++ ) {
             for (int c = 0; c < table.getColumnCount(); c++ ) {
                 if (table.hasExceptions(r, c)) {
-                    flexTable.getCellFormatter().addStyleName(r, c, css.InputError());
+                    flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
                     flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
 
                         @Override
@@ -396,7 +396,7 @@ public class StaticView extends ViewInt {
 
                     });
                 } else {
-                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
+                    flexTable.getCellFormatter().removeStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
                     flexTable.removeHandler(r, c);
                 }
 
