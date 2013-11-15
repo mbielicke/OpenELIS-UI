@@ -4,16 +4,16 @@
 
   <g:DockLayoutPanel ui:field="outer">
     <g:north size="{res.window.borderWidth}">
-      <g:FocusPanel width="100%" height="100%" ui:field="north" />
+      <g:FocusPanel ui:field="north" />
     </g:north>
     <g:east size="{res.window.borderWidth}">
-      <g:FocusPanel width="100%" height="100%" ui:field="east" />
+      <g:FocusPanel ui:field="east" />
     </g:east>
     <g:west size="{res.window.borderWidth}">
-      <g:FocusPanel width="100%" height="100%" ui:field="west" />
+      <g:FocusPanel ui:field="west" />
     </g:west>
     <g:south size="{res.window.borderWidth}">
-      <g:FocusPanel width="100%" height="100%" ui:field="south" />
+      <g:FocusPanel ui:field="south" />
     </g:south>
     <g:center>
       <g:LayoutPanel ui:field="inner">
