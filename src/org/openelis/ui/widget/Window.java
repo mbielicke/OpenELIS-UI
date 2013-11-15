@@ -79,77 +79,75 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-//import org.openelis.ui.screen.Screen;
+
+// import org.openelis.ui.screen.Screen;
 
 public class Window extends FocusPanel implements WindowInt, RequiresResize, ProvidesResize {
     /*
-    @UiTemplate("Window.ui.xml")
-    interface WindowUiBinder extends UiBinder<Widget, Window> {
-    };
-    
-    public static final WindowUiBinder uiBinder = GWT.create(WindowUiBinder.class);
-    
-    
-    @UiField
-    protected Caption                  cap;
-    @UiField
-    protected DockLayoutPanel          outer;
-    @UiField
-    protected LayoutPanel              top, bottom;
-    */
-    protected VerticalPanel            messagePanel;
-    protected PopupPanel               pop;
+     * @UiTemplate("Window.ui.xml") interface WindowUiBinder extends
+     * UiBinder<Widget, Window> { };
+     * 
+     * public static final WindowUiBinder uiBinder =
+     * GWT.create(WindowUiBinder.class);
+     * 
+     * 
+     * @UiField protected Caption cap;
+     * 
+     * @UiField protected DockLayoutPanel outer;
+     * 
+     * @UiField protected LayoutPanel top, bottom;
+     */
+    protected VerticalPanel        messagePanel;
+    protected PopupPanel           pop;
     /*
-    @UiField
-    protected Label                    status;
-    @UiField
-    protected FocusPanel               statusImg,close, collapse, maximize,resizer,
-                                       north,south,east,west;
-    @UiField
-    protected LayoutPanel              body;
-    @UiField
-    protected Grid                     statusContainer;
-    */
-    protected AbsolutePanel            glass,parent;
-    protected HTML                     label;
+     * @UiField protected Label status;
+     * 
+     * @UiField protected FocusPanel statusImg,close, collapse,
+     * maximize,resizer, north,south,east,west;
+     * 
+     * @UiField protected LayoutPanel body;
+     * 
+     * @UiField protected Grid statusContainer;
+     */
+    protected AbsolutePanel        glass, parent;
+    protected HTML                 label;
 
-    protected PickupDragController     dragController;
-    protected HandlerRegistration      moveHandler, mouseUpHandler;
-    protected int                      offX, offY;
-    
-    protected FocusPanel               resizeWindow;
+    protected PickupDragController dragController;
+    protected HandlerRegistration  moveHandler, mouseUpHandler;
+    protected int                  offX, offY;
 
-    protected int                      userWidth, userHeight,userLeft,userTop;
-    protected boolean                  maximized,resize;
-    
-    protected MouseDownHandler         mouseDownHandler;
-    protected Widget                   dragSource;
-    
+    protected FocusPanel           resizeWindow;
+
+    protected int                  userWidth, userHeight, userLeft, userTop;
+    protected boolean              maximized, resize;
+
+    protected MouseDownHandler     mouseDownHandler;
+    protected Widget               dragSource;
+
     /**
      * The Screen or panel that is displayed by this window.
      */
-    protected Widget                   content;
+    protected Widget               content;
 
-    protected WindowCSS                css;
+    protected WindowCSS            css;
 
-    protected Window                   source   = this;
-    
-    protected WindowViewInt            view;
+    protected Window               source = this;
+
+    protected WindowViewInt        view;
 
     public Window() {
         this(true);
     }
-    
+
     public Window(boolean resize) {
         this.resize = resize;
-        
-        if(resize)
+
+        if (resize)
             view = new WindowResizeView();
         else
             view = new WindowView();
 
         setWidget(view);
-
 
         view.getCap().addMouseDownHandler(new MouseDownHandler() {
             public void onMouseDown(MouseDownEvent event) {
@@ -170,55 +168,60 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
 
         view.getCollapse().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                
-                if(view.getBody().isVisible()) {
+
+                if (view.getBody().isVisible()) {
                     userHeight = getOffsetHeight();// + (css.borderWidth());
                     view.getOuter().setHeight("25px");
-                }else
-                    view.getOuter().setHeight((userHeight-2)+"px");
-                
-                if(source.resize) {
+                } else
+                    view.getOuter().setHeight( (userHeight - 2) + "px");
+
+                if (source.resize) {
                     boolean visible = view.getBody().isVisible();
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()),!visible);
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()), !visible);
+                    UIObject.setVisible( ((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()),
+                                        !visible);
+                    UIObject.setVisible( ((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()),
+                                        !visible);
                 }
-                view.getBody().setVisible(!view.getBody().isVisible());
-                view.getBottom().setVisible(!view.getBottom().isVisible());
-                
+                view.getBody().setVisible( !view.getBody().isVisible());
+                view.getBottom().setVisible( !view.getBottom().isVisible());
+
             }
         });
-        
-        if(resize) {
-        view.getMaximize().addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                
-                if(!view.getBody().isVisible()) {
-                    view.getOuter().setHeight((userHeight-2)+"px");
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()), true);
-                    UIObject.setVisible(((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()), true);
-                    view.getBody().setVisible(true);
-                    view.getBottom().setVisible(true);
+
+        if (resize) {
+            view.getMaximize().addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+
+                    if ( !view.getBody().isVisible()) {
+                        view.getOuter().setHeight( (userHeight - 2) + "px");
+                        UIObject.setVisible( ((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBody()),
+                                            true);
+                        UIObject.setVisible( ((LayoutPanel)view.getInner()).getWidgetContainerElement(view.getBottom()),
+                                            true);
+                        view.getBody().setVisible(true);
+                        view.getBottom().setVisible(true);
+                    }
+
+                    if ( !maximized) {
+                        userWidth = getOffsetWidth();
+                        userHeight = getOffsetHeight();
+                        userLeft = ((AbsolutePanel)getParent()).getWidgetLeft(source);
+                        userTop = ((AbsolutePanel)getParent()).getWidgetTop(source);
+                        setSize(getParent().getOffsetWidth() - (css.borderWidth() * 2) + "px",
+                                getParent().getOffsetHeight() - (css.borderWidth() * 2) + "px");
+                        ((AbsolutePanel)getParent()).setWidgetPosition(source, 0, 0);
+                        maximized = true;
+                        view.getMaximize().setStyleName(css.RestoreButton());
+                    } else {
+                        ((AbsolutePanel)getParent()).setWidgetPosition(source, userLeft, userTop);
+                        setSize(userWidth + "px", userHeight + "px");
+                        maximized = false;
+                        view.getMaximize().setStyleName(css.MaximizeButton());
+                    }
+                    ((LayoutPanel)view.getBody()).onResize();
+
                 }
-                
-                if(!maximized) {
-                    userWidth = getOffsetWidth();
-                    userHeight = getOffsetHeight();
-                    userLeft = ((AbsolutePanel)getParent()).getWidgetLeft(source);
-                    userTop = ((AbsolutePanel)getParent()).getWidgetTop(source);
-                    setSize(getParent().getOffsetWidth()-(css.borderWidth()*2)+"px",getParent().getOffsetHeight()-(css.borderWidth()*2)+"px");
-                    ((AbsolutePanel)getParent()).setWidgetPosition(source, 0, 0);
-                    maximized = true;
-                    view.getMaximize().setStyleName(css.RestoreButton());
-                }else {
-                    ((AbsolutePanel)getParent()).setWidgetPosition(source, userLeft, userTop);
-                    setSize(userWidth+"px",userHeight+"px");
-                    maximized = false;
-                    view.getMaximize().setStyleName(css.MaximizeButton());
-                }
-                ((LayoutPanel)view.getBody()).onResize();
-       
-            }
-        });
+            });
         }
 
         view.getStatusImg().addMouseOverHandler(new MouseOverHandler() {
@@ -258,104 +261,114 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
         });
 
         view.getStatus().setText(Messages.get().window_loading());
-        
-        view.getStatusContainer().getCellFormatter().setWidth(0,1,"100%");
+
+        view.getStatusContainer().getCellFormatter().setWidth(0, 1, "100%");
 
         /* Sink events and add resize Handler */
         view.getOuter().sinkEvents(Event.ONCLICK);
         view.getOuter().setWidth("auto");
-        
+
         /* Apply style to the window elements */
         setCSS(UIResources.INSTANCE.window());
-        
-        if(resize) {
-        resizeWindow = new FocusPanel();
-        resizeWindow.setStyleName(css.ResizeWindow());
-        DOM.setStyleAttribute(resizeWindow.getElement(), "zIndex", "1000");
-        
-        mouseDownHandler = new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                parent = (AbsolutePanel)getParent();
-                resizeWindow.setWidth(getOffsetWidth() + "px");
-                resizeWindow.setHeight(getOffsetHeight() + "px");
-                parent.add(resizeWindow, parent.getWidgetLeft(source), parent.getWidgetTop(source));
 
+        if (resize) {
+            resizeWindow = new FocusPanel();
+            resizeWindow.setStyleName(css.ResizeWindow());
+            DOM.setStyleAttribute(resizeWindow.getElement(), "zIndex", "1000");
 
-                parent.addStyleName(css.NoSelect());
-                view.getOuter().addStyleName(css.NoSelect());
-                DOM.setCapture(resizeWindow.getElement());
-                dragSource = (Widget)event.getSource();
-                if(dragSource == view.getNorth() || dragSource == view.getSouth())
-                    DOM.setStyleAttribute(resizeWindow.getElement(), "cursor", "ns-resize");
-                else if (dragSource == view.getEast() || dragSource == view.getWest())
-                    DOM.setStyleAttribute(resizeWindow.getElement(), "cursor", "ew-resize");
-                else
-                    DOM.setStyleAttribute(resizeWindow.getElement(), "cursor", "se-resize");
-              }
-        };
-        
-        view.getResizer().addMouseDownHandler(mouseDownHandler);
-        
-        view.getNorth().addMouseDownHandler(mouseDownHandler);
-        
-        ((FocusPanel)view.getEast()).addMouseDownHandler(mouseDownHandler);
-        
-        ((FocusPanel)view.getWest()).addMouseDownHandler(mouseDownHandler);
-        
-        view.getSouth().addMouseDownHandler(mouseDownHandler);
-        
-        resizeWindow.addMouseMoveHandler(new MouseMoveHandler() {
-            public void onMouseMove(MouseMoveEvent event) {
-                int width,height,x,y;
-                
-                if(dragSource == view.getResizer() || dragSource == view.getEast())
-                    width = event.getRelativeX(parent.getElement()) - parent.getWidgetLeft(source);
-                else if(dragSource == view.getWest())
-                    width = (parent.getWidgetLeft(source) - event.getRelativeX(parent.getElement())) + view.getOuter().getOffsetWidth();
-                else
-                    width = getOffsetWidth();
-                
-                if(dragSource == view.getResizer() || dragSource == view.getSouth())
-                    height = event.getRelativeY(parent.getElement()) - parent.getWidgetTop(source);
-                else if(dragSource == view.getNorth()){
-                    height = (parent.getWidgetTop(source) - event.getRelativeY(parent.getElement())) + view.getOuter().getOffsetHeight();
-                }else
-                    height = getOffsetHeight();
-                
-                if(dragSource == view.getNorth())
-                    y = event.getRelativeY(parent.getElement());
-                else
-                    y = parent.getWidgetTop(source);
-                
-                if(dragSource == view.getWest())
-                    x = event.getRelativeX(parent.getElement());
-                else
-                    x = parent.getWidgetLeft(source);
-                
-                parent.setWidgetPosition(resizeWindow, x, y);
-                resizeWindow.setSize(width+"px", height+"px");
-            }
-        });
+            mouseDownHandler = new MouseDownHandler() {
+                @Override
+                public void onMouseDown(MouseDownEvent event) {
+                    parent = (AbsolutePanel)getParent();
+                    resizeWindow.setWidth(getOffsetWidth() + "px");
+                    resizeWindow.setHeight(getOffsetHeight() + "px");
+                    parent.add(resizeWindow,
+                               parent.getWidgetLeft(source),
+                               parent.getWidgetTop(source));
 
-        resizeWindow.addMouseUpHandler(new MouseUpHandler() {
+                    parent.addStyleName(css.NoSelect());
+                    view.getOuter().addStyleName(css.NoSelect());
+                    DOM.setCapture(resizeWindow.getElement());
+                    dragSource = (Widget)event.getSource();
+                    if (dragSource == view.getNorth() || dragSource == view.getSouth())
+                        DOM.setStyleAttribute(resizeWindow.getElement(), "cursor", "ns-resize");
+                    else if (dragSource == view.getEast() || dragSource == view.getWest())
+                        DOM.setStyleAttribute(resizeWindow.getElement(), "cursor", "ew-resize");
+                    else
+                        DOM.setStyleAttribute(resizeWindow.getElement(), "cursor", "se-resize");
+                }
+            };
 
-            @Override
-            public void onMouseUp(MouseUpEvent event) {
+            view.getResizer().addMouseDownHandler(mouseDownHandler);
+
+            view.getNorth().addMouseDownHandler(mouseDownHandler);
+
+            ((FocusPanel)view.getEast()).addMouseDownHandler(mouseDownHandler);
+
+            ((FocusPanel)view.getWest()).addMouseDownHandler(mouseDownHandler);
+
+            view.getSouth().addMouseDownHandler(mouseDownHandler);
+
+            resizeWindow.addMouseMoveHandler(new MouseMoveHandler() {
+                public void onMouseMove(MouseMoveEvent event) {
+                    int width, height, x, y;
+
+                    if (dragSource == view.getResizer() || dragSource == view.getEast())
+                        width = event.getRelativeX(parent.getElement()) -
+                                parent.getWidgetLeft(source);
+                    else if (dragSource == view.getWest())
+                        width = (parent.getWidgetLeft(source) - event.getRelativeX(parent.getElement())) +
+                                view.getOuter().getOffsetWidth();
+                    else
+                        width = getOffsetWidth();
+
+                    if (dragSource == view.getResizer() || dragSource == view.getSouth())
+                        height = event.getRelativeY(parent.getElement()) -
+                                 parent.getWidgetTop(source);
+                    else if (dragSource == view.getNorth()) {
+                        height = (parent.getWidgetTop(source) - event.getRelativeY(parent.getElement())) +
+                                 view.getOuter().getOffsetHeight();
+                    } else
+                        height = getOffsetHeight();
+
+                    if (dragSource == view.getNorth())
+                        y = event.getRelativeY(parent.getElement());
+                    else
+                        y = parent.getWidgetTop(source);
+
+                    if (dragSource == view.getWest())
+                        x = event.getRelativeX(parent.getElement());
+                    else
+                        x = parent.getWidgetLeft(source);
+
+                    parent.setWidgetPosition(resizeWindow, x, y);
+                    resizeWindow.setSize(width + "px", height + "px");
+                }
+            });
+
+            resizeWindow.addMouseUpHandler(new MouseUpHandler() {
+
+                @Override
+                public void onMouseUp(MouseUpEvent event) {
                     parent.removeStyleName(css.NoSelect());
                     view.getOuter().removeStyleName(css.NoSelect());
                     DOM.releaseCapture(resizeWindow.getElement());
-                    setSize(resizeWindow.getOffsetWidth() - (CSSUtils.getAddedBorderWidth(resizeWindow.getElement()) * 2 ) + "px",
-                            resizeWindow.getOffsetHeight() - (CSSUtils.getAddedBorderHeight(resizeWindow.getElement()) * 2 ) + "px");
-                    parent.setWidgetPosition(source,parent.getWidgetLeft(resizeWindow) ,parent.getWidgetTop(resizeWindow));
+                    setSize(resizeWindow.getOffsetWidth() -
+                                            (CSSUtils.getAddedBorderWidth(resizeWindow.getElement()) * 2) +
+                                            "px",
+                            resizeWindow.getOffsetHeight() -
+                                            (CSSUtils.getAddedBorderHeight(resizeWindow.getElement()) * 2) +
+                                            "px");
+                    parent.setWidgetPosition(source,
+                                             parent.getWidgetLeft(resizeWindow),
+                                             parent.getWidgetTop(resizeWindow));
                     parent.remove(resizeWindow);
                     onResize();
-            }
-       
-        });
+                }
+
+            });
         }
 
-       
     }
 
     /**
@@ -373,13 +386,14 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
                 ((Panel)view.getBody()).add(content);
                 setKeyHandling();
                 setDone(Messages.get().window_done());
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() { 
-                    @Override
-                    public void execute() {
-                       onResize();
-                    }
-                });
-                
+                if (resize) {
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            onResize();
+                        }
+                    });
+                }
             }
         });
 
@@ -388,26 +402,26 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
     public Widget getContent() {
         return content;
     }
-    
+
     public void setContentSize(final int width, final int height) {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() { 
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                int wth = width,hgt = height;
-                if(resize) {
+                int wth = width, hgt = height;
+                if (resize) {
                     hgt += view.getCap().getOffsetHeight();
                     hgt += view.getBottom().getOffsetHeight();
                     hgt += CSSUtils.getAddedBorderHeight(resizeWindow.getElement()) * 2;
                     wth += CSSUtils.getAddedBorderWidth(resizeWindow.getElement()) * 2;
-                    setSize(wth+"px",hgt+"px");
+                    setSize(wth + "px", hgt + "px");
                 } else {
-                    content.setSize(width+"px", height+"px");
+                    content.setSize(width + "px", height + "px");
                 }
             }
         });
 
     }
-    
+
     public void setKeyHandling() {
         /**
          * This handler is added to forward the key press event if received by
@@ -439,11 +453,11 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
     }
 
     public void destroy() {
-        //view.getCap() = null;
-        //outer = null;
-        //bottom = null;
-        //close = null;
-        //content = null;
+        // view.getCap() = null;
+        // outer = null;
+        // bottom = null;
+        // close = null;
+        // content = null;
     }
 
     public void setMessagePopup(ArrayList<Exception> exceptions, String style) {
@@ -536,16 +550,16 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
         label.setStyleName(css.ScreenWindowLabel());
         view.getClose().setStyleName(css.CloseButton());
         view.getCollapse().setStyleName(css.MinimizeButton());
-        if(resize)
+        if (resize)
             view.getMaximize().setStyleName(css.MaximizeButton());
         view.getBottom().setStyleName(css.StatusBar());
         view.getStatus().setStyleName(css.ScreenWindowLabel());
         view.getBody().setStyleName(css.WindowBody());
-        if(resize)
+        if (resize)
             view.getOuter().setStyleName(css.WindowPanel());
         else
             view.getOuter().setStyleName(css.LegacyWindowPanel());
-        if(resize) {
+        if (resize) {
             view.getResizer().setStyleName(css.Resizer());
             view.getNorth().setStyleName(css.North());
             view.getEast().setStyleName(css.East());
@@ -561,7 +575,6 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
     public HandlerRegistration addBeforeClosedHandler(BeforeCloseHandler<WindowInt> handler) {
         return addHandler(handler, BeforeCloseEvent.getType());
     }
-
 
     @Override
     public void setWidth(String width) {
@@ -612,12 +625,12 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
 
     @Override
     public void onResize() {
-        if(resize) {
-            if(maximized)
-                setSize(getParent().getOffsetWidth()-(css.borderWidth()*2)+"px",getParent().getOffsetHeight()-(css.borderWidth()*2)+"px");
+        if (resize) {
+            if (maximized)
+                setSize(getParent().getOffsetWidth() - (css.borderWidth() * 2) + "px",
+                        getParent().getOffsetHeight() - (css.borderWidth() * 2) + "px");
             ((LayoutPanel)view.getBody()).onResize();
         }
     }
-
 
 }
