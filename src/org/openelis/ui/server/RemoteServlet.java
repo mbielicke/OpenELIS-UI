@@ -12,7 +12,7 @@ import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 public class RemoteServlet extends XsrfProtectedServiceServlet {
 
     private static final long            serialVersionUID = 1L;
-    protected static SerializationPolicy sPolicy;
+    protected SerializationPolicy sPolicy;
 
     /**
      * Overridden to manage session timeout
