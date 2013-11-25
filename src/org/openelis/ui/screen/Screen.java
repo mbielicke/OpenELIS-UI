@@ -48,6 +48,7 @@ import org.openelis.ui.widget.WindowInt;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
@@ -63,6 +64,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing.Validation;
@@ -397,7 +399,9 @@ public class Screen extends ResizeComposite implements FocusHandler,
             glass.setStyleName(css.GlassPanel());
             glass.setHeight(getOffsetHeight() + "px");
             glass.setWidth(getOffsetWidth() + "px");
-            RootPanel.get().add(glass, getAbsoluteLeft(), getAbsoluteTop());
+            RootLayoutPanel.get().add(glass);
+            RootLayoutPanel.get().setWidgetLeftWidth(glass, getAbsoluteLeft(), Unit.PX, getOffsetWidth(),Unit.PX);
+            RootLayoutPanel.get().setWidgetTopHeight(glass, getAbsoluteTop(), Unit.PX, getOffsetHeight(), Unit.PX);
         }
     }
 
