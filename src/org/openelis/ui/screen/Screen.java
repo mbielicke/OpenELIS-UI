@@ -385,6 +385,10 @@ public class Screen extends ResizeComposite implements FocusHandler,
         busy = 0;
         unlockWindow();
     }
+    
+    public boolean isBusy() {
+        return busy > 0;
+    }
 
     public void unlockWindow() {
         if (glass != null) {
