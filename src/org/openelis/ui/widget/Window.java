@@ -386,12 +386,17 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
             public void execute() {
                 ((Panel)view.getBody()).clear();
                 ((Panel)view.getBody()).add(content);
+                if(resize) {
+                    
+                }
                 setKeyHandling();
                 setDone(Messages.get().window_done());
                 if (resize) {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
+                            ((LayoutPanel)view.getBody()).setWidgetLeftWidth(content, 0, Unit.PX, content.getOffsetWidth(), Unit.PX);
+                            ((LayoutPanel)view.getBody()).setWidgetTopHeight(content, 0, Unit.PX, content.getOffsetHeight(), Unit.PX);
                             onResize();
                         }
                     });
@@ -489,7 +494,6 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
     public void setStatus(String text, String style) {
         view.getStatus().setText(text);
         view.getStatusImg().setStyleName(style);
-        unlockWindow();
     }
 
     public void lockWindow() {
@@ -498,9 +502,13 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
             glass.setStyleName(css.GlassPanel());
             glass.setHeight(content.getOffsetHeight() + "px");
             glass.setWidth(content.getOffsetWidth() + "px");
-            RootLayoutPanel.get().add(glass);
-            RootLayoutPanel.get().setWidgetLeftWidth(glass, getAbsoluteLeft(), Unit.PX, getOffsetWidth(),Unit.PX);
-            RootLayoutPanel.get().setWidgetTopHeight(glass, getAbsoluteTop(), Unit.PX, getOffsetHeight(), Unit.PX);
+            if(resize) {
+                ((LayoutPanel)view.getBody()).add(glass);
+                ((LayoutPanel)view.getBody()).setWidgetLeftWidth(glass, 0, Unit.PX, content.getOffsetWidth(),Unit.PX);
+                ((LayoutPanel)view.getBody()).setWidgetTopHeight(glass, 0, Unit.PX, content.getOffsetHeight(), Unit.PX);
+            }else {
+               ((AbsolutePanel)view.getBody()).add(glass, 0, 0);            
+            }
         }
     }
 
