@@ -391,22 +391,28 @@ public class Screen extends ResizeComposite implements FocusHandler,
     }
 
     public void unlockWindow() {
-        if (glass != null) {
-            glass.removeFromParent();
-            glass = null;
-        }
+        if(window == null) {
+            if (glass != null) {
+                glass.removeFromParent();
+                glass = null;
+            }
+        }else
+            window.unlockWindow();
     }
 
     public void lockWindow() {
-        if (glass == null) {
-            glass = new AbsolutePanel();
-            glass.setStyleName(css.GlassPanel());
-            glass.setHeight(getOffsetHeight() + "px");
-            glass.setWidth(getOffsetWidth() + "px");
-            RootLayoutPanel.get().add(glass);
-            RootLayoutPanel.get().setWidgetLeftWidth(glass, getAbsoluteLeft(), Unit.PX, getOffsetWidth(),Unit.PX);
-            RootLayoutPanel.get().setWidgetTopHeight(glass, getAbsoluteTop(), Unit.PX, getOffsetHeight(), Unit.PX);
-        }
+        if(window == null) {
+            if (glass == null) {
+                glass = new AbsolutePanel();
+                glass.setStyleName(css.GlassPanel());
+                glass.setHeight(getOffsetHeight() + "px");
+                glass.setWidth(getOffsetWidth() + "px");
+                RootLayoutPanel.get().add(glass);
+                RootLayoutPanel.get().setWidgetLeftWidth(glass, getAbsoluteLeft(), Unit.PX, getOffsetWidth(),Unit.PX);
+                RootLayoutPanel.get().setWidgetTopHeight(glass, getAbsoluteTop(), Unit.PX, getOffsetHeight(), Unit.PX);
+            }
+        }else
+            window.lockWindow();
     }
 
     public void clearStatus() {
@@ -479,6 +485,12 @@ public class Screen extends ResizeComposite implements FocusHandler,
         public ArrayList<Exception> getExceptions() {
             return exceptions;
         }
+    }
+    
+    @Override
+    protected void onDetach() {
+        // TODO Auto-generated method stub
+        super.onDetach();
     }
 
 }
