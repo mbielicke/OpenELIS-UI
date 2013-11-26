@@ -1,0 +1,39 @@
+
+.ScreenTextBox {
+	border: none;
+	cursor: default;
+	font-family: inherit;
+    font-size: inherit;
+}
+
+.ScreenTextArea {
+	height: 120px;
+	border: 1px solid #d8d8d8;
+	cursor: default;
+	tex-overflow: ellipsis;
+	font-family: inherit;
+    font-size: inherit;
+}
+
+.ScreenLabel {
+}
+
+.InputError {
+	border-bottom: 1px dashed red;
+}
+
+.InputWarning {
+	border-bottom: 1px dashed #f5d852;
+}
+
+.Focus {
+	border: none;
+}
+
+.Upper {
+	text-transform: uppercase;
+}
+
+.Lower {
+	text-transform: lowercase;
+}

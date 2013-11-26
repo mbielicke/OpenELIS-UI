@@ -1,0 +1,66 @@
+
+.ButtonPanel {
+    display : inline-block;
+}
+
+.Button {
+    margin:2px;
+    padding:1px;
+	border:1px solid transparent;
+	-moz-border-radius:2px;
+	border-radius:2px;
+	font-family:"Open Sans",sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    text-shadow: 0 1px white;
+  }
+    
+    .Button Table{border-spacing:0;}
+    
+.Button:hover {
+   border:1px solid #7293be;
+	cursor:pointer; 
+}
+
+.Pressed {}
+
+@if user.agent gecko1_8 {
+	.Button:hover, .Pressed{ 
+		background: -moz-linear-gradient(top,  #e7f0f7 0%, #b4c9e2 100%);
+	}
+}@elif user.agent ie6 ie8 ie9 {
+	.Button:hover, .Pressed {
+		background-image: -ms-linear-gradient(top,#b4c9e2,#e7f0f7);
+	
+	}	
+}@elif user.agent safari {
+	.Button:hover, .Pressed {
+		background-image: -webkit-linear-gradient(top,#b4c9e2,#e7f0f7);		
+	}
+}
+
+.Disabled {
+    color : gray;
+}
+
+.Disabled:hover {
+    border:1px solid transparent;
+    background:none;
+    cursor:default;
+}
+
+@sprite .PreviousPageButtonImage {
+	gwt-image:'previousPage';
+}
+
+@sprite .Disabled .PreviousPageButtonImage {
+	gwt-image:'previousPageDisabled';
+}
+
+@sprite .NextPageButtonImage {
+	gwt-image: 'nextPage';
+}
+
+@sprite .Disabled .NextPageButtonImage {
+	gwt-image:'nextPageDisabled';
+}

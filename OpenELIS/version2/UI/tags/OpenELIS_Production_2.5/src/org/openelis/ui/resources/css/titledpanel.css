@@ -1,0 +1,10 @@
+.Title {
+	font-style : italic;
+	color : blue;
+}
+
+.Legend {
+	color : blue;
+	padding:0;
+	margin:0;
+}
