@@ -31,5 +31,7 @@ public interface IconCSS extends CssResource {
     String DuplicateRowButtonImage();
     String arrowUpButtonImage();
     String arrowDownButtonImage();
+    String refreshButtonImage();
+    String selectIcon();
 
 }
