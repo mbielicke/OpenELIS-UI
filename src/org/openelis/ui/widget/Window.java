@@ -38,7 +38,6 @@ import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasAllMouseHandlers;
@@ -76,7 +75,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -386,17 +384,12 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
             public void execute() {
                 ((Panel)view.getBody()).clear();
                 ((Panel)view.getBody()).add(content);
-                if(resize) {
-                    
-                }
                 setKeyHandling();
                 setDone(Messages.get().window_done());
                 if (resize) {
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            ((LayoutPanel)view.getBody()).setWidgetLeftWidth(content, 0, Unit.PX, content.getOffsetWidth(), Unit.PX);
-                            ((LayoutPanel)view.getBody()).setWidgetTopHeight(content, 0, Unit.PX, content.getOffsetHeight(), Unit.PX);
                             onResize();
                         }
                     });
@@ -494,6 +487,7 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
     public void setStatus(String text, String style) {
         view.getStatus().setText(text);
         view.getStatusImg().setStyleName(style);
+        unlockWindow();
     }
 
     public void lockWindow() {
@@ -502,13 +496,7 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
             glass.setStyleName(css.GlassPanel());
             glass.setHeight(content.getOffsetHeight() + "px");
             glass.setWidth(content.getOffsetWidth() + "px");
-            if(resize) {
-                ((LayoutPanel)view.getBody()).add(glass);
-                ((LayoutPanel)view.getBody()).setWidgetLeftWidth(glass, 0, Unit.PX, content.getOffsetWidth(),Unit.PX);
-                ((LayoutPanel)view.getBody()).setWidgetTopHeight(glass, 0, Unit.PX, content.getOffsetHeight(), Unit.PX);
-            }else {
-               ((AbsolutePanel)view.getBody()).add(glass, 0, 0);            
-            }
+            RootPanel.get().add(glass, content.getAbsoluteLeft(), content.getAbsoluteTop());
         }
     }
 

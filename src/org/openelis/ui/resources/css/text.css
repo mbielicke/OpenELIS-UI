@@ -33,9 +33,7 @@
 	border: 1px solid #63b159;
 }
 
-.Upper {
-	text-transform: uppercase;
-}
+.Upper {}
 
 .Lower {
 	text-transform: lowercase;

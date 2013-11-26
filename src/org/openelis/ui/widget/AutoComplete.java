@@ -568,8 +568,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     		unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
     	else if(isEnabled())
     		sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
-    	
-    	textbox.setText("");
     }
 
     /**
