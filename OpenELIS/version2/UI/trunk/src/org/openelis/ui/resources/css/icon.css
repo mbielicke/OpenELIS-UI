@@ -182,3 +182,18 @@
 @sprite .Disabled .arrowDownButtonImage {
 	gwt-image:'arrowDownButtonImageDisabled';
 }
+
+@sprite .refreshButtonImage {
+	gwt-image: 'refresh';
+	width: 20px;
+}
+
+@sprite .selectIcon {
+	gwt-image: 'select';
+	width : 20px;
+}
+
+@sprite .Disabled .selectIcon {
+	gwt-image: 'selectDisabled';
+	width: 20px
+}
