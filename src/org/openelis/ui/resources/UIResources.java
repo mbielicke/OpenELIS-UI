@@ -444,7 +444,7 @@ public interface UIResources extends ClientBundle {
     ImageResource arrowUpButtonImageDisabled();
     
     @Source("images/arrow_refresh.png")
-    ImageResource reresh();
+    ImageResource refresh();
     
     @Source("images/select.png")
     ImageResource select();
