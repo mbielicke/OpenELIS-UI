@@ -427,6 +427,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
     }
 
     public void setError(String message) {
+        removeBusy();
         window.setStatus(message, css.ErrorPanel());
     }
 
