@@ -744,6 +744,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	@Override
 	public void finishEditing() {
+	    if(queryMode)  
+	        return;
+	    
 		if(table.isAnyRowSelected())
 			setValue(getModel().get(table.getSelectedRow()).key,true);
 		else
