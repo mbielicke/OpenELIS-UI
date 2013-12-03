@@ -395,8 +395,6 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
                     Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         @Override
                         public void execute() {
-                            ((LayoutPanel)view.getBody()).setWidgetLeftWidth(content, 0, Unit.PX, content.getOffsetWidth(), Unit.PX);
-                            ((LayoutPanel)view.getBody()).setWidgetTopHeight(content, 0, Unit.PX, content.getOffsetHeight(), Unit.PX);
                             onResize();
                         }
                     });
