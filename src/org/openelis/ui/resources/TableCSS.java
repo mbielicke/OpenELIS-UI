@@ -16,6 +16,8 @@ public interface TableCSS extends CssResource {
 	String CellContainer();
 	String FilterButton();
 	String DropdownPopup();
+	String SelectionCell();
+	String Single();
 	
 	String TextboxSelected();
 	String TextboxUnselected();
