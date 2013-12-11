@@ -1679,10 +1679,12 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         exceptions = column.getCellRenderer().validate(value);
         
-        if (column.isRequired() && value == null) {
-            if(exceptions == null)
-                exceptions = new ArrayList<Exception>();
-            exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+        if(!queryMode) {
+            if (column.isRequired() && value == null) {
+                if(exceptions == null)
+                    exceptions = new ArrayList<Exception>();
+                exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+            }
         }
         
         setValidateException(row,col,exceptions);
