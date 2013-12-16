@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWidget {
     private DropTableCSS css = UIResources.INSTANCE.dropTable();
+    private Column col;
     
     public SelectionCell() {
         css.ensureInjected();
@@ -47,6 +48,9 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         editor.setText(0, 1, display(value));
         
         //Style the editor to not wrap words
+        editor.setWidth((this.col.getWidth())+"px");
+        editor.getCellFormatter().setWidth(0, 0, "20px");
+        editor.getCellFormatter().setWidth(0, 1, (this.col.getWidth()-20)+"px");
         editor.getElement().getStyle().setTableLayout(TableLayout.FIXED);
         editor.getCellFormatter().getElement(0, 1).getStyle().setOverflow(Overflow.HIDDEN);
         editor.getCellFormatter().getElement(0, 1).getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
@@ -105,6 +109,12 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
     @Override
     public Widget asWidget() {
         return new Label<String>("");
+    }
+
+    @Override
+    public void setColumn(ColumnInt col) {
+        this.col = (Column)col;
+        
     }
 
 }
