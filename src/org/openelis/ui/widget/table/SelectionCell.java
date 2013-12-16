@@ -10,6 +10,10 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Label;
 
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TableLayout;
+import com.google.gwt.dom.client.Style.TextOverflow;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -31,6 +35,7 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
     @Override
     public void render(HTMLTable table, int row, int col, Object value) {
         Grid editor = (Grid)table.getWidget(row, col);
+        
         if(editor == null) {
             editor = new Grid(1,2);
             editor.setCellPadding(0);
@@ -38,8 +43,14 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
             editor.getCellFormatter().setStyleName(0, 0, css.SelectionCell());
             table.setWidget(row, col, editor);
         }
+        
         editor.setText(0, 1, display(value));
         
+        //Style the editor to not wrap words
+        editor.getElement().getStyle().setTableLayout(TableLayout.FIXED);
+        editor.getCellFormatter().getElement(0, 1).getStyle().setOverflow(Overflow.HIDDEN);
+        editor.getCellFormatter().getElement(0, 1).getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
+        editor.getCellFormatter().getElement(0, 1).getStyle().setWhiteSpace(WhiteSpace.PRE);
         
     }
 
