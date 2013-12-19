@@ -58,6 +58,7 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
     
     public CheckMenuItem() {
         super();
+        setIcon(css.Unchecked());
     }
     
     /**
