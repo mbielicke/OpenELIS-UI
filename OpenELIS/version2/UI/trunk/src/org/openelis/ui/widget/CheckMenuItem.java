@@ -25,6 +25,8 @@
 */
 package org.openelis.ui.widget;
 
+import javax.persistence.metamodel.SetAttribute;
+
 import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
@@ -52,12 +54,22 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
     {
     	css.ensureInjected();
     }
+    
+    
+    public CheckMenuItem() {
+        super();
+    }
+    
     /**
      * Constructor that accepts a String for the display of the item
      * @param text
      */
     public CheckMenuItem(String display, String description, boolean autoClose) {
-        super(css.Unchecked(),display,description,autoClose);
+        super();
+        setIcon(css.Unchecked());
+        setDisplay(display);
+        setAutoClose(autoClose);
+        
         final CheckMenuItem source = this;
         grid = (Grid)getWidget();
         
