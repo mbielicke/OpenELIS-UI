@@ -58,7 +58,7 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
     
     public CheckMenuItem() {
         super();
-        setIcon(css.Unchecked());
+        init();
     }
     
     /**
@@ -67,12 +67,17 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
      */
     public CheckMenuItem(String display, String description, boolean autoClose) {
         super();
-        setIcon(css.Unchecked());
+        
         setDisplay(display);
         setAutoClose(autoClose);
+        init();
+    }
         
+    public void init() {
         final CheckMenuItem source = this;
         grid = (Grid)getWidget();
+        
+        setIcon(css.Unchecked());
         
         /*
          * Setting this click handler lets the user click anywhere in the menu
