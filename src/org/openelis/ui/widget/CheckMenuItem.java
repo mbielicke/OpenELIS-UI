@@ -49,7 +49,7 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
      * Check box to apply/remove filter  
      */
     protected boolean checked;
-    protected Grid grid;
+   
     protected static CheckboxCSS css  = UIResources.INSTANCE.checkbox(); 
     {
     	css.ensureInjected();
@@ -75,7 +75,6 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
         
     public void init() {
         final CheckMenuItem source = this;
-        grid = (Grid)getWidget();
         
         setIcon(css.Unchecked());
         
@@ -97,11 +96,9 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
     public void setCheck(boolean checked) {
         this.checked = checked;
         if(checked){
-            grid.getCellFormatter().removeStyleName(0,0,css.Unchecked());
-            grid.getCellFormatter().addStyleName(0, 0, css.Checked());
+            setIcon(css.Unchecked());
         }else{
-            grid.getCellFormatter().removeStyleName(0,0,css.Checked());
-            grid.getCellFormatter().addStyleName(0, 0, css.Unchecked());
+            setIcon(css.Checked());
         }
     }
     
