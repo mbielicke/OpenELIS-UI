@@ -45,6 +45,7 @@ public class RemoteServlet extends XsrfProtectedServiceServlet {
             return (ValidationErrorsList)t;
 
         nt = t;
+      
         do {
             try {
                 sPolicy.validateSerialize(nt.getClass());

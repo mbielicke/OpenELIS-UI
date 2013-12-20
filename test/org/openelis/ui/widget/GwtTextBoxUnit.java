@@ -73,6 +73,7 @@ public class GwtTextBoxUnit extends GWTTestCase {
 		});
 		test.setValue("new value",true);
 		assertEquals("new value",test.getText());
+	
 	}
 	
 	public void testSetValueNoFire() {
