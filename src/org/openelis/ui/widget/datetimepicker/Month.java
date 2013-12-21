@@ -93,7 +93,7 @@ public class Month extends Composite {
      * Sets the selected month from the user choice
      * @param month
      */
-    private void setSelection(int month) {
+    protected void setSelection(int month) {
         this.month = month;
         
         NodeList cells = body.getElementsByTagName("div");

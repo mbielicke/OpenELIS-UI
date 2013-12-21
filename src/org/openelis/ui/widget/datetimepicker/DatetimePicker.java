@@ -116,6 +116,7 @@ public class DatetimePicker extends Composite {
             @Override
             public void onBrowserEvent(Event event) {
                 month.setYear(calendar.year);
+                month.setSelection(calendar.month);
                 deck.showWidget(1);
             }
         });

@@ -2,6 +2,7 @@ package org.openelis.ui.widget;
 
 import java.util.Date;
 
+import org.junit.runner.RunWith;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.DateHelper;
@@ -10,6 +11,8 @@ import org.openelis.ui.widget.IntegerHelper;
 import org.openelis.ui.widget.KeyCodes;
 import org.openelis.ui.widget.TextBase;
 import org.openelis.ui.widget.TextBox;
+
+
 
 public class GwtTextBox extends IntegrationTest {
 

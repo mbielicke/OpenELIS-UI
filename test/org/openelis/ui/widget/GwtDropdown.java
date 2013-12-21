@@ -155,42 +155,17 @@ public class GwtDropdown extends IntegrationTest {
 		assertEquals("Iowa",test.getDisplay());
 	}
 	
-	/*
-	public void testMultSelect() {
-		//test.setMultiSelect(true);
-		click(test.button);
-		clickCell(test.getPopupContext(),1,0);
-		assertTrue(test.popup.isShowing());
-		//clickCell(test.getPopupContext(),15,1);
-		assertTrue(test.popup.isShowing());
-		test.popup.hide();
-		assertEquals("Alabama, Iowa",test.getDisplay());
-		blur(test);
-		//assertEquals(Arrays.asList(new Integer[] {1,15}),test.getValues());
-		click(test.button);
-		click(test.checkAll);
-		click(test.close);
-		blur(test);
-		//assertEquals(51,test.getValues().size());
-		click(test.button);
-		click(test.uncheckAll);
-		click(test.close);
-		blur(test);
-		assertNull(test.getValue());
-	}
-	*/
-	
 	public void testQuery() {
 		test.setQueryMode(true);
 		click(test.button);
-		BeforeSelectionEvent.fire(test.table, 15);
-		//test.table.selectRowAt(15);
+		//BeforeSelectionEvent.fire(test.table, 15);
+		test.table.selectRowAt(15);
 		//clickCell(test.table, 15, 1);
 		//clickCell(test.table, 1,1);
-		//test.table.selectRowAt(1);
-		BeforeSelectionEvent.fire(test.table, 1);
-		blur(test.textbox);
-		assertEquals("1 | 15",((QueryData)test.getQuery()).getQuery());
+		test.table.selectRowAt(1);
+		//BeforeSelectionEvent.fire(test.table, 1);
+		test.finishEditing();
+		assertEquals("15 | 1",((QueryData)test.getQuery()).getQuery());
 		click(test.button);
 		click(test.uncheckAll);
 		//click(test.close);

@@ -78,6 +78,7 @@ import org.openelis.ui.widget.table.event.UnselectionEvent;
 import org.openelis.ui.widget.table.event.UnselectionHandler;
 
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -105,6 +106,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
@@ -167,7 +169,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Table state values
      */
     protected boolean                                              enabled, multiSelect, editing,
-                    hasFocus, queryMode, hasHeader, unitTest, fixScrollBar = true;
+                    hasFocus, queryMode, hasHeader, unitTest, fixScrollBar = true, ctrlDefault;
 
     /**
      * Enum representing the state of when the scroll bar should be shown.
@@ -876,8 +878,12 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     protected int getWidthWithoutScrollbar() {
-        if (viewWidth < 0 && totalColumnWidth == 0 && getParent() != null)
-            return ((LayoutPanel)getParent()).getWidgetContainerElement(this).getOffsetWidth() - CSSUtils.getAddedBorderWidth(getElement());
+        if (viewWidth < 0 && totalColumnWidth == 0 && getParent() != null) {
+            if(getParent() instanceof LayoutPanel)
+                return ((LayoutPanel)getParent()).getWidgetContainerElement(this).getOffsetWidth() - CSSUtils.getAddedBorderWidth(getElement());
+            else
+                return getParent().getOffsetWidth() - CSSUtils.getAddedBorderWidth(getElement());
+        }
         return (viewWidth == -1 ? totalColumnWidth : viewWidth) - CSSUtils.getAddedBorderWidth(getElement());
     }
 
@@ -1298,6 +1304,10 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
     public Integer[] getSelectedRows() {
         return selections.toArray(new Integer[] {});
     }
+    
+    public void setCtrlKeyDefault(boolean ctrl) {
+        this.ctrlDefault = ctrl;
+    }
 
     /**
      * Selects the row at the passed index. Selection can be canceled by a
@@ -1333,7 +1343,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
          */
         if (isMultipleSelectionAllowed()) {
             if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
-                ctrlKey = event.getCtrlKey();
+                ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
                 shiftKey = event.getShiftKey();
 
                 if (ctrlKey) {
@@ -1678,10 +1688,12 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         exceptions = column.getCellRenderer().validate(value);
         
-        if (column.isRequired() && value == null) {
-            if(exceptions == null)
-                exceptions = new ArrayList<Exception>();
-            exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+        if(!queryMode) {
+            if (column.isRequired() && value == null) {
+                if(exceptions == null)
+                    exceptions = new ArrayList<Exception>();
+                exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+            }
         }
         
         setValidateException(row,col,exceptions);
@@ -2929,6 +2941,13 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
      public void setCSS(TableCSS css) {
         css.ensureInjected();
         view.setCSS(css);
+    }
+    
+    public void insertBefore(Table bef) {
+        HorizontalPanel hp = new HorizontalPanel();
+        hp.add(bef);
+        hp.add(((StaticView)view).scrollView.getWidget());
+        ((StaticView)view).scrollView.setWidget(hp);
     }
 
    

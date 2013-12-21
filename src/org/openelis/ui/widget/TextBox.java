@@ -2,16 +2,15 @@ package org.openelis.ui.widget;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.TextBox;
-import org.openelis.ui.widget.Balloon.Options;
-import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
+import org.openelis.ui.widget.Balloon.Placement;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -77,12 +76,12 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * from the user.
 	 */
 	public TextBox() {
-		init();
+		init();	
 	}
-
+	
 	public void init() {
 		
-		textbox = new TextBase();
+		textbox = GWT.create(TextBase.class);
 
 		setEnabled(false);
 
@@ -163,14 +162,14 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
      * Enables or disables the textbox for editing.
      */
     public void setEnabled(boolean enabled) {
-        textbox.setReadOnly(!enabled);
+        textbox.setEnabled(enabled);
     }
 
     /**
      * Returns whether the text is enabled for editing
      */
     public boolean isEnabled() {
-        return !textbox.isReadOnly();
+        return textbox.isEnabled();
     }
 
 	// ******** Implementation of Queryable *****************
@@ -372,7 +371,6 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void clearExceptions() {
 		exceptions.clearExceptions();
-		removeExceptionStyle();
 		removeExceptionStyle();
 		Balloon.clearExceptionHandlers(this);
 	}

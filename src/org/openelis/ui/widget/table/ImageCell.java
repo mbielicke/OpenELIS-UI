@@ -80,5 +80,11 @@ public class ImageCell implements CellRenderer,IsWidget {
 		return null;
 	}
 
+    @Override
+    public void setColumn(ColumnInt col) {
+        // TODO Auto-generated method stub
+        
+    }
+
     
 }

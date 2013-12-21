@@ -68,7 +68,5 @@ public interface CellEditor {
     public boolean ignoreKey(int keyCode);
         
     public Widget getWidget();
-    
-    public void setColumn(ColumnInt col);
 
 }

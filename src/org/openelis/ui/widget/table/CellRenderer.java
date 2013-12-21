@@ -46,4 +46,6 @@ public interface CellRenderer {
     public void renderQuery(HTMLTable table, int row, int col, QueryData qd);
     
     public ArrayList<Exception> validate(Object value);
+    
+    public void setColumn(ColumnInt col);
 }

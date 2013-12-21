@@ -383,7 +383,7 @@ public class StaticView extends ViewInt {
         for (int r = start; r <= end; r++ ) {
             for (int c = 0; c < table.getColumnCount(); c++ ) {
                 if (table.hasExceptions(r, c)) {
-                    flexTable.getCellFormatter().addStyleName(r, c, css.InputError());
+                    flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
                     flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
 
                         @Override
@@ -396,7 +396,7 @@ public class StaticView extends ViewInt {
 
                     });
                 } else {
-                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
+                    flexTable.getCellFormatter().removeStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
                     flexTable.removeHandler(r, c);
                 }
 
@@ -691,33 +691,42 @@ public class StaticView extends ViewInt {
     @Override
     public void onResize() {
         super.onResize();
+        
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            
+            @Override
+            public void execute() {
+                Element svEl = inner.getWidgetContainerElement(scrollView);
+                
 
-        Element svEl = inner.getWidgetContainerElement(scrollView);
-      
+                if (CSSUtils.getWidth(svEl) > 0) {
 
-        if (CSSUtils.getWidth(svEl) > 0) {
+                    scrollView.setWidth(CSSUtils.getWidth(svEl) -
+                                        CSSUtils.getAddedBorderWidth(table.getElement()) + "px");
 
-            if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                table.setWidth(CSSUtils.getWidth(svEl) - 1);
-            else
-                table.setWidth(CSSUtils.getWidth(svEl) -
-                               NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
+                    if (CSSUtils.getHeight(inner) > 0) {
+                        int height = CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
+                                        CSSUtils.getAddedBorderHeight(table.getElement());
+                        /*
+                         * This check is here only for Unit Testing.  If not done Unit test on the
+                         * table will fail here with assertion check from the widget.
+                         */
+                        if(height > 0)
+                            scrollView.setHeight(height + "px");
+                    }
+                    
+                    if (scrollView.getMaximumVerticalScrollPosition() == 0)
+                        table.setWidth(CSSUtils.getWidth(svEl) - 1);
+                    else
+                        table.setWidth(CSSUtils.getWidth(svEl) -
+                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
 
-            scrollView.setWidth(CSSUtils.getWidth(svEl) -
-                                CSSUtils.getAddedBorderWidth(table.getElement()) + "px");
-
-            if (CSSUtils.getHeight(inner) > 0) {
-                int height = CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
-                                CSSUtils.getAddedBorderHeight(table.getElement());
-                /*
-                 * This check is here only for Unit Testing.  If not done Unit test on the
-                 * table will fail here with assertion check from the widget.
-                 */
-                if(height > 0)
-                    scrollView.setHeight(height + "px");
+                }
+                
             }
+        });
 
-        }
+
     }
 
     private void adjustForScroll(int before) {
