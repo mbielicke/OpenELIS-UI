@@ -108,5 +108,10 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 		// TODO Auto-generated method stub
 		return null;
 	}
+    @Override
+    public void setColumn(ColumnInt col) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

@@ -214,10 +214,10 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 	@UiChild(limit=1,tagname="renderer")
 	public void setCellRenderer(CellRenderer renderer) {
         this.renderer = renderer;
-        if (renderer instanceof CellEditor) {
+        renderer.setColumn(this);
+        
+        if (renderer instanceof CellEditor) 
             editor = (CellEditor)renderer;
-            editor.setColumn(this);
-        }
     }
 
     /**

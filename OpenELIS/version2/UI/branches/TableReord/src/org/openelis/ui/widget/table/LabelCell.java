@@ -133,5 +133,11 @@ public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget
 	public Widget asWidget() {
 		return new Label("");
 	}
+
+    @Override
+    public void setColumn(ColumnInt col) {
+        // TODO Auto-generated method stub
+        
+    }
     
 }

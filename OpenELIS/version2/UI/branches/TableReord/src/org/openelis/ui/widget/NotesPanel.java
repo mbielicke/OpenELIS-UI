@@ -72,7 +72,7 @@ public class NotesPanel extends ResizeComposite {
             note.setWidget(0,1,userDateText);
         }
         if (text != null) {
-            bodyText = new HTML(encode(text));
+            bodyText = new HTML("<pre>"+encode(text)+"</pre>");
             note.setWidget(2,0,bodyText);
             note.getCellFormatter().setStyleName(2,0,css.noteBodyText());
         }

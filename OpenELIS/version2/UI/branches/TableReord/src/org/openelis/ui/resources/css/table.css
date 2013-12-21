@@ -196,3 +196,23 @@ sprtite .TableCalendar .CalendarButton {
     border:1px solid #D8D8D8;
     background:white;
 }
+
+.Single .Table>tbody>tr .SelectionCell {
+	display:none;
+}
+
+@sprite .Table>tbody>tr .SelectionCell {
+    height:13px;
+    width:13px;
+	gwt-image:'unapply';
+    cursor:pointer;
+    border:1px solid white;	
+}
+
+@sprite .Table>tbody>tr.Selection .SelectionCell {
+	height:13px;
+    width:13px;
+	gwt-image:'apply';
+    cursor:pointer;
+    border:1px solid white;
+}

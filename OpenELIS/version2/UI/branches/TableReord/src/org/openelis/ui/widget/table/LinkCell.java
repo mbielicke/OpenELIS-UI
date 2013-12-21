@@ -48,6 +48,12 @@ public class LinkCell implements CellRenderer, IsWidget {
     public Widget asWidget() {
         return null;
     }
+
+    @Override
+    public void setColumn(ColumnInt col) {
+        // TODO Auto-generated method stub
+        
+    }
     
 
 }

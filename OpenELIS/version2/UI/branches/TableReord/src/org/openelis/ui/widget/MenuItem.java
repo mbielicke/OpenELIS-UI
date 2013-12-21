@@ -237,6 +237,10 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
         }
     }
     
+    public void setAutoClose(boolean autoClose) {
+        this.autoClose = autoClose();
+    }
+    
     public void setTipPlacement(Placement placement) {
         if(options == null)
             options = new Balloon.Options(this);

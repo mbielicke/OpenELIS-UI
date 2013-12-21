@@ -431,5 +431,14 @@ public interface UIResources extends ClientBundle {
     @Source("images/nextpagebuttonimagedisabled.gif")
     ImageResource nextPageDisabled();
 	
+    @Source("images/arrow_refresh.png")
+    ImageResource refresh();
+    
+    @Source("images/select.png")
+    ImageResource select();
+    
+    @Source("images/selectdisabled.png")
+    ImageResource selectDisabled();
+    
     
 }

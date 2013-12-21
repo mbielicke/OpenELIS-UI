@@ -25,6 +25,8 @@
 */
 package org.openelis.ui.widget;
 
+import javax.persistence.metamodel.SetAttribute;
+
 import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
@@ -47,19 +49,34 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
      * Check box to apply/remove filter  
      */
     protected boolean checked;
-    protected Grid grid;
+   
     protected static CheckboxCSS css  = UIResources.INSTANCE.checkbox(); 
     {
     	css.ensureInjected();
     }
+    
+    
+    public CheckMenuItem() {
+        super();
+        init();
+    }
+    
     /**
      * Constructor that accepts a String for the display of the item
      * @param text
      */
     public CheckMenuItem(String display, String description, boolean autoClose) {
-        super(css.Unchecked(),display,description,autoClose);
+        super();
+        
+        setDisplay(display);
+        setAutoClose(autoClose);
+        init();
+    }
+        
+    public void init() {
         final CheckMenuItem source = this;
-        grid = (Grid)getWidget();
+        
+        setIcon(css.Unchecked());
         
         /*
          * Setting this click handler lets the user click anywhere in the menu
@@ -79,11 +96,9 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
     public void setCheck(boolean checked) {
         this.checked = checked;
         if(checked){
-            grid.getCellFormatter().removeStyleName(0,0,css.Unchecked());
-            grid.getCellFormatter().addStyleName(0, 0, css.Checked());
+            setIcon(css.Unchecked());
         }else{
-            grid.getCellFormatter().removeStyleName(0,0,css.Checked());
-            grid.getCellFormatter().addStyleName(0, 0, css.Unchecked());
+            setIcon(css.Checked());
         }
     }
     

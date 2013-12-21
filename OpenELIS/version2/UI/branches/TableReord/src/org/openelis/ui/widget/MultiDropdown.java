@@ -40,7 +40,12 @@ import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.CheckBoxCell;
 import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.Row;
+import org.openelis.ui.widget.table.SelectionCell;
 import org.openelis.ui.widget.table.Table;
+import org.openelis.ui.widget.table.event.CellClickedEvent;
+import org.openelis.ui.widget.table.event.CellClickedHandler;
+import org.openelis.ui.widget.table.event.UnselectionEvent;
+import org.openelis.ui.widget.table.event.UnselectionHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -84,6 +89,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -212,7 +218,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		
 		setCSS(UIResources.INSTANCE.dropdown());
 		
-		setPopupContext(new Table.Builder(10).column(new Column.Builder(100).build()).build());
+		setPopupContext(new Table.Builder(10).column(new Column.Builder(100).renderer(new SelectionCell()).build()).build());
         setHelper((WidgetHelper)new IntegerHelper());
         
         textbox.setReadOnly(true);
@@ -278,29 +284,24 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 
             layout.add(table);
               
-           vp.add(layout);
-           popup.setWidget(vp);
+            vp.add(layout);
+            popup.setWidget(vp);
                 
            /* Handler to select All items when checked */
            checkAll.addClickHandler(new ClickHandler() {
              public void onClick(ClickEvent event) {
-                    for(Item<T> item : getModel()) {
-                        if(item.enabled)
-                            item.setCell(0, "Y");
-                    }
-                    setDisplay();
-                    table.setModel(getModel());
+                 table.selectAll();
+                 setDisplay();
                 }
             });
+           
            checkAll.setEnabled(true);
 
            /* Handler to unselect All items when Checked */
            uncheckAll.addClickHandler(new ClickHandler() {
                public void onClick(ClickEvent event) {
-                   for(Item<T> item : getModel())
-                       item.setCell(0, null);
+                   table.unselectAll();
                    setDisplay();
-                   table.setModel(getModel());
                }
            });
            uncheckAll.setEnabled(true);
@@ -330,16 +331,28 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
             
             @Override
             public void execute() {
-                int width  = (dropWidth == null) ? getOffsetWidth() : Util.stripUnits(dropWidth);
+                int modelHeight = table.getModel().size() * cellHeight;
+
+                if (table.hasHeader())
+                    modelHeight += 19;
+
+                int width = dropWidth == null ? getOffsetWidth() : Util.stripUnits(dropWidth);
+
+                if (table.getTotalColumnWidth() > width)
+                    modelHeight += NativeHorizontalScrollbar.getNativeScrollbarHeight() + 1;
+
+                if (multiHeader.getOffsetWidth() > width)
+                        width = multiHeader.getOffsetWidth();
                 
-                if(multiHeader.getOffsetWidth() > width)
-                    width = multiHeader.getOffsetWidth();
-                
-                layout.setSize(width+"px",Util.stripUnits(dropHeight) > modelHeight ? modelHeight+"px" : dropHeight);
-                
-                layout.forceLayout();
-                table.setModel(table.getModel());
-                
+                layout.setSize(width + "px",
+                               Util.stripUnits(dropHeight) > modelHeight ? modelHeight + "px"
+                                                                            : dropHeight);
+
+
+                popup.setSize(width + "px",
+                              Util.stripUnits(dropHeight) > modelHeight ? modelHeight + "px"
+                                                                       : dropHeight);
+                table.onResize();
                 popup.showRelativeTo(source);
 
                 /*
@@ -347,7 +360,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
                  */
                 if (getSelectedIndex() > 0)
                     table.scrollToVisible(getSelectedIndex());
-                
             }
         });
 
@@ -359,29 +371,24 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * user.
 	 */
 	protected void setDisplay() {
-		StringBuffer sb;
-		ArrayList<Item<T>> items;
-		int selected = 0;
+        StringBuffer sb;
 
-		sb = new StringBuffer();
-		
-		items = getModel();
-		
-		if (items != null) {
-			for (int i = 0; i < items.size(); i++ ) {
-				if ("Y".equals(items.get(i).getCell(0))) {
-					selected++;
-					if (sb.length() > 0)
-						sb.append(", ");
-					sb.append(renderer.getDisplay(items.get(i)));
-				}
-			}
-			
-			if(selected > maxDisplay)
-				sb = new StringBuffer().append(selected+" "+Messages.get().drop_optionsSelected());
-		}
+        sb = new StringBuffer();
 
-		textbox.setText(sb.toString());
+        if (table.isAnyRowSelected()) {
+            if (table.getSelectedRows().length <= maxDisplay) {
+                for (Integer sel : table.getSelectedRows()) {
+                    if (sb.length() > 0)
+                        sb.append(", ");
+                    sb.append(renderer.getDisplay((Row)table.getRowAt(sel)));
+                }
+            } else {
+                sb = new StringBuffer().append(table.getSelectedRows().length + " " +
+                                               Messages.get().drop_optionsSelected());
+            }
+        }
+
+        textbox.setText(sb.toString());
 	}
 
 	@Override
@@ -450,10 +457,13 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	@UiChild(limit=1,tagname="popup")
 	public void setPopupContext(Table tableDef) {
 		this.table = tableDef;
+		table.setCSS(UIResources.INSTANCE.dropTable());
 
-		table.setFixScrollbar(false);
+		//table.setFixScrollbar(false);
 		table.setRowHeight(16);
 		table.setEnabled(true);
+		table.setAllowMultipleSelection(true);
+		table.setCtrlKeyDefault(true);
 		/*
 		 * This handler will will cancel the selection if the item has been
 		 * disabled.
@@ -461,25 +471,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		table.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
 			@SuppressWarnings("rawtypes")
 			public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-				/*
-				 * We want selection to happen for disabled items when they are passed by the programmer as a value.
-				 * Since a user can't click on an item without the options showing, we use showingOptions flag to determine
-				 * if the item was selected by a user click.
-				 */
-				if (!((Item)table.getModel().get(event.getItem())).isEnabled() && showingOptions) {
-					event.cancel();
-					return;
-				}
-				/*
-				 * Never select the table row in Multiselect,  Switch the checkbox 
-				 * and move on.
-				 */
-				if("Y".equals(table.getValueAt(event.getItem(), 0)))
-					table.setValueAt(event.getItem(),0,"N");
-				else
-					table.setValueAt(event.getItem(),0,"Y");
-				setDisplay();
-				event.cancel();
+			    if ( ! ((Item)table.getModel().get(event.getItem())).isEnabled())
+                    event.cancel();
 			}
 		});
 
@@ -493,9 +486,20 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 			}
 		});
 		
-		Column col = new Column.Builder(15).build();
-        col.setCellRenderer(new CheckBoxCell(new CheckBox()));
-        table.addColumnAt(0, col);
+        table.addUnselectionHandler(new UnselectionHandler<Integer>() {
+
+            @Override
+            public void onUnselection(UnselectionEvent<Integer> event) {
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+                    @Override
+                    public void execute() {
+                        setDisplay();
+
+                    }
+                });
+            }
+        });
 	}
 
 	/**
@@ -522,25 +526,16 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * @param model
 	 */
 	public void setModel(ArrayList<Item<T>> model) {
-		assert table != null;
+        assert table != null;
 
-		/*
-		 * Insert column for checkbox
-		 */
-		for(Item<T> item : model) 
-			item.getCells().add(0,null);
+        table.setModel(model);
 
-		table.setModel(model);
+        createKeyHash(model);
 
-		if(model.size() < itemCount) {
-			table.setVisibleRows(model.size());
-		}else
-			table.setVisibleRows(itemCount);
+        searchText = null;
 
-
-		createKeyHash(model);
-
-		searchText = null;
+        setValue(null);
+        setDisplay();
 
 	}
 
@@ -560,14 +555,14 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * @param index
 	 */
 	public void setSelectedIndex(int index) {
-		ArrayList<T> values;
-		
-		if (index > -1) {
-			values = new ArrayList<T>();
-			values.add(getModel().get(index).key);
-			setValue(values);
-		}else
-			setValue(null);
+        if (index > -1) {
+            ArrayList<T> list = new ArrayList<T>();
+            list.add(getModel().get(index).key);
+            setValue(list);
+        } else {
+            setValue(null);
+            table.unselectAll();
+        }
 	}
 
 	/**
@@ -598,11 +593,8 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	public ArrayList<Item<T>> getSelectedItems() {
 		ArrayList<Item<T>> items = null;
 
-
-		items = new ArrayList<Item<T>>();
-		for(Item<T> item : getModel()) {
-			if("Y".equals(item.getCell(0)))
-				items.add(item);
+		for(Integer index : table.getSelectedRows()) {
+		    items.add(getModel().get(index));
 		}
 
 		return items.size() > 0 ? items : null;
@@ -631,6 +623,9 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 
 		button.setEnabled(enabled);
 		table.setEnabled(enabled);
+		
+		if (table != null)
+            table.setEnabled(enabled);
 
 		if (enabled)
 			sinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
@@ -647,10 +642,12 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	public void finishEditing() {
 		ArrayList<T> values;
 		
+		if(queryMode)
+		    return;
+		
 		values = new ArrayList<T>();
-		for(Item<T> item : getModel())
-			if("Y".equals(item.getCell(0)))
-				values.add(item.getKey());
+		for(Integer index : table.getSelectedRows())
+			values.add(getModel().get(index).getKey());
 
 		setValue(values, true);
 
@@ -694,7 +691,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 
 		if (values != null) 
 			for (T key : values)
-				getModel().get(keyHash.get(key)).setCell(0, "Y");
+				table.selectRowAt(keyHash.get(key));
 		
 		setDisplay();
 
@@ -709,14 +706,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * Method used in MultiSelect to clear all checkboxes in MultiSelect mode
 	 */
 	protected void clearSelections() {
-
-	    if(getModel() != null) {
-	        for(Item<T> item : getModel())
-	            item.setCell(0, null);
-	    }
-		
 		table.unselectAll();
-
 	}
 
 	/**
@@ -738,6 +728,10 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		
 		queryMode = query;
 		
+        value = null;
+        textbox.setText("");
+        table.unselectAll();
+		
 	}
 
 	/**
@@ -746,80 +740,77 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	@Override
 	public Object getQuery() {
-		QueryData qd;
-		StringBuffer sb;
-		ArrayList<T> values;
+	    QueryData qd;
+        StringBuffer sb;
+        ArrayList<T> values;
 
-		values = new ArrayList<T>();
-		for(Item<T> item : getModel())
-			if("Y".equals(item.getCell(0)))
-				values.add(item.getKey());
-		
-		/*
-		 * Return null if nothing selected
-		 */
-		if (values == null || (values.size() == 1 && values.get(0) == null))
-			return null;
+        values = new ArrayList<T>();
+        for (Integer item : table.getSelectedRows())
+            values.add( ((Item<T>)table.getRowAt(item)).getKey());
 
-		qd = new QueryData();
+        /*
+         * Return null if nothing selected
+         */
+        if (values.isEmpty() || (values.size() == 1 && values.get(0) == null))
+            return null;
 
-		/*
-		 * Create the query from the selected values
-		 */
-		sb = new StringBuffer();
+        qd = new QueryData();
 
-		for (int i = 0; i < values.size(); i++ ) {
-			if (i > 0)
-				sb.append(" | ");
-			sb.append(values.get(i));
-			if(values.get(i) != null)
+        /*
+         * Create the query from the selected values
+         */
+        sb = new StringBuffer();
 
-				/*
-				 * Since there is no helper we need to do an instance check here
-				 */
-				if (values.get(i) instanceof Integer)
-					qd.setType(QueryData.Type.INTEGER);
-				else
-					qd.setType(QueryData.Type.STRING);
+        for (int i = 0; i < values.size(); i++ ) {
+            if (i > 0)
+                sb.append(" | ");
+            sb.append(values.get(i));
+            if (values.get(i) != null)
 
-		}
+                /*
+                 * Since there is no helper we need to do an instance check here
+                 */
+                if (values.get(i) instanceof Integer)
+                    qd.setType(QueryData.Type.INTEGER);
+                else
+                    qd.setType(QueryData.Type.STRING);
 
-		qd.setQuery(sb.toString());
+        }
 
-		return qd;
+        qd.setQuery(sb.toString());
+
+        return qd;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setQuery(QueryData qd) {
-		String[] params;
-		T key;
+        String[] params;
+        T key;
 
-		if(!queryMode)
-			return;
+        if ( !queryMode)
+            return;
 
-		clearSelections();
+        table.unselectAll();
 
-		if(qd == null)
-			return;
+        setDisplay();
 
-		table.unselectAll();
-		
-		if(qd.getQuery() != null && !qd.getQuery().equals("")) {
-			params = qd.getQuery().split(" \\| ");
-			for(int i = 0; i < params.length; i++) {
-				if(qd.getType() == QueryData.Type.INTEGER) 
-					key = (T)new Integer(params[i]);  
-				else
-					key = (T)params[i];
+        if (qd == null)
+            return;
 
-				getModel().get(keyHash.get(key)).setCell(0, "Y");
-			}
-		}
-		
-		setDisplay();
+        if (qd.getQuery() != null && !qd.getQuery().equals("")) {
+            params = qd.getQuery().split(" \\| ");
+            for (int i = 0; i < params.length; i++ ) {
+                if (qd.getType() == QueryData.Type.INTEGER)
+                    key = (T)new Integer(params[i]);
+                else
+                    key = (T)params[i];
 
-		table.setModel(getModel());
+                table.selectRowAt(keyHash.get(key));
+            }
+        }
+
+        setDisplay();
 	}
 
 	// *************** Search methods ******************
@@ -1255,9 +1246,10 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 * 
 	 */
 	protected class DefaultRenderer implements Renderer {
-		public String getDisplay(Row row) {
-			return row != null && row.getCells().get(1) != null ? row.getCells().get(1).toString() : "";
-		}
+	       public String getDisplay(Row row) {
+	            return row != null && row.getCells().get(0) != null ? row.getCells().get(0).toString()
+	                                                               : "";
+	        }
 	}    
 	
 	public void setCSS(DropdownCSS css) {

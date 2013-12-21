@@ -30,14 +30,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openelis.ui.common.DatabaseException;
-import org.openelis.ui.common.Datetime;
-import org.openelis.ui.common.FieldErrorException;
-import org.openelis.ui.common.FormErrorException;
-import org.openelis.ui.common.GridFieldErrorException;
-import org.openelis.ui.common.TableFieldErrorException;
-import org.openelis.ui.common.ValidationErrorsList;
-
 public class DataBaseUtil {
 
     private DataBaseUtil() {
@@ -504,15 +496,5 @@ public class DataBaseUtil {
             return "";
 
         return obj.toString();
-    }
-
-    /**
-     * Returns the argument if it is not null otherwise returns zero
-     */
-    public static Integer toInteger(Integer integer) {
-        if (integer == null)
-            return 0;
-
-        return integer;
     }
 }
