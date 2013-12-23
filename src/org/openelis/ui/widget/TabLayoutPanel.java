@@ -217,6 +217,9 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         });
     }
     
+    public void setTabVisible(int index, boolean visible) {
+        tabBar.getWidget(index).setVisible(visible);
+    }
     
     @Override
     public void add(Widget child, Widget tab) {
@@ -236,6 +239,10 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
             tab.getElement().getStyle().setFloat(Float.LEFT);
         else if(tabPos == TabPosition.RIGHT) 
             tab.getElement().getStyle().setFloat(Float.RIGHT);
+        
+        if(tab instanceof TabWidget) 
+            setTabVisible(getWidgetCount()-1,((TabWidget)tab).tabVisible);
+
     }
     
     @Override
