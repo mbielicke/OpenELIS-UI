@@ -226,7 +226,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
     	columns = new ArrayList<Column>(5);
     	nodeDefs = new HashMap<String, ArrayList<LeafColumn>>();
-    	rowHeight = 16;
+    	rowHeight = 19;
         view = new StaticView(this);
         setWidget(view);
 
