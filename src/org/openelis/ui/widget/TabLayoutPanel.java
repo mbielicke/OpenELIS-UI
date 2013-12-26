@@ -20,10 +20,14 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.layout.client.Layout;
 import com.google.gwt.layout.client.Layout.Alignment;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -41,6 +45,9 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     protected double barHeight;
     protected Unit barUnit;
     protected FlowPanel tabBar;
+    protected DeckLayoutPanel deck;
+    protected AbsolutePanel blank;
+    protected boolean blankAdded;
     
     public enum TabPosition {TOP,BOTTOM,RIGHT,LEFT};
     
@@ -57,6 +64,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         this.barUnit = barUnit;
 
         tabBar  = (FlowPanel) ((LayoutPanel)getWidget()).getWidget(0);
+        deck    = (DeckLayoutPanel) ((LayoutPanel)getWidget()).getWidget(1);
         
         addSelectionHandler(new SelectionHandler<Integer>() {
             
@@ -75,6 +83,13 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
                 
             }
         });
+        
+        blank = new AbsolutePanel();
+        blank.addStyleName(css.TabContainer());
+        add(blank);
+        setTabVisible(0, false);
+        blankAdded = true;
+        
     }
     
     public void setTabPosition(TabPosition tabPos) {
@@ -218,7 +233,24 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     }
     
     public void setTabVisible(int index, boolean visible) {
+        boolean anyVisible = false;
+        
         tabBar.getWidget(index).setVisible(visible);
+        
+        for(int i = 0; i < tabBar.getWidgetCount(); i++){
+            if(tabBar.getWidget(i).isVisible()) {
+                anyVisible = true;
+                break;
+            }
+        }
+        
+        showTabBar(anyVisible);
+        
+        if(!anyVisible || index == getSelectedIndex()) {
+            selectTab(blank);
+        }
+    
+        
     }
     
     @Override
@@ -228,7 +260,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         
         child.addStyleName(css.TabContainer());
         
-        super.add(child, tab);
+        super.insert(child, tab, getWidgetCount());
         
         needsResize.add(getWidgetIndex(child));
         
@@ -240,8 +272,10 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         else if(tabPos == TabPosition.RIGHT) 
             tab.getElement().getStyle().setFloat(Float.RIGHT);
         
+        
         if(tab instanceof TabWidget) 
             setTabVisible(getWidgetCount()-1,((TabWidget)tab).tabVisible);
+        
 
     }
     
@@ -262,7 +296,10 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         return super.getWidgetIndex(child);
     }
     
-    
+    @Override
+    public int getWidgetCount() {
+        return blankAdded ? super.getWidgetCount() - 1 : super.getWidgetCount();
+    }
     
     public int getTabWidgetIndex(Widget tab) {
         for(int i = 0; i < getWidgetCount(); i++) {
