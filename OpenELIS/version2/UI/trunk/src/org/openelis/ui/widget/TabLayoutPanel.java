@@ -47,7 +47,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     protected FlowPanel tabBar;
     protected DeckLayoutPanel deck;
     protected AbsolutePanel blank;
-    protected boolean blankAdded;
+    protected boolean blankAdded,visibleTabSet;
     
     public enum TabPosition {TOP,BOTTOM,RIGHT,LEFT};
     
@@ -260,7 +260,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         
         child.addStyleName(css.TabContainer());
         
-        super.insert(child, tab, getWidgetCount());
+        super.insert(child, tab, getTabCount());
         
         needsResize.add(getWidgetIndex(child));
         
@@ -274,7 +274,14 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         
         
         if(tab instanceof TabWidget) 
-            setTabVisible(getWidgetCount()-1,((TabWidget)tab).tabVisible);
+            setTabVisible(getTabCount()-1,((TabWidget)tab).tabVisible);
+        
+        if(!visibleTabSet && tabBar.getWidget(getTabCount()-1).isVisible()) {
+            selectTab(getTabCount() -1);
+            visibleTabSet = true;
+        }
+            
+        
         
 
     }
@@ -296,8 +303,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         return super.getWidgetIndex(child);
     }
     
-    @Override
-    public int getWidgetCount() {
+    public int getTabCount() {
         return blankAdded ? super.getWidgetCount() - 1 : super.getWidgetCount();
     }
     
