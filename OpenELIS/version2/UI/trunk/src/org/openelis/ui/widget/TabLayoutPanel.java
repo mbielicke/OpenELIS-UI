@@ -296,6 +296,18 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         return super.getWidgetIndex(child);
     }
     
+    @Override
+    public int getSelectedIndex() {
+        int index = super.getSelectedIndex();
+        
+        if(index > -1) {
+            if(getWidget(index) == blank)
+                index = -1;
+        }
+        
+        return index;
+    }
+    
     public int getTabCount() {
         return getWidgetIndex(blank) > -1 ? super.getWidgetCount() - 1 : super.getWidgetCount();
     }
