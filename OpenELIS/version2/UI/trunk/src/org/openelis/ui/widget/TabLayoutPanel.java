@@ -239,7 +239,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         
         showTabBar(anyVisible);
         
-        if(!anyVisible || index == getSelectedIndex()) {
+        if(!anyVisible || (index == getSelectedIndex() && !visible)) {
             selectTab(blank);
         }
     
