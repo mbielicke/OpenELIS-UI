@@ -50,11 +50,12 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         //Style the editor to not wrap words
         editor.setWidth((this.col.getWidth())+"px");
         editor.getCellFormatter().setWidth(0, 0, "20px");
-        editor.getCellFormatter().setWidth(0, 1, (this.col.getWidth()-20)+"px");
         editor.getElement().getStyle().setTableLayout(TableLayout.FIXED);
         editor.getCellFormatter().getElement(0, 1).getStyle().setOverflow(Overflow.HIDDEN);
         editor.getCellFormatter().getElement(0, 1).getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
         editor.getCellFormatter().getElement(0, 1).getStyle().setWhiteSpace(WhiteSpace.PRE);
+        
+        
         
     }
 
