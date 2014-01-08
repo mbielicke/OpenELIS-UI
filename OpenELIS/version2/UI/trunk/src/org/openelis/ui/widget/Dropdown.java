@@ -226,10 +226,14 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         exceptions = new Exceptions();
 
         setCSS(UIResources.INSTANCE.dropdown());
+        
 
         setPopupContext(new Table.Builder(10).column(new Column.Builder(10).renderer(new SelectionCell())
                                                                            .build())
                                              .build());
+        
+        setWidth("100px");
+        
         setHelper((WidgetHelper)new StringHelper());
     }
 
@@ -431,7 +435,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         button.setWidth("16px");
 
         if (table != null)
-            table.setWidth(width + "px");
+            table.setWidth((width)+ "px");
 
     }
 
