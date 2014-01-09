@@ -279,7 +279,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
             popup = new PopupPanel(true);
             popup.setStyleName(css.Popup());
             
-            table.setModel(model);
+            //table.setModel(model);
 
             /* Draw popup for Multiselect when set */
             if (queryMode) {
@@ -585,7 +585,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
 
         this.model = model;
         
-        popup = null;
+        table.setModel(model);
+        //popup = null;
 
         createKeyHash(model);
 
