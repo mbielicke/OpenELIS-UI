@@ -556,9 +556,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
             if (col.getFilter() != null)
                 col.getFilter().unselectAll();
         }
-
-        // if ( !scrollToVisible(0))
-        renderView( -1, -1);
+        
+        renderView(-1,-1);
+        
 
     }
 
@@ -1368,7 +1368,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                     unselectAll(event);
                 }else
                     unselectAll(event);
-            }
+            }else
+                unselectAll(event);
         } else {
             unselectAll(event);
         }
