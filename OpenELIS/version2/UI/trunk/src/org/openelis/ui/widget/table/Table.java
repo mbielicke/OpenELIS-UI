@@ -557,10 +557,14 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 col.getFilter().unselectAll();
         }
         
-        ((StaticView)view).bulkRender();
+        if(queryMode) {
+            renderView(-1,1);
+        }else{
+            ((StaticView)view).bulkRender();
         
-        if(hasExceptions()) 
-            ((StaticView)view).bulkExceptions(endUserExceptions);
+            if(hasExceptions()) 
+                ((StaticView)view).bulkExceptions(endUserExceptions);
+        }
         
 
     }
