@@ -41,6 +41,8 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -204,19 +206,10 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
 	}
 	
 	private void render(String value, HTMLTable table, int row, int col) {
-		String style;
-		AbsolutePanel div;
+
 		
-        if(value == null)
-        	style = css.Unknown();
-        else if("Y".equals(value))
-        	style = css.Checked();
-        else
-        	style = css.Unchecked();
-        	
-        div = new AbsolutePanel();
-        div.setStyleName(style);
-        table.setWidget(row, col, div);
+		table.setWidget(row, col, getCheckDiv(value));
+		
         if(align.equalsIgnoreCase("left"))
             table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_LEFT);
         else if(align.equalsIgnoreCase("right"))
@@ -225,7 +218,42 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
             table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_CENTER);
             
 	}
+	
+	public SafeHtml bulkRender(Object value) {
+	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
+	    String algn;
+	    
+	    if(align.equalsIgnoreCase("left"))
+            algn = HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString();
+        else if(align.equalsIgnoreCase("right"))
+            algn = HasHorizontalAlignment.ALIGN_RIGHT.getTextAlignString();
+        else
+            algn = HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString();
+	    
+	    builder.appendHtmlConstant("<td align='"+algn+"'>");
+	    builder.appendHtmlConstant(getCheckDiv((String)value).getElement().getString());
+	    builder.appendHtmlConstant("</td>");
+	    
+	    return builder.toSafeHtml();
+	}
 
+	private AbsolutePanel getCheckDiv(String value) {
+	    String style;
+	    AbsolutePanel div;
+	        
+	    if(value == null)
+            style = css.Unknown();
+        else if("Y".equals(value))
+            style = css.Checked();
+        else
+            style = css.Unchecked();
+            
+        div = new AbsolutePanel();
+        div.setStyleName(style);
+        
+        return div;
+	}
+	
 	public void setAlign(String align) {
 	    this.align = align;
 	}

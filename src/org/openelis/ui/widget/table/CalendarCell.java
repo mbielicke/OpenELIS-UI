@@ -35,11 +35,14 @@ import org.openelis.ui.resources.TableCalendarCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.calendar.Calendar;
 
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -145,6 +148,16 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         	return editor.getHelper().format((Datetime)value);
         else
         	return DataBaseUtil.toString(value);
+    }
+    
+    public SafeHtml bulkRender(Object value) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        
+        builder.appendHtmlConstant("<td>");
+        builder.appendEscaped(display(value));
+        builder.appendHtmlConstant("</td>");
+        
+        return builder.toSafeHtml();
     }
 
     /**

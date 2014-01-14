@@ -28,7 +28,6 @@
     <source path="messages" />
     <source path="services" />
     <source path="screen" />
-    <source path="server" />
     <source path="event" />
     <source path="test"/>
 

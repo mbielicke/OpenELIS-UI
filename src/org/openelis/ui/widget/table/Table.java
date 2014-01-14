@@ -557,7 +557,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 col.getFilter().unselectAll();
         }
         
-        renderView(-1,-1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions(endUserExceptions);
         
 
     }
@@ -598,7 +601,16 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (filters == null || filters.size() == 0) {
             modelView = model;
             rowIndex = null;
-            renderView( -1, -1);
+            ((StaticView)view).bulkRender();
+            
+            if(hasExceptions()) 
+                ((StaticView)view).bulkExceptions(endUserExceptions);
+            
+            if(isAnyRowSelected()) {
+                for(Integer index : selections) 
+                    ((StaticView)view).applySelectionStyle(index);
+            }
+            
             return;
         }
 
@@ -637,7 +649,15 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         }
 
         // if ( !scrollToVisible(0))
-        renderView( -1, -1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions(endUserExceptions);
+        
+        if(isAnyRowSelected()) {
+            for(Integer index : selections) 
+                ((StaticView)view).applySelectionStyle(convertModelIndexToView(index));
+        }
     }
 
     /**
@@ -736,7 +756,15 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         for (int i = 0; i < modelView.size(); i++ )
             rowIndex.get(modelView.get(i)).view = i;
 
-        renderView( -1, -1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions(endUserExceptions);
+        
+        if(isAnyRowSelected()) {
+            for(Integer index : selections) 
+                ((StaticView)view).applySelectionStyle(convertModelIndexToView(index));
+        }
     }
 
     /**
@@ -1426,9 +1454,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void selectAll() {
         if (isMultipleSelectionAllowed()) {
             selections = new ArrayList<Integer>();
-            for (int i = 0; i < getRowCount(); i++ )
+            for (int i = 0; i < getRowCount(); i++ ) {
                 selections.add(i);
-            renderView( -1, -1);
+                ((StaticView)view).applySelectionStyle(i);
+            }
         }
     }
 

@@ -41,6 +41,8 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -131,6 +133,16 @@ public class AutoCompleteCell implements CellRenderer,
         	return DataBaseUtil.toString(value);
     }
 
+    public SafeHtml bulkRender(Object value) {
+        SafeHtmlBuilder builder;
+        
+        builder = new SafeHtmlBuilder();
+        builder.appendHtmlConstant("<td>");
+        builder.appendEscaped(display(value));
+        builder.appendHtmlConstant("</td>");
+        
+        return builder.toSafeHtml();
+    }
     /**
      * Sets the QueryData to the editor and sets the Query string into the cell
      * text

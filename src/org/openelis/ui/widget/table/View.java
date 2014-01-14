@@ -368,7 +368,7 @@ public class View extends ViewInt {
      * then the number of rows created will equal model.size() else the number
      * visibleRows will be created for the flexTable table.
      */
-    private void createRow(int rc) {
+    protected void createRow(int rc) {
         flexTable.insertRow(rc);
         flexTable.getCellFormatter().setHeight(rc, 0, table.getRowHeight() + "px");
 
