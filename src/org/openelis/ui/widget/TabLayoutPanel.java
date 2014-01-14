@@ -333,6 +333,10 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     public void setTabHasData(int index) {
         ((TabWidget)getTabWidget(index)).setTabHasData();
     }
+    
+    public void setTabNotification(int index, String text) {
+        ((TabWidget)getTabWidget(index)).setNotificaton(text);
+    }
 
     public void removeTabInError(int index) {
         ((TabWidget)getTabWidget(index)).removeTabInError();
