@@ -1323,57 +1323,79 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      */
     protected void selectRowAt(int row, NativeEvent event) {
-        boolean ctrlKey, shiftKey, selected = false;
-        int startSelect, endSelect, minSelected, maxSelected, i;
-
-        startSelect = row;
-        endSelect = row;
-
+        
         /*
          * If multiple selection is allowed check event for ctrl or shift keys.
          * If none apply the logic will fall throw to normal selection.
          */
         if (isMultipleSelectionAllowed()) {
             if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
-                ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
-                shiftKey = event.getShiftKey();
+                multiSelect(row,event);
+                return;
+            }
+        }   
+        
+        if(isRowSelected(row))
+            return;
+       
+        if (event == null || fireBeforeSelectionEvent(row)) {
+            unselectAll();
+            
+            finishEditing();
 
-                if (ctrlKey) {
-                    if (isRowSelected(row)) {
-                        unselectRowAt(row, event);
-                        return;
-                    }
-                } else if (shiftKey) {
-                    if ( !isAnyRowSelected()) {
-                        startSelect = 0;
-                        endSelect = row;
-                    } else {
-                        Collections.sort(selections);
-                        minSelected = Collections.min(selections);
-                        maxSelected = Collections.max(selections);
-                        if (minSelected > row) {
-                            startSelect = row;
-                            endSelect = minSelected;
-                        } else if (row > maxSelected) {
-                            startSelect = maxSelected;
-                            endSelect = row;
-                        } else {
-                            i = 0;
-                            while (selections.get(i + 1) < row)
-                                i++ ;
-                            startSelect = selections.get(i);
-                            endSelect = row;
-                        }
-                    }
-                    unselectAll(event);
-                }else
-                    unselectAll(event);
-            }else
-                unselectAll(event);
-        } else {
-            unselectAll(event);
+            selections.add(row);
+
+            view.applySelectionStyle(row);
+
+            if (event != null)
+                   fireSelectionEvent(row);
+            
+            scrollToVisible(row);
         }
 
+    }
+    
+    private void multiSelect(int row, NativeEvent event) {
+        int startSelect, endSelect, minSelected, maxSelected, i;
+        boolean ctrlKey, shiftKey, selected = false;
+        
+        startSelect = row;
+        endSelect = row;
+        
+        ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
+        shiftKey = event.getShiftKey();
+        
+        if (ctrlKey) {
+            if (isRowSelected(row)) {
+                unselectRowAt(row, event);
+                return;
+            }
+        } else if (shiftKey) {
+            if ( !isAnyRowSelected()) {
+                startSelect = 0;
+                endSelect = row;
+            } else {
+                Collections.sort(selections);
+                minSelected = Collections.min(selections);
+                maxSelected = Collections.max(selections);
+                if (minSelected > row) {
+                    startSelect = row;
+                    endSelect = minSelected;
+                } else if (row > maxSelected) {
+                    startSelect = maxSelected;
+                    endSelect = row;
+                } else {
+                    i = 0;
+                    while (selections.get(i + 1) < row)
+                        i++ ;
+                    startSelect = selections.get(i);
+                    endSelect = row;
+                }
+            }
+            unselectAll(event);
+        }else
+            unselectAll(event);
+        
         for (i = startSelect; i <= endSelect && i > -1; i++ ) {
             if ( !selections.contains(i)) {
                 if (event == null || fireBeforeSelectionEvent(i)) {
@@ -1391,7 +1413,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 }
             }
         }
-
+        
         if (selected)
             scrollToVisible(endSelect);
     }
