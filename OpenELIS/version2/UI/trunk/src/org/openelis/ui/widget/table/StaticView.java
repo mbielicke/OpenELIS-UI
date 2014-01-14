@@ -25,6 +25,9 @@
  */
 package org.openelis.ui.widget.table;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
@@ -48,6 +51,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -56,6 +60,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
@@ -126,7 +131,7 @@ public class StaticView extends ViewInt {
      */
     public StaticView(Table tbl) {
         header = new Header(tbl);
-
+        
         initWidget(uiBinder.createAndBindUi(this));
 
         this.table = tbl;
@@ -245,10 +250,10 @@ public class StaticView extends ViewInt {
      * then the number of rows created will equal model.size() else the number
      * visibleRows will be created for the flexTable table.
      */
-    private void createRow(int rc) {
+    protected void createRow(int rc) {
         flexTable.insertRow(rc);
         flexTable.getCellFormatter().setHeight(rc, 0, table.getRowHeight() + "px");
-        flexTable.getRowFormatter().setVerticalAlign(rc, HasVerticalAlignment.ALIGN_TOP);
+        //flexTable.getRowFormatter().setVerticalAlign(rc, HasVerticalAlignment.ALIGN_TOP);
         flexTable.getRowFormatter().getElement(rc).setAttribute("index", "" + rc);
 
         if (table.getDragController() != null)
@@ -317,7 +322,28 @@ public class StaticView extends ViewInt {
 
             });
         }
-
+    }
+    
+    protected void bulkRender() {
+        CellRenderer renderer;
+        String style;
+        
+        SafeHtmlBuilder tb = new SafeHtmlBuilder();
+        
+        for(int i = 0; i < table.getRowCount(); i++) {
+            style = table.getRowAt(i).getStyle(i);
+            tb.appendHtmlConstant("<tr height='"+table.getRowHeight()+"' index='"+i+"'");
+            if(style != null)
+                tb.appendHtmlConstant(" class='"+style+"'");
+            tb.appendHtmlConstant(">");
+            for(int j = 0; j < table.getColumnCount(); j++) {
+                renderer = table.getColumnAt(j).getCellRenderer();
+                tb.append(renderer.bulkRender(table.getValueAt(i,j)));
+            }
+            tb.appendHtmlConstant("</tr>");
+        }
+       
+        flexTable.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(tb.toSafeHtml());
     }
 
     protected void addRow(int r) {
@@ -463,6 +489,7 @@ public class StaticView extends ViewInt {
         else
             renderer.render(flexTable, r, c, table.getValueAt(r, c));
 
+        
         if (table.hasExceptions(r, c)) {
             flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
             flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
@@ -477,10 +504,27 @@ public class StaticView extends ViewInt {
             flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
             flexTable.removeHandler(r, c);
         }
+        
 
         flexTable.getCellFormatter().setVisible(r, c, table.getColumnAt(c).isDisplayed());
+        
     }
 
+    protected void bulkExceptions(HashMap<Row,HashMap<Integer, ArrayList<Exception>>> exceptions) {
+        for(Row row : exceptions.keySet()) {
+            int r = table.convertModelIndexToView(table.getModel().indexOf(row));
+            for(int c : exceptions.get(row).keySet()) {
+                flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
+                flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
+                    @Override
+                    public void onCellMouseOver(CellMouseOverEvent event) {
+                        table.drawExceptions(event.getRow(), event.getCol(), event.getX(), event.getY());
+                    }
+
+                });
+            }
+        }
+    }
     /**
      * Will put the passed cell into edit mode making sure the the cell is
      * compeltely visible first

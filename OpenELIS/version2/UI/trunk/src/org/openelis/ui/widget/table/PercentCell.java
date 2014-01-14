@@ -7,6 +7,8 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.PercentBar;
 
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -50,6 +52,15 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 	public void render(HTMLTable table, int row, int col, Object value) {
 		editor.setPercent((Double)value);
 		table.setHTML(row,col,DOM.getInnerHTML(editor.getElement()));
+	}
+	
+	public SafeHtml bulkRender(Object value) {
+	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
+	    
+	    editor.setPercent((Double)value);
+	    builder.appendHtmlConstant("<td>"+editor.getElement().getString()+"</td>");
+	    
+	    return builder.toSafeHtml();
 	}
 
 	/**
