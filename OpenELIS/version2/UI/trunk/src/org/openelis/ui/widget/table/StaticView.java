@@ -326,17 +326,14 @@ public class StaticView extends ViewInt {
     
     protected void bulkRender() {
         CellRenderer renderer;
-        String style,row;
+        String style;
         
         SafeHtmlBuilder tb = new SafeHtmlBuilder();
         
         for(int i = 0; i < table.getRowCount(); i++) {
             style = table.getRowAt(i).getStyle(i);
-            row = "<tr height='"+table.getRowHeight()+"' index='"+i+"'";
-            if(style != null)
-                row += " class='"+style+"'";
-            row += ">";
-            tb.appendHtmlConstant(row);
+            tb.appendHtmlConstant("<tr height='"+table.getRowHeight()+"' index='"+i+"'" +
+                              (style != null ? " class='"+style+"'>" : ">"));
             for(int j = 0; j < table.getColumnCount(); j++) {
                 renderer = table.getColumnAt(j).getCellRenderer();
                 tb.append(renderer.bulkRender(table.getValueAt(i,j)));
