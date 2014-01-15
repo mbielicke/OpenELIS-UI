@@ -561,9 +561,16 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
             if (col.getFilter() != null)
                 col.getFilter().unselectAll();
         }
-
-        // if ( !scrollToVisible(0))
-        renderView( -1, -1);
+        
+        if(queryMode) {
+            renderView(-1,1);
+        }else{
+            ((StaticView)view).bulkRender();
+        
+            if(hasExceptions()) 
+                ((StaticView)view).bulkExceptions((HashMap<Row,HashMap<Integer,ArrayList<Exception>>>)endUserExceptions);
+        }
+        
 
     }
 
@@ -603,7 +610,16 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (filters == null || filters.size() == 0) {
             modelView = model;
             rowIndex = null;
-            renderView( -1, -1);
+            ((StaticView)view).bulkRender();
+            
+            if(hasExceptions()) 
+                ((StaticView)view).bulkExceptions((HashMap<Row,HashMap<Integer,ArrayList<Exception>>>)endUserExceptions);
+            
+            if(isAnyRowSelected()) {
+                for(Integer index : selections) 
+                    ((StaticView)view).applySelectionStyle(index);
+            }
+            
             return;
         }
 
@@ -642,7 +658,15 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         }
 
         // if ( !scrollToVisible(0))
-        renderView( -1, -1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions((HashMap<Row,HashMap<Integer,ArrayList<Exception>>>)endUserExceptions);
+        
+        if(isAnyRowSelected()) {
+            for(Integer index : selections) 
+                ((StaticView)view).applySelectionStyle(convertModelIndexToView(index));
+        }
     }
 
     /**
@@ -741,7 +765,15 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         for (int i = 0; i < modelView.size(); i++ )
             rowIndex.get(modelView.get(i)).view = i;
 
-        renderView( -1, -1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions((HashMap<Row,HashMap<Integer,ArrayList<Exception>>>)endUserExceptions);
+        
+        if(isAnyRowSelected()) {
+            for(Integer index : selections) 
+                ((StaticView)view).applySelectionStyle(convertModelIndexToView(index));
+        }
     }
 
     /**
@@ -1331,56 +1363,84 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      */
     protected void selectRowAt(int row, NativeEvent event) {
-        boolean ctrlKey, shiftKey, selected = false;
-        int startSelect, endSelect, minSelected, maxSelected, i;
-
-        startSelect = row;
-        endSelect = row;
-
+        
+        if(row < 0) {
+            unselectAll();
+            return;
+        }
+        
         /*
          * If multiple selection is allowed check event for ctrl or shift keys.
          * If none apply the logic will fall throw to normal selection.
          */
         if (isMultipleSelectionAllowed()) {
             if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
-                ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
-                shiftKey = event.getShiftKey();
-
-                if (ctrlKey) {
-                    if (isRowSelected(row)) {
-                        unselectRowAt(row, event);
-                        return;
-                    }
-                } else if (shiftKey) {
-                    if ( !isAnyRowSelected()) {
-                        startSelect = 0;
-                        endSelect = row;
-                    } else {
-                        Collections.sort(selections);
-                        minSelected = Collections.min(selections);
-                        maxSelected = Collections.max(selections);
-                        if (minSelected > row) {
-                            startSelect = row;
-                            endSelect = minSelected;
-                        } else if (row > maxSelected) {
-                            startSelect = maxSelected;
-                            endSelect = row;
-                        } else {
-                            i = 0;
-                            while (selections.get(i + 1) < row)
-                                i++ ;
-                            startSelect = selections.get(i);
-                            endSelect = row;
-                        }
-                    }
-                    unselectAll(event);
-                }else
-                    unselectAll(event);
+                multiSelect(row,event);
+                return;
             }
-        } else {
-            unselectAll(event);
+        }   
+        
+        if(isRowSelected(row))
+            return;
+       
+        if (event == null || fireBeforeSelectionEvent(row)) {
+            unselectAll();
+            
+            finishEditing();
+
+            selections.add(row);
+
+            view.applySelectionStyle(row);
+
+            if (event != null)
+                   fireSelectionEvent(row);
+            
+            scrollToVisible(row);
         }
 
+    }
+    
+    private void multiSelect(int row, NativeEvent event) {
+        int startSelect, endSelect, minSelected, maxSelected, i;
+        boolean ctrlKey, shiftKey, selected = false;
+        
+        startSelect = row;
+        endSelect = row;
+        
+        ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
+        shiftKey = event.getShiftKey();
+        
+        if (ctrlKey) {
+            if (isRowSelected(row)) {
+                unselectRowAt(row, event);
+                return;
+            }
+        } else if (shiftKey) {
+            if ( !isAnyRowSelected()) {
+                startSelect = 0;
+                endSelect = row;
+            } else {
+                Collections.sort(selections);
+                minSelected = Collections.min(selections);
+                maxSelected = Collections.max(selections);
+                if (minSelected > row) {
+                    startSelect = row;
+                    endSelect = minSelected;
+                } else if (row > maxSelected) {
+                    startSelect = maxSelected;
+                    endSelect = row;
+                } else {
+                    i = 0;
+                    while (selections.get(i + 1) < row)
+                        i++ ;
+                    startSelect = selections.get(i);
+                    endSelect = row;
+                }
+            }
+            unselectAll(event);
+        }else
+            unselectAll(event);
+        
         for (i = startSelect; i <= endSelect && i > -1; i++ ) {
             if ( !selections.contains(i)) {
                 if (event == null || fireBeforeSelectionEvent(i)) {
@@ -1398,7 +1458,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
                 }
             }
         }
-
+        
         if (selected)
             scrollToVisible(endSelect);
     }
@@ -1411,9 +1471,10 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void selectAll() {
         if (isMultipleSelectionAllowed()) {
             selections = new ArrayList<Integer>();
-            for (int i = 0; i < getRowCount(); i++ )
+            for (int i = 0; i < getRowCount(); i++ ) {
                 selections.add(i);
-            renderView( -1, -1);
+                ((StaticView)view).applySelectionStyle(i);
+            }
         }
     }
 

@@ -17,6 +17,8 @@ public class TabWidget extends FocusPanel {
     Grid grid;
     AbsolutePanel icon;
     String text;
+    boolean tabVisible = true;
+    Label notification;
     
     TabPanelCSS css;
     
@@ -66,6 +68,29 @@ public class TabWidget extends FocusPanel {
     
     public void setPoppedIn() {
         getParent().removeStyleName(css.Popped());
+    }
+    
+    public void setTabVisible(boolean tabVisible) {
+        this.tabVisible = tabVisible;  
+    }
+    
+    public boolean getTabVisible() {
+        return tabVisible;
+    }
+    
+    public void setNotificaton(String text) {
+        if(text == null || text.equals("")) {
+            icon.removeStyleName(css.TabNotification());
+            icon.clear();
+        }else {
+            icon.setStyleName(css.TabNotification());
+            if(notification == null) {
+                notification = new Label();
+                notification.setStyleName(css.TabNotificationText());
+            }
+            notification.setText(text);
+            icon.add(notification);
+        }
     }
     
     protected void setVertical() {

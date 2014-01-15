@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import org.openelis.ui.common.data.QueryData;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HTMLTable;
 
 /**
@@ -40,6 +41,8 @@ import com.google.gwt.user.client.ui.HTMLTable;
 public interface CellRenderer {
 
     public String display(Object value);
+    
+    public SafeHtml bulkRender(Object value);
     
     public void render(HTMLTable table, int row, int col, Object value);
     

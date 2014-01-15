@@ -15,10 +15,6 @@
 	background: white;
 }
 
-.Tree tr.Selection {
-    background:#f0f0f0;
-}
-
 .Tree td {
 	overflow : hidden;
 	text-overfow : ellipsis;
@@ -54,8 +50,8 @@
 	padding : 0px;
 }
 
-.Tree tr.Selection .TreeCell tr {
-  background:#f0f0f0;
+.Tree tr.Selection .TreeCell tr, .Tree tr.Selection {
+  background:#D8E4F2;
 }
 
 .Tree tr.DropOnRow .TreeCell tr {
@@ -76,14 +72,14 @@
 
 @sprite .treeClosedImage{
 	gwt-image:'treeClosed';
-    height:10px;
+    height:16px;
     width:16px;
     cursor:pointer;
 }
 
 @sprite .treeOpenImage{
     gwt-image:'treeOpen';
-    height:10px;
+    height:16px;
     width:16px;
     cursor:pointer;
 }
