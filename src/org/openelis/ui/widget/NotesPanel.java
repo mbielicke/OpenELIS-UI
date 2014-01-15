@@ -69,6 +69,7 @@ public class NotesPanel extends ResizeComposite {
             note.getCellFormatter().setStyleName(0, 0, css.noteSubjectText());
 
             userDateText = new Label<String>(userName + " " + headerDate.format(time));
+            userDateText.setStyleName(css.noteAuthorText());
             note.setWidget(0,1,userDateText);
         }
         if (text != null) {
