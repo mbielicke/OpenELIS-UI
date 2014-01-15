@@ -4,7 +4,7 @@
   
   <g:LayoutPanel>
     <g:layer>
-      <g:ScrollPanel ui:field="scroll">
+      <g:ScrollPanel ui:field="scroll" styleName="{res.table.ScreenTableWithSides}">
         <g:VerticalPanel ui:field="notes"/>
       </g:ScrollPanel>
     </g:layer>
