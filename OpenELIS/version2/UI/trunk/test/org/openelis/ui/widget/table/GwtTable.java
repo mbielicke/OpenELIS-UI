@@ -2,7 +2,7 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.IntegrationTest;
+import org.openelis.gwt.widget.IntegrationTest;
 import org.openelis.ui.widget.IntegerHelper;
 import org.openelis.ui.widget.TextBox;
 import org.openelis.ui.widget.table.Column;
