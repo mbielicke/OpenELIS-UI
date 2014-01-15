@@ -1356,6 +1356,11 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     protected void selectRowAt(int row, NativeEvent event) {
         
+        if(row < 0) {
+            unselectAll();
+            return;
+        }
+        
         /*
          * If multiple selection is allowed check event for ctrl or shift keys.
          * If none apply the logic will fall throw to normal selection.
