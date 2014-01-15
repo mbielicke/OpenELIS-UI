@@ -3,6 +3,7 @@ package org.openelis.ui.widget;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.openelis.gwt.widget.IntegrationTest;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Dropdown;
 import org.openelis.ui.widget.Item;

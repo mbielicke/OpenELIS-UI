@@ -3,6 +3,7 @@ package org.openelis.ui.widget;
 import java.util.Date;
 
 import org.junit.runner.RunWith;
+import org.openelis.gwt.widget.IntegrationTest;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.DateHelper;

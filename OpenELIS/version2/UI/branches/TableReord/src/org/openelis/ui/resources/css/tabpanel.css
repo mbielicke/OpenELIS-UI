@@ -12,6 +12,18 @@
 	height:16px;
 }
 
+.TabNotification {
+	background-color : red;
+	border:1px solid red;
+    border-radius : 4px 4px 4px 4px;
+}
+
+.TabNotificationText {
+	color:white;
+	font-family:inherit;
+	font-size:9px;
+}
+
 .gwt-TabPanelBottom{
     background:#fbfbfb;
     border:1px solid #8db2e3;

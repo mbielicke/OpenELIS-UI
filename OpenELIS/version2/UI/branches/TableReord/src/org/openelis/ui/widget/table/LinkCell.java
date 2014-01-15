@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Link;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -30,6 +32,14 @@ public class LinkCell implements CellRenderer, IsWidget {
         assert value instanceof Link.Details;
         
         table.setWidget(row,col,new Link((Link.Details)value));
+    }
+    
+    public SafeHtml bulkRender(Object value) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        
+        builder.appendHtmlConstant("<td>"+new Link((Link.Details)value).getElement().getString()+"</td>");
+        
+        return builder.toSafeHtml();
     }
 
     @Override

@@ -32,6 +32,8 @@ import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Label;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -77,6 +79,16 @@ public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget
         	return editor.getHelper().format(value);
         else
         	return DataBaseUtil.toString(value);
+    }
+    
+    public SafeHtml bulkRender(Object value) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        
+        builder.appendHtmlConstant("<td>");
+        builder.appendEscaped(display(value));
+        builder.appendHtmlConstant("</td>");
+        
+        return builder.toSafeHtml();
     }
 
     public void renderQuery(HTMLTable table,

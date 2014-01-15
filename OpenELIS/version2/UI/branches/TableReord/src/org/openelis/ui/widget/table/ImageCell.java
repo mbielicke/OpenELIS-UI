@@ -27,8 +27,11 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
+import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -60,6 +63,15 @@ public class ImageCell implements CellRenderer,IsWidget {
     
     public String display(Object value) {
         return value.toString();
+    }
+    
+    public SafeHtml bulkRender(Object value) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        
+        builder.appendHtmlConstant("<td class='"+DataBaseUtil.toString(value)+"/>");
+        
+        return builder.toSafeHtml();
+                        
     }
 
     public void renderQuery(HTMLTable table,

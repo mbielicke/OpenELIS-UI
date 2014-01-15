@@ -7,6 +7,8 @@ public interface TabPanelCSS extends CssResource {
 	
 	String TabError();
 	String TabData();
+	String TabNotification();
+	String TabNotificationText();
 	String TabPanelBottom();
 	String ScreenTab();
 	String TabContainer();

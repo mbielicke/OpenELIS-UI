@@ -40,11 +40,14 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -209,6 +212,30 @@ public class CheckCell implements CellEditor, CellRenderer, IsWidget, HasWidgets
         table.getCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_CENTER);
 	}
 
+	   public SafeHtml bulkRender(Object value) {
+	        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+	        
+	        builder.appendHtmlConstant("<td align='"+HasAlignment.ALIGN_CENTER.getTextAlignString()+"'>"+getCheckDiv((String)value).getElement().getString()+"</td>");
+	        
+	        return builder.toSafeHtml();
+	    }
+
+	    private AbsolutePanel getCheckDiv(String value) {
+	        String style;
+	        AbsolutePanel div;
+	            
+	        if(value == null)
+	            style = css.Unknown();
+	        else if("Y".equals(value))
+	            style = css.Checked();
+	        else
+	            style = css.Unchecked();
+	            
+	        div = new AbsolutePanel();
+	        div.setStyleName(style);
+	        
+	        return div;
+	    }
 	@Override
 	public void add(Widget w) {
 		// TODO Auto-generated method stub

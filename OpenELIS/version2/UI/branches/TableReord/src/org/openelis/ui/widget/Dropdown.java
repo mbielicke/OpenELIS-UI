@@ -38,6 +38,7 @@ import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.Column;
+import org.openelis.ui.widget.table.LabelCell;
 import org.openelis.ui.widget.table.Row;
 import org.openelis.ui.widget.table.SelectionCell;
 import org.openelis.ui.widget.table.Table;
@@ -128,6 +129,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
     protected boolean                    required, queryMode, showingOptions, enabled;
     protected T                          value;
     protected String                     dropHeight   = "150px", dropWidth;
+    protected ArrayList<Item<T>>         model;
 
     @UiField
     protected TextBase                   textbox;
@@ -226,10 +228,14 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         exceptions = new Exceptions();
 
         setCSS(UIResources.INSTANCE.dropdown());
+        
 
         setPopupContext(new Table.Builder(10).column(new Column.Builder(10).renderer(new SelectionCell())
                                                                            .build())
                                              .build());
+        
+        setWidth("150px");
+        
         setHelper((WidgetHelper)new StringHelper());
     }
 
@@ -272,6 +278,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         if (popup == null) {
             popup = new PopupPanel(true);
             popup.setStyleName(css.Popup());
+            
+            //table.setModel(model);
 
             /* Draw popup for Multiselect when set */
             if (queryMode) {
@@ -351,7 +359,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
 
             @Override
             public void execute() {
-                int modelHeight = table.getModel().size() * cellHeight;
+                int modelHeight = model.size() * cellHeight;
 
                 if (table.hasHeader())
                     modelHeight += 19;
@@ -431,7 +439,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         button.setWidth("16px");
 
         if (table != null)
-            table.setWidth(width + "px");
+            table.setWidth((width)+ "px");
 
     }
 
@@ -574,9 +582,11 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      * @param model
      */
     public void setModel(ArrayList<Item<T>> model) {
-        assert table != null;
 
+        this.model = model;
+        
         table.setModel(model);
+        //popup = null;
 
         createKeyHash(model);
 
@@ -593,7 +603,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      * @return
      */
     public ArrayList<Item<T>> getModel() {
-        return table.getModel();
+        return model;
     }
 
     /**
@@ -789,8 +799,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
             textbox.setReadOnly(false);
             table.setAllowMultipleSelection(false);
         }
-
-        //table.setModel(table.getModel());
     }
 
     /**
