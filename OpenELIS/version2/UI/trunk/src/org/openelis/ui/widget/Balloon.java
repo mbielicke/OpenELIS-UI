@@ -36,6 +36,7 @@ import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseEvent;
@@ -82,7 +83,8 @@ public class Balloon extends Composite {
     protected static Balloon                                             balloon;
     protected static Timer                                               tipTimer, timer;
     protected static PopupPanel                                          pop;
-    protected static Widget                                              target;
+    protected static HasBalloon                                          targetWidget;
+    protected static Element                                             targetElement;
     protected static TipHandler                                          tipHandler;
     protected static ExceptionHandlers                                   exceptHandler;
     protected static int                                                 x, y;
@@ -101,7 +103,7 @@ public class Balloon extends Composite {
             public void run() {
                 
                 Object tip;
-                final HasBalloon hasTip = (HasBalloon)target;
+                final HasBalloon hasTip = (HasBalloon)targetWidget;
                 final Options options = hasTip.getBalloonOptions();
 
                 if (options == null)
@@ -218,7 +220,12 @@ public class Balloon extends Composite {
     }
 
     public static void show(final HasBalloon widget, int ex, int ey) {
-        target = (Widget)widget;
+        show(widget,((Widget)widget).getElement(), ex, ey);
+    }
+    
+    public static void show(final HasBalloon widget, Element element, int ex, int ey) {
+        targetWidget = (HasBalloon)widget;
+        targetElement = element;
         x = ex;
         y = ey;
         tipTimer.schedule(0);
@@ -226,12 +233,20 @@ public class Balloon extends Composite {
 
     public static void show(final HasBalloon widget, MouseEvent<?> mouseEvent) {
         setTarget(widget, mouseEvent);
-        tipTimer.schedule( ((HasBalloon)target).getBalloonOptions().delayShow);
+        tipTimer.schedule( ((HasBalloon)targetWidget).getBalloonOptions().delayShow);
+    }
+    
+    public static void show(final HasBalloon widget, Element element, MouseEvent<?> mouseEvent) {
+        setTarget(widget,element,mouseEvent);
     }
 
     private static void setTarget(final HasBalloon widget, MouseEvent<?> mouseEvent) {
-        target = (Widget)widget;
-
+        setTarget(widget, ((Widget)widget).getElement(), mouseEvent);
+    }
+    
+    private static void setTarget(final HasBalloon widget, Element element, MouseEvent<?> mouseEvent) {
+        targetWidget = (HasBalloon)widget;
+        targetElement = element;
         if (mouseEvent instanceof CellMouseOverEvent) {
             x = ((CellMouseOverEvent)mouseEvent).getX();
             y = ((CellMouseOverEvent)mouseEvent).getY();
@@ -266,20 +281,20 @@ public class Balloon extends Composite {
 
                 switch (balloon.placement) {
                     case TOP:
-                        top = target.getAbsoluteTop() - offsetHeight;
-                        left = target.getAbsoluteLeft();
+                        top = targetElement.getAbsoluteTop() - offsetHeight;
+                        left = targetElement.getAbsoluteLeft();
                         break;
                     case BOTTOM:
-                        top = target.getAbsoluteTop() + target.getOffsetHeight();
-                        left = target.getAbsoluteLeft();
+                        top = targetElement.getAbsoluteTop() + targetElement.getOffsetHeight();
+                        left = targetElement.getAbsoluteLeft();
                         break;
                     case RIGHT:
-                        top = target.getAbsoluteTop();
-                        left = target.getAbsoluteLeft() + target.getOffsetWidth();
+                        top = targetElement.getAbsoluteTop();
+                        left = targetElement.getAbsoluteLeft() + targetElement.getOffsetWidth();
                         break;
                     case LEFT:
-                        top = target.getAbsoluteTop();
-                        left = target.getAbsoluteLeft() - offsetWidth;
+                        top = targetElement.getAbsoluteTop();
+                        left = targetElement.getAbsoluteLeft() - offsetWidth;
                         break;
                     case MOUSE:
                         top = y - offsetHeight;
@@ -388,7 +403,10 @@ public class Balloon extends Composite {
                        y);
     }
 
-    public static void drawExceptions(ArrayList<Exception> endUser, ArrayList<Exception> valid,
+    public static void drawExceptions(ArrayList<Exception> endUser, ArrayList<Exception> valid, int ex, int ey) {
+        drawExceptions(endUser,valid,null,ex,ey);
+    }
+    public static void drawExceptions(ArrayList<Exception> endUser, ArrayList<Exception> valid, Element element,
                                       final int ex, final int ey) {
         ArrayList<Exception> exceptions = null;
         Grid grid;
@@ -439,7 +457,12 @@ public class Balloon extends Composite {
         }
 
         balloon.setContent(exceptionPanel);
-        balloon.setPlacement(Balloon.Placement.MOUSE);
+        if(element == null) 
+            balloon.setPlacement(Balloon.Placement.MOUSE);
+        else {
+            targetElement = element;
+            balloon.setPlacement(Balloon.Placement.TOP);
+        }
         
         Options options = new Options();
         options.setDelayHide(5000);

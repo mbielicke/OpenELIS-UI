@@ -2443,6 +2443,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         
                 Balloon.drawExceptions(getEndUserExceptions(row, col),
                                        getValidateExceptions(row, col),
+                                       view.table().getCellFormatter().getElement(row, col),
                                        x,
                                        y);
             }
