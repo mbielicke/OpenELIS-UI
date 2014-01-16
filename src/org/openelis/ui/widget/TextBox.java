@@ -10,6 +10,7 @@ import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -88,8 +89,14 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		textbox.addFocusHandler(new FocusHandler() {
 			public void onFocus(FocusEvent event) {
 				if (isEnabled()) {
-					textbox.selectAll();
 					textbox.addStyleName(css.Focus());
+					Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        
+                        @Override
+                        public void execute() {
+                            textbox.selectAll();
+                        }
+					});
 				}
 			}
 		});
