@@ -23,6 +23,7 @@
     cursor:default;
     table-layout : fixed;
     background:white;
+    outline : none;
 }
 
 .SelectText {
@@ -33,6 +34,7 @@
    cursor: default;
    border: none;
    tex-overflow: ellipsis;
+   outline : none;
 }
 
 .Focus {
@@ -43,6 +45,7 @@
 	text-overflow : ellipsis;
 	overflow : hidden;
 	white-space : nowrap;
+	outline : none;
 }
 
 
