@@ -186,12 +186,11 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		if (maxLength > 0)
 			textbox.setMaxLength(query ? 255 : maxLength);
 		/*
-		 * When coming out of query mode with abort, the setValue will not
+		 * When coming in and out of query mode the setValue will not
 		 * override the the text in the widget since query mode does not change
 		 * the value of the widget
 		 */
-		if (!query)
-			textbox.setText("");
+		textbox.setText("");
 	}
 
 	/**
