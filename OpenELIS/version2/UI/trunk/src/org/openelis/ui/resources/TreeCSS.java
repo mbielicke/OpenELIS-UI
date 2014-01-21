@@ -6,6 +6,7 @@ public interface TreeCSS extends TableCSS {
 	String InputError();
 	String InputWarning();
 	String TreeCell();
+	String TreeCellContainer();
 	String DropOnRow();
 	String GroupIcon();
 	String LeafIcon();

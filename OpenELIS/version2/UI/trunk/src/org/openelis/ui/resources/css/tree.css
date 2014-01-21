@@ -58,6 +58,12 @@
 	background:#defadc;
 }
 
+.TreeCellContainer {
+	border: 1px solid #63B159;
+	padding: 0px;
+	margin: 0px;
+}
+
 @sprite .GroupIcon {
 	width : 10px;
 	height : 10px;

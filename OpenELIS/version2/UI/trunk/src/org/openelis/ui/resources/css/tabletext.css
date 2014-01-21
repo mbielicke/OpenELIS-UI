@@ -4,6 +4,7 @@
 	cursor: default;
 	font-family: inherit;
     font-size: inherit;
+    outline:none;
 }
 
 .ScreenTextArea {
@@ -13,6 +14,7 @@
 	tex-overflow: ellipsis;
 	font-family: inherit;
     font-size: inherit;
+    outline:none;
 }
 
 .ScreenLabel {
