@@ -277,7 +277,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 			textbox.setText("");
 		}
 
-		if (!Util.isDifferent(oldValue, value) && fireEvents)
+		if (Util.isDifferent(oldValue, value) && fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
 
