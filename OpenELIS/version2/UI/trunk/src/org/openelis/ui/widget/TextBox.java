@@ -268,6 +268,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * the value is different than what is currently stored.
 	 */
 	public void setValue(T value, boolean fireEvents) {
+	    T oldValue = this.value;
 
 		this.value = value;
 		if (value != null) {
@@ -276,7 +277,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 			textbox.setText("");
 		}
 
-		if (!Util.isDifferent(this.value, value) && fireEvents)
+		if (!Util.isDifferent(oldValue, value) && fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
 
