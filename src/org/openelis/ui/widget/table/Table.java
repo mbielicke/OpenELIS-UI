@@ -2610,6 +2610,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                         exceptions = getValidateExceptionList(row, col);
                         exception = new Exception(Messages.get().exc_fieldRequired());
                         if(!exceptions.contains(exception)) {
+                            exceptions.add(exception);
                             setValidateException(row, col, exceptions);
                             render = true;
                         }
