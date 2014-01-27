@@ -767,7 +767,10 @@ public class StaticView extends ViewInt {
                         table.setWidth(CSSUtils.getWidth(svEl) - 1);
                     else
                         table.setWidth(CSSUtils.getWidth(svEl) -
+                
                                        NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
+                    
+                    adjustForScroll(0);
 
                 }
                 
