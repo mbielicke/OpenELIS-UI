@@ -78,6 +78,10 @@ public class TabWidget extends FocusPanel {
         return tabVisible;
     }
     
+    public void setIcon(String css) {
+        icon.setStyleName(css);
+    }
+    
     public void setNotificaton(String text) {
         if(text == null || text.equals("")) {
             icon.removeStyleName(css.TabNotification());

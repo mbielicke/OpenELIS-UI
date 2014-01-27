@@ -78,19 +78,21 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         scrollLeft.setStyleName(scrollCss.MoveLeft());
         scroller.add(scrollLeft);
         scroller.setWidgetLeftWidth(scrollLeft, 0.0, Unit.PX, 20, Unit.PX);
+        scroller.setWidgetTopBottom(scrollLeft, 5.0, Unit.PX, 0, Unit.PX);
         scroller.add(tabBar);
         scroller.setWidgetLeftRight(tabBar, 20, Unit.PX, 20, Unit.PX);
-        scroller.setWidgetTopBottom(tabBar, -5.0, Unit.PX, 0, Unit.PX);
+        //scroller.setWidgetTopBottom(tabBar, -5.0, Unit.PX, 0, Unit.PX);
         scrollRight = new AbsolutePanel();
         scrollRight.setStyleName(scrollCss.MoveRight());
         scroller.add(scrollRight);
         scroller.setWidgetRightWidth(scrollRight, 0, Unit.PX, 20, Unit.PX);
+        scroller.setWidgetTopBottom(scrollRight, 5.0, Unit.PX, 0, Unit.PX);
         scroller.setWidth("100%");
         scroller.setHeight("100%");
         scroller.setStyleName("gwt-TabLayoutPanelTabs");
         tabBar.getElement().getStyle().setWidth(6000.0, Unit.PX);
-        tabBar.getElement().getStyle().setPosition(Position.RELATIVE);
-        tabBar.getElement().getStyle().setTop(-5.0, Unit.PX);
+        //tabBar.getElement().getStyle().setPosition(Position.RELATIVE);
+        //tabBar.getElement().getStyle().setTop(-5.0, Unit.PX);
         
         //default to no scroll
         
