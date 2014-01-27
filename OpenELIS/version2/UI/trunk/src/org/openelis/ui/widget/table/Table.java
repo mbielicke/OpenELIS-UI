@@ -2896,6 +2896,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
          
         view.setSize(width+"px", height+"px");
         view.onResize();
+        
+        
     }
     
     @Override
