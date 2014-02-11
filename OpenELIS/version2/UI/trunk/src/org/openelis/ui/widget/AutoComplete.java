@@ -714,6 +714,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         public void onKeyDown(KeyDownEvent event) {
             int start;
             
+            if(queryMode)
+                return;
+            
             prevText = textbox.getText();
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_TAB:
@@ -744,6 +747,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         public void onKeyUp(KeyUpEvent event) {
             String text;
             BeforeGetMatchesEvent bgme;
+            
+            if(queryMode)
+                return;
 
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_DOWN:
