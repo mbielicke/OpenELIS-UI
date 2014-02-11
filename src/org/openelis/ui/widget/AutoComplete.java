@@ -266,6 +266,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     protected void buttonClick(ClickEvent evet) {
     	BeforeGetMatchesEvent bgme;
     	
+    	if(queryMode)
+    	    return;
+    	
     	bgme = BeforeGetMatchesEvent.fire(this, textbox.getText());
     	if(bgme != null && bgme.isCancelled())
     		return;
