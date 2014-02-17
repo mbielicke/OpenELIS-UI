@@ -562,7 +562,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         }else{
             ((StaticView)view).bulkRender();
         
-            if(hasExceptions()) 
+            if(endUserExceptions != null) 
                 ((StaticView)view).bulkExceptions(endUserExceptions);
         }
         
