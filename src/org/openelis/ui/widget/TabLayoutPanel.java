@@ -15,7 +15,6 @@ import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,7 +25,6 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.layout.client.Layout.Alignment;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -279,14 +277,20 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
                     
                         @Override
                         public void onClose(CloseEvent<WindowInt> event) {
+                            boolean isVisible;
+                        
                             if (isAttached() && !closing) {
+                                isVisible = tabBar.getWidget(index).isVisible();
+                            
                                 Widget tab = getTabWidget(index);
                                 popouts.remove(index);
                                 remove(index);
                                 insert(wid, tab, index);
-                                selectTab(index);
+                                if(isVisible())
+                                    selectTab(index);
+                                else
+                                    setTabVisible(index, false);
                                 setTabPoppedIn(index);
-                                
                                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                                     
                                     @Override
@@ -371,6 +375,10 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     @Override
     public boolean remove(int index) {
         boolean ret;
+        
+        if(popouts != null && popouts.keySet().contains(index)) 
+            popouts.get(new Integer(index)).close();
+        
         ret = super.remove(index);
         checkForScroll();
         return ret;
@@ -378,10 +386,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     
     @Override
     public boolean remove(Widget w) {
-        boolean ret;
-        ret =  super.remove(w);
-        checkForScroll();
-        return ret;
+        return remove(getWidgetIndex(w));
     }
     
     @Override
