@@ -286,7 +286,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
                                 popouts.remove(index);
                                 remove(index);
                                 insert(wid, tab, index);
-                                if(isVisible())
+                                if(isVisible)
                                     selectTab(index);
                                 else
                                     setTabVisible(index, false);
