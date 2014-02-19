@@ -567,7 +567,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         }else{
             ((StaticView)view).bulkRender();
         
-            if(hasExceptions()) 
+            if(endUserExceptions != null) 
                 ((StaticView)view).bulkExceptions((HashMap<Row,HashMap<Integer,ArrayList<Exception>>>)endUserExceptions);
         }
         
@@ -2450,6 +2450,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         
                 Balloon.drawExceptions(getEndUserExceptions(row, col),
                                        getValidateExceptions(row, col),
+                                       view.table().getCellFormatter().getElement(row, col),
                                        x,
                                        y);
             }
@@ -2616,6 +2617,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
                         exceptions = getValidateExceptionList(row, col);
                         exception = new Exception(Messages.get().exc_fieldRequired());
                         if(!exceptions.contains(exception)) {
+                            exceptions.add(exception);
                             setValidateException(row, col, exceptions);
                             render = true;
                         }
@@ -2901,6 +2903,8 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
          
         view.setSize(width+"px", height+"px");
         view.onResize();
+        
+        
     }
     
     @Override

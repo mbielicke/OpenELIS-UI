@@ -25,32 +25,32 @@
  */
 package org.openelis.ui.widget.tree;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.TreeCSS;
 import org.openelis.ui.resources.UIResources;
+import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.table.FlexTable;
-import org.openelis.ui.widget.table.event.CellMouseOutEvent;
+import org.openelis.ui.widget.table.Row;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
-import org.openelis.ui.widget.tree.View.TreeGrid;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -59,7 +59,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -113,8 +112,6 @@ public class StaticView extends ViewInt {
      */
     protected boolean                attached, sized;
     
-    protected ClickHandler           toggleHandler;
-    
     protected int                    indent = 18;
 
     /**
@@ -122,7 +119,7 @@ public class StaticView extends ViewInt {
      */
     private Container                container;
 
-    protected TreeCSS               css;
+    protected TreeCSS                css;
 
     protected StaticView             source   = this;
 
@@ -137,22 +134,11 @@ public class StaticView extends ViewInt {
         initWidget(uiBinder.createAndBindUi(this));
 
         this.tree = tre;
-
-        toggleHandler = new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                Cell cell = ((Grid)event.getSource()).getCellForEvent(event);
-                String cellType = cell.getElement().getClassName();
-                
-                if ( cellType.equals(css.treeOpenImage()) || cellType.equals(css.treeClosedImage())) {
-                    tree.toggle(flexTable.getRowForEvent(event.getNativeEvent()));
-                    event.stopPropagation();
-                }
-            }
-        };
+        
+        setCSS(UIResources.INSTANCE.tree());
         
         container = new Container();
-
-        setCSS(UIResources.INSTANCE.tree());
+        container.setStyleName(css.TreeCellContainer());
 
         scrollView.addScrollHandler(new ScrollHandler() {
 
@@ -177,6 +163,15 @@ public class StaticView extends ViewInt {
 
         c = flexTable.getCellForEvent(event).getCellIndex();
         r = flexTable.getCellForEvent(event).getRowIndex();
+        
+        Element cell = event.getNativeEvent().getEventTarget().cast();
+        
+        
+        if ( cell.getClassName().equals(css.treeOpenImage()) || cell.getClassName().equals(css.treeClosedImage())) {
+            tree.toggle(flexTable.getRowForEvent(event.getNativeEvent()));
+            event.stopPropagation();
+            return;
+        }
 
         if (tree.fireCellClickedEvent(r, c, event.isControlKeyDown(), event.isShiftKeyDown()))
             tree.startEditing(r, c, event.getNativeEvent());
@@ -199,6 +194,7 @@ public class StaticView extends ViewInt {
             return;
         
         colgroup = flexTable.getElement().getElementsByTagName("colgroup").getItem(0);
+        
         if(colgroup != null){
             while(colgroup.getChildCount() > tree.getColumnCount())
                 colgroup.removeChild(colgroup.getChild(0));
@@ -209,6 +205,7 @@ public class StaticView extends ViewInt {
             if (tree.getColumnAt(c).getStyle() != null)
                 flexTable.getColumnFormatter().setStyleName(c, tree.getColumnAt(c).getStyle());
         }
+        
         flexTable.setWidth(tree.getTotalColumnWidth() + "px");
         flexTable.setHeight("1px");
         DOM.setStyleAttribute(flexTable.getElement(), "backgroundColor", "transparent");
@@ -245,7 +242,7 @@ public class StaticView extends ViewInt {
      */
     private void createRow(int rc) {
         flexTable.insertRow(rc);
-        flexTable.getCellFormatter().setHeight(rc, 0, tree.getRowHeight() + "px");
+        flexTable.getRowFormatter().getElement(rc).setAttribute("height", tree.getRowHeight()+"px");
         flexTable.getRowFormatter().getElement(rc).setAttribute("index", "" + rc);
 
         if (tree.getDragController() != null)
@@ -263,9 +260,6 @@ public class StaticView extends ViewInt {
      */
     protected void renderView(int smr, int emr) {
         int r, startMax;
-
-        //if ( !attached)
-        //    return;
 
         tree.finishEditing();
 
@@ -317,6 +311,47 @@ public class StaticView extends ViewInt {
             });
         }
 
+    }
+    
+    protected void bulkRender() {
+        CellRenderer renderer;
+        String style;
+        Node node;
+        
+        SafeHtmlBuilder tb = new SafeHtmlBuilder();
+        
+        for(int r = 0; r < tree.getRowCount(); r++) {
+            node = tree.getNodeAt(r);
+            style = node.getStyle(r);
+            tb.appendHtmlConstant("<tr height='"+tree.getRowHeight()+"px' index='"+r+"'" +
+                              (style != null ? " class='"+style+"'>" : ">"));
+            for(int c = 0; c < tree.getColumnCount(); c++) {
+                
+                if (c < tree.getNodeDefinition(node.getType()).size()) {
+                    renderer = tree.getCellRenderer(r, c);
+                    if(c == 0) {
+                        Grid treeGrid = getTreeCell(node, r, c);
+                        renderer.render(treeGrid, 0, treeGrid.getCellCount(0) - 1, tree.getValueAt(r,c));
+                        tb.appendHtmlConstant("<td>");
+                        tb.appendHtmlConstant(treeGrid.getElement().getString());
+                        tb.appendHtmlConstant("</td>");
+                    }else
+                        tb.append(renderer.bulkRender(tree.getValueAt(r,c)));
+                } else {
+                    tb.appendHtmlConstant("<td/>");
+                }                
+            }
+            tb.appendHtmlConstant("</tr>");
+        }
+       
+        flexTable.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(tb.toSafeHtml());
+        
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                adjustForScroll(0);
+            }
+        });
     }
 
     protected void addNodes(int start, int end) {
@@ -404,6 +439,22 @@ public class StaticView extends ViewInt {
             }
         }
     }
+    
+    protected void bulkExceptions(HashMap<Node,HashMap<Integer, ArrayList<Exception>>> exceptions) {
+        for(Node node : exceptions.keySet()) {
+            int r = tree.getNodeViewIndex(node);
+            for(int c : exceptions.get(node).keySet()) {
+                flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(tree.getEndUserExceptions(r, c), tree.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
+                flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
+                    @Override
+                    public void onCellMouseOver(CellMouseOverEvent event) {
+                        tree.drawExceptions(event.getRow(), event.getCol(), event.getX(), event.getY());
+                    }
+
+                });
+            }
+        }
+    }
 
     /**
      * This method will apply either a style that is set in the Row getStyle
@@ -474,17 +525,23 @@ public class StaticView extends ViewInt {
         col = c;
         
         if(c == 0) {
-            table = getTreeCell(node,r,c);
-            row = 0; 
-            col = table.getCellCount(0) - 1;
+            if(flexTable.getCellCount(r) == 0) {
+                SafeHtmlBuilder tb = new SafeHtmlBuilder();
+                Grid treeGrid = getTreeCell(node, r, c);
+                renderer.render(treeGrid, 0, treeGrid.getCellCount(0) - 1, tree.getValueAt(r,c));
+                tb.appendHtmlConstant("<td>");
+                tb.appendHtmlConstant(treeGrid.getElement().getString());
+                tb.appendHtmlConstant("</td>");
+                flexTable.setHTML(r, c, treeGrid.getElement().getString());
+            } else {
+                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.bulkRender(tree.getValueAt(r,c)));                
+            }
+        }else {
+            if (tree.getQueryMode())
+                renderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
+            else
+                renderer.render(table, row, col, tree.getValueAt(r, c));
         }
-        
-        
-        if (tree.getQueryMode())
-            renderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
-        else
-            renderer.render(table, row, col, tree.getValueAt(r, c));
-
         if (tree.hasExceptions(r, c)) {
             flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(tree.getEndUserExceptions(r,c),tree.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
             flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
@@ -514,16 +571,17 @@ public class StaticView extends ViewInt {
      */
     protected void startEditing(int r, final int c, Object value, NativeEvent event) {
         if(c > 0) {
-            container.setWidth( (tree.getColumnAt(c).getWidth() - 3));
-            container.setHeight( (tree.getRowHeight() - 3));
+            container.setWidth( (tree.getColumnAt(c).getWidth() - 4));
+            container.setHeight( (tree.getRowHeight()-4));
             flexTable.setWidget(r, c, container);
         } else {
-            TreeGrid grid = (TreeGrid)flexTable.getWidget(r, c);
-            int width = grid.getCellFormatter().getElement(0, 3).getOffsetWidth() - 3;
+            Element tableCell = flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3);
+            tableCell.removeChild(tableCell.getChild(0));
+            tableCell.appendChild(container.getElement());
+            int width = tableCell.getOffsetWidth() - 3;
             if(width > 0)
                 container.setWidth(width);
-            container.setHeight(tree.getRowHeight() - 3);
-            grid.setWidget(0, 3, container);
+            container.setHeight(tree.getRowHeight()-5);
         }
 
         if (tree.getQueryMode())
@@ -880,9 +938,12 @@ public class StaticView extends ViewInt {
             addStyleName(css.TreeCell());
             setWidth("100%");
             getCellFormatter().setWidth(0,3, "100%");
-            addClickHandler(toggleHandler);
             setCellPadding(0);
             setCellSpacing(0);
+        }
+        
+        public TreeGrid(String html) {
+            getElement().setInnerHTML(html);
         }
     }
 

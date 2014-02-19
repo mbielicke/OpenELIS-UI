@@ -136,9 +136,12 @@ public class StaticView extends ViewInt {
 
         this.table = tbl;
 
-        container = new Container();
-
+        
         setCSS(UIResources.INSTANCE.table());
+        
+        container = new Container();
+        container.setStyleName(css.CellContainer());
+
 
         scrollView.addScrollHandler(new ScrollHandler() {
 
@@ -212,9 +215,7 @@ public class StaticView extends ViewInt {
             flexTable.getColumnFormatter().setWidth(c, table.getColumnAt(c).getWidth() + "px");
             if (table.getColumnAt(c).getStyle() != null)
                 flexTable.getColumnFormatter().setStyleName(c, table.getColumnAt(c).getStyle());
-        }
-        
-       
+        } 
         
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
         flexTable.setHeight("1px");
@@ -252,8 +253,7 @@ public class StaticView extends ViewInt {
      */
     protected void createRow(int rc) {
         flexTable.insertRow(rc);
-        flexTable.getCellFormatter().setHeight(rc, 0, table.getRowHeight() + "px");
-        //flexTable.getRowFormatter().setVerticalAlign(rc, HasVerticalAlignment.ALIGN_TOP);
+        flexTable.getRowFormatter().getElement(rc).setAttribute("height", (table.getRowHeight()+3)+"px");
         flexTable.getRowFormatter().getElement(rc).setAttribute("index", "" + rc);
 
         if (table.getDragController() != null)
@@ -333,7 +333,7 @@ public class StaticView extends ViewInt {
         for(int i = 0; i < table.getRowCount(); i++) {
             if(table.getRowAt(i) instanceof Row)
                 style = ((Row)table.getRowAt(i)).getStyle(i);
-            tb.appendHtmlConstant("<tr height='"+table.getRowHeight()+"' index='"+i+"'" +
+            tb.appendHtmlConstant("<tr height='"+(table.getRowHeight()+3)+"px' index='"+i+"'" +
                               (style != null ? " class='"+style+"'>" : ">"));
             for(int j = 0; j < table.getColumnCount(); j++) {
                 renderer = table.getColumnAt(j).getCellRenderer();
@@ -343,6 +343,14 @@ public class StaticView extends ViewInt {
         }
        
         flexTable.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(tb.toSafeHtml());
+        
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                adjustForScroll(0);
+            }
+        });
+ 
     }
 
     protected void addRow(int r) {
@@ -762,7 +770,10 @@ public class StaticView extends ViewInt {
                         table.setWidth(CSSUtils.getWidth(svEl) - 1);
                     else
                         table.setWidth(CSSUtils.getWidth(svEl) -
+                
                                        NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
+                    
+                    adjustForScroll(0);
 
                 }
                 

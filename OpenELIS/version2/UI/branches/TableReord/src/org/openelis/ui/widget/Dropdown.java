@@ -201,7 +201,13 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
             public void onFocus(FocusEvent event) {
                 if (isEnabled()) {
                     display.addStyleName(css.Focus());
-                    textbox.selectAll();
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            textbox.selectAll();
+                        }
+                    });
+                    
                 }
             }
         });
@@ -212,7 +218,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         addBlurHandler(new BlurHandler() {
             public void onBlur(BlurEvent event) {
                 display.removeStyleName(css.Focus());
-                textbox.setSelectionRange(0, 0);
 
                 if ( !queryMode)
                     finishEditing();
@@ -239,17 +244,18 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         setHelper((WidgetHelper)new StringHelper());
     }
 
+    
     @UiHandler("textbox")
     protected void onFocus(FocusEvent event) {
-        FocusEvent.fireNativeEvent(event.getNativeEvent(), this);
+       FocusEvent.fireNativeEvent(event.getNativeEvent(), this);
     }
 
     @UiHandler("textbox")
     protected void onBlur(BlurEvent event) {
-
         if ( !showingOptions && isEnabled())
             BlurEvent.fireNativeEvent(event.getNativeEvent(), this);
     }
+    
 
     @UiHandler("button")
     public void onClick(ClickEvent event) {

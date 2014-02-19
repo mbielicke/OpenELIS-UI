@@ -1,6 +1,12 @@
 .AutoDropdown{
 }
 
+.Popup {
+    overflow:hidden;
+    background:#FFFFFF;
+    border: 1px solid #7eadd9;
+}
+
 @sprite .AutoDropdownButton{
 	background-position:0 4px;
 	gwt-image:'autoArrow';

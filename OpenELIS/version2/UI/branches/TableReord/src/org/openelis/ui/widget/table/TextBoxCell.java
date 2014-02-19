@@ -122,6 +122,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     	else 
     		editor.setValue(value);
         editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
         editor.selectAll();
     }
@@ -170,6 +171,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
         editor.setQueryMode(true);
         editor.setQuery(qd);
         editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
 

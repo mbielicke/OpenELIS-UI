@@ -29,6 +29,7 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
@@ -39,20 +40,21 @@ public class Container extends AbsolutePanel {
     protected int height;
     protected Scheduler.ScheduledCommand command;
     protected Widget editor;
-    protected Table table;
+        
+    public Container(Element element) {
+        setElement(element);
+    }
     
-    protected TableCSS css;
-    
-    public Container() {
-    	css = UIResources.INSTANCE.table();
-    	css.ensureInjected();
-    	
-        setStyleName(css.CellContainer());
+    public Container() {    	
         command = new Scheduler.ScheduledCommand() {
             public void execute() {
                 ((Focusable)editor).setFocus(true);
             }
         };
+    }
+    
+    public void adopt(Element element) {
+        setElement(element);
     }
     
     public void setWidth(int width) {

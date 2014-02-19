@@ -10,6 +10,7 @@ import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -88,8 +89,14 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		textbox.addFocusHandler(new FocusHandler() {
 			public void onFocus(FocusEvent event) {
 				if (isEnabled()) {
-					textbox.selectAll();
 					textbox.addStyleName(css.Focus());
+					Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        
+                        @Override
+                        public void execute() {
+                            textbox.selectAll();
+                        }
+					});
 				}
 			}
 		});
@@ -186,12 +193,11 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		if (maxLength > 0)
 			textbox.setMaxLength(query ? 255 : maxLength);
 		/*
-		 * When coming out of query mode with abort, the setValue will not
+		 * When coming in and out of query mode the setValue will not
 		 * override the the text in the widget since query mode does not change
 		 * the value of the widget
 		 */
-		if (!query)
-			textbox.setText("");
+		textbox.setText("");
 	}
 
 	/**
@@ -262,12 +268,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * the value is different than what is currently stored.
 	 */
 	public void setValue(T value, boolean fireEvents) {
-
-		if (!Util.isDifferent(this.value, value)) {
-			if (value != null)
-				textbox.setText(helper.format(value));
-			return;
-		}
+	    T oldValue = this.value;
 
 		this.value = value;
 		if (value != null) {
@@ -276,7 +277,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 			textbox.setText("");
 		}
 
-		if (fireEvents)
+		if (Util.isDifferent(oldValue, value) && fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
 

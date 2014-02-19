@@ -453,4 +453,8 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
         setReadOnly(!enabled);
     }
 
+    @Override
+    public boolean isEnabled() {
+        return !isReadOnly();
+    }
 }

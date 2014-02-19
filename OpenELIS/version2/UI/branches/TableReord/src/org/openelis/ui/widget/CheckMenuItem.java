@@ -96,9 +96,9 @@ public class CheckMenuItem extends MenuItem implements HasValueChangeHandlers<Bo
     public void setCheck(boolean checked) {
         this.checked = checked;
         if(checked){
-            setIcon(css.Unchecked());
-        }else{
             setIcon(css.Checked());
+        }else{
+            setIcon(css.Unchecked());
         }
     }
     

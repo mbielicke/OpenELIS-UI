@@ -445,7 +445,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         getDisplayedRows();
 
-        renderView( -1, -1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions(endUserExceptions);
     }
 
     /**
@@ -473,6 +476,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             nodeIndex.put(child, new NodeIndex(modelView.size() - 1));
         }
 
+    }
+    
+    public int getNodeViewIndex(Node node) {
+        return modelView.indexOf(node);
     }
 
     /**
@@ -694,7 +701,15 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      
         getDisplayedRows();
 
-        renderView( -1, -1);
+        ((StaticView)view).bulkRender();
+        
+        if(hasExceptions()) 
+            ((StaticView)view).bulkExceptions(endUserExceptions);
+        
+        if(isAnyNodeSelected()) {
+            for(Integer index : selections) 
+                ((StaticView)view).applySelectionStyle(index);
+        }
     }
     
     /**
@@ -2540,9 +2555,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (row == editingRow && col == editingCol)
             return;
 
-        Balloon.drawExceptions(getEndUserExceptions(row, col), getValidateExceptions(row,
-                                                                                             col),
-                                       x, y);
+        Balloon.drawExceptions(getEndUserExceptions(row, col), 
+                               getValidateExceptions(row,col),
+                               view.table().getCellFormatter().getElement(row, col),
+                               x, y);
     }
 
     // ************ Drag and Drop methods **********************************
@@ -2722,8 +2738,17 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             }
         }
 
-        if (render)
-            renderView( -1, -1);
+        if (render) {
+            ((StaticView)view).bulkRender();
+        
+            if(hasExceptions()) 
+                ((StaticView)view).bulkExceptions(endUserExceptions);
+        
+            if(isAnyNodeSelected()) {
+                for(Integer index : selections) 
+                    ((StaticView)view).applySelectionStyle(index);
+            }
+        }
     }
 
     /**
