@@ -231,9 +231,12 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         
         exceptions = new Exceptions();
         
+        setCSS(UIResources.INSTANCE.autocomplete());
+        
         setPopupContext(new Table.Builder(10).column(new Column.Builder(10).build()).build());
         
-        setCSS(UIResources.INSTANCE.autocomplete());
+        setWidth("150px");
+        
     }
     
     @UiHandler("textbox")
@@ -262,6 +265,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     @UiHandler("button")
     protected void buttonClick(ClickEvent evet) {
     	BeforeGetMatchesEvent bgme;
+    	
+    	if(queryMode)
+    	    return;
     	
     	bgme = BeforeGetMatchesEvent.fire(this, textbox.getText());
     	if(bgme != null && bgme.isCancelled())
@@ -327,7 +333,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                 int modelHeight = table.getModel().size() * cellHeight;
                 
                 if(table.hasHeader())
-                    modelHeight += 19;
+                    modelHeight += 20;
                 
                 int width = dropWidth == null ? getOffsetWidth() : Util.stripUnits(dropWidth);
                 
@@ -361,7 +367,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
     @Override
     public void setWidth(String w) {        
-        width = Util.stripUnits(w);
+        width = Util.stripUnits(w) - 5;
 
         /*
          * Set the outer panel to full width;
@@ -373,8 +379,11 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * set the Textbox to width - 16 to account for button.
          */        
         textbox.setWidth((width - 16) + "px");
-        
         display.getCellFormatter().setWidth(0, 0, (width - 16)+"px");
+        button.setWidth("16px");
+        
+        if(table != null)
+            table.setWidth((width)+"px");
     }
     
     public int getWidth() {
@@ -417,8 +426,11 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     @UiChild(limit=1,tagname="popup")
     public void setPopupContext(Table tableDef) {
         this.table = tableDef;
-        table.setFixScrollbar(false);
-        table.setRowHeight(18);
+        table.setCSS(UIResources.INSTANCE.dropTable());
+        table.addStyleName(UIResources.INSTANCE.dropTable().Single());
+
+        // table.setFixScrollbar(false);
+        table.setRowHeight(16);
         table.setEnabled(true);
         
         /*
@@ -474,6 +486,14 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         //table.setVisibleRows(Math.min(model.size(),itemCount));        
         table.setModel(model);
         table.selectRowAt(0);
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            
+            @Override
+            public void execute() {
+                table.onResize();
+                
+            }
+        });
         
     }
 
@@ -694,6 +714,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         public void onKeyDown(KeyDownEvent event) {
             int start;
             
+            if(queryMode)
+                return;
+            
             prevText = textbox.getText();
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_TAB:
@@ -724,6 +747,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         public void onKeyUp(KeyUpEvent event) {
             String text;
             BeforeGetMatchesEvent bgme;
+            
+            if(queryMode)
+                return;
 
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_DOWN:

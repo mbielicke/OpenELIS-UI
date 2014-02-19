@@ -3,6 +3,8 @@ package org.openelis.ui.widget;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.openelis.ui.common.Util;
+import org.openelis.ui.resources.TabBarScrollerCSS;
 import org.openelis.ui.resources.TabPanelCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -11,8 +13,11 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -47,18 +52,99 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     
     TabPosition tabPos = TabPosition.TOP;
     
-    TabPanelCSS css = UIResources.INSTANCE.tabpanel();
+    protected TabPanelCSS css = UIResources.INSTANCE.tabpanel();
+    protected TabBarScrollerCSS scrollCss = UIResources.INSTANCE.tabBarScroller();
+    protected LayoutPanel scroller;
+    protected AbsolutePanel scrollLeft, scrollRight;
+    
+    
+    
 
     public TabLayoutPanel(double barHeight, Unit barUnit) {
         super(barHeight, barUnit);
         
         css.ensureInjected();
+        scrollCss.ensureInjected();
         
         this.barHeight = barHeight;
         this.barUnit = barUnit;
 
         tabBar  = (FlowPanel) ((LayoutPanel)getWidget()).getWidget(0);
         deck    = (DeckLayoutPanel) ((LayoutPanel)getWidget()).getWidget(1);
+        scroller = new LayoutPanel();
+        scrollLeft = new AbsolutePanel();
+        scrollLeft.setStyleName(scrollCss.MoveLeft());
+        scroller.add(scrollLeft);
+        scroller.setWidgetLeftWidth(scrollLeft, 0.0, Unit.PX, 20, Unit.PX);
+        scroller.setWidgetTopBottom(scrollLeft, 5.0, Unit.PX, 0, Unit.PX);
+        scroller.add(tabBar);
+        scroller.setWidgetLeftRight(tabBar, 20, Unit.PX, 20, Unit.PX);
+        //scroller.setWidgetTopBottom(tabBar, -5.0, Unit.PX, 0, Unit.PX);
+        scrollRight = new AbsolutePanel();
+        scrollRight.setStyleName(scrollCss.MoveRight());
+        scroller.add(scrollRight);
+        scroller.setWidgetRightWidth(scrollRight, 0, Unit.PX, 20, Unit.PX);
+        scroller.setWidgetTopBottom(scrollRight, 5.0, Unit.PX, 0, Unit.PX);
+        scroller.setWidth("100%");
+        scroller.setHeight("100%");
+        scroller.setStyleName("gwt-TabLayoutPanelTabs");
+        tabBar.getElement().getStyle().setWidth(6000.0, Unit.PX);
+        //tabBar.getElement().getStyle().setPosition(Position.RELATIVE);
+        //tabBar.getElement().getStyle().setTop(-5.0, Unit.PX);
+        
+        //default to no scroll
+        
+        scrollLeft.setVisible(false);
+        scrollRight.setVisible(false);
+        scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.NONE);
+        scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.NONE);
+        scroller.setWidgetLeftRight(tabBar, 0,Unit.PX, 0, Unit.PX);
+        
+        scrollRight.addDomHandler(new ClickHandler() {
+            
+            @Override
+            public void onClick(ClickEvent event) {
+                int tabsWidth = 0;
+                
+                for(int i = 0; i < getWidgetCount(); i++) {
+                    tabsWidth += getTabWidget(i).getOffsetWidth() +9;
+                }
+                
+                int left = Util.stripUnits(tabBar.getElement().getStyle().getLeft(),"px");
+                
+                int barWidth = scroller.getWidgetContainerElement(tabBar).getOffsetWidth();
+                
+                int rightEdge = barWidth - tabsWidth;
+                
+                
+                if(tabsWidth > barWidth && left > rightEdge) 
+                    tabBar.getElement().getStyle().setLeft(left-10 < rightEdge ? rightEdge : left-10, Unit.PX);
+            }
+        }, ClickEvent.getType());
+        
+        scrollLeft.addDomHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                int left = Util.stripUnits(tabBar.getElement().getStyle().getLeft(),"px");
+                if(left < 0)
+                    tabBar.getElement().getStyle().setLeft(left+10 > 0 ? 0 : left+10, Unit.PX);
+            }
+        }, ClickEvent.getType());
+
+        //Put the widget back together after adding scroller
+        
+        LayoutPanel panel = ((LayoutPanel)getWidget());
+        panel.clear();
+
+        panel.add(scroller);
+        panel.setWidgetLeftRight(scroller, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetTopHeight(scroller, 0, Unit.PX, barHeight, barUnit);
+        panel.setWidgetVerticalPosition(scroller, Alignment.END);
+
+        panel.add(deck);
+        panel.setWidgetLeftRight(deck, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetTopBottom(deck, barHeight, barUnit, 0, Unit.PX);
+
         
         addSelectionHandler(new SelectionHandler<Integer>() {
             
@@ -191,14 +277,20 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
                     
                         @Override
                         public void onClose(CloseEvent<WindowInt> event) {
+                            boolean isVisible;
+                        
                             if (isAttached() && !closing) {
+                                isVisible = tabBar.getWidget(index).isVisible();
+                            
                                 Widget tab = getTabWidget(index);
                                 popouts.remove(index);
                                 remove(index);
                                 insert(wid, tab, index);
-                                selectTab(index);
+                                if(isVisible)
+                                    selectTab(index);
+                                else
+                                    setTabVisible(index, false);
                                 setTabPoppedIn(index);
-                                
                                 Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                                     
                                     @Override
@@ -242,6 +334,8 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         if(!anyVisible || (index == getSelectedIndex() && !visible)) {
             selectTab(blank);
         }
+        
+        checkForScroll();
     
         
     }
@@ -274,9 +368,25 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
             visibleTabSet = true;
         }
             
+        checkForScroll();
         
+    }
+    
+    @Override
+    public boolean remove(int index) {
+        boolean ret;
         
-
+        if(popouts != null && popouts.keySet().contains(index)) 
+            popouts.get(new Integer(index)).close();
+        
+        ret = super.remove(index);
+        checkForScroll();
+        return ret;
+    }
+    
+    @Override
+    public boolean remove(Widget w) {
+        return remove(getWidgetIndex(w));
     }
     
     @Override
@@ -355,7 +465,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     }
   
     public void showTabBar(boolean show) {
-        UIObject.setVisible(((LayoutPanel)getWidget()).getWidgetContainerElement(tabBar),show);
+        UIObject.setVisible(((LayoutPanel)getWidget()).getWidgetContainerElement(scroller),show);
         tabBar.setVisible(show);
     }
     
@@ -371,7 +481,39 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
             needsResize.add(i);
         needsResize.remove(new Integer(getSelectedIndex()));
         super.onResize();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            
+            @Override
+            public void execute() {
+                checkForScroll();
+            }
+        });
         
+    }
+    
+    private void checkForScroll() {
+        int tabsWidth = 0;
+        
+        for(int i = 0; i < getWidgetCount(); i++) {
+            tabsWidth += getTabWidget(i).getOffsetWidth() + 9;
+        }
+        
+        int barWidth = scroller.getWidgetContainerElement(tabBar).getOffsetWidth();
+        
+        if(tabsWidth > barWidth) {
+            scrollLeft.setVisible(true);
+            scrollRight.setVisible(true);
+            scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.BLOCK);
+            scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.BLOCK);
+            scroller.setWidgetLeftRight(tabBar, 20, Unit.PX, 20, Unit.PX);
+        }else {
+            scrollLeft.setVisible(false);
+            scrollRight.setVisible(false);
+            scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.NONE);
+            scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.NONE);
+            scroller.setWidgetLeftRight(tabBar, 0, Unit.PX, 0, Unit.PX);
+        }
+            
     }
 
 }

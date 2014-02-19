@@ -52,7 +52,6 @@ public class QueryFieldUtil {
         operators.add("(");
         operators.add(">");
         operators.add("<");
-        operators.add("&");
         operators.add("|");
     }
 
@@ -108,8 +107,6 @@ public class QueryFieldUtil {
             if (value.length() > 0) {
                 if (pos.equals("|"))
                     logical.add("|");
-                else
-                    logical.add("&");
                 value = value.substring(1);
                 while (value != null && value.length() > 0 && value.charAt(0) == ' ')
                     value = value.substring(1);
