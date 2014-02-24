@@ -3,6 +3,20 @@ body {
     font-size:11px;
 }
 
+fieldSet {
+    border:1px solid #b5b8c8;
+    padding: 2px;
+}
+
+legend {
+   -moz-user-select: none;
+   font-weight: bold;
+   color: #486095;
+   padding:2px 4px 2px 2px;
+   text-align:right;
+   vertical-align:top;
+}
+
 .ScreenLabel{	
 }
 
