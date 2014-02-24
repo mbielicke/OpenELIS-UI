@@ -6,6 +6,8 @@ body {
 fieldSet {
     border:1px solid #b5b8c8;
     padding: 2px;
+    margin-left : 2px;
+    margin-right : 2px;
 }
 
 legend {
