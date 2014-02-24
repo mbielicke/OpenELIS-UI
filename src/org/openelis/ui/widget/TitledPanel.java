@@ -87,7 +87,7 @@ public class TitledPanel extends SimplePanel implements RequiresResize, Provides
     /**
      * The legend used as the title.
      */
-    private Element                legend;
+    private Element                legend,fieldset;
 
     /**
      * The title.
@@ -105,8 +105,9 @@ public class TitledPanel extends SimplePanel implements RequiresResize, Provides
      *        the title to display
      */
     public TitledPanel() {
-
-        super(DOM.createElement("fieldset"));
+        
+        fieldset = DOM.createElement("fieldset");
+        setElement(fieldset);
         legend = DOM.createElement("legend");
         DOM.appendChild(getElement(), legend);
         title = new Label<String>("Title");
@@ -146,9 +147,10 @@ public class TitledPanel extends SimplePanel implements RequiresResize, Provides
 
     public void setCSS(TitledPanelCSS css) {
         this.css = css;
-
+        
         title.setStyleName(css.Title());
-        legend.setClassName(css.Legend());
+        //egend.setClassName(css.Legend());
+        //fieldset.setClassName(css.Fieldset());
     }
 
     @Override
@@ -159,9 +161,9 @@ public class TitledPanel extends SimplePanel implements RequiresResize, Provides
         int width = parent.getOffsetWidth();
         int height = parent.getOffsetHeight();
 
-        setSize(width + "px", height + "px");
+       // setSize((width) + "px", (height) + "px");
         
-        layout.setSize(width + "px", height + "px");
+        layout.setSize((width-10) + "px", (height-10) + "px");
 
     }
 }
