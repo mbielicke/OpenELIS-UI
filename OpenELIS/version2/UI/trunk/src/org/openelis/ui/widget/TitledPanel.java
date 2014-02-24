@@ -87,7 +87,7 @@ public class TitledPanel extends SimplePanel implements RequiresResize, Provides
     /**
      * The legend used as the title.
      */
-    private Element                legend,fieldset;
+    private Element                legend;//fieldset;
 
     /**
      * The title.
@@ -106,8 +106,7 @@ public class TitledPanel extends SimplePanel implements RequiresResize, Provides
      */
     public TitledPanel() {
         
-        fieldset = DOM.createElement("fieldset");
-        setElement(fieldset);
+        super(DOM.createElement("fieldset"));
         legend = DOM.createElement("legend");
         DOM.appendChild(getElement(), legend);
         title = new Label<String>("Title");
