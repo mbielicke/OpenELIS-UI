@@ -1,10 +1,10 @@
-
-
 .Title {
-	   -moz-user-select: none;
-   font-weight: bold;
-   color: #486095;
-   padding:2px 4px 2px 2px;
-   text-align:right;
-   vertical-align:top;
+	font-style : italic;
+	color : blue;
+}
+
+.Legend {
+	color : blue;
+	padding:0;
+	margin:0;
 }

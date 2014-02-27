@@ -444,7 +444,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         display.getCellFormatter().setWidth(0, 0, (width - 16) + "px");
         button.setWidth("16px");
 
-        if (table != null && dropWidth == null)
+        if (table != null)
             table.setWidth((width)+ "px");
 
     }
@@ -465,9 +465,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
 
     public void setDropWidth(String width) {
         dropWidth = width;
-        
-        if (table != null && dropWidth != null)
-            table.setWidth((dropWidth)+ "px");
     }
 
     public void setCase(TextBase.Case textCase) {

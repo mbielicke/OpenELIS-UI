@@ -1,35 +1,6 @@
-/**
- * Exhibit A - UIRF Open-source Based Public Software License.
- * 
- * The contents of this file are subject to the UIRF Open-source Based Public
- * Software License(the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * openelis.uhl.uiowa.edu
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- * 
- * The Original Code is OpenELIS code.
- * 
- * The Initial Developer of the Original Code is The University of Iowa.
- * Portions created by The University of Iowa are Copyright 2006-2008. All
- * Rights Reserved.
- * 
- * Contributor(s): ______________________________________.
- * 
- * Alternatively, the contents of this file marked "Separately-Licensed" may be
- * used under the terms of a UIRF Software license ("UIRF Software License"), in
- * which case the provisions of a UIRF Software License are applicable instead
- * of those above.
- */
 package org.openelis.ui.widget.fileupload;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.TextAlign;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -43,6 +14,8 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -63,7 +36,7 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
   /**
    * An abstract class which is the base for specific browser implementations.
    */
-  private static class FileLoadButtonImpl {
+  private abstract static class FileLoadButtonImpl {
 
     protected Widget button;
     protected AbsolutePanel container;
@@ -129,8 +102,8 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
     public void init(AbsolutePanel container, FileUploadWithMouseEvents input) {
       super.init(container, input);
       container.add(input, 500, 500);
-      container.getElement().getStyle().setProperty("cssFloat", "left");
-      container.getElement().getStyle().setDisplay(Display.INLINE);
+      DOM.setStyleAttribute(container.getElement(), "cssFloat", "left");
+      DOM.setStyleAttribute(container.getElement(), "display", "inline");
     }
 
     public void setButton(Widget widget) {
@@ -181,14 +154,14 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
       
       // Not using GWT 2.0.x way to set Style attributes in order to be
       // compatible with old GWT releases
-      container.getElement().getStyle().setProperty("cssFloat", "left");
-      wrapper.getElement().getStyle().setTextAlign(TextAlign.LEFT);
-      wrapper.getElement().getStyle().setZIndex(1);
-      input.getElement().getStyle().setMarginLeft(-1500, Unit.PX);
-      input.getElement().getStyle().setFontSize(500, Unit.PX);
-      input.getElement().getStyle().setBorderWidth(0, Unit.PX);
-      input.getElement().getStyle().setOpacity(0);
-      input.getElement().setAttribute("size", "1");
+      DOM.setStyleAttribute(container.getElement(), "cssFloat", "left");
+      DOM.setStyleAttribute(wrapper.getElement(), "textAlign", "left");
+      DOM.setStyleAttribute(wrapper.getElement(), "zIndex", "1");
+      DOM.setStyleAttribute(input.getElement(), "marginLeft", "-1500px");
+      DOM.setStyleAttribute(input.getElement(), "fontSize", "500px");
+      DOM.setStyleAttribute(input.getElement(), "borderWidth", "0px");
+      DOM.setStyleAttribute(input.getElement(), "opacity", "0");
+      DOM.setElementAttribute(input.getElement(), "size", "1");
       
       // Trigger over and out handlers which already exist in the covered button.
       input.addMouseOverHandler(new MouseOverHandler() {
@@ -218,9 +191,9 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
     public void setEnabled(boolean enabled) {
     	super.setEnabled(enabled);
     	if(enabled)
-    		input.getElement().getStyle().setDisplay(Display.INLINE);
+    		DOM.setStyleAttribute(input.getElement(), "display", ";");
     	else
-    		input.getElement().getStyle().setDisplay(Display.NONE);
+    		DOM.setStyleAttribute(input.getElement(), "dispay", "none");
     }
   }
 
