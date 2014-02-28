@@ -4,7 +4,7 @@ body {
 }
 
 fieldSet {
-    border:1px solid #b5b8c8;
+    border:1px solid grey;
     padding: 2px;
     margin-left : 2px;
     margin-right : 2px;
@@ -13,7 +13,7 @@ fieldSet {
 legend {
    -moz-user-select: none;
    font-weight: bold;
-   color: #486095;
+   color: black;
    padding:2px 4px 2px 2px;
    text-align:right;
    vertical-align:top;
