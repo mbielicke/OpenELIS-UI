@@ -25,144 +25,79 @@
  */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.resources.TitledPanelCSS;
-import org.openelis.ui.resources.UIResources;
+import java.util.Iterator;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.LegendElement;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ProvidesResize;
-import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xml.client.Node;
 
 /**
  * A panel that wraps its contents in a border with a title that appears in the
  * upper left corner of the border. This is an implementation of the fieldset
  * HTML element.
  */
-public class TitledPanel extends SimplePanel implements RequiresResize, ProvidesResize {
-    /**
-     * Implementation class for TitledPanel.
-     */
-    public static class TitledPanelImpl {
-
-        public void TitledPanel(Node node) {
-
-        }
-
-        /**
-         * Set the title of a fieldset element.
-         */
-        public void setTitle(Element fieldset, Element legend, Widget title) {
-            if (title != null) {
-                DOM.setInnerHTML(legend, DOM.getInnerHTML(title.getElement()));
-                DOM.insertChild(fieldset, legend, 0);
-            } else if (DOM.getParent(legend) != null) {
-                DOM.removeChild(fieldset, legend);
-            }
-        }
-    }
-
-    /**
-     * Implementation class for TitledPanel that handles Mozilla rendering
-     * issues.
-     */
-    public static class TitledPanelImplMozilla extends TitledPanelImpl {
-        public void setTitle(Element fieldset, Element legend, Widget title) {
-            DOM.setStyleAttribute(fieldset, "display", "none");
-            super.setTitle(fieldset, legend, title);
-            DOM.setStyleAttribute(fieldset, "display", "");
-        }
-    }
-
-    /**
-     * The implementation instance.
-     */
-    private static TitledPanelImpl impl = (TitledPanelImpl)GWT.create(TitledPanelImpl.class);
-
-    /**
-     * The legend used as the title.
-     */
-    private Element                legend;//fieldset;
-
-    /**
-     * The title.
-     */
-    private Label<String>          title;
-
-    private TitledPanelCSS         css;
+public class TitledPanel extends ResizeComposite implements HasWidgets {
     
-    private LayoutPanel            layout;
-
-    /**
-     * Constructor.
-     * 
-     * @param title
-     *        the title to display
-     */
+    @UiTemplate("TitledPanel.ui.xml")
+    interface TitledPanelUiBinder extends UiBinder<Widget,TitledPanel>{};
+    public static final TitledPanelUiBinder uiBinder = GWT.create(TitledPanelUiBinder.class);
+    
+    @UiField
+    LegendElement legend;
+    
+    @UiField
+    LayoutPanel content;
+    
     public TitledPanel() {
-        
-        super(DOM.createElement("fieldset"));
-        legend = DOM.createElement("legend");
-        DOM.appendChild(getElement(), legend);
-        title = new Label<String>("Title");
-
-        layout = new LayoutPanel();
-        super.setWidget(layout);
-        
-        setCSS(UIResources.INSTANCE.titledPanel());
+        initWidget(uiBinder.createAndBindUi(this));
+    }
+    
+    public void setTitle(String title) {
+        legend.setInnerText(title);
     }
 
     @Override
     public void add(Widget w) {
-        layout.add(w);
-        layout.setWidgetTopBottom(w, 0, Unit.PX, 0, Unit.PX);
-        layout.setWidgetLeftRight(w, 0, Unit.PX, 0, Unit.PX);
+        content.add(w);
+        content.setWidgetTopBottom(w, 0, Unit.PX, 0, Unit.PX);
+        content.setWidgetLeftRight(w, 0, Unit.PX, 0, Unit.PX);
     }
-    /**
-     * Get the current title.
-     * 
-     * @return the title of the panel
-     */
-    public Label<String> getTitleWidget() {
-        return this.title;
-    }
-
-    /**
-     * Set the title in the border. Pass in null or an empty string to remove
-     * the title completely, leaving just a box.
-     * 
-     * @param title
-     *        the new title
-     */
-    public void setTitle(String text) {
-        title = new Label<String>(text);
-        impl.setTitle(getElement(), legend, title);
-    }
-
-    public void setCSS(TitledPanelCSS css) {
-        this.css = css;
-        
-        title.setStyleName(css.Title());
-        //egend.setClassName(css.Legend());
-        //fieldset.setClassName(css.Fieldset());
-    }
-
+    
     @Override
     public void onResize() {
         Element parent = (Element) (getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this)
-                                                                      : getParent().getElement());
-
-        int width = parent.getOffsetWidth();
-        int height = parent.getOffsetHeight();
-
-       // setSize((width) + "px", (height) + "px");
+                                                                       : getParent().getElement());
         
-        layout.setSize((width-10) + "px", (height-10) + "px");
-
+        int width = parent.getOffsetWidth() -10;
+        int height = parent.getOffsetHeight() -25;
+        
+        content.setSize(width+"px", height+"px");
     }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Iterator<Widget> iterator() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean remove(Widget w) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
