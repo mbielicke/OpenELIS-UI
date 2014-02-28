@@ -2888,9 +2888,14 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public void onResize() {
-        Element parent = (Element) (getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this)
+        Element parent;
+        
+        if(!isAttached())
+            return;
+            
+        parent = (Element) (getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this)
                                                             : getParent().getElement());
-
+       
         int width = parent.getOffsetWidth();
         int height = parent.getOffsetHeight();
          
