@@ -80,6 +80,7 @@ public class TitledPanel extends ResizeComposite implements HasWidgets {
         int height = parent.getOffsetHeight() -25;
         
         content.setSize(width+"px", height+"px");
+        content.onResize();
     }
 
     @Override
