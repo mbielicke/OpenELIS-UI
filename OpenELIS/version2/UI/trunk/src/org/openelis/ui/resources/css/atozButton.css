@@ -16,7 +16,7 @@
     
     .Button Table{border-spacing:0;}
     
-.Button:hover, .Focus {
+.Button:hover {
    border:1px solid #7293be;
 	cursor:pointer; 
 }
@@ -46,6 +46,11 @@
     border:1px solid transparent;
     background:none;
     cursor:default;
+}
+
+.Focus {
+   border:1px solid #7293be;
+	cursor:pointer; 
 }
 
 @sprite .PreviousPageButtonImage {
