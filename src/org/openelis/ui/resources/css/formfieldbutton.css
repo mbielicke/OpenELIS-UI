@@ -15,7 +15,7 @@
 }
 
 
-.Button:hover, .Focus{
+.Button:hover{
      cursor:pointer;
      border: 1px solid #7293BE;
      box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
@@ -51,5 +51,11 @@
 	background:none;
 	cursor:default;
     box-shadow:none;
+}
+
+.Focus {
+	cursor:pointer;
+     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
+	 background:#e7f0f7;
 }
 

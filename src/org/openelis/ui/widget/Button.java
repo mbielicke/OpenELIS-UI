@@ -33,8 +33,12 @@ import org.openelis.ui.widget.Balloon.Placement;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -123,6 +127,23 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         icon.ensureInjected();
         
         setCss(UIResources.INSTANCE.button());
+        
+        addFocusHandler(new FocusHandler() {
+            
+            @Override
+            public void onFocus(FocusEvent event) {
+                addStyleName(css.Focus());
+            }
+        });
+        
+        addBlurHandler(new BlurHandler() {
+            
+            @Override
+            public void onBlur(BlurEvent event) {
+                removeStyleName(css.Focus());
+            }
+        });
+        
     }
     
     public Button(String icon,String label) {
