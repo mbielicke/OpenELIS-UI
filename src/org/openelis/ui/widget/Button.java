@@ -244,14 +244,14 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
      * Method to add a focus style to the button.
      */
     public void addFocusStyle(String style) {
-       //addStyleName(css.Hover());
+       addStyleName(css.Focus());
     }
 
     /**
      * Method remove a focus style from the button.
      */
     public void removeFocusStyle(String style) {
-       //removeStyleName(css.Hover());
+       removeStyleName(css.Focus());
     }
         
     /**
