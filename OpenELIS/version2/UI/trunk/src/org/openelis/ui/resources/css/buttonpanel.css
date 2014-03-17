@@ -33,7 +33,7 @@
 	gwt-image: 'buttonDivider';
 }
 
-.Button:hover, .Pressed {
+.Button:hover, .Pressed, .Focus {
 	border:1px solid #7293be;
 	background:#e7f0f7;
 	cursor:pointer; 

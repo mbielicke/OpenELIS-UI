@@ -16,7 +16,7 @@
     
     .Button Table{border-spacing:0;}
     
-.Button:hover {
+.Button:hover, .Focus {
    border:1px solid #7293be;
 	cursor:pointer; 
 }

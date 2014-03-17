@@ -8,7 +8,7 @@
     height:18px;
 }
 
-.Button:hover{
+.Button:hover, .Focus {
      cursor:pointer;
      border: 1px solid #7293BE;
      border-width:0 0 0 1px;
