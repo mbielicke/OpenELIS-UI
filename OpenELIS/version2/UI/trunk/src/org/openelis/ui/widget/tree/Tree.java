@@ -557,7 +557,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void toggle(Node node) {
         if(isDisplayed(node))
-            toggle(nodeIndex.get(node).index);
+            toggle(nodeIndex.get(node).index, null);
     }
     
     /**
@@ -568,10 +568,14 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void toggle(int row) {
+        toggle(row,null);
+    }
+    
+    protected void toggle(int row, NativeEvent event) {
         if(getNodeAt(row).isOpen())
-            close(row);
+            close(row,event);
         else
-            open(row);
+            open(row,event);
     }
     
     /**
@@ -581,7 +585,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void open(Node node) {
         if(isDisplayed(node))
-            open(nodeIndex.get(node).index);
+            open(nodeIndex.get(node).index,null);
     }
     
     /**
@@ -592,9 +596,13 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void open(int row) {
+        open(row,null);
+    }
+    
+    protected void open(int row, NativeEvent event) {
         finishEditing();
         
-        selectNodeAt(row);
+        selectNodeAt(row,event);
         
         Node node;
         int pos;
@@ -652,6 +660,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void close(int row) {
+        close(row,null);
+    }
+    
+    protected void close(int row, NativeEvent event) {
         int adj = 0,children;
         
         finishEditing();
