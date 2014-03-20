@@ -668,7 +668,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         finishEditing();
         
-        selectNodeAt(row);
+        selectNodeAt(row,event);
         
         Node node;
         int pos;
