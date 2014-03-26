@@ -48,11 +48,6 @@
     cursor:default;
 }
 
-.Focus {
-   border:1px solid #7293be;
-	cursor:pointer; 
-}
-
 @sprite .PreviousPageButtonImage {
 	gwt-image:'previousPage';
 }

@@ -208,11 +208,6 @@ public class Screen extends ResizeComposite implements FocusHandler,
         }
         
         for(Screen tab : tabs.values()) {
-            // If they added a ScreenHandler to override is valid this is 
-            // redundant call so skip
-            if(widgets.containsKey(tab))
-                continue;
-            
             Validation tabValid = tab.validate();
             
             if(tabValid.status.value > validation.status.value)
