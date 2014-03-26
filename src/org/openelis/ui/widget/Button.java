@@ -97,6 +97,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
             public void onClick(ClickEvent event) {
            		if (toggles)
            			setPressed(!pressed);
+           		removeStyleName(css.Focus());
             }
         });
 
