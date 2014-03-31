@@ -133,7 +133,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
             
             @Override
             public void onFocus(FocusEvent event) {
-                addStyleName(css.Focus());
+                if(isEnabled())
+                    addStyleName(css.Focus());
             }
         });
         
