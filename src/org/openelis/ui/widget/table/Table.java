@@ -781,7 +781,11 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (modelView == null)
             return 0;
 
-        return modelView.size();
+        try {
+            return modelView.size();
+        }catch(Exception e) {
+            return 0;
+        }
     }
 
     /**
