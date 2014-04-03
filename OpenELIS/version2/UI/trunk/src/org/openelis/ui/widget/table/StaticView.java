@@ -153,6 +153,16 @@ public class StaticView extends ViewInt {
             }
         });
         
+        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+            
+            @Override
+            public void onCellMouseOut(CellMouseOutEvent event) {
+                if(table.balloonTimer != null)
+                    table.balloonTimer.cancel();
+                Balloon.hide();
+            }
+        });
+        
     }
 
     

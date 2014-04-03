@@ -103,6 +103,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -2958,16 +2959,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 
             }
         });
-       
-       view.table().addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
-        
-           @Override
-           public void onCellMouseOut(CellMouseOutEvent event) {
-               balloonTimer.cancel();
-               Balloon.hide();
-           }
-       });
-       
         
        options.setTipProvider(new Balloon.TipProvider<Object>() {
         

@@ -2955,16 +2955,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                 
             }
         });
-       
-       view.table().addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
-        
-           @Override
-           public void onCellMouseOut(CellMouseOutEvent event) {
-               balloonTimer.cancel();
-               Balloon.hide();
-           }
-       });
-       
         
        options.setTipProvider(new Balloon.TipProvider<Object>() {
         
