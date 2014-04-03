@@ -2942,8 +2942,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 tipCol = event.getCol();
                 final int x,y;
                 
-                x = event.getX();
-                y = event.getY();
+                Element td = view.table().getCellFormatter().getElement(event.getRow(), event.getCol());
+                
+                y = td.getAbsoluteTop();
+                x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
                 
                 if(!hasExceptions(tipRow, tipCol)) {
                     balloonTimer = new Timer() {
