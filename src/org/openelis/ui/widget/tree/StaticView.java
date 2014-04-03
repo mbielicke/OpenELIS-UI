@@ -40,6 +40,7 @@ import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.table.FlexTable;
 import org.openelis.ui.widget.table.Row;
+import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 
 import com.google.gwt.core.client.GWT;
@@ -147,6 +148,16 @@ public class StaticView extends ViewInt {
                 DOM.setStyleAttribute(header.getElement(),
                                       "left",
                                       (0 - scrollView.getHorizontalScrollPosition()) + "px");
+            }
+        });
+        
+        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+            
+            @Override
+            public void onCellMouseOut(CellMouseOutEvent event) {
+                if(tree.balloonTimer != null)
+                    tree.balloonTimer.cancel();
+                Balloon.hide();
             }
         });
         
