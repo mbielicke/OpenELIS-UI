@@ -423,10 +423,17 @@ public class StaticView extends ViewInt {
 
                         @Override
                         public void onCellMouseOver(CellMouseOverEvent event) {
+                            int x,y;
+                            
+                            Element td = flexTable.getCellFormatter().getElement(event.getRow(), event.getCol());
+                            
+                            y = td.getAbsoluteTop();
+                            x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
+                            
                             tree.drawExceptions(event.getRow(),
                                                  event.getCol(),
-                                                 event.getX(),
-                                                 event.getY());
+                                                 x,
+                                                 y);
                         }
 
                     });
