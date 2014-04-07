@@ -33,14 +33,12 @@ import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableDropdownCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Dropdown;
 import org.openelis.ui.widget.MultiDropdown;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -61,7 +59,7 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
     /**
      * Widget used to edit the cell
      */
-    private MultiDropdown      editor;
+    private MultiDropdown<Integer>      editor;
 
     private boolean       query;
     
@@ -118,7 +116,7 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 
     public String display(Object value) {
     	if(value != null && value instanceof List) {
-   			editor.setValue(value);
+   			editor.setValue((ArrayList<Integer>)value);
         	return editor.getDisplay();
     	}else {
     		return DataBaseUtil.toString(value);
@@ -153,7 +151,7 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
-        editor.setValue(value);
+        editor.setValue((ArrayList<Integer>)value);
         editor.setWidth(container.getWidth()+6+"px");
         container.setEditor(editor);
     }
