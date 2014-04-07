@@ -65,9 +65,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing.Validation;
 
 /**
  * This class is used to bring together widgets into a logical unit of work that
