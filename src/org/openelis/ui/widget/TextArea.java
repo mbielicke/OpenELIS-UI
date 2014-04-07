@@ -14,6 +14,8 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.HasFocusHandlers;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -406,6 +408,10 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
      */
     public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
         return addDomHandler(handler, MouseOutEvent.getType());
+    }
+    
+    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+        return addDomHandler(handler, KeyUpEvent.getType());
     }
     
     public void setCSS(TextCSS css) {

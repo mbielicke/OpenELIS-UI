@@ -40,6 +40,7 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.HasFocusHandlers;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -364,6 +365,10 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 		return check.addMouseOutHandler(handler);
 	}
 
+	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+	    return check.addKeyUpHandler(handler);
+	}
+	
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
 		return addDomHandler(handler, FocusEvent.getType());
