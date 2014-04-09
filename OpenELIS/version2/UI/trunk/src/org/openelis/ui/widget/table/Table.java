@@ -1371,7 +1371,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
          * If none apply the logic will fall throw to normal selection.
          */
         if (isMultipleSelectionAllowed()) {
-            if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
+            if (ctrlDefault || (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK)) {
                 multiSelect(row,event);
                 return;
             }
@@ -1405,7 +1405,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         endSelect = row;
         
         ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
-        shiftKey = event.getShiftKey();
+        shiftKey = event != null ? event.getShiftKey() : false;
         
         if (ctrlKey) {
             if (isRowSelected(row)) {

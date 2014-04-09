@@ -799,6 +799,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
              */
             table.removeStyleName(UIResources.INSTANCE.dropTable().Single());
             textbox.setReadOnly(true);
+            table.setCtrlKeyDefault(true);
             table.setAllowMultipleSelection(true);
         } else {
             /*
