@@ -36,7 +36,7 @@
 		<delete dir="reports"/>
 		<mkdir dir="reports/junit" />
 		<junit includeantruntime="true" fork="yes" showoutput="true" printsummary="withOutAndErr" haltonfailure="no">
-			<jvmarg line="-Xmx256m" />
+			<jvmarg line="-Xmx2048m" />
 			<sysproperty key="gwt.args" value="-standardsMode -logLevel WARN" />
 			<sysproperty key="java.awt.headless" value="true" />
 			<classpath>
