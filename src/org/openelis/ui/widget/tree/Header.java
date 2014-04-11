@@ -410,7 +410,7 @@ public class Header extends FocusPanel {
            // showFilter(col1);
         }
 
-        if (resizeColStyle && col1 > -1) {
+        if (resizeColStyle) {
             flexTable.getCellFormatter().removeStyleName(0, col1, css.ResizeCol());
             flexTable.getCellFormatter().removeStyleName(0, col2, css.ResizeCol());
             resizeColStyle = false;

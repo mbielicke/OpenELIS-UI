@@ -65,7 +65,9 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing.Validation;
 
 /**
  * This class is used to bring together widgets into a logical unit of work that
@@ -206,11 +208,6 @@ public class Screen extends ResizeComposite implements FocusHandler,
         }
         
         for(Screen tab : tabs.values()) {
-            // If they added a ScreenHandler to override is valid this is 
-            // redundant call so skip
-            if(widgets.containsKey(tab))
-                continue;
-            
             Validation tabValid = tab.validate();
             
             if(tabValid.status.value > validation.status.value)

@@ -165,7 +165,7 @@ public class AutoCompleteCell implements CellRenderer,
         	editor.setValue((AutoCompleteValue)value);
         else
         	editor.setValue(null,DataBaseUtil.toString(value));
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
         editor.selectAll();
     }
@@ -175,7 +175,7 @@ public class AutoCompleteCell implements CellRenderer,
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
         container.setEditor(editor);
     }
 

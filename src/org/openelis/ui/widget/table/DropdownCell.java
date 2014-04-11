@@ -110,7 +110,6 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
      * Gets Formatted value from editor and sets it as the cells display
      */
     public void render(HTMLTable table, int row, int col, Object value) {
-        query = false;
         editor.setQueryMode(false);
        	table.setText(row, col, display(value));
     }
@@ -126,9 +125,6 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        
-        query = false;
-        editor.setQueryMode(false);
         
         builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));

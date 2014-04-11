@@ -103,7 +103,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -782,11 +781,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (modelView == null)
             return 0;
 
-        try {
-            return modelView.size();
-        }catch(Exception e) {
-            return 0;
-        }
+        return modelView.size();
     }
 
     /**
@@ -1371,7 +1366,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
          * If none apply the logic will fall throw to normal selection.
          */
         if (isMultipleSelectionAllowed()) {
-            if (ctrlDefault || (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK)) {
+            if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
                 multiSelect(row,event);
                 return;
             }
@@ -1405,7 +1400,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         endSelect = row;
         
         ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
-        shiftKey = event != null ? event.getShiftKey() : false;
+        shiftKey = event.getShiftKey();
         
         if (ctrlKey) {
             if (isRowSelected(row)) {
@@ -2943,10 +2938,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 tipCol = event.getCol();
                 final int x,y;
                 
-                Element td = view.table().getCellFormatter().getElement(event.getRow(), event.getCol());
-                
-                y = td.getAbsoluteTop();
-                x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
+                x = event.getX();
+                y = event.getY();
                 
                 if(!hasExceptions(tipRow, tipCol)) {
                     balloonTimer = new Timer() {
@@ -2959,6 +2952,16 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
                 
             }
         });
+       
+       view.table().addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+        
+           @Override
+           public void onCellMouseOut(CellMouseOutEvent event) {
+               balloonTimer.cancel();
+               Balloon.hide();
+           }
+       });
+       
         
        options.setTipProvider(new Balloon.TipProvider<Object>() {
         

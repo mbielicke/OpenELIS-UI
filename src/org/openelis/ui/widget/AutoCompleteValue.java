@@ -120,12 +120,4 @@ public class AutoCompleteValue {
     	this.data = data;
     }
     
-    @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof AutoCompleteValue))
-            return false;
-        
-        return ((AutoCompleteValue)obj).id.equals(id) && ((AutoCompleteValue)obj).display.equals(display);
-    }
-    
 }

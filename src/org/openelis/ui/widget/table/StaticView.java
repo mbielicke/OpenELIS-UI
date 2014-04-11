@@ -153,16 +153,6 @@ public class StaticView extends ViewInt {
             }
         });
         
-        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
-            
-            @Override
-            public void onCellMouseOut(CellMouseOutEvent event) {
-                if(table.balloonTimer != null)
-                    table.balloonTimer.cancel();
-                Balloon.hide();
-            }
-        });
-        
     }
 
     
@@ -511,12 +501,7 @@ public class StaticView extends ViewInt {
             flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
                 @Override
                 public void onCellMouseOver(CellMouseOverEvent event) {
-                    int x,y;
-                    Element td = flexTable.getCellFormatter().getElement(event.getRow(), event.getCol());
-                    
-                    y = td.getAbsoluteTop();
-                    x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
-                    table.drawExceptions(event.getRow(), event.getCol(),x, y);
+                    table.drawExceptions(event.getRow(), event.getCol(), event.getX(), event.getY());
                 }
 
             });
