@@ -462,6 +462,15 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 		textbox.setFocus(true);
 	}
 	
+	public void setField(String field) {
+		if(field.equals("Double"))
+			setHelper((WidgetHelper<T>)new DoubleHelper());
+		else if(field.equals("Integer"))
+		    setHelper((WidgetHelper<T>)new IntegerHelper());
+		else if(field.equals("Date"))
+		    setHelper((WidgetHelper<T>)new DateHelper());
+	}
+	
 	public void setPattern(String pattern) {
 		helper.setPattern(pattern);
 	}
