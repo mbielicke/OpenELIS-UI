@@ -496,7 +496,7 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
 
     public void lockWindow() {
         if (glass == null) {
-            glass = new AbsolutePanel();
+            glass = GWT.create(AbsolutePanel.class);
             glass.setStyleName(css.GlassPanel());
             glass.setHeight(content.getOffsetHeight() + "px");
             glass.setWidth(content.getOffsetWidth() + "px");
