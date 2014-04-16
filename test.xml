@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project name="TestWidget" default="test.dev" basedir=".">
+<project xmlns:jacoco="antlib:org.jacoco.ant" name="TestWidget" default="test.dev" basedir=".">
 	<!-- Arguments to gwtc and devmode targets -->
 	<property name="gwt.args" value="" />
 
@@ -12,7 +12,11 @@
 	<property name="jboss.home" location="/usr/local/java/wildfly-8.0.0.Final"/>
 	
 	<taskdef name="findbugs" classpath="${findbugs.home}/lib/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
-
+	
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="/usr/local/java/jacoco/lib/jacocoant.jar"/>
+	</taskdef>
+	
 	<path id="project.class.path">
 		<pathelement location="${gwt.sdk}/gwt-user.jar" />
 		<pathelement location="bin" />
@@ -35,6 +39,7 @@
 		<sleep seconds="5" />
 		<delete dir="reports"/>
 		<mkdir dir="reports/junit" />
+		<jacoco:coverage destfile="reports/jacoco/jacoco.exec">
 		<junit includeantruntime="true" fork="yes" showoutput="true" printsummary="withOutAndErr" haltonfailure="no">
 			<jvmarg line="-Xmx2048m" />
 			<sysproperty key="gwt.args" value="-standardsMode -logLevel WARN" />
@@ -51,12 +56,13 @@
 			</classpath>
 			<batchtest todir="reports/junit">
 				<fileset dir="test">
-					<include name="**/Gwt*.java" />
+					<include name="**/Test*.java" />
 				</fileset>
 			</batchtest>
 			<formatter type="plain" />
 			<formatter type="xml" />
 		</junit>
+		</jacoco:coverage>
 	</target>
 
 	<target name="findbugs">

@@ -77,13 +77,14 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * from the user.
 	 */
 	public TextBox() {
-		init();	
+	    textbox = GWT.create(TextBase.class);
+	    initWidget(textbox);
+	    init();
+	    
 	}
 	
 	public void init() {
 		
-		textbox = GWT.create(TextBase.class);
-
 		setEnabled(false);
 
 		textbox.addFocusHandler(new FocusHandler() {
@@ -107,8 +108,6 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 				finishEditing();
 			}
 		});
-
-		initWidget(textbox);
 		
 		exceptions = new Exceptions();
 		
@@ -277,8 +276,9 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 			textbox.setText("");
 		}
 
-		if (Util.isDifferent(oldValue, value) && fireEvents)
+		if (Util.isDifferent(oldValue, value) && fireEvents) {
 			ValueChangeEvent.fire(this, value);
+		}
 	}
 
 	/**
@@ -391,17 +391,17 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void addExceptionStyle() {
 		if(Balloon.isWarning(this))
-			addStyleName(css.InputWarning());
+			textbox.addStyleName(css.InputWarning());
 		else
-			addStyleName(css.InputError());
+			textbox.addStyleName(css.InputError());
 	}
 
 	/**
 	 * will remove the style from the widget
 	 */
 	public void removeExceptionStyle() {
-		removeStyleName(css.InputError());
-		removeStyleName(css.InputWarning());
+		textbox.removeStyleName(css.InputError());
+		textbox.removeStyleName(css.InputWarning());
 	}
 
 	// ************* Implementation of Focusable ******************
@@ -417,8 +417,10 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * Method only implemented to satisfy Focusable interface.
 	 */
 	public void setTabIndex(int index) {
-
+	   
 	}
+	
+	
 
 	/**
 	 * Method only implemented to satisfy Focusable interface.
@@ -458,15 +460,6 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void setFocus(boolean focused) {
 		textbox.setFocus(true);
-	}
-	
-	public void setField(String field) {
-		if(field.equals("Double"))
-			setHelper((WidgetHelper<T>)new DoubleHelper());
-		else if(field.equals("Integer"))
-		    setHelper((WidgetHelper<T>)new IntegerHelper());
-		else if(field.equals("Date"))
-		    setHelper((WidgetHelper<T>)new DateHelper());
 	}
 	
 	public void setPattern(String pattern) {
