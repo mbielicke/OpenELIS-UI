@@ -185,15 +185,19 @@ public class Screen extends ResizeComposite implements FocusHandler,
     protected void focusNextWidget(Focusable focused, boolean forward) {
         assert focused != null;
         
-        Focusable next = focused;
-        Focusable start = focused;
+        Focusable nextWidget = focused;
+        int numberOfWidgetsChecked = 0;
         
         do {
-            next = (Focusable)widgets.get(next).onTab(forward);
-        } while (next != null && next != start && !((ScreenWidgetInt)next).isEnabled());
+            nextWidget = (Focusable)widgets.get(nextWidget).onTab(forward);
+            numberOfWidgetsChecked++;
+        } while (nextWidget != null 
+                 && nextWidget != focused 
+                 && numberOfWidgetsChecked >= widgets.size()
+                 && !((ScreenWidgetInt)nextWidget).isEnabled());
         
-        if (next != null)
-            next.setFocus(true);
+        if (nextWidget != null)
+            nextWidget.setFocus(true);
     }
 
     public void onFocus(FocusEvent event) {
