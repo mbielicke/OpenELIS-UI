@@ -193,7 +193,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
             numberOfWidgetsChecked++;
         } while (nextWidget != null 
                  && nextWidget != focused 
-                 && numberOfWidgetsChecked >= widgets.size()
+                 && numberOfWidgetsChecked < widgets.size()
                  && !((ScreenWidgetInt)nextWidget).isEnabled());
         
         if (nextWidget != null)
