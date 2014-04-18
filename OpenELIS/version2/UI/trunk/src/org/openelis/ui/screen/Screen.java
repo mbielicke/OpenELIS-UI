@@ -120,13 +120,9 @@ public class Screen extends ResizeComposite implements FocusHandler,
 
                     event.preventDefault();
                     event.stopPropagation();
-                    Focusable next = focused;
-                    do {
-                        next = (Focusable)widgets.get(next).onTab( !event.isShiftKeyDown());
-                    } while (next != null && ! ((ScreenWidgetInt)next).isEnabled());
-                    if (next != null)
-                        next.setFocus(true);
-
+                    
+                    focusNextWidget(focused, !event.isShiftKeyDown());
+                 
                     return;
                 }
 
@@ -184,6 +180,20 @@ public class Screen extends ResizeComposite implements FocusHandler,
         },
                       KeyDownEvent.getType());
 
+    }
+    
+    protected void focusNextWidget(Focusable focused, boolean forward) {
+        assert focused != null;
+        
+        Focusable next = focused;
+        Focusable start = focused;
+        
+        do {
+            next = (Focusable)widgets.get(next).onTab(forward);
+        } while (next != null && next != start && !((ScreenWidgetInt)next).isEnabled());
+        
+        if (next != null)
+            next.setFocus(true);
     }
 
     public void onFocus(FocusEvent event) {
