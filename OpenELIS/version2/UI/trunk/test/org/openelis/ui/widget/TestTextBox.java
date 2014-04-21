@@ -73,20 +73,20 @@ public class TestTextBox {
     }
     
     @Test
-    public void testSetMaxLength() {
+    public void setMaxLength() {
         textbox.setMaxLength(40);
         assertEquals(40,textbox.maxLength);
         verify(textbox.textbox).setMaxLength(40);
     }
     
     @Test
-    public void testTextAlignment() {
+    public void textAlignment() {
         textbox.setTextAlignment(TextAlignment.CENTER);
         verify(textbox.textbox).setAlignment(TextAlignment.CENTER);
     }
     
     @Test
-    public void testSetQueryMode() {
+    public void setQueryMode() {
         textbox.setQueryMode(true);
         assertTrue(textbox.queryMode);
         verify(textbox.textbox).enforceMask(false);
@@ -95,14 +95,14 @@ public class TestTextBox {
     }
     
     @Test
-    public void testSetQueryModeFalse() {
+    public void setQueryModeFalse() {
         textbox.setQueryMode(false);
         assertFalse(textbox.queryMode);
         verify(textbox.textbox,never()).enforceMask(anyBoolean());
     }
     
     @Test
-    public void testSetQueryModeReset() {
+    public void setQueryModeReset() {
         textbox.setQueryMode(true);
         reset(textbox.textbox);
         textbox.setQueryMode(false);
@@ -112,7 +112,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void testSetQueryModeWithMaxLength() {
+    public void setQueryModeWithMaxLength() {
         textbox.setMaxLength(40);
         textbox.setQueryMode(true);
         verify(textbox.textbox).setMaxLength(255);
@@ -121,7 +121,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void testSetValue() {
+    public void setValue() {
         bus.addHandler(ValueChangeEvent.getType(), new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
@@ -136,7 +136,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void testSetValueEventNotFired() {
+    public void setValueEventNotFired() {
         bus.addHandler(ValueChangeEvent.getType(), new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
@@ -151,7 +151,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void testFinishEditingDoesNothing() {
+    public void finishEditingDoesNothing() {
         bus.addHandler(ValueChangeEvent.getType(), new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
@@ -165,7 +165,7 @@ public class TestTextBox {
     }
     
     @Test 
-    public void testFinishEditingValueChanged() {        
+    public void finishEditingValueChanged() {        
         
         when(textbox.textbox.isEnabled()).thenReturn(true);
         when(textbox.textbox.getText()).thenReturn("value");
@@ -179,7 +179,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void testFinishEditingQueryMode() {
+    public void finishEditingQueryMode() {
         textbox.setQueryMode(true);
         textbox.helper = new StringHelper() {
             @Override
@@ -194,44 +194,44 @@ public class TestTextBox {
     }
     
     @Test
-    public void testHasExceptions() {
+    public void hasExceptions() {
         assertFalse(textbox.hasExceptions());
     }
     
     @Test
-    public void testHasExceptionsValidateExcepts() {
+    public void hasExceptionsValidateExcepts() {
         textbox.addValidateException(new Exception());
         assertTrue(textbox.hasExceptions());
     }
     
     @Test
-    public void testHasExceptionsUserExcepts() {
+    public void hasExceptionsUserExcepts() {
         textbox.addException(new Exception());
         assertTrue(textbox.hasExceptions());
     }
     
     @Test
-    public void testHasExceptionsRequired() {
+    public void hasExceptionsRequired() {
         textbox.setRequired(true);
         textbox.hasExceptions();
         assertTrue(textbox.hasExceptions());
     }
     
     @Test 
-    public void testHasExceptionsRequiredQueryMode() {
+    public void hasExceptionsRequiredQueryMode() {
         textbox.setRequired(true);
         textbox.setQueryMode(true);
         assertFalse(textbox.hasExceptions());
     }
     
     @Test
-    public void testAddExceptionStyleError() {
+    public void addExceptionStyleError() {
         textbox.addException(new Exception());
         verify(textbox.textbox).addStyleName(textbox.css.InputError());
     }
     
     @Test
-    public void testAddExceptionStyleWarning() {
+    public void addExceptionStyleWarning() {
         textbox.addException(new FieldErrorWarning());
         verify(textbox.textbox).addStyleName(textbox.css.InputWarning());    
     } 

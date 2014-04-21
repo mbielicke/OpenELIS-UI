@@ -143,7 +143,8 @@ public class InfiniteView extends ViewInt {
      * @param tree
      */
     public InfiniteView(Table tbl) {
-    	header = new Header(tbl);
+    	header = GWT.create(Header.class);
+    	header.init(tbl);
     	initWidget(uiBinder.createAndBindUi(this));
 
         this.table = tbl;

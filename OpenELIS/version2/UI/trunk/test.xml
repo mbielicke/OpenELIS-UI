@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<project xmlns:jacoco="antlib:org.jacoco.ant" name="TestWidget" default="test.dev" basedir=".">
+<project xmlns:jacoco="antlib:org.jacoco.ant" name="UI" default="test.dev" basedir=".">
 	<!-- Arguments to gwtc and devmode targets -->
 	<property name="gwt.args" value="" />
 
@@ -36,7 +36,6 @@
 	</target>
 
 	<target name="test.dev" depends="javac.tests" description="Run development mode tests">
-		<sleep seconds="5" />
 		<delete dir="reports"/>
 		<mkdir dir="reports/junit" />
 		<jacoco:coverage destfile="reports/jacoco/jacoco.exec">
@@ -53,6 +52,7 @@
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
 				<pathelement location="${junit.home}/junit-4.11.jar" />
 				<fileset dir="${selenium.home}/libs/" includes="*.jar" />
+				<fileset dir="${jboss.home}/modules/system/layers/base/org/slf4j/main" includes="*.jar"/>
 			</classpath>
 			<batchtest todir="reports/junit">
 				<fileset dir="test">

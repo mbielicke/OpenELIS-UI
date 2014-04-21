@@ -45,9 +45,7 @@ import org.openelis.ui.widget.Button;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.WindowInt;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -72,9 +70,8 @@ import com.google.gwt.user.client.ui.Widget;
  * is presented to the user.
  * 
  */
-public class Screen extends ResizeComposite implements FocusHandler, 
-                                                       HasDataChangeHandlers,
-                                                       HasStateChangeHandlers {
+public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
+                                           HasStateChangeHandlers {
 
     private Focusable                           focused;
 
@@ -95,7 +92,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
     protected WindowCSS css;
     protected WindowInt window;
     protected State     state;
-    
+
     public Screen() {
         css = UIResources.INSTANCE.window();
         css.ensureInjected();
@@ -103,99 +100,43 @@ public class Screen extends ResizeComposite implements FocusHandler,
         handlers = new HashMap<String, ScreenHandler<?>>();
         widgets = new HashMap<Widget, ScreenHandler<?>>();
         shortcuts = new HashMap<Shortcut, Focusable>();
-        tabs = new HashMap<String,Screen>();
+        tabs = new HashMap<String, Screen>();
 
         bus = new SimpleEventBus();
 
-        addDomHandler(new KeyDownHandler() {
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB && focused != null) {
-
-                    if ( ! ((ScreenWidgetInt)focused).isEnabled()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        return;
-                    }
-
-                    event.preventDefault();
-                    event.stopPropagation();
-                    
-                    focusNextWidget(focused, !event.isShiftKeyDown());
-                 
-                    return;
-                }
-
-                if (event.isAnyModifierKeyDown()) {
-
-                    boolean ctrl, alt, shift;
-                    char key;
-
-                    /*
-                     * If no modifier is pressed then return out
-                     */
-
-                    ctrl = event.isControlKeyDown();
-                    alt = event.isAltKeyDown();
-                    shift = event.isShiftKeyDown();
-                    key = (char)event.getNativeKeyCode();
-                    final Focusable target = shortcuts.get(new Shortcut(ctrl,
-                                                                        alt,
-                                                                        shift,
-                                                                        Character.toUpperCase(key)));
-
-                    if (target != null) {
-                        if (target instanceof Button) {
-                            if ( ((Button)target).isEnabled() && ! ((Button)target).isLocked()) {
-                                ((Focusable)target).setFocus(true);
-                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                    public void execute() {
-                                        NativeEvent clickEvent = Document.get()
-                                                                         .createClickEvent(0,
-                                                                                           -1,
-                                                                                           -1,
-                                                                                           -1,
-                                                                                           -1,
-                                                                                           false,
-                                                                                           false,
-                                                                                           false,
-                                                                                           false);
-
-                                        ClickEvent.fireNativeEvent(clickEvent, (Button)target);
-                                    }
-                                });
-
-                                event.stopPropagation();
-                            }
-                            event.preventDefault();
-                            event.stopPropagation();
-                        } else if ( ((ScreenWidgetInt)target).isEnabled()) {
-                            ((Focusable)target).setFocus(true);
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                    }
-                }
-            }
-        },
-                      KeyDownEvent.getType());
-
+        addDomHandler(new ScreenKeyHandler(), KeyDownEvent.getType());
     }
-    
+
+    protected void clickButton(final Button button) {
+        if (button.isEnabled() && !button.isLocked()) {
+            button.setFocus(true);
+            ClickEvent.fireNativeEvent(Document.get().createClickEvent(0,
+                                                                       -1,
+                                                                       -1,
+                                                                       -1,
+                                                                       -1,
+                                                                       false,
+                                                                       false,
+                                                                       false,
+                                                                       false),
+                                       button);
+
+        }
+    }
+
     protected void focusNextWidget(Focusable focused, boolean forward) {
         assert focused != null;
-        
+
         Focusable nextWidget = focused;
         int numberOfWidgetsChecked = 0;
-        
+
         do {
             nextWidget = (Focusable)widgets.get(nextWidget).onTab(forward);
-            numberOfWidgetsChecked++;
-        } while (nextWidget != null 
-                 && nextWidget != focused 
-                 && numberOfWidgetsChecked < widgets.size()
-                 && !((ScreenWidgetInt)nextWidget).isEnabled());
-        
+            numberOfWidgetsChecked++ ;
+        } while (nextWidget != null && nextWidget != focused &&
+                 numberOfWidgetsChecked < widgets.size() &&
+                 ! ((ScreenWidgetInt)nextWidget).isEnabled());
+
         if (nextWidget != null)
             nextWidget.setFocus(true);
     }
@@ -207,8 +148,8 @@ public class Screen extends ResizeComposite implements FocusHandler,
     public void finishEditing() {
         if (focused != null && focused instanceof ScreenWidgetInt)
             ((ScreenWidgetInt)focused).finishEditing();
-        
-        for(Screen tab : tabs.values()) 
+
+        for (Screen tab : tabs.values())
             tab.finishEditing();
     }
 
@@ -218,20 +159,20 @@ public class Screen extends ResizeComposite implements FocusHandler,
         for (ScreenHandler<?> wid : handlers.values()) {
             wid.isValid(validation);
         }
-        
-        for(Screen tab : tabs.values()) {
-            // If they added a ScreenHandler to override is valid this is 
+
+        for (Screen tab : tabs.values()) {
+            // If they added a ScreenHandler to override is valid this is
             // redundant call so skip
-            if(widgets.containsKey(tab))
+            if (widgets.containsKey(tab))
                 continue;
-            
+
             Validation tabValid = tab.validate();
-            
-            if(tabValid.status.value > validation.status.value)
+
+            if (tabValid.status.value > validation.status.value)
                 validation.status = tabValid.status;
-            
-            if(tabValid.getExceptions() != null) {
-                for(Exception exception : tabValid.exceptions)
+
+            if (tabValid.getExceptions() != null) {
+                for (Exception exception : tabValid.exceptions)
                     validation.addException(exception);
             }
         }
@@ -250,9 +191,9 @@ public class Screen extends ResizeComposite implements FocusHandler,
             if (ex instanceof FormErrorException) {
                 formE = (FormErrorException)ex;
                 formErrors.add(formE);
-            } else if (ex instanceof FieldErrorException){
+            } else if (ex instanceof FieldErrorException) {
                 String field = ((FieldErrorException)ex).getFieldName();
-                if(handlers.containsKey(field))
+                if (handlers.containsKey(field))
                     handlers.get(field).showError(ex);
                 else
                     tabErrors.add(ex);
@@ -268,21 +209,20 @@ public class Screen extends ResizeComposite implements FocusHandler,
             setError("(Error 1 of " + formErrors.size() + ") " + formErrors.get(0).getMessage());
             window.setMessagePopup(formErrors, "ErrorPanel");
         }
-        
-        if(tabErrors.size() > 0) {
-            for(Screen tab : tabs.values()) {
+
+        if (tabErrors.size() > 0) {
+            for (Screen tab : tabs.values()) {
                 tab.showErrors(tabErrors);
             }
         }
-        
-        
+
     }
 
     public void clearErrors() {
         for (ScreenHandler<?> wid : handlers.values())
             wid.clearError();
 
-        if(window != null) {
+        if (window != null) {
             window.clearStatus();
             window.clearMessagePopup("");
         }
@@ -333,8 +273,8 @@ public class Screen extends ResizeComposite implements FocusHandler,
 
         handlers.put(meta, screenHandler);
         widgets.put(widget, screenHandler);
-        
-        if(widget instanceof Screen) 
+
+        if (widget instanceof Screen)
             tabs.put(meta, (Screen)widget);
     }
 
@@ -373,7 +313,8 @@ public class Screen extends ResizeComposite implements FocusHandler,
     }
 
     public boolean isState(State... states) {
-        return states.length > 1 ? EnumSet.of(states[0],states).contains(state) : state == states[0];
+        return states.length > 1 ? EnumSet.of(states[0], states).contains(state)
+                                : state == states[0];
     }
 
     public void setBusy() {
@@ -402,33 +343,41 @@ public class Screen extends ResizeComposite implements FocusHandler,
         busy = 0;
         unlockWindow();
     }
-    
+
     public boolean isBusy() {
         return busy > 0;
     }
 
     public void unlockWindow() {
-        if(window == null) {
+        if (window == null) {
             if (glass != null) {
                 glass.removeFromParent();
                 glass = null;
             }
-        }else
+        } else
             window.unlockWindow();
     }
 
     public void lockWindow() {
-        if(window == null) {
+        if (window == null) {
             if (glass == null) {
                 glass = new AbsolutePanel();
                 glass.setStyleName(css.GlassPanel());
                 glass.setHeight(getOffsetHeight() + "px");
                 glass.setWidth(getOffsetWidth() + "px");
                 RootLayoutPanel.get().add(glass);
-                RootLayoutPanel.get().setWidgetLeftWidth(glass, getAbsoluteLeft(), Unit.PX, getOffsetWidth(),Unit.PX);
-                RootLayoutPanel.get().setWidgetTopHeight(glass, getAbsoluteTop(), Unit.PX, getOffsetHeight(), Unit.PX);
+                RootLayoutPanel.get().setWidgetLeftWidth(glass,
+                                                         getAbsoluteLeft(),
+                                                         Unit.PX,
+                                                         getOffsetWidth(),
+                                                         Unit.PX);
+                RootLayoutPanel.get().setWidgetTopHeight(glass,
+                                                         getAbsoluteTop(),
+                                                         Unit.PX,
+                                                         getOffsetHeight(),
+                                                         Unit.PX);
             }
-        }else
+        } else
             window.lockWindow();
     }
 
@@ -451,7 +400,7 @@ public class Screen extends ResizeComposite implements FocusHandler,
     public void setWindow(WindowInt window) {
         this.window = window;
     }
-    
+
     public WindowInt getWindow() {
         return window;
     }
@@ -463,52 +412,101 @@ public class Screen extends ResizeComposite implements FocusHandler,
     public EventBus getEventBus() {
         return bus;
     }
-    
+
     public static class Validation {
-        
+
         public enum Status {
             VALID(0), WARNINGS(1), FLAGGED(2), ERRORS(3);
-            
+
             int value;
-            
-            private Status(int value){
+
+            private Status(int value) {
                 this.value = value;
             }
         };
-        
+
         public Validation() {
             status = Status.VALID;
         }
-        
-        private Status status;
-        
+
+        private Status               status;
+
         private ArrayList<Exception> exceptions;
-        
+
         public void setStatus(Status status) {
-            if(status.value > this.status.value)
+            if (status.value > this.status.value)
                 this.status = status;
         }
-        
+
         public Status getStatus() {
             return status;
         }
-        
+
         public void addException(Exception exception) {
-            if(exceptions == null)
+            if (exceptions == null)
                 exceptions = new ArrayList<Exception>();
-            
+
             exceptions.add(exception);
         }
-        
+
         public ArrayList<Exception> getExceptions() {
             return exceptions;
         }
     }
-    
-    @Override
-    protected void onDetach() {
-        // TODO Auto-generated method stub
-        super.onDetach();
+
+    protected class ScreenKeyHandler implements KeyDownHandler {
+
+        @Override
+        public void onKeyDown(KeyDownEvent event) {
+            if (isTabEvent(event)) {
+                handleTabEvent(event);
+            } else if (isShortcutEvent(event)) {
+                handleShortcutEvent(event);
+            }
+        }
+
+        protected boolean isTabEvent(KeyDownEvent event) {
+            return event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB;
+        }
+
+        protected boolean isShortcutEvent(KeyDownEvent event) {
+            return event.isAnyModifierKeyDown();
+        }
+
+        protected void handleTabEvent(KeyDownEvent event) {
+            if (focused == null)
+                return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            focusNextWidget(focused, !event.isShiftKeyDown());
+        }
+
+        protected void handleShortcutEvent(KeyDownEvent event) {
+            Focusable target;
+
+            target = findShortcutTarget(event);
+
+            if (target == null)
+                return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (target instanceof Button) {
+                clickButton((Button)target);
+            } else if ( ((ScreenWidgetInt)target).isEnabled()) {
+                ((Focusable)target).setFocus(true);
+            }
+        }
+
+        protected Focusable findShortcutTarget(KeyDownEvent event) {
+            return shortcuts.get(new Shortcut(event.isControlKeyDown(),
+                                              event.isAltKeyDown(),
+                                              event.isShiftKeyDown(),
+                                              Character.toUpperCase((char)event.getNativeKeyCode())));
+        }
     }
 
 }

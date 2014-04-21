@@ -34,6 +34,7 @@ import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
+import org.openelis.ui.messages.UIMessages;
 import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
@@ -169,6 +170,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
     protected DropdownCSS                css;
 
     private Dropdown<T>                  source       = this;
+    
+    protected KeyboardHandler keyHandler = new KeyboardHandler();
 
     /**
      * Default no-arg constructor
@@ -182,10 +185,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      * Sets all handlers for user interaction.
      */
     public void init() {
-        /*
-         * Final instance of the private class KeyboardHandler
-         */
-        final KeyboardHandler keyHandler = new KeyboardHandler();
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -226,9 +225,8 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
             }
         });
 
-        /*
-         * Registers the keyboard handling this widget
-         */
+        keyHandler = new KeyboardHandler();
+        
         addHandler(keyHandler, KeyDownEvent.getType());
         addHandler(keyHandler, KeyPressEvent.getType());
 
@@ -280,19 +278,20 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
     protected void showPopup() {
         /* Set to true for button mouse down hack */
         showingOptions = true;
-        final LayoutPanel layout = new LayoutPanel();
+        final LayoutPanel layout = GWT.create(LayoutPanel.class);
 
         /* create a popup instance first time it is used */
         if (popup == null) {
-            popup = new PopupPanel(true);
+            popup = GWT.create(PopupPanel.class);
+            popup.setAutoHideEnabled(true);
             popup.setStyleName(css.Popup());
             
             //table.setModel(model);
 
             /* Draw popup for Multiselect when set */
             if (queryMode) {
-                uncheckAll = new Button(css.Unchecked(), Messages.get().drop_uncheck());
-                checkAll = new Button(css.Checked(), Messages.get().drop_check());
+                uncheckAll = new Button(css.Unchecked(), getMessages().drop_uncheck());
+                checkAll = new Button(css.Checked(), getMessages().drop_check());
 
                 uncheckAll.setCss(UIResources.INSTANCE.button());
                 checkAll.setCss(UIResources.INSTANCE.button());
@@ -421,7 +420,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
                 }
             } else {
                 sb = new StringBuffer().append(table.getSelectedRows().length + " " +
-                                               Messages.get().drop_optionsSelected());
+                                               getMessages().drop_optionsSelected());
             }
         }
 
@@ -482,7 +481,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      * 
      * @param model
      */
-    private void createKeyHash(ArrayList<Item<T>> model) {
+    protected void createKeyHash(ArrayList<Item<T>> model) {
         keyHash = new HashMap<T, Integer>();
 
         if (model != null)
@@ -746,7 +745,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         clearValidateExceptions();
 
         if (required && value == null)
-            addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+            addValidateException(new Exception(getMessages().exc_fieldRequired()));
 
         Balloon.checkExceptionHandlers(this);
     }
@@ -898,7 +897,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      * This method will perform a binary search on a sorted version of the the
      * Dropdown model
      */
-    private int findIndexByTextValue(String textValue) {
+    protected int findIndexByTextValue(String textValue) {
         int index = -1;
         /*
          * Force to Upper case for matching
@@ -1087,11 +1086,12 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         @SuppressWarnings("unchecked")
         private int findPrevActive(int index) {
             int prev;
-
-            /*
-             * Iterate backwards until the next enabled item is found
-             */
-            prev = index - 1;
+            
+            if(index < 0)
+                prev = table.getRowCount() - 1;
+            else
+                prev = index - 1;
+            
             while (prev > -1 && ! ((Item<T>)table.getModel().get(prev)).isEnabled())
                 prev-- ;
 
@@ -1112,7 +1112,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
             return true;
 
         if ( !queryMode && required && getValue() == null) {
-            addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+            addValidateException(new Exception(getMessages().exc_fieldRequired()));
             Balloon.checkExceptionHandlers(this);
         }
 
@@ -1383,4 +1383,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         return options;
     }
 
+    protected UIMessages getMessages() {
+        return Messages.get();
+    }
 }
