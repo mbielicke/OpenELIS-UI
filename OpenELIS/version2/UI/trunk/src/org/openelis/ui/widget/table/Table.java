@@ -2672,7 +2672,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void checkExceptions() {
         if(endUserExceptions != null) {
             for(Row row : endUserExceptions.keySet()) {
-                if(!model.contains(row))
+                if(model == null || !model.contains(row))
                     endUserExceptions.remove(row);
             }
             
@@ -2682,7 +2682,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         if(validateExceptions != null) {
             for(Row row : validateExceptions.keySet()) {
-                if(!model.contains(row))
+                if(model == null || !model.contains(row))
                     validateExceptions.remove(row);
             }
             
