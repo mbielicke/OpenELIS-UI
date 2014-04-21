@@ -143,7 +143,8 @@ public class View extends ViewInt {
      * @param tree
      */
     public View(Table tbl) {
-    	header = new Header(tbl);
+    	header = GWT.create(Header.class);
+    	header.init(tbl);
     	initWidget(uiBinder.createAndBindUi(this));
 
         this.table = tbl;

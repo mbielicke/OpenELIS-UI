@@ -3,23 +3,29 @@ package org.openelis.ui.widget;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TextBox;
 
 /**
  * This class is an extension of GWT's TextBox widget to add our Masking, Alignment, and Case
  * logic so it can be wrapped by other widgets in the library
  *
  */
-public class TextBase extends com.google.gwt.user.client.ui.TextBox {
+public class TextBase extends Composite {
 	
     /**
      * Textbox attributes
      */
-    protected TextAlignment                         alignment = TextAlignment.LEFT;
+    protected TextBox.TextAlignment                 alignment = TextBox.TextAlignment.LEFT;
     protected Case                                  textCase  = Case.MIXED;
 
 	
@@ -34,10 +40,13 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     
     protected TextBase                              source = this;
     
+    protected TextBox                               box;
+    
     protected TextCSS                               css = UIResources.INSTANCE.text();
     
     public TextBase() {
-    	super();
+    	box = GWT.create(TextBox.class);
+    	initWidget(box);
     	setCSS(UIResources.INSTANCE.text());
     }
     
@@ -48,7 +57,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     public String getText() {
     	String text;
     	
-    	text = super.getText();
+    	text = box.getText();
     	
     	if(enforceMask && text.equals(picture))
     		text = "";
@@ -76,8 +85,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
      * Set the text case for input.
      */
     public void setCase(Case textCase) {
-    	if(css == null)
-    		return;
+   	
     	if(textCase == null)
     		textCase = Case.MIXED;
     	
@@ -85,16 +93,16 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     	
         switch (textCase) {
             case UPPER:
-                addStyleName(css.Upper());
-                removeStyleName(css.Lower());
+                box.addStyleName(css.Upper());
+                box.removeStyleName(css.Lower());
                 break;
             case LOWER:
-                addStyleName(css.Lower());
-                removeStyleName(css.Upper());
+                box.addStyleName(css.Lower());
+                box.removeStyleName(css.Upper());
                 break;
             default:
-           		removeStyleName(css.Upper());
-           		removeStyleName(css.Lower());
+           		box.removeStyleName(css.Upper());
+           		box.removeStyleName(css.Lower());
         }
     }
 
@@ -102,9 +110,9 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     /**
      * Set the text alignment.
      */
-    public void setTextAlignment(TextAlignment alignment) {
+    public void setTextAlignment(TextBox.TextAlignment alignment) {
         this.alignment = alignment;
-        super.setAlignment(alignment);
+        box.setAlignment(alignment);
     }
     
     /**
@@ -122,6 +130,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     	if(msk == null) {
     		enforceMask = false;
     		picture = null;
+    		box.setMaxLength(255);
     		if(keyDown != null) {
     			keyDown.removeHandler();
     			keyPress.removeHandler();
@@ -159,9 +168,9 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     		 * Delete and BackSpace keys are handled in KeyDown because Chrome and IE do not 
     		 * pass these keys to the KeyPressEvent.  
     		 */
-    		keyDown = addKeyDownHandler(new KeyDownHandler() {
+    		keyDown = box.addKeyDownHandler(new KeyDownHandler() {
     			public void onKeyDown(KeyDownEvent event) {
-    				if(!isReadOnly())
+    				if(!box.isReadOnly())
     					maskKeyDown(event);
     			}
 
@@ -171,9 +180,9 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     		 * Masks are applied in all browsers in KeyPressEvent because it is the only method that will allow us to
     		 * view the typed character before it being applied to the textbox itself. 
     		 */
-    		keyPress = addKeyPressHandler(new KeyPressHandler() {
+    		keyPress = box.addKeyPressHandler(new KeyPressHandler() {
     			public void onKeyPress(KeyPressEvent event) {
-    				if(!isReadOnly())
+    				if(!box.isReadOnly())
     					maskKeyPress(event);
     			}
 
@@ -181,7 +190,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     		
     	}
     	
-    	setMaxLength(mask.length());
+    	box.setMaxLength(mask.length());
     }
     	
     
@@ -191,19 +200,22 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
      * @param enforce
      */
     public void enforceMask(boolean enforce) {
+        if(mask == null)
+            return;
+        
     	enforceMask = enforce;
     	
-    	if(enforce && mask != null)
-    	    setMaxLength(mask.length());
+    	if(enforce)
+    	    box.setMaxLength(mask.length());
     	else
-    	    setMaxLength(255);
+    	    box.setMaxLength(255);
     }
     
     public boolean isMaskEnforced() {
     	return enforceMask;
     }
     
-    private void maskKeyDown(KeyDownEvent event) {
+    protected void maskKeyDown(KeyDownEvent event) {
 		String input;
 		char mc;
 		int cursor,selectStart,selectEnd;
@@ -221,7 +233,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 
 		input = getText();  // Current state of the Textbox including selection.
 
-		cursor = getCursorPos(); //Current position of cursor when key was pressed.
+		cursor = box.getCursorPos(); //Current position of cursor when key was pressed.
 
 		/*
 		 * If backspace or delete key is hit we want to blank out the current positon and return
@@ -236,18 +248,18 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 			 * If part of the text is selected we want to blank out the selection preserving any mask literals 
 			 * and the current length of length of textbox input. 
 			 */
-			if(getSelectionLength() > 0) {
+			if(box.getSelectionLength() > 0) {
 				applied = new StringBuffer();
 
-				selectStart = getText().indexOf(getSelectedText());  // Start position of selection
-				selectEnd = selectStart + getSelectionLength();              // End positon of selection.
+				selectStart = getText().indexOf(box.getSelectedText());  // Start position of selection
+				selectEnd = selectStart + box.getSelectionLength();              // End positon of selection.
 
 				applied.append(input.substring(0, selectStart));  // Copy the start of the input up to the start of selection into buffer.
 
 				/*
 				 * Loop through the selected portion and either blank out or insert mask literals
 				 */
-				for(int i = 0; i < getSelectionLength(); i++) {
+				for(int i = 0; i < box.getSelectionLength(); i++) {
 					if(mask.toCharArray()[applied.length()] == '9' || mask.toCharArray()[applied.length()] == 'X')
 						applied.append(" ");
 					else
@@ -269,41 +281,43 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_BACKSPACE)
 				cursor--;
 
-			if(cursor < 0)
-				return;
+			if(cursor  > 0) {
+			
+			    mc = mask.charAt(cursor);  // get current mask char based on cursor
 
-			mc = mask.charAt(cursor);  // get current mask char based on cursor
-
-			/*
-			 * if mask position is not a literal we will remove the char
-			 * and replace with blank.  If it is a literal we want to just echo 
-			 * what is in the textbox.
-			 */
-			if(mc == '9' || mc == 'X') {
-				applied.append(input.substring(0,cursor));
-				applied.append(" ");
-				applied.append(input.substring(cursor+1));
-			}else
-				applied.append(input);  
+			    /*
+			     * if mask position is not a literal we will remove the char
+			     * and replace with blank.  If it is a literal we want to just echo 
+			     * what is in the textbox.
+			     */
+			    if(mc == '9' || mc == 'X') {
+			        applied.append(input.substring(0,cursor));
+			        applied.append(" ");
+			        applied.append(input.substring(cursor+1));
+			    }else {
+			        applied.append(input); 
+			    }
+			}else {
+			    applied.append(input);
+			}
 
 			/*
 			 * Set new Text and cursor position into widget
 			 */
-			setText(applied.toString());
-			setCursorPos(cursor);
-
-			/*
-			 * KeyPressEvent occurs before the browser applies changes to the textbox.
-			 * We stop propagation and default since we already set the changes we wanted
-			 * otherwise the typed char would be repeated
-			 */
-			event.preventDefault();
+			box.setText(applied.toString());
+			box.setCursorPos(cursor > -1 ? cursor : 0);
+			
+		    /*
+    	     * KeyPressEvent occurs before the browser applies changes to the textbox.
+		     *  We stop propagation and default since we already set the changes we wanted
+		     * otherwise the typed char would be repeated
+		     */
+		    event.preventDefault();
 	        event.stopPropagation();
-
 		}
 	}
     
-    private void maskKeyPress(KeyPressEvent event) {
+    protected void maskKeyPress(KeyPressEvent event) {
 		String input;
 		int cursor,selectStart,selectEnd;
 		char ch,mc;
@@ -323,7 +337,7 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 
 		input = getText();  // Current state of the Textbox including selection.
 
-		cursor = getCursorPos(); //Current position of cursor when key was pressed.
+		cursor = box.getCursorPos(); //Current position of cursor when key was pressed.
         
 		selectStart = cursor;
         
@@ -331,18 +345,18 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 		 * If part of the text is selected we want to blank out the selection preserving any mask literals 
 		 * and the current length of length of textbox input. 
 		 */
-		if(getSelectionLength() > 0) {
+		if(box.getSelectionLength() > 0) {
 			applied = new StringBuffer();
 
-			selectStart = getText().indexOf(getSelectedText());  // Start position of selection
-			selectEnd = selectStart + getSelectionLength();              // End positon of selection.
+			selectStart = getText().indexOf(box.getSelectedText());  // Start position of selection
+			selectEnd = selectStart + box.getSelectionLength();              // End positon of selection.
 
 			applied.append(input.substring(0, selectStart));  // Copy the start of the input up to the start of selection into buffer.
 
 			/*
 			 * Loop through the selected portion and either blank out or insert mask literals
 			 */
-			for(int i = 0; i < getSelectionLength(); i++) {
+			for(int i = 0; i < box.getSelectionLength(); i++) {
 				if(mask.toCharArray()[applied.length()] == '9' || mask.toCharArray()[applied.length()] == 'X')
 					applied.append(" ");
 				else
@@ -431,8 +445,8 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
 		/*
 		 * Set new Text and cursor position into widget
 		 */
-		setText(applied.toString());
-		setCursorPos(cursor);
+		box.setText(applied.toString());
+		box.setCursorPos(cursor);
 
 		/*
 		 * KeyPressEvent occurs before the browser applies changes to the textbox.
@@ -448,13 +462,68 @@ public class TextBase extends com.google.gwt.user.client.ui.TextBox {
     	this.css = css;
     }
     
-    @Override
+    /*
+     *  Methods below here are pass-through to box to complete the composition 
+     */
+    
     public void setEnabled(boolean enabled) {
-        setReadOnly(!enabled);
+        box.setReadOnly(!enabled);
     }
 
-    @Override
     public boolean isEnabled() {
-        return !isReadOnly();
+        return !box.isReadOnly();
     }
+    
+    public void setSelectionRange(int pos, int length) {
+        box.setSelectionRange(pos, length);
+    }
+    
+    public void setFocus(boolean focused) {
+        box.setFocus(focused);
+    }
+    
+    public void setText(String text) {
+        box.setText(text);
+    }
+    
+    public void setReadOnly(boolean readOnly) {
+        box.setReadOnly(readOnly);
+    }
+    
+    public int getSelectionLength() {
+        return box.getSelectionLength();
+    }
+    
+    public boolean isReadOnly() {
+        return box.isReadOnly();
+    }
+    
+    public void selectAll() {
+        box.selectAll();
+    }
+    
+    public HandlerRegistration addFocusHandler(FocusHandler handler) {
+        return box.addFocusHandler(handler);
+    }
+    
+    public HandlerRegistration addBlurHandler(BlurHandler handler) {
+        return box.addBlurHandler(handler);
+    }
+    
+    public void setMaxLength(int length) {
+        box.setMaxLength(length);
+    }
+    
+    public void setAlignment(TextBox.TextAlignment align) {
+        box.setAlignment(alignment);
+    }
+    
+    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+        return box.addKeyUpHandler(handler);
+    }
+    
+    public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
+        return box.addKeyPressHandler(handler);
+    }
+    
 }

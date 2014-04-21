@@ -166,7 +166,7 @@ public class GwtDropdown extends IntegrationTest {
 		click(test.button);
 		click(test.uncheckAll);
 		//click(test.close);
-		blur(test.textbox);
+		//blur(test.textbox);
 		assertNull(test.getQuery());
 	}
 
