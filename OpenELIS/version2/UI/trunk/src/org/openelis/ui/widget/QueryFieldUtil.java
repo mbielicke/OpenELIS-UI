@@ -56,6 +56,9 @@ public class QueryFieldUtil {
     }
 
     public void parse(String value) throws Exception {
+        if(value == null || "".equals(value))
+            return;
+        
         this.queryString = value;
         comparator = new ArrayList<String>();
         parameter = new ArrayList<String>();
