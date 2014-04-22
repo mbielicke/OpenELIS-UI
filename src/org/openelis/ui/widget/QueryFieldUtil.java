@@ -137,6 +137,9 @@ public class QueryFieldUtil {
     }
 
     public void parseDouble(String query) throws Exception {
+        if(query == null || "".equals(query))
+            return;
+        
         parse(query);
 
         // Loop through query params and make sure each is a valid double value
@@ -155,6 +158,9 @@ public class QueryFieldUtil {
     }
 
     public void parseInteger(String query) throws Exception {
+        if(query == null || "".equals(query))
+            return;
+        
         parse(query);
 
         // Loop through query params and make sure each is a valid double value
@@ -173,6 +179,9 @@ public class QueryFieldUtil {
     }
 
     public void parseLong(String query) throws Exception {
+        if(query == null || "".equals(query))
+            return;
+        
         parse(query);
 
         // Loop through query params and make sure each is a valid double value
@@ -191,6 +200,9 @@ public class QueryFieldUtil {
     }
 
     public void parseDate(String query, String pattern) throws Exception {
+        if(query == null || "".equals(query))
+            return;
+        
         parse(query);
 
         // Loop through query params and make sure each is a valid date value

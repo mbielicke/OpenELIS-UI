@@ -100,13 +100,13 @@ public class TestDateHelper {
     @Test
     public void validateQueryNull() {
         try {
-            helper.validate(null);
+            helper.validateQuery(null);
         }catch(Exception e) {
             fail("Should not throw exception on null");
         }
         
         try {
-            helper.validate("");
+            helper.validateQuery("");
         }catch(Exception e) {
             fail("Should not throw exception on empty string");
         }
