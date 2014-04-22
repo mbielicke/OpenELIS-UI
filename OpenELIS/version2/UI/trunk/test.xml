@@ -64,7 +64,7 @@
 		</junit>
 		</jacoco:coverage>
 	</target>
-
+	
 	<target name="findbugs">
 		<mkdir dir="reports/findbugs" />
 
