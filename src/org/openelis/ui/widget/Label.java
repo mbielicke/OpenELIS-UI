@@ -267,4 +267,8 @@ public class Label<T> extends Composite implements HasValue<T>,
     public void setText(String text) {
         label.setText(text);
     }
+    
+    public void setWordWrap(boolean wrap) {
+        label.setWordWrap(wrap);
+    }
 }
