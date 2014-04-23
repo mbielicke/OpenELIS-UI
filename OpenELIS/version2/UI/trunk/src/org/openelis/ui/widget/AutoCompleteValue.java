@@ -127,8 +127,8 @@ public class AutoCompleteValue {
         if(!(obj instanceof AutoCompleteValue))
             return false;
         
-        return DataBaseUtil.isDifferent(((AutoCompleteValue)obj).id,id) && 
-               DataBaseUtil.isDifferent(((AutoCompleteValue)obj).display,display);
+        return DataBaseUtil.isSame(((AutoCompleteValue)obj).id,id) && 
+               DataBaseUtil.isSame(((AutoCompleteValue)obj).display,display);
     }
     
 }
