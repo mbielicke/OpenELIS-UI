@@ -37,4 +37,12 @@ public class ScriptletRunner<T extends ScriptletObject> {
  
         return so;
     }
+    
+    public int numberOfScriptlets() {
+        return scriptlets.size();
+    }
+    
+    public boolean containsScriptlet(ScriptletInt<T> scriptlet) {
+        return scriptlets.contains(scriptlet);
+    }
 }
