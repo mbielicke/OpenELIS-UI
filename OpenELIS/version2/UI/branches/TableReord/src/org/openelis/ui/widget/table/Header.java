@@ -112,7 +112,11 @@ public class Header extends FocusPanel {
      * 
      * @param table
      */
-    public Header(final Table table) {
+    public Header() {
+        
+    }
+    
+    public void init(final Table table) {
     	css = UIResources.INSTANCE.table();
     	css.ensureInjected();
     	

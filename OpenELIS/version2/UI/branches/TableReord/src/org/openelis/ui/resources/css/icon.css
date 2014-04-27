@@ -197,3 +197,19 @@
 	gwt-image: 'selectDisabled';
 	width: 20px
 }
+
+@sprite .PreviousPageButtonImage {
+	gwt-image:'previousPage';
+}
+
+@sprite .Disabled .PreviousPageButtonImage {
+	gwt-image:'previousPageDisabled';
+}
+
+@sprite .NextPageButtonImage {
+	gwt-image: 'nextPage';
+}
+
+@sprite .Disabled .NextPageButtonImage {
+	gwt-image:'nextPageDisabled';
+}

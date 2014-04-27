@@ -130,7 +130,8 @@ public class StaticView extends ViewInt {
      * @param tree
      */
     public StaticView(Table tbl) {
-        header = new Header(tbl);
+        header = GWT.create(Header.class);
+        header.init(tbl);
         
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -150,6 +151,16 @@ public class StaticView extends ViewInt {
                 DOM.setStyleAttribute(header.getElement(),
                                       "left",
                                       (0 - scrollView.getHorizontalScrollPosition()) + "px");
+            }
+        });
+        
+        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+            
+            @Override
+            public void onCellMouseOut(CellMouseOutEvent event) {
+                if(table.balloonTimer != null)
+                    table.balloonTimer.cancel();
+                Balloon.hide();
             }
         });
         
@@ -342,7 +353,12 @@ public class StaticView extends ViewInt {
             tb.appendHtmlConstant("</tr>");
         }
        
-        flexTable.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(tb.toSafeHtml());
+        
+        // this is in a try catch only to get by for unit testing
+        try {
+            flexTable.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(tb.toSafeHtml());
+        }catch(Exception e) {
+        }
         
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
@@ -504,7 +520,12 @@ public class StaticView extends ViewInt {
             flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
                 @Override
                 public void onCellMouseOver(CellMouseOverEvent event) {
-                    table.drawExceptions(event.getRow(), event.getCol(), event.getX(), event.getY());
+                    int x,y;
+                    Element td = flexTable.getCellFormatter().getElement(event.getRow(), event.getCol());
+                    
+                    y = td.getAbsoluteTop();
+                    x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
+                    table.drawExceptions(event.getRow(), event.getCol(),x, y);
                 }
 
             });

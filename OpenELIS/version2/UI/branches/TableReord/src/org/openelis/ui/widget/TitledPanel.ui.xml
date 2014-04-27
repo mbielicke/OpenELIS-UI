@@ -1,0 +1,16 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+       xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+  
+  <ui:with type="org.openelis.ui.resources.UIResources" field="res"/>
+  
+  <g:LayoutPanel>
+    <g:layer>
+      <g:HTMLPanel width="100%" height="100%">
+        <fieldset ui:field="fieldset">
+          <legend ui:field="legend"></legend>
+          <g:LayoutPanel ui:field="content"/>
+        </fieldset>
+      </g:HTMLPanel>
+    </g:layer>
+  </g:LayoutPanel>
+</ui:UiBinder>
