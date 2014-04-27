@@ -103,6 +103,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -786,7 +787,11 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (modelView == null)
             return 0;
 
-        return modelView.size();
+        try {
+            return modelView.size();
+        }catch(Exception e) {
+            return 0;
+        }
     }
 
     /**
@@ -1374,7 +1379,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
          * If none apply the logic will fall throw to normal selection.
          */
         if (isMultipleSelectionAllowed()) {
-            if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
+            if (ctrlDefault || (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK)) {
                 multiSelect(row,event);
                 return;
             }
@@ -1408,7 +1413,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         endSelect = row;
         
         ctrlKey = ctrlDefault ? ctrlDefault : event.getCtrlKey();
-        shiftKey = event.getShiftKey();
+        shiftKey = event != null ? event.getShiftKey() : false;
         
         if (ctrlKey) {
             if (isRowSelected(row)) {
@@ -2674,7 +2679,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void checkExceptions() {
         if(endUserExceptions != null) {
             for(T row : endUserExceptions.keySet()) {
-                if(!model.contains(row))
+                if(model == null || !model.contains(row))
                     endUserExceptions.remove(row);
             }
             
@@ -2684,7 +2689,7 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         if(validateExceptions != null) {
             for(T row : validateExceptions.keySet()) {
-                if(!model.contains(row))
+                if(model == null || !model.contains(row))
                     validateExceptions.remove(row);
             }
             
@@ -2895,9 +2900,14 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public void onResize() {
-        Element parent = (Element) (getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this)
+        Element parent;
+        
+        if(!isAttached())
+            return;
+            
+        parent = (Element) (getParent() instanceof LayoutPanel ? ((LayoutPanel)getParent()).getWidgetContainerElement(this)
                                                             : getParent().getElement());
-
+       
         int width = parent.getOffsetWidth();
         int height = parent.getOffsetHeight();
          
@@ -2940,8 +2950,10 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
                 tipCol = event.getCol();
                 final int x,y;
                 
-                x = event.getX();
-                y = event.getY();
+                Element td = view.table().getCellFormatter().getElement(event.getRow(), event.getCol());
+                
+                y = td.getAbsoluteTop();
+                x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
                 
                 if(!hasExceptions(tipRow, tipCol)) {
                     balloonTimer = new Timer() {
@@ -2954,16 +2966,6 @@ public class Table<T> extends FocusPanel implements ScreenWidgetInt, Queryable,
                 
             }
         });
-       
-       view.table().addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
-        
-           @Override
-           public void onCellMouseOut(CellMouseOutEvent event) {
-               balloonTimer.cancel();
-               Balloon.hide();
-           }
-       });
-       
         
        options.setTipProvider(new Balloon.TipProvider<Object>() {
         

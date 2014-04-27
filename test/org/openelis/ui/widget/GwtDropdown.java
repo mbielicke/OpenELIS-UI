@@ -1,17 +1,13 @@
 package org.openelis.ui.widget;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import org.openelis.gwt.widget.IntegrationTest;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Dropdown;
 import org.openelis.ui.widget.Item;
 import org.openelis.ui.widget.KeyCodes;
 import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.Table;
-
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
 
 public class GwtDropdown extends IntegrationTest {
 	
@@ -170,7 +166,7 @@ public class GwtDropdown extends IntegrationTest {
 		click(test.button);
 		click(test.uncheckAll);
 		//click(test.close);
-		blur(test.textbox);
+		//blur(test.textbox);
 		assertNull(test.getQuery());
 	}
 

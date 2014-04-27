@@ -857,11 +857,15 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
 	}
-
+	
 	@Override
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
 	}
+	
+	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+        return addDomHandler(handler, KeyUpEvent.getType());
+    }
 
 	// ********** Implementation of HasException interface ***************
 	/**

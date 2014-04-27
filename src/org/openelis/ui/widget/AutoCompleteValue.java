@@ -25,6 +25,8 @@
 */
 package org.openelis.ui.widget;
 
+import org.openelis.ui.common.DataBaseUtil;
+
 /**
  * Class used by AutoComplete to store its key-value pair
  * @author tschmidt
@@ -118,6 +120,15 @@ public class AutoCompleteValue {
      */
     public void setData(Object data) {
     	this.data = data;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof AutoCompleteValue))
+            return false;
+        
+        return DataBaseUtil.isSame(((AutoCompleteValue)obj).id,id) && 
+               DataBaseUtil.isSame(((AutoCompleteValue)obj).display,display);
     }
     
 }

@@ -29,6 +29,7 @@
     <source path="services" />
     <source path="screen" />
     <source path="event" />
+    <source path="scriptlet"/>
     <source path="test"/>
 
     <replace-with

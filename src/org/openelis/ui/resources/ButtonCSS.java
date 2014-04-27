@@ -7,5 +7,5 @@ public interface ButtonCSS extends CssResource {
 	String Pressed();
 	String Disabled();
 	String Button();
-
+	String Focus();
 }

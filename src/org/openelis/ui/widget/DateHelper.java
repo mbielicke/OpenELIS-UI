@@ -7,6 +7,7 @@ import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
+import org.openelis.ui.messages.UIMessages;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
@@ -62,7 +63,7 @@ public class DateHelper implements WidgetHelper<Datetime> {
         try {
             date =  DateTimeFormat.getFormat(pattern).parseStrict(input);
         }catch(Exception e) {
-            throw new Exception(Messages.get().exc_invalidDate());
+            throw new Exception(getMessages().exc_invalidDate());
         }
         
         return Datetime.getInstance(begin,end,date);
@@ -73,16 +74,8 @@ public class DateHelper implements WidgetHelper<Datetime> {
      * and that the query params are all valid date values. 
      */
     public void validateQuery(String input) throws Exception {
-        QueryFieldUtil qField;
 
-        // If null or empty string do nothing and return.
-        if (input == null || input.equals(""))
-            return;
-
-        // Parse query and if invalid set exception and return right away.
-        qField = new QueryFieldUtil();
-        
-        qField.parseDate(input, pattern);
+        new QueryFieldUtil().parseDate(input, pattern);
 
     }
 
@@ -147,11 +140,11 @@ public class DateHelper implements WidgetHelper<Datetime> {
     
     private void setDefaultPattern() {
        	if(begin > Datetime.DAY) {
-    		setPattern(Messages.get().gen_timePattern());
+    		setPattern(getMessages().gen_timePattern());
     	} else if (end < Datetime.HOUR){
-    		setPattern(Messages.get().gen_datePattern());
+    		setPattern(getMessages().gen_datePattern());
     	} else {
-    		setPattern(Messages.get().gen_dateTimePattern());
+    		setPattern(getMessages().gen_dateTimePattern());
     	}
     }
 
@@ -163,10 +156,14 @@ public class DateHelper implements WidgetHelper<Datetime> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value))
-			exceptions.add(new Exception(Messages.get().exc_invalidDate()));
+			exceptions.add(new Exception(getMessages().exc_invalidDate()));
 		
 		return exceptions;
 		
+	}
+	
+	protected UIMessages getMessages() {
+	    return Messages.get();
 	}
 
 }

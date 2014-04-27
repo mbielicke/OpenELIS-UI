@@ -21,6 +21,7 @@
 	 background:#e7f0f7;
  }
 
+
 @if user.agent gecko1_8 {
 	.Button:hover{
 	}
@@ -49,6 +50,11 @@
     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #dddfe2 inset;}
 }
 
+.Focus {
+	cursor:pointer;
+     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
+	 background:#e7f0f7;
+}
  .Pressed{}
 /*
 @if user.agent gecko1_8 {

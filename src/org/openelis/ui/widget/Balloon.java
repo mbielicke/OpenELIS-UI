@@ -80,15 +80,15 @@ public class Balloon extends Composite {
 
     protected ToolTipCSS                                                 css            = UIResources.INSTANCE.toolTip();
 
-    protected static Balloon                                             balloon;
-    protected static Timer                                               tipTimer, timer;
-    protected static PopupPanel                                          pop;
+    protected static final Balloon                                             balloon;
+    protected static final Timer                                               tipTimer, timer;
+    protected static final PopupPanel                                          pop;
     protected static HasBalloon                                          targetWidget;
     protected static Element                                             targetElement;
     protected static TipHandler                                          tipHandler;
-    protected static ExceptionHandlers                                   exceptHandler;
+    protected static final ExceptionHandlers                                   exceptHandler;
     protected static int                                                 x, y;
-    protected static VerticalPanel                                       exceptionPanel = new VerticalPanel();
+    protected static final VerticalPanel                                       exceptionPanel = new VerticalPanel();
     protected static final DialogCSS                                     dialogCss      = UIResources.INSTANCE.dialog();
     protected static final HashMap<HasExceptions, HandlerRegistration>   overHandlers;
     protected static final HashMap<HasExceptions, HandlerRegistration>   outHandlers;
