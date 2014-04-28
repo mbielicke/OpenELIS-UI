@@ -43,7 +43,7 @@ public class GwtTableUnit2 extends GWTTestCase {
     protected void gwtSetUp() throws Exception {
         super.gwtSetUp();
 
-        Table2 uiWidget = new Table2();
+        TestTable2 uiWidget = new TestTable2();
         uiWidget.panel.setSize("350px", "100px");
         uiWidget.panel.forceLayout();
 

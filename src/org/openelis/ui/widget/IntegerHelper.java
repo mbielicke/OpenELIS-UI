@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
-import org.openelis.ui.messages.UIMessages;
 
 import com.google.gwt.i18n.client.NumberFormat;
 
@@ -67,7 +66,7 @@ public class IntegerHelper implements WidgetHelper<Integer> {
 					// Do nothing to Fall through and throw the exception.
 				}
 			}
-			throw new Exception(getMessages().exc_invalidNumeric());
+			throw new Exception(Messages.get().exc_invalidNumeric());
 		}
 	}
 
@@ -78,8 +77,17 @@ public class IntegerHelper implements WidgetHelper<Integer> {
 	 * successful.
 	 */
 	public void validateQuery(String input) throws Exception {
+		QueryFieldUtil qField;
+
+		// If null or empty string do nothing and return.
+		if (input == null || input.equals(""))
+			return;
+
 		// Parse query and if invalid set exception and return right away.
-		new QueryFieldUtil().parseInteger(input);
+		qField = new QueryFieldUtil();
+		
+		qField.parseInteger(input);
+
 	}
 
 	/**
@@ -109,7 +117,7 @@ public class IntegerHelper implements WidgetHelper<Integer> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value)) 
-			exceptions.add(new Exception(getMessages().exc_invalidNumeric()));
+			exceptions.add(new Exception(Messages.get().exc_invalidNumeric()));
 		
 		return exceptions;
 	}
@@ -118,7 +126,4 @@ public class IntegerHelper implements WidgetHelper<Integer> {
 		return value == null || value instanceof Integer;
 	}
 
-	protected UIMessages getMessages() {
-	    return Messages.get();
-	}
 }

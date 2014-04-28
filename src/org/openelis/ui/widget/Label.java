@@ -6,15 +6,9 @@ import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiChild;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
 
 /**
@@ -28,11 +22,10 @@ import com.google.gwt.user.client.ui.HasValue;
  * 
  * @param <T>
  */
-public class Label<T> extends Composite implements HasValue<T>,
-                                                   HasHelper<T>,
-                                                   HasExceptions,
-                                                   HasBalloon,
-                                                   HasClickHandlers {
+public class Label<T> extends com.google.gwt.user.client.ui.Label implements HasValue<T>,
+                                                                             HasHelper<T>,
+                                                                             HasExceptions,
+                                                                             HasBalloon {
 
     /*
      * value and helper fields
@@ -50,15 +43,12 @@ public class Label<T> extends Composite implements HasValue<T>,
     protected Balloon.Options   options;
     
     protected TextCSS css;
-    
-    protected com.google.gwt.user.client.ui.Label label;
 
     /**
      * Default no-arg constructor
      */
     public Label() {
-        label = GWT.create(com.google.gwt.user.client.ui.Label.class);
-        initWidget(label);
+        super();
         setCSS(UIResources.INSTANCE.text());
     }
 
@@ -68,8 +58,9 @@ public class Label<T> extends Composite implements HasValue<T>,
      * @param value
      */
     public Label(T value) {
-        this();
+        super();
         setValue(value);
+        setCSS(UIResources.INSTANCE.text());
     }
 
     // *********** Implementaton of HasValue<T> ************
@@ -86,7 +77,7 @@ public class Label<T> extends Composite implements HasValue<T>,
      */
     public void setValue(T value) {
         this.value = value;
-        label.setText(helper.format(value));
+        setText(helper.format(value));
     }
 
     /**
@@ -183,30 +174,30 @@ public class Label<T> extends Composite implements HasValue<T>,
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(!Balloon.isWarning(this))
-    		label.addStyleName(css.InputError());
+    	if(Balloon.isWarning(this))
+    		addStyleName(css.InputError());
     	else
-    		label.addStyleName(css.InputWarning());
+    		addStyleName(css.InputWarning());
     }
 
     /**
      * will remove the style from the widget
      */
     public void removeExceptionStyle() {
-        label.removeStyleName(css.InputError());
-        label.removeStyleName(css.InputWarning());
+        removeStyleName(css.InputError());
+        removeStyleName(css.InputWarning());
     }
     
     public void setCSS(TextCSS css) {
     	css.ensureInjected();
     	
     	if(getStyleName().contains(css.InputError())) {
-    		label.removeStyleName(this.css.InputError());
-    		label.addStyleName(css.InputError());
+    		removeStyleName(this.css.InputError());
+    		addStyleName(css.InputError());
     	}
     	if(getStyleName().contains(css.InputWarning())) {
-    		label.removeStyleName(this.css.InputWarning());
-    		label.addStyleName(css.InputWarning());
+    		removeStyleName(this.css.InputWarning());
+    		addStyleName(css.InputWarning());
     	}
     	
     	this.css = css;
@@ -217,6 +208,8 @@ public class Label<T> extends Composite implements HasValue<T>,
     public void setField(String field) {
     	if(field.equals("Date")) {
     		DateHelper helper = new DateHelper();
+    		helper.setBegin((byte)0);
+    		helper.setEnd((byte)2);
     		setHelper((WidgetHelper)helper);
     	}
     }
@@ -247,28 +240,5 @@ public class Label<T> extends Composite implements HasValue<T>,
     
     public Balloon.Options getBalloonOptions() {
         return options;
-    }
-
-    @Override
-    public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-        return label.addMouseOverHandler(handler);
-    }
-
-    @Override
-    public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-        return label.addMouseOutHandler(handler);
-    }
-
-    @Override
-    public HandlerRegistration addClickHandler(ClickHandler handler) {
-        return label.addClickHandler(handler);
-    }
-    
-    public void setText(String text) {
-        label.setText(text);
-    }
-    
-    public void setWordWrap(boolean wrap) {
-        label.setWordWrap(wrap);
     }
 }

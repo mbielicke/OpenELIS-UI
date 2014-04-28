@@ -36,8 +36,8 @@ import org.openelis.ui.resources.WindowCSS;
 
 import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -157,7 +157,7 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
             }
         });
 
-        label = GWT.create(HTML.class);
+        label = new HTML();
         label.setText(" ");
 
         view.getCap().add(label);
@@ -496,7 +496,7 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
 
     public void lockWindow() {
         if (glass == null) {
-            glass = GWT.create(AbsolutePanel.class);
+            glass = new AbsolutePanel();
             glass.setStyleName(css.GlassPanel());
             glass.setHeight(content.getOffsetHeight() + "px");
             glass.setWidth(content.getOffsetWidth() + "px");

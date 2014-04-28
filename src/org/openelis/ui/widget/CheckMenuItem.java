@@ -25,6 +25,9 @@
 */
 package org.openelis.ui.widget;
 
+import javax.persistence.metamodel.SetAttribute;
+
+import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -33,6 +36,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Grid;
 
 /**
  * This class is used to draw a FilterMenItem to be used in the Popup menu of a table

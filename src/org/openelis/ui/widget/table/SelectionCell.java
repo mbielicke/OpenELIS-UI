@@ -10,7 +10,6 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Label;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.TextOverflow;
@@ -64,8 +63,7 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
-        Grid editor = GWT.create(Grid.class);
-        editor.resize(1, 2);
+        Grid editor = new Grid(1,2);
         editor.setCellPadding(0);
         editor.setCellSpacing(0);
         editor.getCellFormatter().setStyleName(0, 0, css.SelectionCell());

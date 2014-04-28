@@ -52,18 +52,8 @@ public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateCh
 	
 	public void isValid(Validation validation) {
 	    HasExceptions he;
-	    
-	    if(widget instanceof Screen) {
-	        Validation tabValid = ((Screen)widget).validate();
-        
-	        if(tabValid.getStatus().value > validation.getStatus().value)
-	            validation.setStatus(tabValid.getStatus());
-        
-	        if(tabValid.getExceptions() != null) 
-	            for(Exception exception : tabValid.getExceptions())
-	                validation.addException(exception);
-	            
-        }else if(widget instanceof HasExceptions) {
+	
+	    if(widget instanceof HasExceptions) {
 	        he = (HasExceptions)widget;
 	        if(he.hasExceptions()) {
 	            if(Balloon.isWarning(he))

@@ -146,36 +146,17 @@ public class Datetime implements Serializable, Comparable<Datetime> {
 	public boolean equals(Object obj) {
         Date compDate;
 
-        if (!(obj instanceof Datetime))
+        if (obj instanceof Datetime)
+            compDate = ((Datetime)obj).getDate();
+        else if (obj instanceof Date)
+            compDate = (Date)obj;
+        else
             return false;
-        
-        compDate = ((Datetime)obj).getDate();
 
         if (endCode < HOUR)
             return new Date(year, month, date).equals(compDate);
 
         return timestamp.equals(compDate);
-    }
-    
-    @SuppressWarnings("deprecation")
-    public boolean equals(Date compDate) {
-        if(compDate == null)
-            return false;
-        
-        if (endCode < HOUR)
-            return new Date(year, month, date).equals(compDate);
-
-        return timestamp.equals(compDate);
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 17 * hash + (timestamp != null ? timestamp.hashCode() : 1);
-        hash = 17 * hash + year;
-        hash = 17 * hash + date;
-        hash = 17 * hash + month;
-        return hash;
     }
 
     /**

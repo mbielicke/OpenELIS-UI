@@ -1,4 +1,4 @@
-package org.openelis.ui.widget;
+package org.openelis.gwt.widget;
 
 import org.junit.Ignore;
 import org.openelis.ui.widget.table.Table;

@@ -15,7 +15,7 @@
       <g:AbsolutePanel ui:field="title" width="100%"/>
     </g:layer>
     <g:layer top="20px" bottom="0px">
-      <g:ScrollPanel styleName="ContentPanel" ui:field="content"/>
+      <g:LayoutPanel styleName="ContentPanel" ui:field="content"/>
     </g:layer>
   </g:LayoutPanel>
   

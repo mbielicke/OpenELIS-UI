@@ -42,7 +42,7 @@ public class Link extends Composite {
     public Link(String text, String url) {
         this();
         details.text = text;
-        this.label.setValue(text);
+        this.label.setText(text);
         details.url = url;
     }
     
@@ -58,7 +58,7 @@ public class Link extends Composite {
     
     public void setDetails(Details details) {
         this.details = details;
-        label.setValue(details.text);
+        label.setText(details.text);
     }
     
     public static class Details implements Serializable {

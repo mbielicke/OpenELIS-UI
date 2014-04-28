@@ -92,7 +92,7 @@ public class TabWidget extends FocusPanel {
                 notification = new Label();
                 notification.setStyleName(css.TabNotificationText());
             }
-            notification.setValue(text);
+            notification.setText(text);
             icon.add(notification);
         }
     }

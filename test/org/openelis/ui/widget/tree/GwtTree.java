@@ -25,7 +25,7 @@ public class GwtTree extends GWTTestCase {
 	protected void gwtSetUp() throws Exception {
 		super.gwtSetUp();
 		
-        Tree2 uiWidget = new Tree2();
+        TestTree uiWidget = new TestTree();
         uiWidget.panel.setSize("350px", "100px");
         uiWidget.panel.forceLayout();
 

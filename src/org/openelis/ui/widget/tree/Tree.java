@@ -557,7 +557,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void toggle(Node node) {
         if(isDisplayed(node))
-            toggle(nodeIndex.get(node).index, null);
+            toggle(nodeIndex.get(node).index);
     }
     
     /**
@@ -568,14 +568,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void toggle(int row) {
-        toggle(row,null);
-    }
-    
-    protected void toggle(int row, NativeEvent event) {
         if(getNodeAt(row).isOpen())
-            close(row,event);
+            close(row);
         else
-            open(row,event);
+            open(row);
     }
     
     /**
@@ -585,7 +581,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void open(Node node) {
         if(isDisplayed(node))
-            open(nodeIndex.get(node).index,null);
+            open(nodeIndex.get(node).index);
     }
     
     /**
@@ -596,13 +592,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void open(int row) {
-        open(row,null);
-    }
-    
-    protected void open(int row, NativeEvent event) {
         finishEditing();
         
-        selectNodeAt(row,event);
+        selectNodeAt(row);
         
         Node node;
         int pos;
@@ -660,15 +652,11 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param row
      */
     public void close(int row) {
-        close(row,null);
-    }
-    
-    protected void close(int row, NativeEvent event) {
         int adj = 0,children;
         
         finishEditing();
         
-        selectNodeAt(row,event);
+        selectNodeAt(row);
         
         Node node;
         int pos;
@@ -1427,39 +1415,77 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      */
     public void selectNodeAt(int index, NativeEvent event) {
-        if(index < 0) {
-            unselectAll();
-            return;
-        }
+    	boolean ctrlKey, shiftKey, selected = false;
+    	int startSelect, endSelect,minSelected,maxSelected,i;
+    	
+    	startSelect = index;
+    	endSelect = index;
     	
 		/*
 		 * If multiple selection is allowed check event for ctrl or shift keys.
 		 * If none apply the logic will fall throw to normal selection.
 		 */
 		if (isMultipleSelectionAllowed()) {
-		    if (event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
-                multiSelect(index,event);
-                return;
-            }
+			if(event != null && Event.getTypeInt(event.getType()) == Event.ONCLICK) {
+				ctrlKey = event.getCtrlKey();
+				shiftKey = event.getShiftKey();
+
+				if (ctrlKey) {
+					if (isNodeSelected(index)) {
+						unselectNodeAt(index,event);
+						return;
+					}
+				}else if (shiftKey) {
+					if (!isAnyNodeSelected()) {
+						startSelect = 0;
+						endSelect = index;
+					} else {
+						Collections.sort(selections);
+						minSelected = Collections.min(selections);
+						maxSelected = Collections.max(selections);
+						if (minSelected > index) {
+							startSelect = index;
+							endSelect = minSelected;
+						} else if (index > maxSelected) {
+							startSelect = maxSelected;
+							endSelect = index;
+						} else {
+							i = 0;
+							while (selections.get(i + 1) < index)
+								i++;
+							startSelect = selections.get(i);
+							endSelect = index;
+						}
+					}
+					unselectAll(event);
+				}else
+				    unselectAll(event);
+				
+			}
+		}else {
+			unselectAll(event);
 		}
-		 
-	    if(isNodeSelected(index))
-	        return;
-	       
-	    if (event == null || fireBeforeSelectionEvent(index)) {
-	        unselectAll();
-	            
-	        finishEditing();
 
-	        selections.add(index);
+		for(i = startSelect; i <= endSelect && i > -1; i++) {			
+			if (!selections.contains(i)) {
+				if (event == null || fireBeforeSelectionEvent(i)) {
+					
+					selected = true;
+					
+					finishEditing();
+					
+					selections.add(i);
 
-	        view.applySelectionStyle(index);
+					view.applySelectionStyle(i);
 
-	        if (event != null)
-	               fireSelectionEvent(index);
-	            
-	        scrollToVisible(index);
-	    }
+					if(event != null)
+						fireSelectionEvent(i);
+				}
+			}
+		}
+		
+		if(selected) 
+			scrollToVisible(endSelect);		
     }
 
     /**
@@ -1485,70 +1511,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     			selections.add(i);
 			view.selectAll();
 		}
-    }
-    
-    private void multiSelect(int node, NativeEvent event) {
-        int startSelect, endSelect, minSelected, maxSelected, i;
-        boolean ctrlKey, shiftKey, selected = false;
-        
-        startSelect = node;
-        endSelect = node;
-        
-        ctrlKey = event.getCtrlKey();
-        shiftKey = event.getShiftKey();
-
-        if (ctrlKey) {
-            if (isNodeSelected(node)) {
-                unselectNodeAt(node,event);
-                return;
-            }
-        }else if (shiftKey) {
-            if (!isAnyNodeSelected()) {
-                startSelect = 0;
-                endSelect = node;
-            } else {
-                Collections.sort(selections);
-                minSelected = Collections.min(selections);
-                maxSelected = Collections.max(selections);
-                if (minSelected > node) {
-                    startSelect = node;
-                    endSelect = minSelected;
-                } else if (node > maxSelected) {
-                    startSelect = maxSelected;
-                    endSelect = node;
-                } else {
-                    i = 0;
-                    while (selections.get(i + 1) < node)
-                        i++;
-                    startSelect = selections.get(i);
-                    endSelect = node;
-                }
-            }
-            unselectAll(event);
-        }else
-            unselectAll(event);
-            
-        for (i = startSelect; i <= endSelect && i > -1; i++ ) {
-            if ( !selections.contains(i)) {
-                if (event == null || fireBeforeSelectionEvent(i)) {
-
-                    selected = true;
-
-                    finishEditing();
-
-                    selections.add(i);
-
-                    view.applySelectionStyle(i);
-
-                    if (event != null)
-                        fireSelectionEvent(i);
-                }
-            }
-        }
-        
-        if (selected)
-            scrollToVisible(endSelect);
-        
     }
     
     public void unselectNodeAt(int index) {
@@ -2939,10 +2901,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                 tipCol = event.getCol();
                 final int x,y;
                 
-                Element td = view.table().getCellFormatter().getElement(event.getRow(), event.getCol());
-                
-                y = td.getAbsoluteTop();
-                x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
+                x = event.getX();
+                y = event.getY();
                 
                 if(!hasExceptions(tipRow, tipCol)) {
                     balloonTimer = new Timer() {
@@ -2955,6 +2915,16 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                 
             }
         });
+       
+       view.table().addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
+        
+           @Override
+           public void onCellMouseOut(CellMouseOutEvent event) {
+               balloonTimer.cancel();
+               Balloon.hide();
+           }
+       });
+       
         
        options.setTipProvider(new Balloon.TipProvider<Object>() {
         

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
-import org.openelis.ui.messages.UIMessages;
 
 /**
  * This class is used by ScreenWidgets that implement HasValue<String> to
@@ -52,8 +51,16 @@ public class StringHelper implements WidgetHelper<String> {
      * and that the query params are all valid double values.
      */
     public void validateQuery(String input) throws Exception {
-        
-        new QueryFieldUtil().parse(input);
+        QueryFieldUtil qField;
+
+        // If null or empty string do nothing and return.
+        if (input == null || input.equals(""))
+            return;
+
+        // Parse query and if invalid set exception and return right away.
+        qField = new QueryFieldUtil();
+
+        qField.parse(input);
     }
 
     /**
@@ -81,12 +88,8 @@ public class StringHelper implements WidgetHelper<String> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value))
-			exceptions.add(new Exception(getMessages().exc_invalidType()));
+			exceptions.add(new Exception(Messages.get().exc_invalidType()));
 		
 		return exceptions;
-	}
-	
-	protected UIMessages getMessages() {
-	    return Messages.get();
 	}
 }

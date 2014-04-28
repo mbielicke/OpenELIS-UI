@@ -40,7 +40,6 @@ import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.table.FlexTable;
 import org.openelis.ui.widget.table.Row;
-import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 
 import com.google.gwt.core.client.GWT;
@@ -151,16 +150,6 @@ public class StaticView extends ViewInt {
             }
         });
         
-        flexTable.addCellMouseOutHandler(new CellMouseOutEvent.Handler() {
-            
-            @Override
-            public void onCellMouseOut(CellMouseOutEvent event) {
-                if(tree.balloonTimer != null)
-                    tree.balloonTimer.cancel();
-                Balloon.hide();
-            }
-        });
-        
     }
 
     @UiHandler("flexTable")
@@ -179,8 +168,8 @@ public class StaticView extends ViewInt {
         
         
         if ( cell.getClassName().equals(css.treeOpenImage()) || cell.getClassName().equals(css.treeClosedImage())) {
-            tree.toggle(flexTable.getRowForEvent(event.getNativeEvent()), event.getNativeEvent());
-            //event.stopPropagation();
+            tree.toggle(flexTable.getRowForEvent(event.getNativeEvent()));
+            event.stopPropagation();
             return;
         }
 
@@ -434,17 +423,10 @@ public class StaticView extends ViewInt {
 
                         @Override
                         public void onCellMouseOver(CellMouseOverEvent event) {
-                            int x,y;
-                            
-                            Element td = flexTable.getCellFormatter().getElement(event.getRow(), event.getCol());
-                            
-                            y = td.getAbsoluteTop();
-                            x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
-                            
                             tree.drawExceptions(event.getRow(),
                                                  event.getCol(),
-                                                 x,
-                                                 y);
+                                                 event.getX(),
+                                                 event.getY());
                         }
 
                     });
@@ -552,12 +534,6 @@ public class StaticView extends ViewInt {
                 tb.appendHtmlConstant("</td>");
                 flexTable.setHTML(r, c, treeGrid.getElement().getString());
             } else {
-                if ( !node.isLeaf()) {
-                    if (node.isOpen)
-                        flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeOpenImage());
-                    else
-                        flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeClosedImage());
-                }
                 flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.bulkRender(tree.getValueAt(r,c)));                
             }
         }else {

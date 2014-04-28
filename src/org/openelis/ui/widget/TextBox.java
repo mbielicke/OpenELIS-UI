@@ -77,14 +77,13 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * from the user.
 	 */
 	public TextBox() {
-	    textbox = GWT.create(TextBase.class);
-	    initWidget(textbox);
-	    init();
-	    
+		init();	
 	}
 	
 	public void init() {
 		
+		textbox = GWT.create(TextBase.class);
+
 		setEnabled(false);
 
 		textbox.addFocusHandler(new FocusHandler() {
@@ -108,6 +107,8 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 				finishEditing();
 			}
 		});
+
+		initWidget(textbox);
 		
 		exceptions = new Exceptions();
 		
@@ -276,9 +277,8 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 			textbox.setText("");
 		}
 
-		if (Util.isDifferent(oldValue, value) && fireEvents) {
+		if (Util.isDifferent(oldValue, value) && fireEvents)
 			ValueChangeEvent.fire(this, value);
-		}
 	}
 
 	/**
@@ -391,17 +391,17 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void addExceptionStyle() {
 		if(Balloon.isWarning(this))
-			textbox.addStyleName(css.InputWarning());
+			addStyleName(css.InputWarning());
 		else
-			textbox.addStyleName(css.InputError());
+			addStyleName(css.InputError());
 	}
 
 	/**
 	 * will remove the style from the widget
 	 */
 	public void removeExceptionStyle() {
-		textbox.removeStyleName(css.InputError());
-		textbox.removeStyleName(css.InputWarning());
+		removeStyleName(css.InputError());
+		removeStyleName(css.InputWarning());
 	}
 
 	// ************* Implementation of Focusable ******************
@@ -417,10 +417,8 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * Method only implemented to satisfy Focusable interface.
 	 */
 	public void setTabIndex(int index) {
-	   
+
 	}
-	
-	
 
 	/**
 	 * Method only implemented to satisfy Focusable interface.

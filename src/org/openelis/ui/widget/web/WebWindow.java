@@ -47,7 +47,6 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -66,7 +65,7 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	protected AbsolutePanel title;
 	
 	@UiField
-	protected ScrollPanel  content;
+	protected LayoutPanel  content;
 	protected Widget screen;
 	private Confirm confirm;
 	private Label name;
@@ -108,7 +107,7 @@ public class WebWindow extends ResizeComposite implements WindowInt {
 	 */
 	public void setContent(Widget screen) {
 		content.clear();
-		content.setWidget(screen);
+		content.add(screen);
 		this.screen = screen;
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             
@@ -286,5 +285,7 @@ public class WebWindow extends ResizeComposite implements WindowInt {
     @Override
     public void onResize() {
         super.onResize();
+        if(!(screen instanceof RequiresResize))
+            screen.setSize(getOffsetWidth()+"px", getOffsetHeight()+"px");
     }
 }

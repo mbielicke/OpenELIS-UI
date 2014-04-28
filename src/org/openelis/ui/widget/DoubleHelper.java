@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import org.openelis.ui.widget.QueryFieldUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
-import org.openelis.ui.messages.UIMessages;
 
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.i18n.client.constants.NumberConstants;
 
 /**
  * This class is used by ScreenWidgets that implement HasValue<Double> to
@@ -70,7 +67,7 @@ public class DoubleHelper implements WidgetHelper<Double> {
 					// Do nothing to Fall through and throw the exception.
 				}
 			}
-			throw new Exception(getMessages().exc_invalidNumeric());
+			throw new Exception(Messages.get().exc_invalidNumeric());
 		}
 	}
 
@@ -79,8 +76,17 @@ public class DoubleHelper implements WidgetHelper<Double> {
 	 * and that the query params are all valid double values. 
 	 */
 	public void validateQuery(String input) throws Exception {
+        QueryFieldUtil qField;
+
+        // If null or empty string do nothing and return.
+        if (input == null || input.equals(""))
+            return;
+
         // Parse query and if invalid set exception and return right away.
-        new QueryFieldUtil().parseDouble(input);
+        qField = new QueryFieldUtil();
+        
+        qField.parseDouble(input);
+
 	}
 
 	/**
@@ -116,13 +122,10 @@ public class DoubleHelper implements WidgetHelper<Double> {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
 		if(!isCorrectType(value)) 
-			exceptions.add(new Exception(getMessages().exc_invalidNumeric()));
+			exceptions.add(new Exception(Messages.get().exc_invalidNumeric()));
 		
 		return exceptions;
-	}
-	
-	protected UIMessages getMessages() {
-	    return Messages.get();
+			
 	}
 
 }
