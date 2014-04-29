@@ -18,6 +18,10 @@ public class ScriptletRunner<T extends ScriptletObject> {
         for(ScriptletInt<T> script : scripts) 
             scriptlets.add(script);
     }
+
+    public void remove(ScriptletInt<T> script) {
+        scriptlets.remove(script);
+    }
     
     public T run(T so) {
         so.setStatus(ScriptletObject.Status.EXECUTING);
