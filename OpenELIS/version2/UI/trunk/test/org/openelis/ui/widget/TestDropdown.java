@@ -1,9 +1,10 @@
 package org.openelis.ui.widget;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.openelis.ui.util.TestingUtil.*;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public class TestDropdown {
     SimpleEventBus    bus;
    
     @Before
-    public void init() {
+    public void preArrange() {
         LocaleProxy.initialize();
         messages = LocaleFactory.get(UIMessages.class, "en");
         bus = new SimpleEventBus();
@@ -122,9 +123,9 @@ public class TestDropdown {
         drop.setEnabled(false);
         
         assertFalse(drop.enabled);
-        verify(drop.button).setEnabled(false);
-        verify(drop.textbox).setEnabled(false);
-        verify(drop.table).setEnabled(false);
+        verifyNotEnabled(drop.button);
+        verify(drop.textbox,last()).setEnabled(false);
+        verifyNotEnabled(drop.table);
     }
     
     @Test
@@ -132,9 +133,9 @@ public class TestDropdown {
         drop.setEnabled(true);
         
         assertTrue(drop.enabled);
-        verify(drop.button).setEnabled(true);
-        verify(drop.textbox).setEnabled(true);
-        verify(drop.table).setEnabled(true);
+        verifyEnabled(drop.button);
+        verify(drop.textbox,last()).setEnabled(true);
+        verifyEnabled(drop.table);
     }
     
     @Test

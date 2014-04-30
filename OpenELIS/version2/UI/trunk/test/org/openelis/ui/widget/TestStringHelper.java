@@ -18,7 +18,7 @@ public class TestStringHelper {
     UIMessages messages;
     
     @Before
-    public void init() {
+    public void preArrange() {
         messages = GWT.create(UIMessages.class);
         helper = new StringHelper() {
             @Override
@@ -29,13 +29,13 @@ public class TestStringHelper {
     }
     
     @Test
-    public void getQueryNull() {
+    public void getQuery_null() {
         assertNull(helper.getQuery(null));
         assertNull(helper.getQuery(""));
     }
     
     @Test
-    public void getQueryValid() {
+    public void getQuery_valid() {
         QueryData qd = helper.getQuery("n");
         
         assertNotNull(qd);
@@ -45,7 +45,7 @@ public class TestStringHelper {
     }
     
     @Test
-    public void getValueNull() throws Exception {
+    public void getValue_null() throws Exception {
         assertNull(helper.getValue(null));
         assertNull(helper.getValue(""));
     }
@@ -56,7 +56,7 @@ public class TestStringHelper {
     }
     
     @Test
-    public void validateQueryNull() {
+    public void validateQuery_null() {
         try {
             helper.validateQuery(null);
         }catch(Exception e) {
@@ -71,7 +71,7 @@ public class TestStringHelper {
     }
     
     @Test
-    public void formatNull() {
+    public void format_null() {
         assertEquals("",helper.format(null));
     }
     
@@ -92,5 +92,4 @@ public class TestStringHelper {
         assertTrue(helper.validate("value").isEmpty());
         assertEquals(1,helper.validate(4).size());
     } 
-    
 }

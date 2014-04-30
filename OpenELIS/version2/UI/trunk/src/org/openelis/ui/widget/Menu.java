@@ -59,7 +59,7 @@ import com.google.gwt.user.client.ui.Widget;
  * a Menu to display a sub menu of MenuItems when either moused over or clicked.
  * 
  */
-public class Menu extends Composite implements HasWidgets {
+public class Menu extends Composite implements HasWidgets,ScreenWidgetInt {
 	@UiTemplate("Menu.ui.xml")
 	interface MenuUiBinder extends UiBinder<HTML, Menu>{};
 	public static final MenuUiBinder uiBinder = GWT.create(MenuUiBinder.class);
@@ -351,19 +351,21 @@ public class Menu extends Composite implements HasWidgets {
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
 		return false;
 	}
+
+    @Override
+    public void finishEditing() {
+        
+    }
 }

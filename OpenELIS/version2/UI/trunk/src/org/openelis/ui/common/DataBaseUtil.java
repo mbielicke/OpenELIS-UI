@@ -319,7 +319,8 @@ public class DataBaseUtil {
      * @return true if object is the same; otherwise false
      */
     public static boolean isSame(Object a, Object b) {
-        return a != null && a.equals(b);
+        return (a == null && b == null) ||
+               (a != null && a.equals(b));
     }
 
     /**

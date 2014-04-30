@@ -1,6 +1,6 @@
 package org.openelis.ui.widget;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.Before;
@@ -20,7 +20,7 @@ public class TestTextBase {
     TextBase text;
     
     @Before
-    public void init() {
+    public void preArrange() {
         text = new TextBase();
     }
     
@@ -31,21 +31,21 @@ public class TestTextBase {
     }
     
     @Test
-    public void getTextLowerCase() {
+    public void getText_lowerCase() {
         when(text.box.getText()).thenReturn("MixedCase");
         text.textCase = TextBase.Case.LOWER;
         assertEquals("mixedcase",text.getText());
     }
     
     @Test
-    public void getTextUpperCase() {
+    public void getText_upperCase() {
         when(text.box.getText()).thenReturn("MixedCase");
         text.textCase = TextBase.Case.UPPER;
         assertEquals("MIXEDCASE",text.getText());
     }
     
     @Test
-    public void getTextClearMask() {
+    public void getText_clearMask() {
         text.picture = "999";
         text.enforceMask = true;
         when(text.box.getText()).thenReturn("999");
@@ -63,7 +63,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void setCaseUpper() {
+    public void setCase_upper() {
         text.setCase(TextBase.Case.UPPER);
         
         verify(text.box).addStyleName(text.css.Upper());
@@ -72,7 +72,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void setCaseLower() {
+    public void setCase_lower() {
         text.setCase(TextBase.Case.LOWER);
         
         verify(text.box).removeStyleName(text.css.Upper());
@@ -96,7 +96,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void setMaskToNull() {
+    public void setMask_toNull() {
         String mask = "999-999-9999";
         text.mask = mask;
         text.picture = "   -   -    ";
@@ -111,7 +111,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void enforceMaskNotSet() {
+    public void enforceMask_notSet() {
         text.enforceMask(true);
         
         assertFalse(text.isMaskEnforced());
@@ -119,7 +119,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void enforceMaskSet() {
+    public void enforceMask_set() {
         text.mask = "999-999-9999";
         
         text.enforceMask(true);
@@ -129,7 +129,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void enforceMaskUnset() {
+    public void enforceMask_unset() {
         text.mask = "999-999-9999";
         text.enforceMask = true;
         
@@ -140,7 +140,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownNotEnforced() {
+    public void maskKeyDown_notEnforced() {
         KeyDownEvent keyDown = mock(KeyDownEvent.class);
         
         text.maskKeyDown(keyDown);
@@ -149,7 +149,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownNonDisplayKey() {
+    public void maskKeyDown_nonDisplayKey() {
         KeyDownEvent keyDown = mock(KeyDownEvent.class);
         when(keyDown.isAnyModifierKeyDown()).thenReturn(true);
         
@@ -159,7 +159,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownDelete() {
+    public void maskKeyDown_deleteKey() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-5");
@@ -172,7 +172,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownDeleteOverLiteral() {
+    public void maskKeyDown_deleteOverLiteral() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-");
@@ -185,7 +185,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownDeleteOnLiteral() {
+    public void maskKeyDown_deleteOnLiteral() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-");
@@ -198,7 +198,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownDeleteWithSelection() {
+    public void maskKeyDown_deleteWithSelection() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-5");
@@ -212,7 +212,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownBackSpace() {
+    public void maskKeyDown_backSpaceKey() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-5");
@@ -225,7 +225,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownBackSpaceOverLiteral() {
+    public void maskKeyDown_backSpaceOverLiteral() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-");
@@ -238,7 +238,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownBackSpaceOnLiteral() {
+    public void maskKeyDown_backSpaceOnLiteral() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-");
@@ -251,7 +251,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyDownBackSpaceWithSelection() {
+    public void maskKeyDown_backSpaceWithSelection() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("530-5");
@@ -265,7 +265,7 @@ public class TestTextBase {
     }
     
     @Test 
-    public void maskKeyPressNotEnforced() {
+    public void maskKeyPress_notEnforced() {
         KeyPressEvent keyPress = mock(KeyPressEvent.class);
         
         text.maskKeyPress(keyPress);
@@ -274,7 +274,7 @@ public class TestTextBase {
     }
     
     @Test 
-    public void maskKeyPressNoneDisplayKey() {
+    public void maskKeyPress_noneDisplayKey() {
         String mask = "999-999-9999";
         text.setMask(mask);
         KeyPressEvent keyPress = mock(KeyPressEvent.class);
@@ -286,7 +286,7 @@ public class TestTextBase {
     }
     
     @Test 
-    public void maskKeyPressFirstValid() {
+    public void maskKeyPress_firstValid() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("");
@@ -299,7 +299,7 @@ public class TestTextBase {
     }
     
     @Test 
-    public void maskKeyPressFirstInValid() {
+    public void maskKeyPress_firstInValid() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("");
@@ -312,7 +312,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyPressInsertLiteral() {
+    public void maskKeyPress_insertLiteral() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("555");
@@ -325,7 +325,7 @@ public class TestTextBase {
     }
     
     @Test
-    public void maskKeyPressPastMask() {
+    public void maskKeyPress_pastMask() {
         String mask = "999-999-9999";
         text.setMask(mask);
         when(text.box.getText()).thenReturn("555-555-5555");

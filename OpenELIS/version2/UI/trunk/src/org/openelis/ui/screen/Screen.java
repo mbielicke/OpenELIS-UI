@@ -278,6 +278,10 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
             tabs.put(meta, (Screen)widget);
     }
 
+    public <T> ScreenHandler<T> getHandler(Widget widget) {
+        return (ScreenHandler<T>)widgets.get(widget);
+    }
+    
     /**
      * Registers a DataChangeHandler to the Screen.
      */

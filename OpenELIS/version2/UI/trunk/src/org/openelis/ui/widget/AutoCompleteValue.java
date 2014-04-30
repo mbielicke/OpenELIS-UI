@@ -131,4 +131,11 @@ public class AutoCompleteValue {
                DataBaseUtil.isSame(((AutoCompleteValue)obj).display,display);
     }
     
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (id == null ? 0 : id.hashCode());
+        hash = 17 * hash + (display == null ? 0 : display.hashCode());
+        return hash;
+    }
 }

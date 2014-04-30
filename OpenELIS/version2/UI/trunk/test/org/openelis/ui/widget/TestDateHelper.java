@@ -28,7 +28,7 @@ public class TestDateHelper {
     UIMessages messages;
     
     @Before
-    public void init() {
+    public void preArrange() {
         LocaleProxy.initialize();
         messages = LocaleFactory.get(UIMessages.class, "en");
         
@@ -40,13 +40,13 @@ public class TestDateHelper {
     }
     
     @Test
-    public void getQueryNull() {
+    public void getQuery_null() {
         assertNull(helper.getQuery(null));
         assertNull(helper.getQuery(""));
     }
     
     @Test
-    public void getQueryValid() {
+    public void getQuery_valid() {
         QueryData qd = helper.getQuery("2012-12-31");
         
         assertNotNull(qd);
@@ -56,7 +56,7 @@ public class TestDateHelper {
     }
     
     @Test
-    public void getValueNull() throws Exception {
+    public void getValue_null() throws Exception {
         assertNull(helper.getValue(null));
         assertNull(helper.getValue(""));
     }
@@ -70,7 +70,7 @@ public class TestDateHelper {
     }
     
     @Test 
-    public void getValueYM() throws Exception {
+    public void getValue_YM() throws Exception {
         helper.setEnd(Datetime.MINUTE);
         Calendar cal = Calendar.getInstance();
         cal.set(2014, 3, 17, 4, 30, 0);
@@ -81,7 +81,7 @@ public class TestDateHelper {
     }
     
     @Test
-    public void getValueHM() throws Exception {
+    public void getValue_HM() throws Exception {
         helper.setBegin(Datetime.HOUR);
         helper.setEnd(Datetime.MINUTE);
         Calendar cal = Calendar.getInstance();
@@ -93,12 +93,12 @@ public class TestDateHelper {
     }
     
     @Test(expected=Exception.class) 
-    public void getValueBadDate() throws Exception {
+    public void getValue_throwBadDate() throws Exception {
         helper.getValue("bad date");
     }
     
     @Test
-    public void validateQueryNull() {
+    public void validateQuery_null() {
         try {
             helper.validateQuery(null);
         }catch(Exception e) {
@@ -113,7 +113,7 @@ public class TestDateHelper {
     }
     
     @Test
-    public void formatNull() {
+    public void format_null() {
         assertEquals("",helper.format(null));
     }
     
@@ -126,7 +126,7 @@ public class TestDateHelper {
     }
     
     @Test
-    public void formatYM() {
+    public void format_YM() {
         helper.setEnd(Datetime.MINUTE);
         Calendar cal = Calendar.getInstance();
         cal.set(2014, 3, 17, 4, 30, 0);
@@ -138,7 +138,7 @@ public class TestDateHelper {
     }
     
     @Test
-    public void formatHM() {
+    public void format_HM() {
         helper.setBegin(Datetime.HOUR);
         helper.setEnd(Datetime.MINUTE);
         Calendar cal = Calendar.getInstance();
@@ -161,8 +161,4 @@ public class TestDateHelper {
         assertTrue(helper.validate(Datetime.getInstance()).isEmpty());
         assertEquals(1,helper.validate(4).size());
     } 
-    
-    
-    
-    
 }

@@ -25,7 +25,7 @@ public class TestDoubleHelper {
     UIMessages messages;
     
     @Before
-    public void init() {
+    public void preArrange() {
         LocaleProxy.initialize();
         messages = LocaleFactory.get(UIMessages.class, "en");
         
@@ -38,13 +38,13 @@ public class TestDoubleHelper {
     }
     
     @Test
-    public void getQueryNull() {
+    public void getQuery_null() {
         assertNull(helper.getQuery(null));
         assertNull(helper.getQuery(""));
     }
     
     @Test
-    public void getQueryValid() {
+    public void getQuery_valid() {
         QueryData qd = helper.getQuery("54.65");
         
         assertNotNull(qd);
@@ -54,7 +54,7 @@ public class TestDoubleHelper {
     }
     
     @Test
-    public void getValueNull() throws Exception {
+    public void getValue_null() throws Exception {
         assertNull(helper.getValue(null));
         assertNull(helper.getValue(""));
     }
@@ -65,12 +65,12 @@ public class TestDoubleHelper {
     }
     
     @Test(expected=Exception.class)
-    public void getValueException() throws Exception {
+    public void getValue_throwException() throws Exception {
         helper.getValue("abc");
     }
     
     @Test
-    public void validateQueryNull() {
+    public void validateQuery_null() {
 
         try {
             helper.validateQuery(null);
@@ -86,7 +86,7 @@ public class TestDoubleHelper {
     }
     
     @Test
-    public void formatNull() {
+    public void format_null() {
         assertEquals("",helper.format(null));
     }
     
@@ -106,14 +106,5 @@ public class TestDoubleHelper {
     public void validate() {
         assertTrue(helper.validate(new Double(4)).isEmpty());
         assertEquals(1,helper.validate("4").size());
-    } 
-    
-    
-   
-    
-    
-    
-    
-
-    
+    }     
 }
