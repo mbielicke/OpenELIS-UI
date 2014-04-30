@@ -1,7 +1,7 @@
 package org.openelis.ui.widget;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
@@ -27,25 +27,25 @@ public class TestLabel {
     }
     
     @Test
-    public void hasExceptionsValidateExcepts() {
+    public void hasExceptions_validateExcepts() {
         label.addValidateException(new Exception());
         assertTrue(label.hasExceptions());
     }
     
     @Test
-    public void hasExceptionsUserExcepts() {
+    public void hasExceptions_userExcepts() {
         label.addException(new Exception());
         assertTrue(label.hasExceptions());
     }
     
     @Test
-    public void addExceptionStyleError() {
+    public void addExceptionStyle_error() {
         label.addException(new Exception());
         verify(label.label).addStyleName(label.css.InputError());
     }
     
     @Test
-    public void addExceptionStyleWarning() {
+    public void addExceptionStyle_warning() {
         label.addException(new FieldErrorWarning());
         verify(label.label).addStyleName(label.css.InputWarning());    
     } 

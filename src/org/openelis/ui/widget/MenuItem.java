@@ -54,7 +54,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 
-public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouseOutHandlers, HasBalloon {
+public class MenuItem extends Composite implements ScreenWidgetInt,HasMouseOverHandlers,HasMouseOutHandlers, HasBalloon {
 	@UiTemplate("MenuItem.ui.xml")
 	interface MenuItemUiBinder extends UiBinder<HTML, MenuItem>{};
 	public static final MenuItemUiBinder uiBinder = GWT.create(MenuItemUiBinder.class);
@@ -256,6 +256,11 @@ public class MenuItem extends Composite implements HasMouseOverHandlers,HasMouse
     
     public Balloon.Options getBalloonOptions() {
         return options;
+    }
+
+    @Override
+    public void finishEditing() {
+        
     }
 
 }

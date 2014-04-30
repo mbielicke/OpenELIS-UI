@@ -1,9 +1,10 @@
 package org.openelis.ui.widget;
 
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
@@ -12,7 +13,6 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +86,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void setQueryMode() {
+    public void setQueryMode_true() {
         textbox.setQueryMode(true);
         assertTrue(textbox.queryMode);
         verify(textbox.textbox).enforceMask(false);
@@ -95,14 +95,14 @@ public class TestTextBox {
     }
     
     @Test
-    public void setQueryModeFalse() {
+    public void setQueryMode_false() {
         textbox.setQueryMode(false);
         assertFalse(textbox.queryMode);
         verify(textbox.textbox,never()).enforceMask(anyBoolean());
     }
     
     @Test
-    public void setQueryModeReset() {
+    public void setQueryMode_reset() {
         textbox.setQueryMode(true);
         reset(textbox.textbox);
         textbox.setQueryMode(false);
@@ -112,7 +112,7 @@ public class TestTextBox {
     }
     
     @Test
-    public void setQueryModeWithMaxLength() {
+    public void setQueryMode_withMaxLength() {
         textbox.setMaxLength(40);
         textbox.setQueryMode(true);
         verify(textbox.textbox).setMaxLength(255);
@@ -136,11 +136,11 @@ public class TestTextBox {
     }
     
     @Test
-    public void setValueEventNotFired() {
+    public void setValue_eventNotFired() {
         bus.addHandler(ValueChangeEvent.getType(), new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
-                Assert.fail("Event should not have fired");
+                fail("Event should not have fired");
             }
         });
         
@@ -151,11 +151,11 @@ public class TestTextBox {
     }
     
     @Test
-    public void finishEditingDoesNothing() {
+    public void finishEditing_doesNothing() {
         bus.addHandler(ValueChangeEvent.getType(), new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
-                Assert.fail("Event should not have fired");
+                fail("Event should not have fired");
             }
         });
         
@@ -165,7 +165,7 @@ public class TestTextBox {
     }
     
     @Test 
-    public void finishEditingValueChanged() {        
+    public void finishEditing_valueChanged() {        
         
         when(textbox.textbox.isEnabled()).thenReturn(true);
         when(textbox.textbox.getText()).thenReturn("value");
@@ -174,12 +174,12 @@ public class TestTextBox {
         
         verify(textbox.textbox).getText();
         assertEquals("value",textbox.value);
-        Assert.assertFalse(textbox.hasExceptions());
+        assertFalse(textbox.hasExceptions());
         
     }
     
     @Test
-    public void finishEditingQueryMode() {
+    public void finishEditing_queryMode() {
         textbox.setQueryMode(true);
         textbox.helper = new StringHelper() {
             @Override
@@ -199,41 +199,40 @@ public class TestTextBox {
     }
     
     @Test
-    public void hasExceptionsValidateExcepts() {
+    public void hasExceptions_validateExcepts() {
         textbox.addValidateException(new Exception());
         assertTrue(textbox.hasExceptions());
     }
     
     @Test
-    public void hasExceptionsUserExcepts() {
+    public void hasExceptions_userExcepts() {
         textbox.addException(new Exception());
         assertTrue(textbox.hasExceptions());
     }
     
     @Test
-    public void hasExceptionsRequired() {
+    public void hasExceptions_required() {
         textbox.setRequired(true);
         textbox.hasExceptions();
         assertTrue(textbox.hasExceptions());
     }
     
     @Test 
-    public void hasExceptionsRequiredQueryMode() {
+    public void hasExceptions_requiredQueryMode() {
         textbox.setRequired(true);
         textbox.setQueryMode(true);
         assertFalse(textbox.hasExceptions());
     }
     
     @Test
-    public void addExceptionStyleError() {
+    public void addExceptionStyle_error() {
         textbox.addException(new Exception());
         verify(textbox.textbox).addStyleName(textbox.css.InputError());
     }
     
     @Test
-    public void addExceptionStyleWarning() {
+    public void addExceptionStyle_warning() {
         textbox.addException(new FieldErrorWarning());
         verify(textbox.textbox).addStyleName(textbox.css.InputWarning());    
     } 
-
 }

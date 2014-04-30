@@ -111,6 +111,8 @@ public class Datetime implements Serializable, Comparable<Datetime> {
      * Datetime when; false otherwise.
      */
     public boolean before(Datetime when) {
+        if(when == null)
+            throw new IllegalArgumentException("Cannot do compare on null");
         return before(when.getDate());
     }
 
@@ -127,6 +129,8 @@ public class Datetime implements Serializable, Comparable<Datetime> {
      * Datetime when; false otherwise.
      */
     public boolean after(Datetime when) {
+        if(when == null) 
+            throw new IllegalArgumentException("Cannot do compare on null");
         return after(when.getDate());
     }
 
@@ -142,19 +146,11 @@ public class Datetime implements Serializable, Comparable<Datetime> {
      * Returns true if the current value of this Datetime is equal the value of
      * Datetime when; false otherwise.
      */
-    @SuppressWarnings("deprecation")
 	public boolean equals(Object obj) {
-        Date compDate;
-
         if (!(obj instanceof Datetime))
             return false;
         
-        compDate = ((Datetime)obj).getDate();
-
-        if (endCode < HOUR)
-            return new Date(year, month, date).equals(compDate);
-
-        return timestamp.equals(compDate);
+        return equals(((Datetime)obj).getDate());
     }
     
     @SuppressWarnings("deprecation")

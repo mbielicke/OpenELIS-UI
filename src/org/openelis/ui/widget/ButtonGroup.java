@@ -20,9 +20,10 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  *
  */
-public class ButtonGroup extends SimplePanel implements HasClickHandlers {
+public class ButtonGroup extends SimplePanel implements HasClickHandlers, ScreenWidgetInt {
 
-    private ArrayList<Button> buttons = new ArrayList<Button>();
+    protected ArrayList<Button> buttons = new ArrayList<Button>();
+    protected boolean enabled;
 
     public ButtonGroup() {
     }
@@ -64,6 +65,7 @@ public class ButtonGroup extends SimplePanel implements HasClickHandlers {
      * @param enabled
      */
     public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
         for (Button button : buttons) {
             button.setEnabled(enabled);
         }
@@ -78,5 +80,15 @@ public class ButtonGroup extends SimplePanel implements HasClickHandlers {
 	public void setWidget(Widget w) {
 		setButtons((Panel)w);
 	}
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void finishEditing() {
+        
+    }
 
 }
