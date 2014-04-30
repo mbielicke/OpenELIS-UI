@@ -6,8 +6,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.junit.Test;
+
+import sun.util.calendar.CalendarSystem;
+import sun.util.calendar.Gregorian;
 
 public class TestDatetime {
     
@@ -522,15 +526,10 @@ public class TestDatetime {
     
     @SuppressWarnings("deprecation")
     private Date createTime(int hour, int minute) {
-        Date time = new Date();
-        time.setYear(0);
-        time.setMonth(0);
-        time.setDate(0);
-        time.setHours(hour);
-        time.setMinutes(minute);
-        time.setSeconds(0);
-        
-        return time;
+        Calendar cal = Calendar.getInstance();
+        cal.set(1899,11,31,hour,minute,0);
+        cal.set(Calendar.MILLISECOND,0);
+        return new Date(cal.getTimeInMillis());
     }
     
     private Date createTimestamp(int year, int month, int date, int hour,int minute) {
