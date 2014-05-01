@@ -320,6 +320,9 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     public void setTabVisible(int index, boolean visible) {
         boolean anyVisible = false;
         
+        if(!visible && popouts.containsKey(index))
+            popouts.get(index).close();
+            
         tabBar.getWidget(index).setVisible(visible);
         
         for(int i = 0; i < tabBar.getWidgetCount(); i++){
