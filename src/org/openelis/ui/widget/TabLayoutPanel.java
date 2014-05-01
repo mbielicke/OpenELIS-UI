@@ -38,7 +38,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     
     protected PickupDragController drag;
     protected SimpleDropController drop;
-    protected HashMap<Integer,Window> popouts;
+    protected HashMap<Integer,Window> popouts = new HashMap<Integer,Window>();
     protected boolean closing;
     protected HashSet<Integer> needsResize = new HashSet<Integer>();
     protected double barHeight;
