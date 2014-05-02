@@ -73,7 +73,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
                                            HasStateChangeHandlers {
 
-    private Focusable                           focused;
+    protected Focusable                         focused;
 
     protected HashMap<String, ScreenHandler<?>> handlers;
     protected HashMap<Widget, ScreenHandler<?>> widgets;
@@ -126,6 +126,9 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
     protected void focusNextWidget(Focusable focused, boolean forward) {
         assert focused != null;
+        
+        if(focused == null) 
+            return;
 
         Focusable nextWidget = focused;
         int numberOfWidgetsChecked = 0;
@@ -159,24 +162,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         for (ScreenHandler<?> wid : handlers.values()) {
             wid.isValid(validation);
         }
-
-        for (Screen tab : tabs.values()) {
-            // If they added a ScreenHandler to override is valid this is
-            // redundant call so skip
-            if (widgets.containsKey(tab))
-                continue;
-
-            Validation tabValid = tab.validate();
-
-            if (tabValid.status.value > validation.status.value)
-                validation.status = tabValid.status;
-
-            if (tabValid.getExceptions() != null) {
-                for (Exception exception : tabValid.exceptions)
-                    validation.addException(exception);
-            }
-        }
-
+        
         return validation;
     }
 
@@ -184,6 +170,9 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         ArrayList<Exception> formErrors;
         FormErrorException formE;
         ValidationErrorsList tabErrors;
+        
+        if(errors == null || errors.getErrorList().isEmpty())
+            return;
 
         formErrors = new ArrayList<Exception>();
         tabErrors = new ValidationErrorsList();
