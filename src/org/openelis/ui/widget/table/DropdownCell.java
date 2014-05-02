@@ -59,9 +59,9 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     /**
      * Widget used to edit the cell
      */
-    private Dropdown      editor;
+    protected Dropdown      editor;
 
-    private boolean       query;
+    protected boolean       query;
     
     private ColumnInt     column;
 
@@ -99,11 +99,16 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     }
 
     public ArrayList<Exception> validate(Object value) {
+    	ArrayList<Exception> exceptions = new ArrayList<Exception>();
     	
-    	if(!query) 
-    		return editor.getHelper().validate(value);
-    	        	
-        return null;
+    	if(!query) {
+    	    if(editor.isValidKey(value))
+    	        exceptions.add(new Exception("Invalid key set for dropdown"));
+    	
+    	    exceptions.addAll(editor.getHelper().validate(value));
+    	}
+    	
+        return exceptions;
     }
 
     /**
@@ -116,6 +121,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     }
 
     public String display(Object value) {
+        editor.setQueryMode(false);
     	if(value != null && editor.getHelper().isCorrectType(value) && editor.isValidKey(value)) {
    			editor.setValue(value);
         	return editor.getDisplay();
