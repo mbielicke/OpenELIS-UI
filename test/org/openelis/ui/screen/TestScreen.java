@@ -483,7 +483,7 @@ public class TestScreen {
         when(handler3.onTab(false)).thenReturn(text2);
     }
     
-    private Answer<Void> createValidationAnswer(final Validation.Status satus, final Exception... exceptions) {
+    private Answer<Void> createValidationAnswer(final Validation.Status status, final Exception... exceptions) {
         return new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
@@ -492,7 +492,7 @@ public class TestScreen {
                     for(Exception exception : exceptions)
                         validation.addException(exception);
                 }
-                validation.setStatus(Validation.Status.ERRORS);
+                validation.setStatus(status);
                 return null;
             }
         };
