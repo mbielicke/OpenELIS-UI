@@ -101,6 +101,7 @@ public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget
 
 	@Override
 	public ArrayList<Exception> validate(Object value) {
+
 		 return editor.getHelper().validate(value);
 	}
 

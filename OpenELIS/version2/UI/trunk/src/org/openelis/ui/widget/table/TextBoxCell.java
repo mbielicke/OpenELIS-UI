@@ -30,7 +30,6 @@ import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.TextBox;
@@ -38,7 +37,6 @@ import org.openelis.ui.widget.TextBox;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -60,13 +58,13 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     /**
      * Editor used by this cell
      */
-    private TextBox     editor;
+    protected TextBox     editor;
 
-    private boolean     query;
+    protected boolean     query;
 
-    private ColumnInt   column;
+    protected ColumnInt   column;
     
-    protected TableCSS  css;
+    protected TextCSS     textCss;
     
     public TextBoxCell() {
     	
@@ -76,16 +74,18 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
      * 
      * @param editor
      */
-    public TextBoxCell(final TextBox editor) {
+    public TextBoxCell(final TextBox<?> editor) {
     	setEditor(editor);
     }
     
-    public void setEditor(TextBox editor) {
-    	TextCSS css = UIResources.INSTANCE.tableText();
-    	css.ensureInjected();
+    public void setEditor(TextBox<?> editor) {
         this.editor = editor;
+        
+    	textCss = UIResources.INSTANCE.tableText();
+    	textCss.ensureInjected();
+       
         editor.setEnabled(true);
-        editor.setCSS(css);
+        editor.setCSS(textCss);
         editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
@@ -139,17 +139,20 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
 
     public ArrayList<Exception> validate(Object value) {
         ArrayList<Exception> exceptions;
-        if(query && value != null) {
+        
+        exceptions = new ArrayList<Exception>();
+        if(query) {
             try {
-                editor.getHelper().validateQuery(((QueryData)value).getQuery());
-                return null;
+                if(value != null)
+                    editor.getHelper().validateQuery(((QueryData)value).getQuery());
             }catch(Exception e) {
-                exceptions = new ArrayList<Exception>();
                 exceptions.add(e);
-                return exceptions;
             }
-        }else
-            return editor.getHelper().validate(value);
+        }else {
+            exceptions.addAll(editor.getHelper().validate(value));
+        }
+        
+        return exceptions;
     }
 
     public Object finishEditing() {
