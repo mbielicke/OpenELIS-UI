@@ -6,12 +6,8 @@ import java.util.ArrayList;
 public class ScriptletObject implements Serializable {
     
     private static final long serialVersionUID = 1L;
-        
-    public static enum Operation {ADD,UPDATE,DELETE};
     
     public static enum Status {EXECUTING,FINISHED,FAILED}
-    
-    protected Operation op;
     
     protected Status status;
     
@@ -24,14 +20,6 @@ public class ScriptletObject implements Serializable {
     
     public ScriptletObject() {
         rerun = new ArrayList<String>();
-    }
-        
-    public void setOperation(Operation op) {
-        this.op = op;
-    }
-    
-    public Operation getOperation() {
-        return op;
     }
     
     public void addRerun(String... metas) {
