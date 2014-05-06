@@ -1,7 +1,10 @@
 package org.openelis.ui.widget;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.openelis.ui.common.Util;
 import org.openelis.ui.resources.TabBarScrollerCSS;
@@ -28,16 +31,15 @@ import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel {
-    
-    protected PickupDragController drag;
-    protected SimpleDropController drop;
+public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel implements SelectionHandler<Integer> { 
+                                                                                           
+    protected TabPopper popper;
     protected HashMap<Integer,Window> popouts = new HashMap<Integer,Window>();
     protected boolean closing;
     protected HashSet<Integer> needsResize = new HashSet<Integer>();
@@ -47,6 +49,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     protected DeckLayoutPanel deck;
     protected AbsolutePanel blank;
     protected boolean visibleTabSet;
+    protected TabBarScroller tabScroller;
     
     public enum TabPosition {TOP,BOTTOM,RIGHT,LEFT};
     
@@ -54,11 +57,6 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     
     protected TabPanelCSS css = UIResources.INSTANCE.tabpanel();
     protected TabBarScrollerCSS scrollCss = UIResources.INSTANCE.tabBarScroller();
-    protected LayoutPanel scroller;
-    protected AbsolutePanel scrollLeft, scrollRight;
-    
-    
-    
 
     public TabLayoutPanel(double barHeight, Unit barUnit) {
         super(barHeight, barUnit);
@@ -71,283 +69,119 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
 
         tabBar  = (FlowPanel) ((LayoutPanel)getWidget()).getWidget(0);
         deck    = (DeckLayoutPanel) ((LayoutPanel)getWidget()).getWidget(1);
-        scroller = new LayoutPanel();
-        scrollLeft = new AbsolutePanel();
-        scrollLeft.setStyleName(scrollCss.MoveLeft());
-        scroller.add(scrollLeft);
-        scroller.setWidgetLeftWidth(scrollLeft, 0.0, Unit.PX, 20, Unit.PX);
-        scroller.setWidgetTopBottom(scrollLeft, 5.0, Unit.PX, 0, Unit.PX);
-        scroller.add(tabBar);
-        scroller.setWidgetLeftRight(tabBar, 20, Unit.PX, 20, Unit.PX);
-        //scroller.setWidgetTopBottom(tabBar, -5.0, Unit.PX, 0, Unit.PX);
-        scrollRight = new AbsolutePanel();
-        scrollRight.setStyleName(scrollCss.MoveRight());
-        scroller.add(scrollRight);
-        scroller.setWidgetRightWidth(scrollRight, 0, Unit.PX, 20, Unit.PX);
-        scroller.setWidgetTopBottom(scrollRight, 5.0, Unit.PX, 0, Unit.PX);
-        scroller.setWidth("100%");
-        scroller.setHeight("100%");
-        scroller.setStyleName("gwt-TabLayoutPanelTabs");
-        tabBar.getElement().getStyle().setWidth(6000.0, Unit.PX);
-        //tabBar.getElement().getStyle().setPosition(Position.RELATIVE);
-        //tabBar.getElement().getStyle().setTop(-5.0, Unit.PX);
-        
-        //default to no scroll
-        
-        scrollLeft.setVisible(false);
-        scrollRight.setVisible(false);
-        scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.NONE);
-        scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.NONE);
-        scroller.setWidgetLeftRight(tabBar, 0,Unit.PX, 0, Unit.PX);
-        
-        scrollRight.addDomHandler(new ClickHandler() {
-            
-            @Override
-            public void onClick(ClickEvent event) {
-                int tabsWidth = 0;
-                
-                for(int i = 0; i < getWidgetCount(); i++) {
-                    tabsWidth += getTabWidget(i).getOffsetWidth() +9;
-                }
-                
-                int left = Util.stripUnits(tabBar.getElement().getStyle().getLeft(),"px");
-                
-                int barWidth = scroller.getWidgetContainerElement(tabBar).getOffsetWidth();
-                
-                int rightEdge = barWidth - tabsWidth;
-                
-                
-                if(tabsWidth > barWidth && left > rightEdge) 
-                    tabBar.getElement().getStyle().setLeft(left-10 < rightEdge ? rightEdge : left-10, Unit.PX);
-            }
-        }, ClickEvent.getType());
-        
-        scrollLeft.addDomHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                int left = Util.stripUnits(tabBar.getElement().getStyle().getLeft(),"px");
-                if(left < 0)
-                    tabBar.getElement().getStyle().setLeft(left+10 > 0 ? 0 : left+10, Unit.PX);
-            }
-        }, ClickEvent.getType());
+
+        tabScroller = new TabBarScroller(tabBar);
 
         //Put the widget back together after adding scroller
         
         LayoutPanel panel = ((LayoutPanel)getWidget());
         panel.clear();
-
-        panel.add(scroller);
-        panel.setWidgetLeftRight(scroller, 0, Unit.PX, 0, Unit.PX);
-        panel.setWidgetTopHeight(scroller, 0, Unit.PX, barHeight, barUnit);
-        panel.setWidgetVerticalPosition(scroller, Alignment.END);
-
+        panel.add(tabScroller);
+        panel.setWidgetLeftRight(tabScroller, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetTopHeight(tabScroller, 0, Unit.PX, barHeight, barUnit);
+        panel.setWidgetVerticalPosition(tabScroller, Alignment.END);
         panel.add(deck);
         panel.setWidgetLeftRight(deck, 0, Unit.PX, 0, Unit.PX);
         panel.setWidgetTopBottom(deck, barHeight, barUnit, 0, Unit.PX);
 
-        
-        addSelectionHandler(new SelectionHandler<Integer>() {
-            
-            @Override
-            public void onSelection(final SelectionEvent<Integer> event) {
-                if(needsResize.contains(event.getSelectedItem())) {
-                    needsResize.remove(new Integer(event.getSelectedItem()));
-                    if(getWidget(event.getSelectedItem()) instanceof RequiresResize)
-                        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                            @Override
-                            public void execute() {
-                                ((RequiresResize)getWidget(event.getSelectedItem())).onResize();
-                            }
-                        });
-                }
-                
-            }
-        });
-        
         blank = new AbsolutePanel();
         blank.addStyleName(css.TabContainer());
         add(blank);
         setTabVisible(0, false);
         
+        addSelectionHandler(this);
     }
     
     public void setTabPosition(TabPosition tabPos) {
         this.tabPos = tabPos;
         
-        LayoutPanel panel = (LayoutPanel)getWidget();
-        Widget deck = panel.getWidget(1);
+        LayoutPanel panel;
+        Widget deck;
         
+        panel = (LayoutPanel)getWidget();
+        deck = panel.getWidget(1);
        
-        if(tabPos == TabPosition.BOTTOM) {
-            panel.setWidgetLeftRight(tabBar, 0, Unit.PX, 0, Unit.PX);
-            panel.setWidgetBottomHeight(tabBar, 0, Unit.PX, barHeight, barUnit);
-            panel.setWidgetTopBottom(deck, 0, Unit.PX, barHeight, barUnit);
-        }else if(tabPos == TabPosition.LEFT) {
-            panel.setWidgetTopBottom(deck, 0, Unit.PX, 0, Unit.PX);
-            panel.setWidgetTopBottom(tabBar, 0, Unit.PX, 0, Unit.PX);
-            panel.setWidgetLeftRight(deck, barHeight, barUnit, 0, Unit.PX);
-            panel.setWidgetLeftWidth(tabBar, 0, Unit.PX, barHeight, Unit.PX);
-            panel.setWidgetVerticalPosition(tabBar,Alignment.BEGIN);
-            tabBar.getElement().getStyle().setHeight(16834, Unit.PX);
-            tabBar.getElement().getStyle().setWidth(barHeight, barUnit);
-            for(int i = 0; i < getWidgetCount(); i++) {
-                getTabWidget(i).getElement().getStyle().setFloat(Float.LEFT);
-                ((TabWidget)getTabWidget(i)).setVertical();
-            }
-        }else if(tabPos == TabPosition.RIGHT) {
-            panel.setWidgetTopBottom(deck, 0, Unit.PX, 0, Unit.PX);
-            panel.setWidgetTopBottom(tabBar, 0, Unit.PX, 0, Unit.PX);
-            panel.setWidgetLeftRight(deck,  0, Unit.PX, barHeight, barUnit);
-            panel.setWidgetRightWidth(tabBar, 0, Unit.PX, barHeight, Unit.PX);
-            panel.setWidgetVerticalPosition(tabBar,Alignment.BEGIN);
-            tabBar.getElement().getStyle().setHeight(16834, Unit.PX);
-            tabBar.getElement().getStyle().setWidth(barHeight, barUnit);
-            for(int i = 0; i < getWidgetCount(); i++) {
-                getTabWidget(i).getElement().getStyle().setFloat(Float.RIGHT);
-                ((TabWidget)getTabWidget(i)).setVertical();
-               
-            }
+        switch(tabPos) {
+            case BOTTOM : 
+                positionTabsBottom(panel,deck);
+                break;
+            case LEFT : 
+                positionTabsLeft(panel,deck);
+                break;
+            case RIGHT : 
+                positionTabsRight(panel,deck);
+                break;
+            default :
+        }
+    }
+    
+    protected void positionTabsBottom(LayoutPanel panel, Widget deck) {
+        panel.setWidgetLeftRight(tabBar, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetBottomHeight(tabBar, 0, Unit.PX, barHeight, barUnit);
+        panel.setWidgetTopBottom(deck, 0, Unit.PX, barHeight, barUnit);
+    }
+    
+    protected void positionTabsLeft(LayoutPanel panel, Widget deck) {
+        panel.setWidgetTopBottom(deck, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetTopBottom(tabBar, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetLeftRight(deck, barHeight, barUnit, 0, Unit.PX);
+        panel.setWidgetLeftWidth(tabBar, 0, Unit.PX, barHeight, Unit.PX);
+        panel.setWidgetVerticalPosition(tabBar,Alignment.BEGIN);
+        tabBar.getElement().getStyle().setHeight(16834, Unit.PX);
+        tabBar.getElement().getStyle().setWidth(barHeight, barUnit);
+        for(int i = 0; i < getWidgetCount(); i++) {
+            getTabWidget(i).getElement().getStyle().setFloat(Float.LEFT);
+            ((TabWidget)getTabWidget(i)).setVertical();
+        }
+    }
+    
+    protected void positionTabsRight(LayoutPanel panel, Widget deck) {
+        panel.setWidgetTopBottom(deck, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetTopBottom(tabBar, 0, Unit.PX, 0, Unit.PX);
+        panel.setWidgetLeftRight(deck,  0, Unit.PX, barHeight, barUnit);
+        panel.setWidgetRightWidth(tabBar, 0, Unit.PX, barHeight, Unit.PX);
+        panel.setWidgetVerticalPosition(tabBar,Alignment.BEGIN);
+        tabBar.getElement().getStyle().setHeight(16834, Unit.PX);
+        tabBar.getElement().getStyle().setWidth(barHeight, barUnit);
+        for(int i = 0; i < getWidgetCount(); i++) {
+            getTabWidget(i).getElement().getStyle().setFloat(Float.RIGHT);
+            ((TabWidget)getTabWidget(i)).setVertical();
         }
     }
     
     public void setPopoutBrowser(final Browser browser) {
-        drag = new PickupDragController(browser.browser,false) {
-            @Override
-            public void previewDragStart() throws VetoDragException {
-                super.previewDragStart();
-                if(popouts.keySet().contains(getTabWidgetIndex(context.draggable)))
-                    throw new VetoDragException();
-                                
-            }
-            
-            @Override
-            protected Widget newDragProxy(DragContext context) {
-                AbsolutePanel panel;
-                
-                panel = new AbsolutePanel();
-                panel.setStyleName(css.TabDraggable());
-                TabWidget tabW = (TabWidget)context.draggable;
-                panel.add(new Label(tabW.getText()));
-                
-                return panel;
-                
-            }
-            
-        }; 
-        
-        drag.setBehaviorDragProxy(true);
-        drag.setBehaviorDragStartSensitivity(10);
-        
-        
-        for(int i = 0; i < getWidgetCount(); i++) {
-            drag.makeDraggable(getTabWidget(i));
-        }
-        
-        popouts = new HashMap<Integer,Window>();
-        drop = new SimpleDropController(browser.browser) {
-            @Override
-            public void onDrop(DragContext context) {
-                super.onDrop(context);
-                
-                if(context.desiredDraggableX > 0) {
-                    
-                    final Window win = new Window(true);
-                    final int index = getTabWidgetIndex(context.draggable);
-                    final Widget wid = getWidget(index);
-                    
-                    boolean showing = index == getSelectedIndex();
-                    
-                    win.setName(((TabWidget)context.draggable).getText());
-                    win.setContentSize(getOffsetWidth(),getOffsetHeight());
-                    
-                    getWidget(index).setVisible(true);
-                    remove(index);
-                    
-                    win.setContent(wid);
-                    LayoutPanel holder = new LayoutPanel();
-                    holder.setStyleName(UIResources.INSTANCE.tabpanel().Popped());
-                    insert(holder,context.draggable,index);
-                    browser.addWindow(win,"modules",context.desiredDraggableX,context.desiredDraggableY);
-                    setTabPoppedOut(index);
-                    if(showing)
-                        selectTab(index);
-                    popouts.put(new Integer(index),win);
-                                        
-                    win.addCloseHandler(new CloseHandler<WindowInt>() {
-                    
-                        @Override
-                        public void onClose(CloseEvent<WindowInt> event) {
-                            boolean isVisible;
-                        
-                            if (isAttached() && !closing) {
-                                isVisible = tabBar.getWidget(index).isVisible();
-                            
-                                Widget tab = getTabWidget(index);
-                                popouts.remove(index);
-                                remove(index);
-                                insert(wid, tab, index);
-                                if(isVisible)
-                                    selectTab(index);
-                                else
-                                    setTabVisible(index, false);
-                                setTabPoppedIn(index);
-                                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                                    
-                                    @Override
-                                    public void execute() {
-                                        ((RequiresResize)getWidget(index)).onResize();
-                                    }
-                                });
-                                
-                            }
-                        }
-                    });
-                }
-                
-            }
-        };
-        drag.registerDropController(drop);
-        
-        addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-            @Override
-            public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-                if(popouts.keySet().contains(event.getItem()))
-                    event.cancel();
-            }
-        });
+        popper = new TabPopper(browser);
     }
     
     public void setTabVisible(int index, boolean visible) {
-        boolean anyVisible = false;
+        boolean anyVisible = isAnyTabVisible();
             
-        tabBar.getWidget(index).setVisible(visible);
-        
-        for(int i = 0; i < tabBar.getWidgetCount(); i++){
-            if(tabBar.getWidget(i).isVisible()) {
-                anyVisible = true;
-                break;
-            }
-        }
+        tabBar.getWidget(index).setVisible(visible); 
         
         showTabBar(anyVisible);
-        
         if(!anyVisible || (index == getSelectedIndex() && !visible)) {
             selectTab(blank);
         }
         
         checkForScroll();
+    }
     
-        
+    public boolean isAnyTabVisible() {
+        for(Widget tab : tabBar) { 
+            if(tab.isVisible()) 
+                return true;
+        }
+        return false;
     }
     
     @Override
     public void add(Widget child, Widget tab) {
-        if(drag != null)
-            drag.makeDraggable(tab);
+        if(popper != null)
+            popper.makeDraggable(tab);
         
         child.addStyleName(css.TabContainer());
         
-        super.insert(child, tab, getTabCount());
+        insert(child, tab, getTabCount());
         
         needsResize.add(getWidgetIndex(child));
         
@@ -369,7 +203,6 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         }
             
         checkForScroll();
-        
     }
     
     @Override
@@ -397,8 +230,11 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     }
 
     @Override
-    public int getWidgetIndex(IsWidget child) {
-        
+    public int getWidgetIndex(Widget child) {
+        /* Widget is replaced with blank in the deck panel if popped out
+        *  so the default method will return -1 so we need to 
+        *  check the popped list first.
+        */
         for(int index : popouts.keySet()) 
             if(popouts.get(new Integer(index)).getContent() == child)
                 return index;        
@@ -465,7 +301,7 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
     }
   
     public void showTabBar(boolean show) {
-        UIObject.setVisible(((LayoutPanel)getWidget()).getWidgetContainerElement(scroller),show);
+        UIObject.setVisible(((LayoutPanel)getWidget()).getWidgetContainerElement(tabScroller),show);
         tabBar.setVisible(show);
     }
     
@@ -480,40 +316,319 @@ public class TabLayoutPanel extends com.google.gwt.user.client.ui.TabLayoutPanel
         for(int i = 0; i < getTabCount(); i++)
             needsResize.add(i);
         needsResize.remove(new Integer(getSelectedIndex()));
-        super.onResize();
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-            @Override
-            public void execute() {
-                checkForScroll();
-            }
-        });
         
+        super.onResize();
+        
+        checkForScroll();
     }
     
-    private void checkForScroll() {
-        int tabsWidth = 0;
+    @Override
+    public void onSelection(SelectionEvent<Integer> event) {
+        if(!needsResize.contains(event.getSelectedItem())) 
+            return;
         
-        for(int i = 0; i < getWidgetCount(); i++) {
-            tabsWidth += getTabWidget(i).getOffsetWidth() + 9;
+        needsResize.remove(new Integer(event.getSelectedItem()));
+        if(getWidget(event.getSelectedItem()) instanceof RequiresResize) {
+            resizeTab(event.getSelectedItem());
+        }
+    }
+    
+    protected void resizeTab(final int index) {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                ((RequiresResize)getWidget(index)).onResize();
+            }
+        });
+    }
+    
+    protected void checkForScroll() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                tabScroller.checkForScroll();
+            }
+        });
+    }
+   
+    protected class TabBarScroller extends ResizeComposite {
+        
+        LayoutPanel scroller;
+        AbsolutePanel scrollLeft, scrollRight;
+        List<Integer> tabEdges;
+        
+        public TabBarScroller(FlowPanel tabBar) {
+            scroller = new LayoutPanel();
+            scrollLeft = new AbsolutePanel();
+            scrollLeft.setStyleName(scrollCss.MoveLeft());
+            scroller.add(scrollLeft);
+            scroller.setWidgetLeftWidth(scrollLeft, 0.0, Unit.PX, 20, Unit.PX);
+            scroller.setWidgetTopBottom(scrollLeft, 5.0, Unit.PX, 0, Unit.PX);
+            scroller.add(tabBar);
+            scroller.setWidgetLeftRight(tabBar, 20, Unit.PX, 20, Unit.PX);
+            scrollRight = new AbsolutePanel();
+            scrollRight.setStyleName(scrollCss.MoveRight());
+            scroller.add(scrollRight);
+            scroller.setWidgetRightWidth(scrollRight, 0, Unit.PX, 20, Unit.PX);
+            scroller.setWidgetTopBottom(scrollRight, 5.0, Unit.PX, 0, Unit.PX);
+            scroller.setWidth("100%");
+            scroller.setHeight("100%");
+            scroller.setStyleName("gwt-TabLayoutPanelTabs");
+            tabBar.getElement().getStyle().setWidth(6000.0, Unit.PX);
+            
+            scrollLeft.setVisible(false);
+            scrollRight.setVisible(false);
+            scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.NONE);
+            scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.NONE);
+            scroller.setWidgetLeftRight(tabBar, 0,Unit.PX, 0, Unit.PX);
+            
+            scrollRight.addDomHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    scrollRight();
+                }
+            }, ClickEvent.getType());
+        
+            scrollLeft.addDomHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    scrollLeft();
+                }
+            }, ClickEvent.getType());
+            
+            initWidget(scroller);
         }
         
-        int barWidth = scroller.getWidgetContainerElement(tabBar).getOffsetWidth();
+        public void scrollRight() {
+            int left,lastVisibleEdge,tabEdge; 
+            
+            tabEdge = 0;
+            left = Util.stripUnits(tabBar.getElement().getStyle().getLeft(),"px");
+            lastVisibleEdge = Math.abs(left) + scroller.getWidgetContainerElement(tabBar).getOffsetWidth();
+            calculateTabEdges();
+            
+            if(lastVisibleEdge >= tabEdges.get(tabEdges.size()-1))
+                return;
+   
+            for(Integer edge : tabEdges) {
+               if(edge > lastVisibleEdge) {
+                   tabEdge = edge;
+                   break;
+               }
+            }
+            
+            tabBar.getElement().getStyle().setLeft(left-(tabEdge-lastVisibleEdge),Unit.PX);
+            
+        }
         
-        if(tabsWidth > barWidth) {
+        public void scrollLeft() {
+            int firstVisibleEdge,tabEdge;
+            
+            tabEdge = 0;
+            firstVisibleEdge = Math.abs(Util.stripUnits(tabBar.getElement().getStyle().getLeft(),"px"));
+            
+            if(firstVisibleEdge == 0)
+                return;
+            
+            calculateTabEdges();
+            Collections.reverse(tabEdges);
+            for(Integer edge : tabEdges) {
+                if(edge < firstVisibleEdge) {
+                    tabEdge = edge;
+                    break;
+                }
+            }
+                   
+            tabBar.getElement().getStyle().setLeft(-tabEdge, Unit.PX);
+        }
+        
+        public void calculateTabEdges() {
+            int tabsWidth;
+            
+            tabEdges = new ArrayList<Integer>(getWidgetCount());
+            tabsWidth = 0;
+            
+            for(Widget widget : tabBar) {
+                tabEdges.add(tabsWidth);
+                if(widget.isVisible())
+                    tabsWidth += widget.getOffsetWidth()+2;//2 pixels added for MarginRight in css 
+            }
+            
+        }
+        
+        public void checkForScroll() {
+            int tabsWidth = 0, barWidth;
+            
+            for(Widget widget : tabBar) 
+                tabsWidth += widget.getOffsetWidth()+2;//2 pixels added for MarginRight in css ;
+            
+            barWidth = scroller.getWidgetContainerElement(tabBar).getOffsetWidth();
+            
+            if(tabsWidth > barWidth) {
+                showScrollArrows();
+            }else {
+                hideScrollArrows();
+            }
+        }
+        
+        protected void showScrollArrows() {
             scrollLeft.setVisible(true);
             scrollRight.setVisible(true);
             scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.BLOCK);
             scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.BLOCK);
             scroller.setWidgetLeftRight(tabBar, 20, Unit.PX, 20, Unit.PX);
-        }else {
+        }
+        
+        protected void hideScrollArrows() {
             scrollLeft.setVisible(false);
             scrollRight.setVisible(false);
             scroller.getWidgetContainerElement(scrollLeft).getStyle().setDisplay(Display.NONE);
             scroller.getWidgetContainerElement(scrollRight).getStyle().setDisplay(Display.NONE);
             scroller.setWidgetLeftRight(tabBar, 0, Unit.PX, 0, Unit.PX);
         }
-            
     }
+    
+    protected class TabPopper implements CloseHandler<WindowInt>, BeforeSelectionHandler<Integer> {
+        
+        Browser browser;
+        PickupDragController drag;
+        SimpleDropController drop;
+        
+        public TabPopper(Browser browser) {
+            this.browser = browser;
+            drag = new TabDragger(browser.browser,false);
+            drag.setBehaviorDragProxy(true);
+            drag.setBehaviorDragStartSensitivity(10);
+            
+            for(int i = 0; i < getWidgetCount(); i++) {
+                makeDraggable(getTabWidget(i));
+            }
+           
+            popouts = new HashMap<Integer,Window>();
+            
+            drop = new TabDropper(browser.browser);
+            drag.registerDropController(drop);
+            
+            addBeforeSelectionHandler(this);
+        }
+        
+        public void makeDraggable(Widget widget) {
+            drag.makeDraggable(widget);
+        }
+        
+        protected class TabDragger extends PickupDragController {
+
+            public TabDragger(AbsolutePanel boundary, boolean byProxy) {
+                super(boundary,byProxy);
+            }
+
+            @Override
+            public void previewDragStart() throws VetoDragException {
+                super.previewDragStart();
+                if(popouts.keySet().contains(getTabWidgetIndex(context.draggable)))
+                    throw new VetoDragException();
+
+            }
+
+            @Override
+            protected Widget newDragProxy(DragContext context) {
+                AbsolutePanel panel;
+
+                panel = new AbsolutePanel();
+                panel.setStyleName(css.TabDraggable());
+                TabWidget tabW = (TabWidget)context.draggable;
+                panel.add(new Label(tabW.getText()));
+                return panel;
+            }
+        }
+
+        protected class TabDropper extends SimpleDropController {
+
+            public TabDropper(AbsolutePanel boundary) {
+                super(boundary);
+            }
+
+            @Override
+            public void onDrop(DragContext context) {
+                super.onDrop(context);
+                System.out.println("drop happening");
+                if(context.desiredDraggableX > 0) {
+                    doDrop(context.draggable,
+                           context.desiredDraggableX,
+                           context.desiredDraggableY);
+                }
+
+            }
+            
+            protected void doDrop(Widget tab, int x, int y) {
+ 
+                int index = getTabWidgetIndex(tab);
+                final Widget wid = getWidget(index);
+                
+                replaceWidgetWithBlank(index,tab);
+
+                Window win = createWindow(((TabWidget)tab).getText(), wid);
+                popouts.put(new Integer(index),win);
+                browser.addWindow(win,"modules",x,y);
+                
+                setTabPoppedOut(index);
+            }
+            
+            protected void replaceWidgetWithBlank(int index,Widget tab) {
+                boolean showing = index == getSelectedIndex();
+
+                getWidget(index).setVisible(true);
+                remove(index);
+
+                LayoutPanel holder = new LayoutPanel();
+                holder.setStyleName(UIResources.INSTANCE.tabpanel().Popped());
+                insert(holder,tab,index);
+                
+                if(showing)
+                    selectTab(index);
+            }
+            
+            protected Window createWindow(String name, Widget content) {
+                final Window win = new Window(true);
+                win.setName(name);
+                win.setContentSize(getOffsetWidth(),getOffsetHeight());
+                win.setContent(content);
+                win.addCloseHandler(popper);
+                return win;
+            }
+        }
+
+        @Override
+        public void onClose(CloseEvent<WindowInt> event) {
+            boolean isVisible;
+            Window win = (Window)event.getSource();
+            Widget wid = win.getContent();
+            final int index = getWidgetIndex(wid);
+            
+            if (!isAttached() || closing)
+                return;
+            
+            isVisible = tabBar.getWidget(index).isVisible();
+
+            Widget tab = getTabWidget(index);
+            popouts.remove(index);
+            remove(index);
+            insert(wid, tab, index);
+            if(isVisible)
+                selectTab(index);
+            else
+                setTabVisible(index, false);
+            setTabPoppedIn(index);
+            
+            resizeTab(index);
+        }
+
+        @Override
+        public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+            if(popouts.keySet().contains(event.getItem()))
+                event.cancel();
+        }
+    }
+
 
 }
