@@ -440,5 +440,16 @@ public interface UIResources extends ClientBundle {
     @Source("images/selectdisabled.png")
     ImageResource selectDisabled();
     
+    @Source("images/arrow_down.png")
+    ImageResource arrowDownButtonImage();
     
+    @Source("images/arrow_downdisabled.png")
+    ImageResource arrowDownButtonImageDisabled();
+    
+    @Source("images/arrow_up.png")
+    ImageResource arrowUpButtonImage();
+    
+    @Source("images/arrow_updisabled.png")
+    ImageResource arrowUpButtonImageDisabled();
+        
 }
