@@ -3,14 +3,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/usr/local/java/jboss-as-7.1.1.Final/bin/client/jboss-client.jar"/>
-	<classpathentry kind="lib" path="/usr/local/java/jboss-as-7.1.1.Final/modules/javax/persistence/api/main/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="/usr/local/java/wildfly-8.0.0.Final/bin/client/jboss-client.jar"/>
+	<classpathentry kind="lib" path="/usr/local/java/wildfly-8.0.0.Final/modules/system/layers/base/javax/persistence/api/main/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/gwt-i18n-server-0.17.jar"/>
-	<classpathentry kind="lib" path="lib/gwtmockito-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-dnd-3.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-i18n-server-0.22.jar"/>
+	<classpathentry kind="lib" path="lib/gwtmockito-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/javassist.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-all-1.9.5.jar"/>
-	<classpathentry kind="lib" path="lib/gwt-dnd-55b29bc583e9f0a1126efdc201fd370fe76e2f35.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="output" path="bin"/>
