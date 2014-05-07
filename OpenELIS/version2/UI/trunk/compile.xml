@@ -6,7 +6,7 @@
 	<!-- Configure path to GWT SDK -->
 	<property name="gwt.sdk" location="/usr/local/java/gwt-2.6.0" />
 	
-	<property name="jboss.home" location="/usr/local/java/wildfly-8.0.0.Final"/>
+	<property name="jboss.home" location="/usr/local/java/jboss-as-7.1.1.Final"/>
 
 	<path id="project.class.path">
 		<pathelement location="${gwt.sdk}/gwt-user.jar" />
@@ -15,10 +15,8 @@
 		<!-- Add any additional non-server libs (such as JUnit) -->
 		<fileset dir="lib" includes="*.jar" />
 		<fileset dir="${jboss.home}/bin/client" includes="jboss-client.jar" />
-		<fileset dir="${jboss.home}/modules/system/layers/base/javax/websocket/api/main" includes="jboss-websocket-api_1.0_spec-1.0.0.Final.jar" />
-		<fileset dir="${jboss.home}/modules/system/layers/base/javax/persistence/api/main" includes="*.jar" />
+		<fileset dir="${jboss.home}/modules/javax/persistence/api/main" includes="*.jar" />
 	</path>
-
 
 	<target name="javac" depends="clean" description="Compile java source to bytecode">
 		<mkdir dir="bin" />
