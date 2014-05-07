@@ -19,7 +19,7 @@
 
     <mkdir dir="reports/checkstyle" />
 
-    <checkstyle config="${checkstyle.home}/sun_checks.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+    <checkstyle config="${checkstyle.home}/shl_checks.xml" failureProperty="checkstyle.failure" failOnViolation="false">
       <formatter type="xml" tofile="reports/checkstyle/checkstyle_report.xml" />
       <fileset dir="src" includes="**/*.java" />
     </checkstyle>
