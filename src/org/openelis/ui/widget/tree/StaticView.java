@@ -600,7 +600,8 @@ public class StaticView extends ViewInt {
             flexTable.setWidget(r, c, container);
         } else {
             Element tableCell = flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3);
-            tableCell.removeChild(tableCell.getChild(0));
+            if(tableCell.hasChildNodes())
+                tableCell.removeChild(tableCell.getChild(0));
             tableCell.appendChild(container.getElement());
             int width = tableCell.getOffsetWidth() - 3;
             if(width > 0)
