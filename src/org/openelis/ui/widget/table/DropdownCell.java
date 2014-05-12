@@ -102,7 +102,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     	ArrayList<Exception> exceptions = new ArrayList<Exception>();
     	
     	if(!query) {
-    	    if(value != null && editor.isValidKey(value))
+    	    if(value != null && !editor.isValidKey(value))
     	        exceptions.add(new Exception("Invalid key set for dropdown"));
     	
     	    exceptions.addAll(editor.getHelper().validate(value));
