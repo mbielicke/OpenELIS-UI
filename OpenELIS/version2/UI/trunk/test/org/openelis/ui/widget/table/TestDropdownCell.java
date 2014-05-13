@@ -94,12 +94,14 @@ public class TestDropdownCell {
     
     @Test
     public void validate() {
+        when(editor.isValidKey(new Integer(1))).thenReturn(true);
         assertTrue(cell.validate(new Integer(1)).isEmpty());       
     }
     
     @Test 
     public void validate_invalidValue() {
-        assertFalse(cell.validate("123").isEmpty());
+        when(editor.isValidKey(new Integer(123))).thenReturn(false);
+        assertFalse(cell.validate(new Integer(123)).isEmpty());
     }
     
     @Test 
