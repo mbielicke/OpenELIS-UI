@@ -19,11 +19,12 @@
     color:#000000;
     font-family: inherit;
     font-size: inherit;
-    height:20px;
+    height:16px;
     cursor:default;
     table-layout : fixed;
     background:white;
     outline : none;
+    padding : 1px;
 }
 
 .SelectText {

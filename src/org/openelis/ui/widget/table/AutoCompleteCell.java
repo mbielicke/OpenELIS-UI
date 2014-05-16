@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableAutoCompleteCSS;
+import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.AutoComplete;
@@ -40,7 +40,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -84,7 +83,7 @@ public class AutoCompleteCell implements CellRenderer,
     
     public void setEditor(AutoComplete editor) {
         this.editor = editor;
-        TableAutoCompleteCSS css = UIResources.INSTANCE.tableAutoComplete();
+        DropdownCSS css = UIResources.INSTANCE.tableDropdown();
         css.ensureInjected();
         editor.setEnabled(true);
         editor.setCSS(css);
@@ -157,7 +156,6 @@ public class AutoCompleteCell implements CellRenderer,
     /**
      * Returns the current widget set as this cells editor.
      */
-    @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
@@ -165,17 +163,18 @@ public class AutoCompleteCell implements CellRenderer,
         	editor.setValue((AutoCompleteValue)value);
         else
         	editor.setValue(null,DataBaseUtil.toString(value));
-        editor.setWidth(container.getWidth()+6+"px");
         container.setEditor(editor);
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         editor.selectAll();
     }
 
-    @SuppressWarnings("rawtypes")
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
 

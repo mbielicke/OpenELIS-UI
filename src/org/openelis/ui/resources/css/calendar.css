@@ -221,6 +221,7 @@ margin:0;
 
 @sprite .CalendarButton{
 	gwt-image:'calendarButton';
+	border : 1px solid #D8D8D8;
 }
 
 .DayCell{
@@ -271,9 +272,9 @@ margin:0;
 .SelectBox {
     border:1px solid #d8d8d8;
     color:#000000;
-    height:20px;
+    height:16px;
     cursor:default;
-    table-layout : fixed;
+    padding : 1px;
 }
 
 .SelectText {
@@ -288,12 +289,6 @@ margin:0;
 
 .Focus {
 	 border:1px solid #63b159;
-}
-
-.SelectBox td {
-	text-overflow : ellipsis;
-	overflow : hidden;
-	white-space : nowrap;
 }
 
 

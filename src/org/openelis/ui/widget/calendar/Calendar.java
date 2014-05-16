@@ -36,6 +36,7 @@ import org.openelis.ui.resources.CalendarCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.Button;
+import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DateHelper;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.HasHelper;
@@ -49,6 +50,7 @@ import org.openelis.ui.widget.datetimepicker.DatetimePicker;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -78,9 +80,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.Widget;
@@ -108,9 +112,9 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      * Used for Calendar display
      */
 	@UiField
-    protected Grid                                  display;
+    protected LayoutPanel                           display;
 	@UiField
-    protected Button                                button;
+    protected FocusPanel                            button;
     protected PopupPanel                            popup;
     protected DatetimePicker                        picker;
     protected int                                   width;
@@ -139,9 +143,6 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     public Calendar() {
     	source = this;
 
-    	/*
-         * Final instance of the private class KeyboardHandler
-         */
         final KeyboardHandler keyHandler = new KeyboardHandler();
         
         initWidget(uiBinder.createAndBindUi(this));
@@ -169,12 +170,11 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         
         exceptions = new Exceptions();
 
-        /*
-         * Registers the keyboard handling this widget
-         */
         addHandler(keyHandler, KeyDownEvent.getType());
         
         setCSS(UIResources.INSTANCE.calendar());
+        
+        setWidth("90px");
         
     }
     
@@ -199,10 +199,6 @@ public class Calendar extends Composite implements ScreenWidgetInt,
 		showingCalendar = true;
 	}
     
-    /**
-     * This method is overwritten to implement case management. Use the
-     * setValue/getValue methods for normal screen use.
-     */
     public String getText() {
         return textbox.getText();
     }
@@ -259,18 +255,10 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     @Override
     public void setWidth(String w) {
         width = Util.stripUnits(w);
-        /*
-         * Set the outer panel to full width;
-         */
-        if (display != null)
-            display.setWidth(width+"px");
-
-        /*
-         * set the Textbox to width - 14 to account for button.
-         */
-        display.getCellFormatter().setWidth(0,0,(width-25)+"px");
-        textbox.setWidth((width - 25) + "px");
-        
+ 
+        if (display != null){
+            display.setWidth(w);
+        }
     }
     
     public int getWidth() {
@@ -304,13 +292,15 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      */
     @Override
     public void setEnabled(boolean enabled) {
-        button.setEnabled(enabled);
         textbox.enforceMask(enabled);
         textbox.setReadOnly(!enabled);
-        if (enabled)
+        if (enabled) {
             sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
-        else
+            button.sinkEvents(Event.ONCLICK);
+        }else{
             unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
+            button.unsinkEvents(Event.ONCLICK);
+        }
     }
 
     /**
@@ -381,10 +371,13 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     	 */
     	if(dh.getBegin() > Datetime.DAY) {
     		textbox.setMask(Messages.get().gen_timeMask());
+    		setWidth("60px");
     	} else if (dh.getEnd() < Datetime.HOUR){
     		textbox.setMask(Messages.get().gen_dateMask());
+    		setWidth("90px");
     	} else {
     		textbox.setMask(Messages.get().gen_dateTimeMask());
+    		setWidth("125px");
     	}
     }
 
@@ -722,7 +715,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     	css.ensureInjected();
     	this.css = css;
     	
-        button.setLeftIcon(css.CalendarButton());
+        button.setStyleName(css.CalendarButton());
         display.setStyleName(css.SelectBox());
         textbox.setStyleName(css.SelectText());
     }

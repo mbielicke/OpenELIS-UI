@@ -86,6 +86,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -123,11 +124,11 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 
 	protected AbsolutePanel                         image;
 	@UiField
-	protected Grid 					                display;
+	protected LayoutPanel    		                display;
 	protected Grid                                  multiHeader;
 	protected VerticalPanel         				vp;
 	@UiField
-	protected Button  					            button;
+	protected Button     				            button;
 	protected Button                                checkAll,uncheckAll,close;
 	protected Table                 				table;
 	protected PopupPanel      					    popup;
@@ -395,21 +396,10 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 
 	@Override
 	public void setWidth(String w) {    
-		width = Util.stripUnits(w) - 5;
-
-		/*
-		 * Set the outer panel to full width;
-		 */
+		width = Util.stripUnits(w);
+		
 		if (display != null)
 			display.setWidth(width+"px");
-
-		/*
-         * set the Textbox to width - 16 to account for button.
-         */
-
-        textbox.setWidth((width - 16) + "px");
-        display.getCellFormatter().setWidth(0, 0, (width - 16)+"px");
-        button.setWidth("16px");
 
 		if(table != null) 
 			table.setWidth(width+"px");
@@ -623,16 +613,17 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 
-		button.setEnabled(enabled);
 		table.setEnabled(enabled);
+		button.setEnabled(enabled);
 		
 		if (table != null)
             table.setEnabled(enabled);
 
-		if (enabled)
+		if (enabled) {
 			sinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
-		else
+		}else{
 			unsinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
+		}
 
 	}
 

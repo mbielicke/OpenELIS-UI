@@ -225,6 +225,7 @@
 
 @sprite .CalendarButton{
 	gwt-image:'calendarButton';
+	margin-left : 2px;
 }
 
 .DayCell{

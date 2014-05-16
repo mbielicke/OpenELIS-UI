@@ -39,7 +39,6 @@ import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.Column;
-import org.openelis.ui.widget.table.LabelCell;
 import org.openelis.ui.widget.table.Row;
 import org.openelis.ui.widget.table.SelectionCell;
 import org.openelis.ui.widget.table.Table;
@@ -120,7 +119,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
 
     protected AbsolutePanel              image;
     @UiField
-    protected Grid                       display;
+    protected LayoutPanel                display;
     protected Grid                       multiHeader;
     protected VerticalPanel              vp;
     @UiField
@@ -429,25 +428,13 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
 
     @Override
     public void setWidth(String w) {
-        width = Util.stripUnits(w) - 5;
-
-        /*
-         * Set the outer panel to full width;
-         */
+        width = Util.stripUnits(w);
+        
         if (display != null)
             display.setWidth(width + "px");
 
-        /*
-         * set the Textbox to width - 16 to account for button.
-         */
-
-        textbox.setWidth( (width - 16) + "px");
-        display.getCellFormatter().setWidth(0, 0, (width - 16) + "px");
-        button.setWidth("16px");
-
         if (table != null && dropWidth == null)
             table.setWidth((width)+ "px");
-
     }
 
     public int getWidth() {
@@ -689,16 +676,17 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
 
-        button.setEnabled(enabled);
         textbox.setEnabled(enabled);
+        button.setEnabled(enabled);
 
         if (table != null)
             table.setEnabled(enabled);
 
-        if (enabled)
+        if (enabled) {
             sinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
-        else
+        }else{
             unsinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
+        }
 
     }
 

@@ -38,7 +38,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -66,7 +65,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     private ColumnInt     column;
 
     public DropdownCell() {
-    	this(new Dropdown<String>());
+    	//this(new Dropdown<String>());
     	
     }
     /**
@@ -158,21 +157,23 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
      * Returns the current widget set as this cells editor.
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, final Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
         editor.setValue(value);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
 
     @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
+	public void startEditingQuery(QueryData qd, final Container container, NativeEvent event) {
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+6+"px");
         container.setEditor(editor);
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
     }
     
     public boolean ignoreKey(int keyCode) {
@@ -208,13 +209,6 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
 	public void add(Widget w) {
 		if(w instanceof Dropdown) {
 		    setEditor((Dropdown)w);
-			//this.editor = (Dropdown)w;
-		    //editor.setStyleName("TableDropdown");
-	        //editor.addBlurHandler(new BlurHandler() {
-				//public void onBlur(BlurEvent event) {
-					//column.finishEditing();
-				//}
-		//	});
 		}
 	}
 	

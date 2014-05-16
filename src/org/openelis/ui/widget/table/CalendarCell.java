@@ -35,16 +35,13 @@ import org.openelis.ui.resources.TableCalendarCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.calendar.Calendar;
 
-import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -101,6 +98,7 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         else
         	editor.setText(DataBaseUtil.toString(value));
         editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
         editor.selectAll();
     }
@@ -111,6 +109,7 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         editor.setQueryMode(true);
         editor.setQuery(qd);
         editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
 

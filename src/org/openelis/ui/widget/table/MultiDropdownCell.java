@@ -147,21 +147,21 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
     /**
      * Returns the current widget set as this cells editor.
      */
-    @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
         editor.setValue((ArrayList<Integer>)value);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
 
-    @SuppressWarnings("rawtypes")
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+6+"px");
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
     
@@ -198,13 +198,6 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 	public void add(Widget w) {
 		if(w instanceof MultiDropdown) {
 		    setEditor((MultiDropdown)w);
-			//this.editor = (Dropdown)w;
-		    //editor.setStyleName("TableDropdown");
-	        //editor.addBlurHandler(new BlurHandler() {
-				//public void onBlur(BlurEvent event) {
-					//column.finishEditing();
-				//}
-		//	});
 		}
 	}
 	
