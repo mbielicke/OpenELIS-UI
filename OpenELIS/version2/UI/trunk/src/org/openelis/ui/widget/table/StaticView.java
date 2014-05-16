@@ -575,13 +575,6 @@ public class StaticView extends ViewInt {
             table.getColumnAt(c)
                  .getCellEditor()
                  .startEditing(table.getValueAt(r, c), container, event);
-        
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                
-            }
-        });
     }
 
     /**
