@@ -38,9 +38,8 @@ import org.openelis.ui.event.GetMatchesHandler;
 import org.openelis.ui.event.HasBeforeGetMatchesHandlers;
 import org.openelis.ui.event.HasGetMatchesHandlers;
 import org.openelis.ui.messages.UIMessages;
-import org.openelis.ui.resources.AutoCompleteCSS;
+import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Options;
 import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.Row;
@@ -85,7 +84,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
@@ -120,7 +118,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      */
 
 	@UiField
-    protected Grid                                  display;
+    protected LayoutPanel                           display;
 	@UiField
     protected Button                                button;
     protected Table                                 table;
@@ -153,7 +151,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     
     protected UIMessages                            consts    = GWT.create(UIMessages.class);
     
-    protected AutoCompleteCSS                       css;
+    protected DropdownCSS                           css;
     
     protected String                                dropHeight = "150px", dropWidth;
     
@@ -231,7 +229,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         
         exceptions = new Exceptions();
         
-        setCSS(UIResources.INSTANCE.autocomplete());
+        setCSS(UIResources.INSTANCE.dropdown());
         
         setPopupContext(new Table.Builder(10).column(new Column.Builder(10).build()).build());
         
@@ -367,20 +365,10 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
     @Override
     public void setWidth(String w) {        
-        width = Util.stripUnits(w) - 5;
+        width = Util.stripUnits(w);
 
-        /*
-         * Set the outer panel to full width;
-         */
         if (display != null)
             display.setWidth(width+"px");
-
-        /*
-         * set the Textbox to width - 16 to account for button.
-         */        
-        textbox.setWidth((width - 16) + "px");
-        display.getCellFormatter().setWidth(0, 0, (width - 16)+"px");
-        button.setWidth("16px");
         
         if(table != null)
             table.setWidth((width)+"px");
@@ -392,7 +380,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     
     @Override
     public void setHeight(String height) {
-        textbox.setHeight(height);
+        display.setHeight(height);
         button.setHeight(height);
     }
     
@@ -1070,13 +1058,13 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         }
     }
     
-    public void setCSS(AutoCompleteCSS css) {
+    public void setCSS(DropdownCSS css) {
     	css.ensureInjected();
     	this.css = css;
     	
-        button.setLeftIcon(css.AutoDropdownButton());
+        button.setLeftIcon(css.SelectButton());
         display.setStyleName(css.SelectBox());
-        textbox.setStyleName(css.AutoBox());
+        textbox.setStyleName(css.SelectText());
     }
     
     /**

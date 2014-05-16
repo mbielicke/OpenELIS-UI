@@ -1,8 +1,14 @@
 package org.openelis.ui.util;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.internal.invocation.InvocationMarker;
@@ -59,6 +65,34 @@ public class TestingUtil {
                 return null;
             }
         };
+    }
+    
+    public static void mockNamedQueryWithSingleResult(EntityManager manager, String queryName, Object data) {
+        when(mockNamedQuery(queryName,manager).getSingleResult()).thenReturn(data);
+    }
+    
+    public static void mockNamedQueryThatThrowsException(EntityManager manager, String queryName, Exception exception) {
+        when(mockNamedQuery(queryName,manager).getSingleResult()).thenThrow(exception);
+    }
+    
+    public static void mockNamedQueryWithResultList(EntityManager manager, String queryName, List<?> result) {
+        when(mockNamedQuery(queryName,manager).getResultList()).thenReturn(result);
+    }
+    
+    public static void mockQueryWithResultList(EntityManager manager, List<?> result) {
+        when(mockQuery(manager).getResultList()).thenReturn(result);
+    }
+    
+    public static Query mockNamedQuery(String queryId,EntityManager manager) {
+        Query query = mock(Query.class);
+        when(manager.createNamedQuery(queryId)).thenReturn(query);
+        return query;
+    }
+    
+    public static Query mockQuery(EntityManager manager) {
+        Query query = mock(Query.class);
+        when(manager.createQuery(anyString())).thenReturn(query);
+        return query;
     }
     
     private static Last last = new Last();

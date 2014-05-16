@@ -84,7 +84,7 @@ public class AutoCompleteCell implements CellRenderer,
         TableAutoCompleteCSS css = UIResources.INSTANCE.tableAutoComplete();
         css.ensureInjected();
         editor.setEnabled(true);
-        editor.setCSS(css);
+        //editor.setCSS(css);
         editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {

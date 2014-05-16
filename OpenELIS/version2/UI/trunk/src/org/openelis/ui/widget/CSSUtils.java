@@ -77,4 +77,14 @@ public class CSSUtils {
    public static String getStyleProperty(com.google.gwt.dom.client.Element el,String prop) {
        return getStyleProperty((Element)el,prop);
    }
+   
+   public static int getAddedMarginWidth(com.google.gwt.dom.client.Element el) {
+       return Util.stripUnits(el.getStyle().getMarginRight()) +
+              Util.stripUnits(el.getStyle().getMarginLeft());   
+   }
+   
+   public static int getAddPaddingWidth(com.google.gwt.dom.client.Element el) {
+       return Util.stripUnits(el.getStyle().getPaddingLeft()) +
+              Util.stripUnits(el.getStyle().getPaddingRight());
+   }
 }

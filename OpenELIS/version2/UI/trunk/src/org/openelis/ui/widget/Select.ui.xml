@@ -4,15 +4,13 @@
              
     <ui:with field="res" type="org.openelis.ui.resources.UIResources"/>
 
-    <g:Grid cellPadding="0" cellSpacing="0" ui:field="display">
-      <g:row>
-        <g:customCell>
-          <w:TextBase ui:field="textbox"/>
-        </g:customCell>
-        <g:customCell>
-          <w:Button ui:field="button" CSS="{res.lookupButton}"/>
-        </g:customCell>
-      </g:row>
-    </g:Grid>
-
+    <g:LayoutPanel ui:field="display">
+      <g:layer left="0px" right="16px">
+        <w:TextBase ui:field="textbox" width="100%"/>
+      </g:layer>
+      <g:layer right="0" width="16px">
+       <w:Button ui:field="button" CSS="{res.lookupButton}"/>
+      </g:layer>
+    </g:LayoutPanel>
+    
 </ui:UiBinder>

@@ -561,10 +561,11 @@ public class StaticView extends ViewInt {
      * @param value
      * @param event
      */
-    protected void startEditing(int r, final int c, Object value, NativeEvent event) {
+    protected void startEditing(final int r, final int c, Object value, NativeEvent event) {
         container.setWidth( (table.getColumnAt(c).getWidth() - 3));
         container.setHeight( (table.getRowHeight()));
         flexTable.setWidget(r, c, container);
+       
 
         if (table.getQueryMode())
             table.getColumnAt(c)
@@ -574,6 +575,13 @@ public class StaticView extends ViewInt {
             table.getColumnAt(c)
                  .getCellEditor()
                  .startEditing(table.getValueAt(r, c), container, event);
+        
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                
+            }
+        });
     }
 
     /**
