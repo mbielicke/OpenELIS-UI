@@ -67,7 +67,7 @@
 			<formatter type="xml" />
 		</junit>
 		</jacoco:coverage>
-		<ivy:publish resolver="nexus-public" organisation="org.openelis" module="ui" artifactspattern="ui.jar"/>
+		<ivy:publish resolver="nexus-public" organisation="org.openelis" module="ui" artifactspattern="ui.jar" pubrevision="1.0.0"/>
 	</target>
 	
 </project>
