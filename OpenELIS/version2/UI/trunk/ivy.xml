@@ -24,6 +24,11 @@
         module="OpenELIS-UI"
         status="integration">
 	</info>
+    
+    <publications>
+        <artifact name="ui" type="jar"/>
+    </publications>
+    
     <dependencies>
 	  <dependency org="com.google.gwt.gwtmockito" name="gwtmockito" rev="1.1.3" transitive="false" conf="default->master"/>
 	  <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="default->master"/>
