@@ -70,6 +70,7 @@
 	</target>
 	
 	<target name="publish">
+		  <ivy:resolve/>
 		  <ivy:publish resolver="nexus-releases"
 		                      revision="1.0.0"
 		                      overwrite="true" 
