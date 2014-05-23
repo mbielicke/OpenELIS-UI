@@ -70,13 +70,15 @@
 	</target>
 	
 	<target name="publish">
+		  <ivy:deliver deliverpattern="ivy.xml" pubrevision="1.0.0-SNAPSHOT" status="release"/>
+		  <!--<ivy:makepom ivyfile="ivy.xml" pomfile="pom.xml"/>-->
 		  <ivy:resolve/>
-		  <ivy:publish resolver="nexus-releases"
-		                      revision="1.0.0"
+		  <ivy:publish resolver="nexus-snapshots"
+		                      revision="1.0.0-SNAPSHOT"
 		                      overwrite="true" 
-		                      publishivy="false" >
-		    <artifacts pattern="ui.jar"/>
-		  </ivy:publish>
+		                      publishivy="false"
+		  	                  artifactspattern="[artifact].[ext]"
+		  	                  />
 	</target>
 	
 </project>
