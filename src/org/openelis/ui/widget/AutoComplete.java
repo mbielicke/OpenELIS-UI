@@ -571,13 +571,14 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     		return;
     	
     	queryMode = query;
+    	value = null;
+    	textbox.setText("");
+        table.unselectAll();
     	
     	if(query)
     		unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
     	else if(isEnabled())
     		sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
-    	
-    	textbox.setText("");
     }
 
     /**
@@ -611,7 +612,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     @Override
     public void setValue(AutoCompleteValue value, boolean fireEvents) {
 
-        if(!Util.isDifferent(this.value, value))
+        if(!Util.isDifferent(this.value == null ? null : this.value, value))
             return;
         
         table.setModel(null);
