@@ -18,7 +18,9 @@
 	border-color: #FFFFFF #EDEDED #EDEDED;
 	border-style: solid;
 	border-width: 0px 1px 1px 0px;
-	color: black;
+	color: inherit;
+	font-family:inherit;
+	font-size:inherit;
 	cursor: pointer;
 /*	padding: 0px 2px 2px 2px;  fixed row cellpadding*/
 	padding: 0px 2px 2px;

@@ -285,6 +285,7 @@ margin:0;
    tex-overflow: ellipsis;
    font-family:inherit;
    font-size:inherit;
+   color:inherit;
 }
 
 .Focus {
