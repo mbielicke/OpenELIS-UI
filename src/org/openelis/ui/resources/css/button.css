@@ -5,8 +5,9 @@
 	display : inline-block;
 	border:1px solid #7293be;
 	border-radius : 4px;
-	font-family:"Open Sans",sans-serif;
-    font-size:11px;
+	font-family:inherit;
+    font-size:inherit;
+    color:inherit;
     text-shadow: 0 1px white;
     background:white;
 }

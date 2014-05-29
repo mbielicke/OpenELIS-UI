@@ -34,6 +34,10 @@ background-image: -moz-linear-gradient(center top , rgba(99, 136, 246, 1), rgba(
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align:middle;
+	white-space: pre;
+	color:inherit;
+	font-family:inherit;
+	font-size:inherit;
 }
 
 .Table>tbody>tr>td.InputError {

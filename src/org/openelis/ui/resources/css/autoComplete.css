@@ -16,6 +16,7 @@
 .AutoBox {
    font-family: inherit;
    font-size: inherit;
+   color:inherit;
    background:white;
    height: 16px;
    cursor: default;

@@ -5,7 +5,9 @@
 	border:1px solid transparent;
 	-moz-border-radius:2px;
 	border-radius:4px;
-    color:black;
+    color:inherit;
+    font-family:inherit;
+    font-size:inherit;
     display : inline-block;
     text-shadow: 0 1px white;
 }
