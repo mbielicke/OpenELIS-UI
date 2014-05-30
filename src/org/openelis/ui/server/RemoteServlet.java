@@ -12,7 +12,7 @@ import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 public class RemoteServlet extends XsrfProtectedServiceServlet {
 
     private static final long            serialVersionUID = 1L;
-    protected static SerializationPolicy sPolicy;
+    protected SerializationPolicy sPolicy;
 
     /**
      * Overridden to manage session timeout
@@ -22,7 +22,6 @@ public class RemoteServlet extends XsrfProtectedServiceServlet {
 
         getThreadLocalRequest().setAttribute("last_access",
                                              Datetime.getInstance(Datetime.YEAR, Datetime.MINUTE));
-        System.out.println("Last Access set to - "+getThreadLocalRequest().getAttribute("last_access"));
     }
 
     /**
@@ -39,7 +38,7 @@ public class RemoteServlet extends XsrfProtectedServiceServlet {
     /**
      * Throws or wraps the EJB exceptions so it can be forwarded to GWT
      */
-    public static Exception serializeForGWT(Throwable t) {
+    protected Exception serializeForGWT(Throwable t) {
         Throwable nt;
         
         if (t instanceof ValidationErrorsList)
