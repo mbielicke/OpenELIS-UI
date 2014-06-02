@@ -32,15 +32,15 @@ import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
+import org.openelis.ui.messages.UIMessages;
 import org.openelis.ui.resources.CalendarCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon;
-import org.openelis.ui.widget.Button;
-import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DateHelper;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.HasHelper;
 import org.openelis.ui.widget.HasBalloon;
+import org.openelis.ui.widget.IconContainer;
 import org.openelis.ui.widget.Queryable;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.TextBase;
@@ -50,7 +50,7 @@ import org.openelis.ui.widget.datetimepicker.DatetimePicker;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -82,7 +82,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -297,9 +296,11 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         if (enabled) {
             sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
             button.sinkEvents(Event.ONCLICK);
+            button.getElement().getStyle().setCursor(Cursor.POINTER);
         }else{
             unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
             button.unsinkEvents(Event.ONCLICK);
+            button.getElement().getStyle().setCursor(Cursor.AUTO);
         }
     }
 
@@ -333,7 +334,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     }
     
     public void setPrecision(byte begin, byte end) {
-    	assert(begin < end);
+    	assert(begin < end) : "Precsion in wrong order";
     	
     	((DateHelper)getHelper()).setBegin(begin);
     	((DateHelper)getHelper()).setEnd(end);
@@ -370,13 +371,13 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     	 * xsl, but defaults are provided if none set.
     	 */
     	if(dh.getBegin() > Datetime.DAY) {
-    		textbox.setMask(Messages.get().gen_timeMask());
+    		textbox.setMask(getMessages().gen_timeMask());
     		setWidth("60px");
     	} else if (dh.getEnd() < Datetime.HOUR){
-    		textbox.setMask(Messages.get().gen_dateMask());
+    		textbox.setMask(getMessages().gen_dateMask());
     		setWidth("90px");
     	} else {
-    		textbox.setMask(Messages.get().gen_dateTimeMask());
+    		textbox.setMask(getMessages().gen_dateTimeMask());
     		setWidth("125px");
     	}
     }
@@ -458,7 +459,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     			try {
     				setValue(helper.getValue(text), fireEvents);
     				if (required && value == null) 
-    					addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+    					addValidateException(new Exception(getMessages().exc_fieldRequired()));
     			} catch (Exception e) {
     				addValidateException(e);
     			}
@@ -472,7 +473,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      */
     public void validateQuery() {
         try {
-            getValidateExceptions();
+            clearValidateExceptions();
             helper.validateQuery(textbox.getText());
         } catch (Exception e) {
             addValidateException(e);
@@ -750,5 +751,9 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     
     public Balloon.Options getBalloonOptions() {
         return options;
+    }
+    
+    protected UIMessages getMessages() {
+        return Messages.get();
     }
 }
