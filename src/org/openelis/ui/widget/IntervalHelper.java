@@ -141,7 +141,7 @@ public class IntervalHelper implements WidgetHelper<Double> {
         if (minutes != null && minutes.doubleValue() > 0.0) {
             h = (int)(minutes / 60);
             m = (int)(minutes % 60);
-            return h + ":" + m;
+            return h + ":" + (m < 10 ? "0"+m : m);
         } 
   
         return "";      
@@ -157,7 +157,7 @@ public class IntervalHelper implements WidgetHelper<Double> {
                 m = (int)Math.round(hours  * 60);
             else
                 m = (int)Math.round((hours % h) * 60);
-            return h + ":" + m;
+            return h + ":" + (m < 10 ? "0"+m : m);
         } 
   
         return "";      
