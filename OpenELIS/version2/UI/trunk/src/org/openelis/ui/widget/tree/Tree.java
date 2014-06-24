@@ -1232,12 +1232,14 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         if ( !fireBeforeNodeAddedEvent(index, parent, node))
             return null;
         
+        unselectAll();
+        
         if(parent.isOpen) {
             if(parent == root) {
                 if(index == root.getChildCount())
                     pos = getRowCount();
                 else
-                    pos = nodeIndex.get(root.getChildAt(index)).index - 1;
+                    pos = nodeIndex.get(root.getChildAt(index)).index;
                 
             }else if(parent.getChildCount() == 0)
             	pos = nodeIndex.get(parent).index +1;
