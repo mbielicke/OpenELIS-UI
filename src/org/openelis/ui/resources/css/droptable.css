@@ -40,6 +40,10 @@ background-image: -moz-linear-gradient(center top , rgba(99, 136, 246, 1), rgba(
 	font-size:inherit;
 }
 
+.Table>tbody>tr>td.Disabled {
+	color : grey;
+}
+
 .Table>tbody>tr>td.InputError {
 	border-bottom: 1px red dashed;
 }
