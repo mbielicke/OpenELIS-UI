@@ -291,7 +291,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      */
     @Override
     public void setEnabled(boolean enabled) {
-        textbox.enforceMask(enabled);
+        textbox.enforceMask(enabled && !queryMode);
         textbox.setReadOnly(!enabled);
         if (enabled) {
             sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
@@ -310,7 +310,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     @Override
     public void addExceptionStyle() {
     	if(Balloon.isWarning(this))
-    		addStyleName(css.InputWarning());
+    	    addStyleName(css.InputWarning());
     	else
     		addStyleName(css.InputError());
     }
@@ -656,9 +656,11 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         if (queryMode == query) 
             return;
         
+
         queryMode = query;
-        textbox.enforceMask(!query && isEnabled());
+        textbox.enforceMask(!query);
         textbox.setText("");
+        value = null;
     }
 
     /**
