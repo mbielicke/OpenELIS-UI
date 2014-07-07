@@ -18,7 +18,7 @@
 .Tree td {
 	overflow : hidden;
 	text-overfow : ellipsis;
-	white-space : nowrap;
+	white-space : pre;
 	border : none;
 	color: black;
 	cursor: pointer;
