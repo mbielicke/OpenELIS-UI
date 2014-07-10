@@ -161,7 +161,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
          */
         addBlurHandler(new BlurHandler() {
         	public void onBlur(BlurEvent event) {
-        		display.removeStyleName(css.Focus());
+        	    display.removeStyleName(css.Focus());
         		finishEditing(true);
         	}
         });
@@ -184,6 +184,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     
     @UiHandler("textbox")
     public void onBlur(BlurEvent event) {
+        display.removeStyleName(css.Focus());
     	if(!showingCalendar && isEnabled())
     		BlurEvent.fireNativeEvent(event.getNativeEvent(), this);
     }
