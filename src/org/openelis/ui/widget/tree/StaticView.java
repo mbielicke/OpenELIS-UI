@@ -47,7 +47,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -526,11 +525,10 @@ public class StaticView extends ViewInt {
     protected void renderCell(int r, int c) {
         CellRenderer renderer;
         HTMLTable table;
-        int row, col, level;
+        int row, col;
         Node node;
         
         node = tree.getNodeAt(r);
-        level = tree.showRoot() ? node.getLevel() : node.getLevel() - 1;
 
         if (c < tree.getNodeDefinition(node.getType()).size())
             renderer = tree.getCellRenderer(r, c);
@@ -555,8 +553,6 @@ public class StaticView extends ViewInt {
                 flexTable.setHTML(r, c, treeGrid.getElement().getString());
             } else {
                 if ( !node.isLeaf()) {
-                    if(level == 0)
-                        flexTable.getCellFormatter().getElement(r, c).getElementsByTagName("td").getItem(0).getStyle().setDisplay(Display.NONE);
                     if (node.isOpen)
                         flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeOpenImage());
                     else

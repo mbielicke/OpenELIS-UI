@@ -11,10 +11,6 @@
 	background: white;
 }
 
-.Table>tbody>tr>td.Disabled {
-	color : grey;
-}
-
 .Table>tbody>tr>td {
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -113,8 +109,6 @@
 	padding: 0;
 	border-collapse: collapse;
 }
-
-
 
 .DropdownTable tr {
 	background: white;

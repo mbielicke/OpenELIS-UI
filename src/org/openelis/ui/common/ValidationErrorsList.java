@@ -33,30 +33,26 @@ public class ValidationErrorsList extends Exception {
     
     private static final long serialVersionUID = 1L;
     private ArrayList<Exception> errors;
-    private boolean hasErrors, hasWarnings, hasCautions;
+    private boolean hasErrors, hasWarnings;
     
     public ValidationErrorsList() {
         super();
         errors = new ArrayList<Exception>();
         hasErrors = false;
         hasWarnings = false;
-        hasCautions = false;
     }
 
     public ValidationErrorsList(String msg) {
         super(msg);
         hasErrors = false;
         hasWarnings = false;
-        hasCautions = false;
     }
     
     public void add(Exception ex){
         errors.add(ex);
 
-        if (ex instanceof Warning)
+        if(ex instanceof Warning)
             hasWarnings = true;
-        else if (ex instanceof Caution)
-            hasCautions = true;
         else
             hasErrors = true;
     }
@@ -77,7 +73,4 @@ public class ValidationErrorsList extends Exception {
         return hasWarnings;
     }
     
-    public boolean hasCautions(){
-        return hasCautions;
-    }
 }

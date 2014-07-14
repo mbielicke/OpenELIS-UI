@@ -200,9 +200,10 @@ public class TextBase extends Composite {
      * @param enforce
      */
     public void enforceMask(boolean enforce) {
-        enforceMask = enforce;
         if(mask == null)
             return;
+        
+    	enforceMask = enforce;
     	
     	if(enforce)
     	    box.setMaxLength(mask.length());
@@ -211,7 +212,7 @@ public class TextBase extends Composite {
     }
     
     public boolean isMaskEnforced() {
-    	return mask != null && enforceMask;
+    	return enforceMask;
     }
     
     protected void maskKeyDown(KeyDownEvent event) {
@@ -223,7 +224,7 @@ public class TextBase extends Composite {
 		/*
 		 * If return if mask is not be enforced such as when in Query Mode;
 		 */
-		if(!isMaskEnforced())
+		if(!enforceMask)
 			return;
 		
 		if((event.isAnyModifierKeyDown() && !event.isShiftKeyDown()) ||
@@ -280,7 +281,7 @@ public class TextBase extends Composite {
 			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_BACKSPACE)
 				cursor--;
 
-			if(cursor  >= 0) {
+			if(cursor  > 0) {
 			
 			    mc = mask.charAt(cursor);  // get current mask char based on cursor
 
@@ -327,7 +328,7 @@ public class TextBase extends Composite {
 		/*
 		 * If return if mask is not be enforced such as when in Query Mode;
 		 */
-		if(!isMaskEnforced())
+		if(!enforceMask)
 			return;
 		
 		if((event.isAltKeyDown() || event.isControlKeyDown() || event.isMetaKeyDown()) ||

@@ -17,9 +17,6 @@
 	cursor: default;
 	tex-overflow: ellipsis;
 	outline : none;
-	font-family:inherit;
-	font-size:inherit;
-	color:inherit;
 }
 
 .ScreenLabel {

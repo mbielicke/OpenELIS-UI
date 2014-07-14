@@ -1,8 +1,5 @@
 package org.openelis.ui.widget;
 
-import org.openelis.ui.resources.DropTableCSS;
-import org.openelis.ui.resources.TableCSS;
-import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.table.Row;
 
 /**
@@ -23,7 +20,6 @@ public class Item<T> extends Row {
      * selection by users.
      */
     protected boolean enabled = true;
-    protected DropTableCSS css = UIResources.INSTANCE.dropTable();
 
     public Item(Item<T> item) {
         super(item.cells.size());
@@ -34,8 +30,6 @@ public class Item<T> extends Row {
         for(int i = 0; i < cells.size(); i++) {
             cells.set(i, item.cells.get(i));
         }
-        
-        css.ensureInjected();
     }
     
     public Item(int size) {
@@ -78,7 +72,7 @@ public class Item<T> extends Row {
     	if(enabled)
     		return null;
     	else
-    		return css.Disabled();
+    		return "Disabled";
     }
 
 }
