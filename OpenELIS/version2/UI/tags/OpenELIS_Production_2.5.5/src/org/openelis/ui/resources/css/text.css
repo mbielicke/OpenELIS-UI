@@ -1,0 +1,43 @@
+
+.ScreenTextBox {
+	height: 16px;
+	border: 1px solid #d8d8d8;
+	cursor: default;
+	tex-overflow: ellipsis;
+	outline : none;
+	font-family:inherit;
+	font-size:inherit;
+	color:inherit;
+	background:white;
+}
+
+.ScreenTextArea {
+	height: 120px;
+	border: 1px solid #d8d8d8;
+	cursor: default;
+	tex-overflow: ellipsis;
+	outline : none;
+}
+
+.ScreenLabel {
+}
+
+.InputError {
+	border-bottom: 1px dashed red;
+}
+
+.InputWarning {
+	border-bottom: 1px dashed #f5d852;
+}
+
+.Focus {
+	border: 1px solid #63b159;
+}
+
+.Upper {
+	text-transform: uppercase;
+}
+
+.Lower {
+	text-transform: lowercase;
+}

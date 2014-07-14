@@ -1,0 +1,240 @@
+.cal_view {
+	border:1px solid #a4bed4;
+	width:259px;
+	height:250px;
+	border-radius:3px;
+	font-family:Helvetica,Verdana;
+	font-size:13px;
+	color:#1e2022;
+	cursor:default;
+	overflow:hidden;
+	white-space:normal;
+	background-color:#fff;
+}
+
+.cal_month {
+	height:22px;
+	line-height:20px;
+	text-align:center;
+	position:relative;
+	font-size:14px;
+	padding-top:17px;
+	padding-bottom:5px;
+	font-weight:normal;
+}
+
+.cal_month_name {
+	cursor:pointer;
+}
+
+@sprite .cal_prev_button {
+	gwt-image : 'calPrevious';
+	left:17px;
+	cursor:pointer;
+	position:absolute;
+	top:17px;
+	width:30px;
+	height:42px;
+	background-position:11.5px 4px;
+}
+
+@sprite .cal_next_button {
+	gwt-image : 'calNext';
+	right:17px;
+	cursor:pointer;
+	position:absolute;
+	top:17px;
+	width:30px;
+	height:42px;
+	background-position:11.5px 4px;
+}
+
+.cal_header {
+	margin:1px 17px;
+	line-height:19px;
+	height:19px;
+	border-bottom:0px;
+}
+
+.cal_day_header {
+	width:31px;
+	color:#1e2022;
+	margin-bottom:2px;
+	box-shadow : 0 1px 1px #fff inset;
+	background-color : #dfedff;
+	background : -webkit-gradient(linear,left top,left bottom,colo-stop(0%,#e5f0ff),color-stop(50%,#dfedff),color-stop(100%,#d5e8ff));
+	background-position : 0 1px;
+	background-repeat : repeat-x;
+	border-bottom : none;
+	border-right : 1px solid #fff;
+	float:left;
+	text-align: center;
+	height:19px;
+	font-size : 11px;
+	text-shadow: 0 1px white;
+}
+
+.cal_body {
+	margin:0 17px 0 17px;
+	border-bottom : 2px solid #cecece;
+}
+
+.cal_row {
+	height:25px;
+	clear:both;
+}
+
+.cal_day {
+	width:31px;
+	float:left;
+	text-align:center;
+	height:100%;
+	background : #eff6ff;
+	font-weight : normal;
+	border: 1px solid #fff;
+	border-width : 0px 1px 1px 0px;
+	line-height : 29px;
+	cursor : pointer;
+	font-size : 12px;
+	text-shadow: 0 1px white;
+}
+.cal_day:hover, .cal_block:hover, .hour_block:hover, .minute_block:hover{
+	background:#FFC341;
+	cursor:pointer;
+	}
+.cal_outside {
+	background:#fff;
+	color : #bbb;
+}
+
+.cal_weekend {
+	background : #fff3da;
+	color : #c66200;
+}
+
+.cal_today {
+	background : #d1d7e0;
+}
+
+.cal_select {
+	background : #ffc341;
+}
+
+.cal_time {
+	text-align : center;
+	font-size : 12px;
+	color : #444;
+	padding : 4px 35%;
+	cursor : pointer;
+	display:inline-block;
+}
+
+@sprite .cal_clock {
+	gwt-image : 'clock';
+	float:left;
+	margin-top:2px;
+}
+
+.cal_time_display {
+	font-size : 17px;
+	line-height : 20px;
+	display : inline-block;
+	width : 60px;
+}
+
+.cal_block {
+	width:56.25px;
+	height:55.3333333333333336px;
+	line-Height : 55.33333333333336px;
+	float:left;
+	text-align :center;
+	cursor : pointer;
+}
+
+.cal_done {
+	margin-top : 3px;
+	padding : 2px 7px;
+	border-radius : 6px;
+	border : 1px solid #a4bed4;
+	box-shadow : 0 1px 1px #fff inset;
+	background-color : #dfedff;
+	background-image : -moz-linear-gradient(top,#e5f0ff 0, #dfedff 50%, #d5e8ff 100%);
+	background-position : 0 1px;
+	background-repeat : repeat-x;
+	float : right;
+	font-size : 12px;
+	text-shadow: 0 1px white;
+	
+}
+
+.cal_done:hover {
+		background-image : -moz-linear-gradient(bottom,#e5f0ff 0, #dfedff 50%, #d5e8ff 100%);
+text-shadow: 0 1px white;
+cursor:pointer;
+border-color:gray;
+	}
+.time_header {
+	padding : 17px 17px 5px 17px;	
+}
+
+.cal_hours {
+	width : 149.333333333333334px;
+	border-right : none;
+	display : inline-block;
+	font-size : 14px;
+	text-align : center;
+	height : 22px;
+	line-height : 22px;
+	box-sizing : border-box;
+	box-shadow : 0 1px 1px #fff inset;
+	background-image : -moz-linear-gradient(top, #e5f0ff 0, #dfedff 50%, #d5e8ff 100%);
+	background-position : 0 1px;
+	background-repeat: repeat-x;
+	border-bottom : none;
+}
+
+.cal_minutes {
+	width : 74.6666666666666667px;
+	border-left : 1px solid #fff;
+	display : inline-block;
+	font-size : 14px;
+	text-align : center;
+	height : 22px;
+	line-height : 22px;
+	box-sizing : border-box;
+	box-shadow : 0 1px 1px #fff inset;
+	background-image : -moz-linear-gradient(top, #e5f0ff 0, #dfedff 50%, #d5e8ff 100%);
+	background-position : 0 1px;
+	background-repeat: repeat-x;
+	border-bottom : none;
+	float : right;
+}
+
+.hours {
+	width : 149.333333333333334px;
+	float:left;
+	border-right : 1px solid #cecece;
+}
+
+.minutes {
+	width : 74.6666666666666667px;
+	float : right;
+}
+
+.hour_block {
+	width: 37.333333333333333333336px;
+	height: 27.666666666666666668px;
+	line-Height : 27.666666666666666668px;
+	float : left;
+	text-align : center;
+	cursor : pointer;
+}
+
+.minute_block {
+    width: 37.333333333333333333336px;
+	height: 27.666666666666666668px;
+	line-Height : 27.666666666666666668px;
+	float:left;
+	text-align : center;
+	curosr : pointer;
+}
