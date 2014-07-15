@@ -43,7 +43,7 @@ public abstract class AsyncCallbackUI<T> implements AsyncCallback<T> {
      * user defined success method
      */
     @Override
-    public void onSuccess(T result) {
+    public final void onSuccess(T result) {
         success(result);
         finish();
     }
@@ -54,7 +54,7 @@ public abstract class AsyncCallbackUI<T> implements AsyncCallback<T> {
      * failure method is called.
      */
     @Override
-    public void onFailure(Throwable caught) {
+    public final void onFailure(Throwable caught) {
         if(caught instanceof ValidationErrorsList)
             validationErrors((ValidationErrorsList)caught);
         else if(caught instanceof LastPageException)
