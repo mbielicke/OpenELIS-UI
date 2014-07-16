@@ -976,6 +976,16 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
                     if (popup != null && popup.isShowing())
                         popup.hide();
                     break;
+                case KeyCodes.KEY_DOWN:
+                case KeyCodes.KEY_UP:
+                case KeyCodes.KEY_ENTER:
+                case KeyCodes.KEY_BACKSPACE:
+                    break;
+                default:
+                    if(queryMode) {
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }
             }
 
         }
