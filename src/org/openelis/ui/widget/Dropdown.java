@@ -798,6 +798,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
             textbox.setReadOnly(false);
             table.setAllowMultipleSelection(false);
         }
+        
     }
 
     /**
@@ -1020,7 +1021,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
                     }
                 default:
                     // Don't add backspace to search
-                    if ( !queryMode) {
+                    if (!queryMode) {
                         if (ch != '\b')
                             searchString += String.valueOf(ch);
 
