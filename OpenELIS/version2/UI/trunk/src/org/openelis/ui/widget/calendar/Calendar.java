@@ -40,7 +40,6 @@ import org.openelis.ui.widget.DateHelper;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.HasHelper;
 import org.openelis.ui.widget.HasBalloon;
-import org.openelis.ui.widget.IconContainer;
 import org.openelis.ui.widget.Queryable;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.TextBase;
@@ -191,6 +190,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     
     @UiHandler("button")
     public void onClick(ClickEvent event) {
+        textbox.setFocus(true);
         showPopup();
     }
     
@@ -220,12 +220,13 @@ public class Calendar extends Composite implements ScreenWidgetInt,
             popup.setStyleName(css.Popup());
             popup.setPreviewingAllNativeEvents(false);
             popup.addCloseHandler(new CloseHandler<PopupPanel>() {
-                public void onClose(CloseEvent<PopupPanel> event) {
+                public void onClose(final CloseEvent<PopupPanel> event) {
                 	showingCalendar = false;
                 	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 	    public void execute() {
                 	      	setText(helper.format(picker.getDatetime()));
-                	      	setFocus(true);
+                	      	if(event.isAutoClosed())
+                	      	    setFocus(true);
                 	    }
                 	});
                 }
@@ -283,6 +284,10 @@ public class Calendar extends Composite implements ScreenWidgetInt,
             switch (event.getNativeKeyCode()) {
                 case KeyCodes.KEY_ENTER:
                     showPopup();
+                    break;
+                case KeyCodes.KEY_TAB:
+                    if(showingCalendar) 
+                        popup.hide();
             }
         }
     }
