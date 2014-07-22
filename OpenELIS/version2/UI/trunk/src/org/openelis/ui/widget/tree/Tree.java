@@ -1209,13 +1209,21 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public void addNodeAfter(Node selected, Node node) {
-        Node parent = selected.getLevel() == 0 ? root : selected.getParent();
-        Node nextSib = getNextSibling(node);
+        Node parent = selected.getParent();
         
-        if(nextSib == null)
+        if(node.isLastChild())
             addNodeAt(parent,node);
         else
-            addNodeAt(parent,node,parent.getIndex(selected)+1);
+            addNodeAt(parent,node,node.getChildIndex()+1);
+    }
+    
+    public void addNodeBefore(Node selected, Node node) {
+        Node parent = selected.getParent();
+        
+        if(node.isFirstChild())
+            addNodeAt(parent,node,0);
+        else 
+            addNodeAt(parent,node,node.getChildIndex()-1);
     }
     
     /**
@@ -2980,37 +2988,5 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
            }
            
        });
-    }
-    
-    public Node getNextSibling(Node node) {
-        Node parent;
-        int childIndex;
-        
-        if(node == root)
-            return null;
-        
-        parent = node.getLevel() == 0 ? root : node.getParent();
-        childIndex = parent.getIndex(node);
-        
-        if(childIndex + 1 < parent.getChildCount())
-            return parent.getChildAt(childIndex + 1);
-        else
-            return null;
-    }
-
-    public Node getPreviousSibling(Node node) {
-        Node parent;
-        int childIndex;
-        
-        if(node == root)
-            return null;
-        
-        parent = node.getParent();
-        childIndex = parent.getIndex(node);
-        
-        if(childIndex > 0)
-            return parent.getChildAt(childIndex + 1);
-        else
-            return null;
     }
 }
