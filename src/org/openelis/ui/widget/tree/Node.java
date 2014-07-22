@@ -155,7 +155,6 @@ public class Node extends Row {
             return parent.isNodeAncestor(node);
         
         return false;
-        
     }
     
     public boolean isNodeDescendent(Node node) {
@@ -171,7 +170,22 @@ public class Node extends Row {
         }   
         
         return false;
-        
+    }
+    
+    public Node nextSibling() {
+        return !isLastChild() ? parent.getChildAt(getChildIndex() + 1) : null; 
+    }
+    
+    public Node previousSibling() {
+        return !isFirstChild() ? parent.getChildAt(getChildIndex() - 1) : null;
+    }
+    
+    public boolean isFirstChild() {
+        return parent.getFirstChild() == this;
+    }
+    
+    public boolean isLastChild() {
+        return parent.getLastChild() == this;
     }
     
     public boolean isNodeChild(Node node) {
@@ -221,5 +235,9 @@ public class Node extends Row {
     
     public String getImage() {
         return null;
+    }
+    
+    protected int getChildIndex() {
+        return parent != null ? parent.getIndex(this) : -1;
     }
 }
