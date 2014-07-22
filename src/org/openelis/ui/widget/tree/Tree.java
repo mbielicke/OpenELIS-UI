@@ -1209,7 +1209,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     public void addNodeAfter(Node selected, Node node) {
-        Node parent = selected.getParent();
+        Node parent = selected.getLevel() == 0 ? root : selected.getParent();
         Node nextSib = getNextSibling(node);
         
         if(nextSib == null)
@@ -2989,7 +2989,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         if(node == root)
             return null;
         
-        parent = node.getParent();
+        parent = node.getLevel() == 0 ? root : node.getParent();
         childIndex = parent.getIndex(node);
         
         if(childIndex + 1 < parent.getChildCount())
