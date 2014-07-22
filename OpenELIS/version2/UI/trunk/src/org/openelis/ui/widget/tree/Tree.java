@@ -1208,6 +1208,16 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         return addNode(index, root, node);
     }
 
+    public void addNodeAfter(Node selected, Node node) {
+        Node parent = selected.getParent();
+        Node nextSib = getNextSibling(node);
+        
+        if(nextSib == null)
+            addNodeAt(parent,node);
+        else
+            addNodeAt(parent,node,parent.getIndex(selected)+1);
+    }
+    
     /**
      * Private method called by all public addRow methods to handle event firing
      * and add the new row to the model.
@@ -2971,5 +2981,36 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
            
        });
     }
+    
+    public Node getNextSibling(Node node) {
+        Node parent;
+        int childIndex;
+        
+        if(node == root)
+            return null;
+        
+        parent = node.getParent();
+        childIndex = parent.getIndex(node);
+        
+        if(childIndex + 1 < parent.getChildCount())
+            return parent.getChildAt(childIndex + 1);
+        else
+            return null;
+    }
 
+    public Node getPreviousSibling(Node node) {
+        Node parent;
+        int childIndex;
+        
+        if(node == root)
+            return null;
+        
+        parent = node.getParent();
+        childIndex = parent.getIndex(node);
+        
+        if(childIndex > 0)
+            return parent.getChildAt(childIndex + 1);
+        else
+            return null;
+    }
 }
