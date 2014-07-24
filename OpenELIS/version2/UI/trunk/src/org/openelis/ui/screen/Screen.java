@@ -38,6 +38,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.event.DataChangeEvent;
 import org.openelis.ui.event.HasDataChangeHandlers;
 import org.openelis.ui.event.HasStateChangeHandlers;
+import org.openelis.ui.event.ShortcutHandler;
 import org.openelis.ui.event.StateChangeEvent;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.resources.WindowCSS;
@@ -486,12 +487,14 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
             event.preventDefault();
             event.stopPropagation();
-
-            if (target instanceof Button) {
-                clickButton((Button)target);
+            
+            if (target instanceof ShortcutHandler) {
+                ((ShortcutHandler)target).onShortcut();
+            }else if (target instanceof Button) {
+                clickButton((Button)target); 
             } else if ( ((ScreenWidgetInt)target).isEnabled()) {
                 ((Focusable)target).setFocus(true);
-            }
+            } 
         }
 
         protected Focusable findShortcutTarget(KeyDownEvent event) {
