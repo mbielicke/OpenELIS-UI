@@ -33,6 +33,7 @@ import org.openelis.ui.event.BeforeCloseHandler;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.resources.WindowCSS;
+import org.openelis.ui.screen.Screen;
 
 import com.allen_sauer.gwt.dnd.client.DragController;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
@@ -434,7 +435,7 @@ public class Window extends FocusPanel implements WindowInt, RequiresResize, Pro
          */
         addDomHandler(new KeyDownHandler() {
             public void onKeyDown(KeyDownEvent event) {
-                if (content instanceof KeyDownHandler)
+                if (content instanceof Screen)
                     KeyDownEvent.fireNativeEvent(event.getNativeEvent(), ((HasHandlers)content));
             }
         }, KeyDownEvent.getType());
