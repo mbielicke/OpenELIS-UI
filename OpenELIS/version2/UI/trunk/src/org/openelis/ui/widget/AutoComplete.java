@@ -740,7 +740,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             if(queryMode)
                 return;
            
-            switch (event.getCharCode()) {
+            switch (event.getNativeEvent().getKeyCode()) {
                 case KeyCodes.KEY_DOWN:
                     if (popup != null && popup.isShowing()) { 
                         table.selectRowAt(findNextActive(table.getSelectedRow()));
