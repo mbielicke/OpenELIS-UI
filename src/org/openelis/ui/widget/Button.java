@@ -42,6 +42,8 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
@@ -104,8 +106,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         /**
          * Change the KeyEvent to ClickEvent and fire on this button.
          */
-        addKeyDownHandler(new KeyDownHandler() {
-            public void onKeyDown(KeyDownEvent event) {
+        addKeyUpHandler(new KeyUpHandler() {
+            public void onKeyUp(KeyUpEvent event) {
            		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
            			NativeEvent clickEvent = com.google.gwt.dom.client.Document.get()
            					.createClickEvent(
@@ -120,6 +122,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
            							event.isMetaKeyDown());
             			ClickEvent.fireNativeEvent(clickEvent, source);
             			event.stopPropagation();
+            			event.preventDefault();
            		}
             }
         });
