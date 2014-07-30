@@ -559,9 +559,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         button.setEnabled(enabled);
         table.setEnabled(enabled);
         if (enabled)
-            sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
+            sinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
         else
-            unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
+            unsinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
         textbox.setReadOnly(!enabled);
     }
     
@@ -576,9 +576,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         table.unselectAll();
     	
     	if(query)
-    		unsinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
+    		unsinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
     	else if(isEnabled())
-    		sinkEvents(Event.ONKEYDOWN | Event.ONKEYUP);
+    		sinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
     }
 
     /**
@@ -739,7 +739,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             
             if(queryMode)
                 return;
-
+           
             switch (event.getCharCode()) {
                 case KeyCodes.KEY_DOWN:
                     if (popup != null && popup.isShowing()) { 
@@ -769,21 +769,27 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                 case KeyCodes.KEY_TAB:
                     break;
                 default:
-                    
-                    text = textbox.getText();
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                        
+                        @Override
+                        public void execute() {
+                            String text = textbox.getText();
 
-                    timer.cancel();
-                    /*
-                     * Will hit this if backspaced to clear textbox. Call
-                     * setSelected 0 so that if user tabs off the value is
-                     * selected correctly
-                     */
-                    if (DataBaseUtil.isEmpty(text)){    
-                        setSelectedIndex( -1);
-                        if(popup != null)
-                            popup.hide();
-                    }else if(!text.equals(prevText))
-                        timer.schedule(delay);
+                            timer.cancel();
+                            /*
+                             * Will hit this if backspaced to clear textbox. Call
+                             * setSelected 0 so that if user tabs off the value is
+                             * selected correctly
+                             */
+                            if (DataBaseUtil.isEmpty(text)){    
+                                setSelectedIndex( -1);
+                                if(popup != null)
+                                    popup.hide();
+                            }else if(!text.equals(prevText))
+                                timer.schedule(delay);
+                        }
+                    });
+
                     
              }
         }
@@ -828,8 +834,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
             return index;
         }
-
-
     }
 
 	@Override
