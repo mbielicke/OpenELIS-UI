@@ -60,6 +60,8 @@ import com.google.gwt.event.dom.client.HasFocusHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -194,7 +196,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * Registers the keyboard handling this widget
          */
         addHandler(keyHandler, KeyDownEvent.getType());
-        addHandler(keyHandler, KeyUpEvent.getType());
+        addHandler(keyHandler, KeyPressEvent.getType());
         
         /*
          * Timer is defined here once and scheduled to run when needed.  The timer is used to try and not 
@@ -694,7 +696,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
     // ********** Table Keyboard Handling ****************************
 
-    protected class KeyboardHandler implements KeyDownHandler, KeyUpHandler {
+    protected class KeyboardHandler implements KeyDownHandler, KeyPressHandler {
         /**
          * This method handles all key down events for this table
          */
@@ -731,17 +733,14 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         /**
          * This method handles all keyup events for the dropdown widget.
          */
-        public void onKeyUp(KeyUpEvent event) {
+        public void onKeyPress(KeyPressEvent event) {
             String text;
             BeforeGetMatchesEvent bgme;
             
             if(queryMode)
                 return;
-            
-            if(event.isAnyModifierKeyDown())
-                return;
 
-            switch (event.getNativeKeyCode()) {
+            switch (event.getCharCode()) {
                 case KeyCodes.KEY_DOWN:
                     if (popup != null && popup.isShowing()) { 
                         table.selectRowAt(findNextActive(table.getSelectedRow()));
