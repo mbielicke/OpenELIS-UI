@@ -37,6 +37,7 @@ import org.openelis.ui.event.GetMatchesEvent;
 import org.openelis.ui.event.GetMatchesHandler;
 import org.openelis.ui.event.HasBeforeGetMatchesHandlers;
 import org.openelis.ui.event.HasGetMatchesHandlers;
+import org.openelis.ui.messages.Messages;
 import org.openelis.ui.messages.UIMessages;
 import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
@@ -148,8 +149,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     protected Renderer                              renderer  = new DefaultRenderer();
     
     protected WidgetHelper<String>                  helper    = new StringHelper();
-    
-    protected UIMessages                            consts    = GWT.create(UIMessages.class);
     
     protected DropdownCSS                           css;
     
@@ -471,7 +470,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     public void setModel(ArrayList<Item<Integer>> model) {
         assert table != null;
         
-        //table.setVisibleRows(Math.min(model.size(),itemCount));        
         table.setModel(model);
         table.selectRowAt(0);
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -652,7 +650,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         	    }
         		
         		if (required && value == null) 
-        		    addValidateException(new Exception(consts.exc_fieldRequired()));
+        		    addValidateException(new Exception(getMessages().exc_fieldRequired()));
         	   
         		Balloon.checkExceptionHandlers(this);
         	}
@@ -738,6 +736,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             BeforeGetMatchesEvent bgme;
             
             if(queryMode)
+                return;
+            
+            if(event.isAnyModifierKeyDown())
                 return;
 
             switch (event.getNativeKeyCode()) {
@@ -869,7 +870,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 			return true;
 
 		if (!queryMode && required && getValue() == null) {
-			addValidateException(new Exception(consts.exc_fieldRequired()));
+			addValidateException(new Exception(getMessages().exc_fieldRequired()));
 			Balloon.checkExceptionHandlers(this);
 		}
 
@@ -1111,4 +1112,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     public Balloon.Options getBalloonOptions() {
         return options;
     }
+    
+    protected UIMessages getMessages() {
+        return Messages.get();
+    }
+    
 }
