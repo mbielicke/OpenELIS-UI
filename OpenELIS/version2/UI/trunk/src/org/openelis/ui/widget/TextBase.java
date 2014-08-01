@@ -64,11 +64,11 @@ public class TextBase extends Composite {
     	
         switch (textCase) {
             case UPPER:
-                return text.toUpperCase();
+                return text.toUpperCase().trim();
             case LOWER:
-                return text.toLowerCase();
+                return text.toLowerCase().trim();
             default:
-                return text;
+                return text.trim();
         }
     }
         
