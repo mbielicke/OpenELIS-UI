@@ -150,8 +150,10 @@ public class Calendar extends Composite implements ScreenWidgetInt,
          */
         addFocusHandler(new FocusHandler() {
         	public void onFocus(FocusEvent event) {
-        		if(isEnabled())
+        		if(isEnabled()) {
         			display.addStyleName(css.Focus());
+        			textbox.selectAll();
+        		}
         	}
         });
 
@@ -184,7 +186,7 @@ public class Calendar extends Composite implements ScreenWidgetInt,
     @UiHandler("textbox")
     public void onBlur(BlurEvent event) {
         display.removeStyleName(css.Focus());
-    	if(!showingCalendar && isEnabled())
+    	if(isEnabled())
     		BlurEvent.fireNativeEvent(event.getNativeEvent(), this);
     }
     
@@ -286,8 +288,10 @@ public class Calendar extends Composite implements ScreenWidgetInt,
                     showPopup();
                     break;
                 case KeyCodes.KEY_TAB:
-                    if(showingCalendar) 
+                    if(showingCalendar)  {
+                        setText(helper.format(picker.getDatetime()));
                         popup.hide();
+                    }
             }
         }
     }
