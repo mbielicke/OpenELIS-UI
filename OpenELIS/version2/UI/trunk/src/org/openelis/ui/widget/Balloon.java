@@ -282,18 +282,18 @@ public class Balloon extends Composite {
                 switch (balloon.placement) {
                     case TOP:
                         top = targetElement.getAbsoluteTop() - offsetHeight;
-                        left = targetElement.getAbsoluteLeft();
+                        left = targetElement.getAbsoluteLeft() - (offsetWidth / 2) + (targetElement.getOffsetWidth() / 2);
                         break;
                     case BOTTOM:
                         top = targetElement.getAbsoluteTop() + targetElement.getOffsetHeight();
-                        left = targetElement.getAbsoluteLeft();
+                        left = targetElement.getAbsoluteLeft()  - (offsetWidth / 2) + (targetElement.getOffsetWidth() / 2);
                         break;
                     case RIGHT:
-                        top = targetElement.getAbsoluteTop();
+                        top = targetElement.getAbsoluteTop()  - (offsetHeight / 2) + (targetElement.getOffsetHeight() / 2);
                         left = targetElement.getAbsoluteLeft() + targetElement.getOffsetWidth();
                         break;
                     case LEFT:
-                        top = targetElement.getAbsoluteTop();
+                        top = targetElement.getAbsoluteTop()  - (offsetHeight / 2) + (targetElement.getOffsetHeight() / 2);
                         left = targetElement.getAbsoluteLeft() - offsetWidth;
                         break;
                     case MOUSE:
@@ -513,7 +513,7 @@ public class Balloon extends Composite {
         private Placement               placement = Placement.TOP;
         private String                  tip       = "";
         private Widget                  widget;
-        private int                     offset    = 50;
+        private double                  offset    = 50;
         private int                     delayShow = 500;
         private int                     delayHide = 5000;
         private TipProvider             tipProvider;
@@ -543,7 +543,7 @@ public class Balloon extends Composite {
             this.tip = tip;
         }
 
-        public int getOffset() {
+        public double getOffset() {
             return offset;
         }
 
