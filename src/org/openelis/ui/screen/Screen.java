@@ -248,7 +248,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
     }
 
     public <T> void addScreenHandler(Widget widget, String meta, ScreenHandler<T> screenHandler) {
-        assert widget != null : "addScreenHandler received a null widget";
+        assert widget != null : "addScreenHandler received a null widget : "+meta;
 
         if (widget instanceof HasFocusHandlers)
             ((HasFocusHandlers)widget).addFocusHandler(this);
