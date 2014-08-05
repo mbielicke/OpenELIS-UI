@@ -257,8 +257,10 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         		if (item != null)
         			setValue(item.key, renderer.getDisplay(item),item.getData(),true);
         	}
-        	BlurEvent.fireNativeEvent(event.getNativeEvent(), this);
         }
+        
+        if(!showingOptions)
+        	BlurEvent.fireNativeEvent(event.getNativeEvent(), this);
     }
     
     @UiHandler("button")
