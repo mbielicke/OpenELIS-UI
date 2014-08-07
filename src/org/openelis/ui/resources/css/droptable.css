@@ -40,7 +40,7 @@ background-image: -moz-linear-gradient(center top , rgba(99, 136, 246, 1), rgba(
 	font-size:inherit;
 }
 
-.Table>tbody>tr>td.Disabled {
+.Table>tbody>tr.Disabled>td {
 	color : grey;
 }
 
