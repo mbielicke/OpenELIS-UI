@@ -456,10 +456,62 @@ public class TextBase extends Composite {
 		event.stopPropagation();
 	}
     
+    
+    private String applyMask(String text) {
+    	boolean loop;
+    	StringBuffer applied = new StringBuffer();
+    	int maskCursor = 0,textCursor = 0;
+    	
+    	if(!isMaskEnforced())
+    		return text;
+    	
+    	while(textCursor < text.length() && maskCursor < mask.length()) {
+
+    		char mc = mask.charAt(maskCursor);  // Get the Mask char for the position typed
+    		char ch = text.charAt(textCursor);
+
+    		/*
+    		 * Perfrom switch at least once possibly more if literals are to be inserted
+    		 */
+    		do {
+    			loop = false;
+    			switch(mc) {
+    			case '9' : 
+    				if(Character.isDigit(ch))    // if input matches add to buffer 
+    					applied.append(ch);
+    				break;
+    			case 'X' :
+    				if(Character.isLetterOrDigit(ch)) // if input matches add to buffer 
+    					applied.append(ch);
+    				break;
+    			default :
+    				applied.append(mc);         // Apply literal from mask always in this case
+
+    				/*
+    				 * if inputed char does not match literal then we 
+    				 * want to loop again to try and match and apply the input to the 
+    				 * next position in the mask
+    				 */
+    				if(mc != ch) {
+    					loop = true;
+    					maskCursor++;
+    					mc = mask.charAt(maskCursor); 
+    				}
+    			}
+    		}while (loop);
+    		
+    		textCursor++;
+    		maskCursor++;
+    	}
+    	
+    	return applied.toString();
+    }
+	
     public void setCSS(TextCSS css) {
     	css.ensureInjected();
     	this.css = css;
     }
+    
     
     /*
      *  Methods below here are pass-through to box to complete the composition 
@@ -482,7 +534,7 @@ public class TextBase extends Composite {
     }
     
     public void setText(String text) {
-        box.setText(text);
+        box.setText(applyMask(text));
     }
     
     public void setReadOnly(boolean readOnly) {
