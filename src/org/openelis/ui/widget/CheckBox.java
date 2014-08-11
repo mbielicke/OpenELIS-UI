@@ -371,7 +371,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 	
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return addDomHandler(handler, FocusEvent.getType());
+		return check.addDomHandler(handler, FocusEvent.getType());
 	}
 
 	@Override
