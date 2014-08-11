@@ -131,6 +131,13 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 			}
 		});
     	
+    	check.addFocusHandler(new FocusHandler() {
+    		@Override
+    		public void onFocus(FocusEvent event) {
+    			FocusEvent.fireNativeEvent(event.getNativeEvent(), source);
+    		}
+    	});
+    	
     	setWidget(check);
         
         exceptions = new Exceptions();
@@ -371,7 +378,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 	
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return check.addDomHandler(handler, FocusEvent.getType());
+		return addDomHandler(handler, FocusEvent.getType());
 	}
 
 	@Override
