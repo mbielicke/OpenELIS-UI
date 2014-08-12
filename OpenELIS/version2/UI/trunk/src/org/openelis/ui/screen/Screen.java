@@ -46,6 +46,7 @@ import org.openelis.ui.widget.Button;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.WindowInt;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -72,7 +73,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
-                                           HasStateChangeHandlers {
+                                           HasStateChangeHandlers, Focusable {
 
     protected Focusable                         focused;
 
@@ -147,6 +148,16 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
     public void onFocus(FocusEvent event) {
         focused = (Focusable)event.getSource();
+        
+        //Focus window if not the focused window the browser
+        if(window.asWidget().getStyleName().contains(css.unfocused())) {
+         	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
+         	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+				public void execute() {
+					focused.setFocus(true);	
+				}
+			});
+        }
     }
 
     public void finishEditing() {
@@ -504,5 +515,30 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
                                               Character.toUpperCase((char)event.getNativeKeyCode())));
         }
     }
+
+	@Override
+	public int getTabIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		getElement().focus();
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }
