@@ -150,7 +150,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         focused = (Focusable)event.getSource();
         
         //Focus window if not the focused window the browser
-        if(window.asWidget().getStyleName().contains(css.unfocused())) {
+        if(window != null && window.asWidget().getStyleName().contains(css.unfocused())) {
          	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
          	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 				public void execute() {
