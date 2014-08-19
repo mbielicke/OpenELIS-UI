@@ -534,7 +534,12 @@ public class TextBase extends Composite {
     }
     
     public void setText(String text) {
-        box.setText(applyMask(text));
+    	text = applyMask(text);
+    	
+    	if(getMaxLength() > -1)
+    		text = text.substring(0,getMaxLength());
+        
+    	box.setText(text);
     }
     
     public void setReadOnly(boolean readOnly) {
@@ -563,6 +568,10 @@ public class TextBase extends Composite {
     
     public void setMaxLength(int length) {
         box.setMaxLength(length);
+    }
+    
+    public int getMaxLength() {
+    	return box.getMaxLength();
     }
     
     public void setAlignment(TextBox.TextAlignment align) {
