@@ -73,7 +73,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
-                                           HasStateChangeHandlers, Focusable {
+                                           HasStateChangeHandlers, Focusable, ScreenWidgetInt {
 
     protected Focusable                         focused;
 
@@ -537,6 +537,17 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 	public void setTabIndex(int index) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	
