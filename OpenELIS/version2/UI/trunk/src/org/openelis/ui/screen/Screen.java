@@ -107,6 +107,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         bus = new SimpleEventBus();
 
         addDomHandler(new ScreenKeyHandler(), KeyDownEvent.getType());
+        
     }
 
     protected void clickButton(final Button button) {
@@ -142,8 +143,9 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
                  numberOfWidgetsChecked < widgets.size() &&
                  ! ((ScreenWidgetInt)nextWidget).isEnabled());
 
-        if (nextWidget != null)
-            nextWidget.setFocus(true);
+      	if (nextWidget != null)
+       		nextWidget.setFocus(true);
+
     }
 
     public void onFocus(FocusEvent event) {
@@ -518,13 +520,11 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
 	@Override
 	public int getTabIndex() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -535,13 +535,12 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
 	@Override
 	public void setTabIndex(int index) {
-		// TODO Auto-generated method stub
+		getElement().setTabIndex(index);
 		
 	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -550,6 +549,15 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 		return true;
 	}
 
+	/**
+	 * This is overriden in order to set tabindex so that
+	 * setFocus() method will work
+	 */
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		setTabIndex(0);
+	}
 	
 
 }
