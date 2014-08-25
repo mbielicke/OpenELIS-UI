@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:jacoco="antlib:org.jacoco.ant" name="UI" default="test.dev" basedir=".">
+	<!-- Arguments to gwtc and devmode targets -->
+	<property name="gwt.args" value="" />
+
+	<!-- Configure path to GWT SDK -->
+	<property name="gwt.sdk" location="/usr/local/java/gwt-2.6.0" />
+	
+	<property name="jboss.home" location="/usr/local/java/jboss-as-7.1.1.Final"/>
+	
+	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+		         uri="antlib:org.apache.ivy.ant" classpath="/usr/share/java/ivy.jar"/>
+	
+	<ivy:configure file="ivysettings.xml"/>
+	<ivy:retrieve pattern="lib/[artifact]-[type]-[revision].[ext]"/>
+	
+	<path id="ivy.lib">
+	   <fileset dir="lib" includes="*.jar"/>
+    </path>
+
+	
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+		<classpath path="/usr/local/java/jacoco/lib/jacocoant.jar"/>
+	</taskdef>
+	
+	<path id="project.class.path">
+		<pathelement location="${gwt.sdk}/gwt-user.jar" />
+		<pathelement location="bin" />
+		<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar" />
+		<!-- Add any additional non-server libs (such as JUnit) -->
+		<fileset dir="lib" includes="*.jar" />
+		<fileset dir="${jboss.home}/bin/client" includes="jboss-client.jar" />
+		<fileset dir="${jboss.home}/modules/javax/persistence/api/main" includes="*.jar" />
+	</path>
+
+	<target name="javac.tests" description="Compiles test code">
+		<javac srcdir="test" includes="**" encoding="utf-8" source="1.7" target="1.7" nowarn="true" destdir="bin" debug="true" debuglevel="lines,vars,source">
+			<classpath refid="ivy.lib"/>
+			<classpath refid="project.class.path" />
+		</javac>
+	</target>
+
+	<target name="test.dev" depends="javac.tests" description="Run development mode tests">
+		<delete dir="reports"/>
+		<mkdir dir="reports/junit" />
+		<jacoco:coverage destfile="reports/jacoco/jacoco.exec">
+		<junit includeantruntime="true" fork="yes" showoutput="true" printsummary="withOutAndErr" haltonfailure="no">
+			<jvmarg line="-Xmx2048m" />
+			<sysproperty key="gwt.args" value="-standardsMode -logLevel WARN" />
+			<sysproperty key="java.awt.headless" value="true" />
+			<classpath>
+				<pathelement location="src" />
+				<pathelement location="test"/>
+				<pathelement location="bin" />
+				<path refid="ivy.lib"/>
+				<path refid="project.class.path" />
+				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />
+				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA-sources.jar" />
+				<fileset dir="${jboss.home}/modules/org/slf4j/main" includes="*.jar"/>
+			</classpath>
+			<batchtest todir="reports/junit">
+				<fileset dir="test">
+					<include name="**/Test*.java" />
+				</fileset>
+			</batchtest>
+			<formatter type="plain" />
+			<formatter type="xml" />
+		</junit>
+		</jacoco:coverage>
+	</target>
+	
+	<target name="publish">
+		  <ivy:deliver deliverpattern="ivy.xml" pubrevision="1.0.0-SNAPSHOT" status="release"/>
+		  <!--<ivy:makepom ivyfile="ivy.xml" pomfile="pom.xml"/>-->
+		  <ivy:resolve/>
+		  <ivy:publish resolver="nexus-snapshots"
+		                      revision="1.0.0-SNAPSHOT"
+		                      overwrite="true" 
+		                      publishivy="false"
+		  	                  artifactspattern="[artifact].[ext]"
+		  	                  />
+	</target>
+	
+</project>
