@@ -269,13 +269,8 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	public void setValue(T value, boolean fireEvents) {
 	    T oldValue = this.value;
 
-		if(value instanceof String && getMaxLength() > -1)
-			value = (T)((String)value).substring(0,getMaxLength());
-		
 		this.value = value;
-		
 		if (value != null) {
-		    
 			textbox.setText(helper.format(value));
 		} else {
 			textbox.setText("");
@@ -468,22 +463,12 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	}
 	
 	public void setField(String field) {
-	    switch(field) {
-	        case "Double" :
-	            setHelper((WidgetHelper<T>)new DoubleHelper());
-	            break;
-	        case "Integer" :
-	            setHelper((WidgetHelper<T>)new IntegerHelper());
-	            break;
-	        case "Date" :
-	            setHelper((WidgetHelper<T>)new DateHelper());
-	            break;
-	        case "Time" :
-	            setHelper((WidgetHelper<T>)new IntervalHelper());
-	            break;
-	        default :
-	            break;
-	    }
+		if(field.equals("Double"))
+			setHelper((WidgetHelper<T>)new DoubleHelper());
+		else if(field.equals("Integer"))
+		    setHelper((WidgetHelper<T>)new IntegerHelper());
+		else if(field.equals("Date"))
+		    setHelper((WidgetHelper<T>)new DateHelper());
 	}
 	
 	public void setPattern(String pattern) {
@@ -570,10 +555,6 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
     
     public Balloon.Options getBalloonOptions() {
         return options;
-    }
-    
-    public int getMaxLength() {
-    	return textbox.getMaxLength();
     }
 
 }

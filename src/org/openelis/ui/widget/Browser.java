@@ -156,10 +156,10 @@ public class Browser extends ResizeComposite {
     	index++;
     	browser.add(window.asWidget(),left,top);
     	wv = new WindowValues();
-    	wv.key = key+index;
+    	wv.key = key;
     	wv.zIndex = index;
     	windows.put(window,wv);
-    	windowsByKey.put(key+index,window);
+    	windowsByKey.put(key,window);
     	window.addCloseHandler(new CloseHandler<WindowInt>() {
     	    public void onClose(CloseEvent<WindowInt> event) {
     	       windowsByKey.remove(windows.remove(event.getSource()).key);
