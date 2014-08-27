@@ -208,12 +208,12 @@ public class Balloon extends Composite {
 
     }
 
-    private void setText(String text) {
+    public void setText(String text) {
         this.content.clear();
         content.getElement().setInnerText(text);
     }
 
-    private void setContent(Widget content) {
+    public void setContent(Widget content) {
         this.content.clear();
         this.content.getElement().setInnerText("");
         this.content.add(content);
@@ -257,7 +257,7 @@ public class Balloon extends Composite {
 
     }
 
-    private static void showBalloon(Balloon.Options options) {
+    public static void showBalloon(Balloon.Options options) {
         switch (balloon.placement) {
             case TOP:
             case BOTTOM:
