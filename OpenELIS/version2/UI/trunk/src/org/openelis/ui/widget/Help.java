@@ -20,7 +20,7 @@ public class Help extends FocusPanel implements ClickHandler {
 	public void onClick(ClickEvent event) {
 		if(text != null)
 			balloon.show(this, text);
-		if(widget != null)
+		else if(widget != null)
 			balloon.show(this, widget);
 	}
 	
