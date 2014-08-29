@@ -3,13 +3,16 @@ package org.openelis.ui.widget.fileupload;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
+import com.google.gwt.event.dom.client.DragEvent;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -20,8 +23,8 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	protected FormData formData;
 	protected boolean sendAuto,enabled = true;
 	protected String sendUrl;
-	protected Widget dropArea;
 	
+	HandlerRegistration dragEnter, dragLeave;
 	/**
 	 * Constructor that accepts a widget to enable as an area to drop files.  The url param
 	 * is where the files will be uploaded to.
@@ -46,15 +49,15 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		formData = FormData.create();
 		this.sendAuto = sendAuto;
 		this.sendUrl = url;
-		this.dropArea = dropArea;
+		
 
 		dropArea.addDomHandler(this, DropEvent.getType());
 		
-		dropArea.addDomHandler(this, DragEnterEvent.getType());
+		dragEnter = dropArea.addDomHandler(this, DragEnterEvent.getType());
 		
 		dropArea.addDomHandler(this, DragOverEvent.getType());
 		
-		dropArea.addDomHandler(this, DragLeaveEvent.getType());
+		dragLeave = dropArea.addDomHandler(this, DragLeaveEvent.getType());
 	}
 
 	/**
@@ -81,7 +84,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		if(sendAuto)
 			formData.send(sendUrl);
 		
-		DOM.releaseCapture(dropArea.getElement());
+		//DOM.releaseCapture(dropArea.getElement());
 	}
 	
 	/**
@@ -92,7 +95,6 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	public void onDragEnter(DragEnterEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
-		DOM.setCapture(dropArea.getElement());
 	}
 	
 	@Override
@@ -105,9 +107,15 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	public void onDragLeave(DragLeaveEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
-		DOM.releaseCapture(dropArea.getElement());
 	}
-	
+
+	public void swap(Widget widget) {
+		dragEnter.removeHandler();
+		dragLeave.removeHandler();
+		dragEnter = widget.addDomHandler(this, DragEnterEvent.getType());
+		dragLeave = widget.addDomHandler(this, DragLeaveEvent.getType());
+		
+	}
 	/**
 	 * This method can be called to send all files that have been dropped to the url that 
 	 * that is set in sendUrl.  Only necessary if sendAuto has been set to false.
