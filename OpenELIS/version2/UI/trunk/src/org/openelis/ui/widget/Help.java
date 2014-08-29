@@ -10,6 +10,7 @@ public class Help extends FocusPanel implements ClickHandler {
 	
 	protected String text;
 	protected Widget widget;
+	protected HelpBalloon.Placement placement = HelpBalloon.Placement.TOP;
 	protected static HelpBalloon balloon = new HelpBalloon();
 	
 	public Help() {
@@ -19,9 +20,9 @@ public class Help extends FocusPanel implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent event) {
 		if(text != null)
-			balloon.show(this, text);
+			balloon.show(this, placement, text);
 		else if(widget != null)
-			balloon.show(this, widget);
+			balloon.show(this, placement, widget);
 	}
 	
 	@UiChild(tagname="helpPanel")
@@ -31,6 +32,10 @@ public class Help extends FocusPanel implements ClickHandler {
 	
 	public void setText(String text) {
 		this.text = text;
+	}
+	
+	public void setPlacement(HelpBalloon.Placement placement) {
+		this.placement = placement;
 	}
 	
 
