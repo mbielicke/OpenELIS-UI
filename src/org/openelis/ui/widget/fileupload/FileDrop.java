@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -19,6 +20,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	protected FormData formData;
 	protected boolean sendAuto,enabled = true;
 	protected String sendUrl;
+	protected Widget dropArea;
 	
 	/**
 	 * Constructor that accepts a widget to enable as an area to drop files.  The url param
@@ -44,6 +46,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		formData = FormData.create();
 		this.sendAuto = sendAuto;
 		this.sendUrl = url;
+		this.dropArea = dropArea;
 
 		dropArea.addDomHandler(this, DropEvent.getType());
 		
@@ -77,6 +80,8 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		
 		if(sendAuto)
 			formData.send(sendUrl);
+		
+		DOM.releaseCapture(dropArea.getElement());
 	}
 	
 	/**
@@ -87,6 +92,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	public void onDragEnter(DragEnterEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
+		DOM.setCapture(dropArea.getElement());
 	}
 	
 	@Override
@@ -99,6 +105,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	public void onDragLeave(DragLeaveEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
+		DOM.releaseCapture(dropArea.getElement());
 	}
 	
 	/**
