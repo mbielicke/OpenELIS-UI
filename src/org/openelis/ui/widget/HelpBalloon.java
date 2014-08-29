@@ -103,17 +103,17 @@ public class HelpBalloon extends Composite {
 		this.offset = offset;
 	}
 
-	public void show(Widget widget, String text) {
+	public void show(Widget widget, Placement placement, String text) {
 		setText(text);
-		show(widget);
+		show(widget, placement);
 	}
 
-	public void show(Widget widget, Widget content) {
+	public void show(Widget widget, Placement placement, Widget content) {
 		setContent(content);
-		show(widget);
+		show(widget, placement);
 	}
 
-	private void show(final Widget widget) {
+	private void show(final Widget widget, final Placement placement) {
 		switch (placement) {
 		case TOP:
 		case BOTTOM:
