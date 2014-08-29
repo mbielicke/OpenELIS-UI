@@ -3,6 +3,8 @@ package org.openelis.ui.widget.fileupload;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
@@ -12,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  *  This class is used to make a widget accept dropped files that can be uploaded to a URL. 
  */
-public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler {
+public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler, DragLeaveHandler {
 	
 	protected FormData formData;
 	protected boolean sendAuto,enabled = true;
@@ -48,6 +50,8 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler 
 		dropArea.addDomHandler(this, DragEnterEvent.getType());
 		
 		dropArea.addDomHandler(this, DragOverEvent.getType());
+		
+		dropArea.addDomHandler(this, DragLeaveEvent.getType());
 	}
 
 	/**
@@ -83,18 +87,18 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler 
 	public void onDragEnter(DragEnterEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
-		
-		if(!enabled)
-			return;
 	}
 	
 	@Override
 	public void onDragOver(DragOverEvent event ) {
 		event.preventDefault();
 		event.stopPropagation();
-		
-		if(!enabled)
-			return;
+	}
+	
+	@Override
+	public void onDragLeave(DragLeaveEvent event) {
+		event.preventDefault();
+		event.stopPropagation();
 	}
 	
 	/**
