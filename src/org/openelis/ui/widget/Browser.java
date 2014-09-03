@@ -33,6 +33,14 @@ import org.openelis.ui.resources.WindowCSS;
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbsolutePositionDropController;
+import com.google.gwt.event.dom.client.DragEnterEvent;
+import com.google.gwt.event.dom.client.DragEnterHandler;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragLeaveHandler;
+import com.google.gwt.event.dom.client.DragOverEvent;
+import com.google.gwt.event.dom.client.DragOverHandler;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -127,6 +135,44 @@ public class Browser extends ResizeComposite {
         setKeyHandling();
         
         setCSS(UIResources.INSTANCE.window());
+        
+        // These handlers are added to prevent the default drag/drop from happening
+        
+        addDomHandler(new DropHandler() {
+			
+			@Override
+			public void onDrop(DropEvent event) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		}, DropEvent.getType());
+        
+        addDomHandler(new DragEnterHandler() {
+			
+			@Override
+			public void onDragEnter(DragEnterEvent event) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		}, DragEnterEvent.getType());
+        
+        addDomHandler(new DragLeaveHandler() {
+			
+			@Override
+			public void onDragLeave(DragLeaveEvent event) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		}, DragLeaveEvent.getType());
+        
+        addDomHandler(new DragOverHandler() {
+			
+			@Override
+			public void onDragOver(DragOverEvent event) {
+				event.stopPropagation();
+				event.preventDefault();
+			}
+		},DragOverEvent.getType());
     }
     
     public void setKeyHandling() {
