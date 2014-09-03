@@ -119,8 +119,8 @@ public class FileDrop extends Widget implements DropHandler, DragEnterHandler, D
 		event.preventDefault();
 		event.stopPropagation();
 		
-		if(enabled && !overDrop(event.getNativeEvent().getScreenX(),
-				                event.getNativeEvent().getScreenY())) {
+		if(enabled && !overDrop(event.getNativeEvent().getClientX(),
+				                event.getNativeEvent().getClientY())) {
 			over = false;
 			DragLeaveEvent.fireNativeEvent(event.getNativeEvent(), this);
 		}
