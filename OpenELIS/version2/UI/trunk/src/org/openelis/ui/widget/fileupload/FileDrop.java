@@ -3,26 +3,29 @@ package org.openelis.ui.widget.fileupload;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
-import com.google.gwt.event.dom.client.DragEvent;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.event.dom.client.HasDragEnterHandlers;
+import com.google.gwt.event.dom.client.HasDragLeaveHandlers;
+import com.google.gwt.event.dom.client.HasDropHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  *  This class is used to make a widget accept dropped files that can be uploaded to a URL. 
  */
-public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler, DragLeaveHandler {
+public class FileDrop extends Widget implements DropHandler, DragEnterHandler, DragLeaveHandler, DragOverHandler, HasDragEnterHandlers, HasDragLeaveHandlers, HasDropHandlers {
 	
 	protected FormData formData;
 	protected boolean sendAuto,enabled = true;
 	protected String sendUrl;
+	protected Widget dropArea;
+	protected int x0,x1,y0,y1;
+	boolean over;
 	
 	HandlerRegistration dragEnter, dragLeave;
 	/**
@@ -49,7 +52,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		formData = FormData.create();
 		this.sendAuto = sendAuto;
 		this.sendUrl = url;
-		
+		this.dropArea = dropArea;
 
 		dropArea.addDomHandler(this, DropEvent.getType());
 		
@@ -58,6 +61,7 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		dropArea.addDomHandler(this, DragOverEvent.getType());
 		
 		dragLeave = dropArea.addDomHandler(this, DragLeaveEvent.getType());
+		
 	}
 
 	/**
@@ -71,6 +75,8 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 		
 		if(!enabled)
 			return;
+		
+		over = false;
 
 		File[] files = getFiles(event.getDataTransfer());
 		
@@ -92,9 +98,14 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	 * to code some visual cue to the user to know the have entered a drop area 
 	 */
 	@Override
-	public void onDragEnter(DragEnterEvent event) {
+	public final void onDragEnter(DragEnterEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
+		
+		if(enabled && !over) {
+			over = true;
+			DragEnterEvent.fireNativeEvent(event.getNativeEvent(), this);
+		}
 	}
 	
 	@Override
@@ -104,18 +115,18 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
 	}
 	
 	@Override
-	public void onDragLeave(DragLeaveEvent event) {
+	public final void onDragLeave(DragLeaveEvent event) {
 		event.preventDefault();
 		event.stopPropagation();
+		
+		if(enabled && !overDrop(event.getNativeEvent().getClientX(),
+				                event.getNativeEvent().getClientY())) {
+			over = false;
+			DragLeaveEvent.fireNativeEvent(event.getNativeEvent(), this);
+		}
 	}
 
-	public void swap(Widget widget) {
-		dragEnter.removeHandler();
-		dragLeave.removeHandler();
-		dragEnter = widget.addDomHandler(this, DragEnterEvent.getType());
-		dragLeave = widget.addDomHandler(this, DragLeaveEvent.getType());
-		
-	}
+	
 	/**
 	 * This method can be called to send all files that have been dropped to the url that 
 	 * that is set in sendUrl.  Only necessary if sendAuto has been set to false.
@@ -188,6 +199,33 @@ public class FileDrop implements DropHandler, DragEnterHandler, DragOverHandler,
     protected static native File[] getFiles(JavaScriptObject transfer) /*-{
     	return transfer.files;
     }-*/;
-    	
 
+
+    private void getCoordinates() {
+    	x0 = dropArea.getAbsoluteLeft();
+    	x1 = x0 + dropArea.getOffsetWidth();
+    	y0 = dropArea.getAbsoluteTop();
+    	y1 = y0 + dropArea.getOffsetHeight();
+    }
+    
+    private boolean overDrop(int x, int y) {
+    	getCoordinates();
+    	return x > x0 && x < x1 && y > y0 && y < y1;
+    }
+    
+	@Override
+	public HandlerRegistration addDropHandler(DropHandler handler) {
+		return addHandler(handler, DropEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addDragLeaveHandler(DragLeaveHandler handler) {
+		return addHandler(handler, DragLeaveEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addDragEnterHandler(DragEnterHandler handler) {
+		return addHandler(handler, DragEnterEvent.getType());
+	}
+	
 }
