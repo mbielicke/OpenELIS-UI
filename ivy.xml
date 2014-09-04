@@ -18,7 +18,8 @@
    under the License.    
 -->
 <ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
-    <info organisation="org.openelis" module="ui" revision="1.0.0-SNAPSHOT" status="release" publication="20140702165621"/>
+    <info organisation="org.openelis" module="ui" revision="1.0.0-SNAPSHOT" status="release" publication="20140702165621">
+    </info>
     
     <publications>
         <artifact name="ui" type="jar"/>
