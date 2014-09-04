@@ -87,10 +87,28 @@ public class FileDrop extends Widget implements DropHandler, DragEnterHandler, D
 			formData.append("file", file, file.name());
 		}
 		
-		if(sendAuto)
-			formData.send(sendUrl);
+		if(sendAuto) {
+			formData.send(sendUrl, new FormData.Callback() {
+				
+				@Override
+				public void success() {
+					onDropSuccess();
+				}
+				
+				@Override
+				public void failure() {
+					onDropFailure();
+				}
+			});
+		}
+	}
+	
+	public void onDropSuccess() {
 		
-		//DOM.releaseCapture(dropArea.getElement());
+	}
+	
+	public void onDropFailure() {
+		
 	}
 	
 	/**
