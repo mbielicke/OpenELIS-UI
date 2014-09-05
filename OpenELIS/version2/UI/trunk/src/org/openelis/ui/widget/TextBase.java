@@ -62,13 +62,16 @@ public class TextBase extends Composite {
     	if(enforceMask && text.equals(picture))
     		text = "";
     	
+    	if(text.trim().length() == 0)
+    		return "";
+    	
         switch (textCase) {
             case UPPER:
-                return text.toUpperCase().trim();
+                return text.toUpperCase();
             case LOWER:
-                return text.toLowerCase().trim();
+                return text.toLowerCase();
             default:
-                return text.trim();
+                return text;
         }
     }
         
