@@ -225,6 +225,19 @@ public class TestTextBase {
     }
     
     @Test
+    public void maskKeyDown_backSpaceKey_clearAll() {
+        String mask = "999-999-9999";
+        text.setMask(mask);
+        when(text.box.getText()).thenReturn("5  -   -    ");
+        when(text.box.getCursorPos()).thenReturn(1);
+        when(text.box.getSelectionLength()).thenReturn(0);
+        
+        text.maskKeyDown(keyDown(KeyCodes.KEY_BACKSPACE));
+        
+        verify(text.box).setText("   -   -    ");
+    }
+    
+    @Test
     public void maskKeyDown_backSpaceOverLiteral() {
         String mask = "999-999-9999";
         text.setMask(mask);
