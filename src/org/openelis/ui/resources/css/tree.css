@@ -17,7 +17,7 @@
 
 .Tree td {
 	overflow : hidden;
-	text-overflow : ellipsis;
+	text-overfow : ellipsis;
 	white-space : pre;
 	border : none;
 	color: black;
@@ -43,8 +43,6 @@
    font-family: Verdana, Arial, Helvetica, sans-serif;
    font-size: 10px;
    border-bottom:none;
-   white-space: pre;
-   text-overflow : ellipsis;
  }
  
 .TreeCell td {

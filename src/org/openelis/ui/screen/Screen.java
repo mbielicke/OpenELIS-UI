@@ -46,7 +46,6 @@ import org.openelis.ui.widget.Button;
 import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.WindowInt;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -73,7 +72,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
-                                           HasStateChangeHandlers, Focusable, ScreenWidgetInt {
+                                           HasStateChangeHandlers {
 
     protected Focusable                         focused;
 
@@ -107,7 +106,6 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         bus = new SimpleEventBus();
 
         addDomHandler(new ScreenKeyHandler(), KeyDownEvent.getType());
-        
     }
 
     protected void clickButton(final Button button) {
@@ -143,23 +141,12 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
                  numberOfWidgetsChecked < widgets.size() &&
                  ! ((ScreenWidgetInt)nextWidget).isEnabled());
 
-      	if (nextWidget != null)
-       		nextWidget.setFocus(true);
-
+        if (nextWidget != null)
+            nextWidget.setFocus(true);
     }
 
     public void onFocus(FocusEvent event) {
         focused = (Focusable)event.getSource();
-        
-        //Focus window if not the focused window the browser
-        if(window != null && window.asWidget().getStyleName().contains(css.unfocused())) {
-         	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
-         	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-				public void execute() {
-					focused.setFocus(true);	
-				}
-			});
-        }
     }
 
     public void finishEditing() {
@@ -517,47 +504,5 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
                                               Character.toUpperCase((char)event.getNativeKeyCode())));
         }
     }
-
-	@Override
-	public int getTabIndex() {
-		return 0;
-	}
-
-	@Override
-	public void setAccessKey(char key) {
-		
-	}
-
-	@Override
-	public void setFocus(boolean focused) {
-		getElement().focus();
-	}
-
-	@Override
-	public void setTabIndex(int index) {
-		getElement().setTabIndex(index);
-		
-	}
-
-	@Override
-	public void setEnabled(boolean enabled) {
-		
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	/**
-	 * This is overriden in order to set tabindex so that
-	 * setFocus() method will work
-	 */
-	@Override
-	protected void onAttach() {
-		super.onAttach();
-		setTabIndex(0);
-	}
-	
 
 }

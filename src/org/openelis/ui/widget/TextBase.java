@@ -62,16 +62,13 @@ public class TextBase extends Composite {
     	if(enforceMask && text.equals(picture))
     		text = "";
     	
-    	if(text.trim().length() == 0)
-    		return "";
-    	
         switch (textCase) {
             case UPPER:
-                return text.toUpperCase();
+                return text.toUpperCase().trim();
             case LOWER:
-                return text.toLowerCase();
+                return text.toLowerCase().trim();
             default:
-                return text;
+                return text.trim();
         }
     }
         
@@ -537,12 +534,7 @@ public class TextBase extends Composite {
     }
     
     public void setText(String text) {
-    	text = applyMask(text);
-    	
-    	if(getMaxLength() > -1)
-    		text = text.substring(0,getMaxLength());
-        
-    	box.setText(text);
+        box.setText(applyMask(text));
     }
     
     public void setReadOnly(boolean readOnly) {
@@ -571,10 +563,6 @@ public class TextBase extends Composite {
     
     public void setMaxLength(int length) {
         box.setMaxLength(length);
-    }
-    
-    public int getMaxLength() {
-    	return box.getMaxLength();
     }
     
     public void setAlignment(TextBox.TextAlignment align) {
