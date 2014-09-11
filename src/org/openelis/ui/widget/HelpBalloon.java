@@ -6,6 +6,8 @@ import org.openelis.ui.resources.UIResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.TextJustify;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -50,6 +52,7 @@ public class HelpBalloon extends Composite {
 	public void setText(String text) {
 		this.content.clear();
 		content.getElement().setInnerText(text);
+		content.getElement().getStyle().setTextAlign(TextAlign.LEFT);
 	}
 
 	public void setContent(Widget content) {
