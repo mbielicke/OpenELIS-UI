@@ -38,5 +38,12 @@ public class Help extends FocusPanel implements ClickHandler {
 		this.placement = placement;
 	}
 	
+	public void setBallonWidth(String width) {
+		balloon.setWidth(width);
+	}
+	
+	public void setBalloonHeight(String height) {
+		balloon.setHeight(height);
+	}
 
 }
