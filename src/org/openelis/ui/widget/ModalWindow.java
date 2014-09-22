@@ -25,12 +25,14 @@
 */
 package org.openelis.ui.widget;
 
+import org.openelis.ui.event.BeforeCloseEvent;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.resources.WindowCSS;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbsolutePositionDropController;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -82,12 +84,21 @@ public class ModalWindow extends org.openelis.ui.widget.Window {
     
     @Override
     public void close() {
+        if (getHandlerCount(BeforeCloseEvent.getType()) > 0) {
+            BeforeCloseEvent<WindowInt> event = BeforeCloseEvent.fire(this, this);
+            if (event != null && event.isCancelled())
+                return;
+        }
+        
         if(modalGlass != null) {
             removeFromParent();
             RootLayoutPanel.get().remove(modalGlass);
             RootLayoutPanel.get().remove(modalPanel);
         }
-        super.close();
+      
+        destroy();
+
+        CloseEvent.fire(this, this);
     }
 
     /**
