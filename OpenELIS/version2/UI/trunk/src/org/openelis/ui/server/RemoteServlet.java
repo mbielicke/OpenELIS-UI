@@ -20,7 +20,7 @@ public class RemoteServlet extends XsrfProtectedServiceServlet {
     protected void onBeforeRequestDeserialized(String serializedRequest) {
         super.onBeforeRequestDeserialized(serializedRequest);
 
-        getThreadLocalRequest().setAttribute("last_access",
+        getThreadLocalRequest().getSession().setAttribute("last_access",
                                              Datetime.getInstance(Datetime.YEAR, Datetime.MINUTE));
     }
 
