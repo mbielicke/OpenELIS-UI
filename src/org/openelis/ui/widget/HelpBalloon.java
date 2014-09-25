@@ -1,5 +1,6 @@
 package org.openelis.ui.widget;
 
+import org.openelis.ui.resources.HelpCSS;
 import org.openelis.ui.resources.ToolTipCSS;
 import org.openelis.ui.resources.UIResources;
 
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class HelpBalloon extends Composite {
 
-	@UiTemplate("Balloon.ui.xml")
+	@UiTemplate("HelpBalloon.ui.xml")
 	interface BalloonUiBinder extends UiBinder<AbsolutePanel, HelpBalloon> {
 	}
 
@@ -37,7 +38,7 @@ public class HelpBalloon extends Composite {
 
 	protected Placement placement = Placement.TOP;
 
-	protected ToolTipCSS css = UIResources.INSTANCE.toolTip();
+	protected HelpCSS css = UIResources.INSTANCE.help();
 	protected PopupPanel pop;
 
 	public HelpBalloon() {
