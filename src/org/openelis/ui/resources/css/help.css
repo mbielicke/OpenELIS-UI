@@ -3,7 +3,7 @@
 	position:absolute;
 	display:block;
 	padding:5px;
-	opacity:0.8;
+	opacity:0.95;
 }
 
 .TipLeft {
@@ -67,7 +67,7 @@
 	padding:2px 4px;
 	text-align:center;
 	text-decoration: none;
-	background-color :#333;
+	background-color :black;
 	color:white;
 	border-radius : 4px;
 	font-wheight:bold;
