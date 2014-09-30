@@ -4,6 +4,7 @@
 	gwt-image:'apply';
     cursor:pointer;
     border:1px solid white;
+    margin : auto;
 }
 @sprite .Unchecked {
     height:13px;
@@ -11,6 +12,7 @@
 	gwt-image:'unapply';
     cursor:pointer;
     border:1px solid white;
+    margin : auto;
 }
 @sprite .Unknown {
     height:13px;
@@ -18,6 +20,7 @@
 	gwt-image:'unknown';
     cursor:pointer;
     border:1px solid white;
+    margin : auto;
 }
 
 .InputError {
