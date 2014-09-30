@@ -12,7 +12,7 @@
 		         uri="antlib:org.apache.ivy.ant" classpath="/usr/share/java/ivy.jar"/>
 	
 	<ivy:configure file="ivysettings.xml"/>
-	<ivy:retrieve pattern="lib/[artifact]-[type]-[revision].[ext]" sync="true"/>
+	<ivy:retrieve pattern="lib/[artifact]-[type]-[revision].[ext]"/>
 	
 	<path id="ivy.lib">
 	   <fileset dir="lib" includes="*.jar"/>

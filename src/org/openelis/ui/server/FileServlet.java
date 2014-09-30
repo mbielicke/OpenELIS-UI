@@ -33,22 +33,11 @@ public class FileServlet extends HttpServlet {
             factory = new DiskFileItemFactory();
             upload = new ServletFileUpload(factory);
             files = upload.parseRequest(req);
-            
-            System.out.print("files uploaded = ");
-            if (files != null && files.size() > 0) {
-            	System.out.println(files.size());
-            	
-            	if (req.getSession().getAttribute("upload") != null)  
-            		((List<FileItem>)req.getSession().getAttribute("upload")).addAll(files);
-            	else
-            		req.getSession().setAttribute("upload", files);
-            }
+            if (files.size() > 0)
+                req.getSession().setAttribute("upload", files.get(0));
         } catch (Exception e) {
-        	e.printStackTrace();
             throw (ServletException)e.getCause();
         }
-        
-        resp.getOutputStream().print("Files Uploaded");
     }
 
     @Override

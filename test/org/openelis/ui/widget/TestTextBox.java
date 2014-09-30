@@ -130,8 +130,6 @@ public class TestTextBox {
             }
         });
         
-        when(textbox.getMaxLength()).thenReturn(-1);
-        
         textbox.setValue("value",true);
         assertEquals("value",textbox.value);
         verify(textbox.textbox).setText("value");
@@ -145,8 +143,6 @@ public class TestTextBox {
                 fail("Event should not have fired");
             }
         });
-        
-        when(textbox.getMaxLength()).thenReturn(-1);
         
         textbox.setValue("value");
         assertEquals("value",textbox.value);
@@ -173,7 +169,6 @@ public class TestTextBox {
         
         when(textbox.textbox.isEnabled()).thenReturn(true);
         when(textbox.textbox.getText()).thenReturn("value");
-        when(textbox.getMaxLength()).thenReturn(-1);
         
         textbox.finishEditing();
         

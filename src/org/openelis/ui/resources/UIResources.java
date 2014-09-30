@@ -123,9 +123,6 @@ public interface UIResources extends ClientBundle {
 	@Source("css/tooltip.css")
     ToolTipCSS toolTip();
 	
-	@Source("css/help.css")
-	HelpCSS help();
-	
 	@Source("css/cal.css")
 	CalCSS cal();
 	
