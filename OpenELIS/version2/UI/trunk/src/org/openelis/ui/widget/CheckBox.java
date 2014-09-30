@@ -427,5 +427,15 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
     public Balloon.Options getBalloonOptions() {
         return options;
     }
+    
+    @Override
+    public void setWidth(String width) {
+    	check.setWidth(width);
+    }
+    
+    @Override
+    public void setHeight(String height) {
+    	check.setHeight(height);
+    }
 
 }
