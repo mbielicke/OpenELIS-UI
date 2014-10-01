@@ -29,6 +29,7 @@ import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.resources.PopupCSS;
 import org.openelis.ui.resources.UIResources;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -270,18 +271,25 @@ public class PopupMenuPanel extends PopupPanel {
     @Override
     protected void onAttach() {
         super.onAttach();
-        if(panel.getOffsetHeight() > Window.getClientHeight()- getAbsoluteTop()){
-            ap.setHeight((Window.getClientHeight()- getAbsoluteTop() - 50)+"px");
-            ap.setWidth(ap.getOffsetWidth()+"px");
-            up.setVisible(true);
-            down.setVisible(true);
-        }else{
-            ap.setHeight(panel.getOffsetHeight()+"px");
-            ap.setWidth(panel.getOffsetWidth()+"px");
-            ap.setWidgetPosition(panel, 0, 0);
-            up.setVisible(false);
-            down.setVisible(false);
-        }
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+		        if(panel.getOffsetHeight() > Window.getClientHeight()- getAbsoluteTop()){
+		            ap.setHeight((Window.getClientHeight()- getAbsoluteTop() - 50)+"px");
+		            ap.setWidth(ap.getOffsetWidth()+"px");
+		            up.setVisible(true);
+		            down.setVisible(true);
+		        }else{
+		            ap.setHeight(panel.getOffsetHeight()+"px");
+		            ap.setWidth(panel.getOffsetWidth()+"px");
+		            ap.setWidgetPosition(panel, 0, 0);
+		            up.setVisible(false);
+		            down.setVisible(false);
+		        }
+			}
+		});
+
     }
     
     /**
