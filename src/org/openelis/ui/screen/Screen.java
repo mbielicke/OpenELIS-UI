@@ -152,7 +152,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         focused = (Focusable)event.getSource();
         
         //Focus window if not the focused window the browser
-        if(window != null && window.asWidget().getStyleName().contains(css.unfocused())) {
+        if(window != null && window.asWidget() != null && window.asWidget().getStyleName().contains(css.unfocused())) {
          	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
          	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 				public void execute() {
@@ -299,7 +299,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         return bus.addHandlerToSource(StateChangeEvent.getType(), this, handler);
     }
 
-    protected void fireDataChange() {
+    public void fireDataChange() {
         bus.fireEventFromSource(new DataChangeEvent(), this);
     }
 
