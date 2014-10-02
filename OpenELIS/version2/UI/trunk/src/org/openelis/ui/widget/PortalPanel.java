@@ -1,6 +1,7 @@
 package org.openelis.ui.widget;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
@@ -13,6 +14,7 @@ public class PortalPanel extends AbsolutePanel implements RequiresResize, Provid
 
 	
 	public PortalPanel() {
+		getElement().getStyle().setOverflow(Overflow.AUTO);
 	}
 
 	@Override
