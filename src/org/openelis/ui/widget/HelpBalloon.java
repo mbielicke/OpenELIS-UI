@@ -170,5 +170,11 @@ public class HelpBalloon extends Composite {
 		});
 
 	}
+	
+	public void setCss(HelpCSS css) {
+		css.ensureInjected();
+		this.css = css;
+		setPlacement(placement);
+	}
 
 }

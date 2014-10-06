@@ -126,6 +126,9 @@ public interface UIResources extends ClientBundle {
 	@Source("css/help.css")
 	HelpCSS help();
 	
+	@Source("css/error.css")
+	HelpCSS errorCss();
+	
 	@Source("css/cal.css")
 	CalCSS cal();
 	
@@ -454,6 +457,9 @@ public interface UIResources extends ClientBundle {
     
     @Source("images/selectdisabled.png")
     ImageResource selectDisabled();
+    
+    @Source("images/help.png")
+    ImageResource helpImage();
     
     
 }
