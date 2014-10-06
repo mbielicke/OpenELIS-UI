@@ -13,7 +13,7 @@ public class Help extends FocusPanel implements ClickHandler {
 	protected String text;
 	protected Widget widget;
 	protected HelpBalloon.Placement placement = HelpBalloon.Placement.TOP;
-	protected static HelpBalloon balloon = new HelpBalloon();
+	protected HelpBalloon balloon = new HelpBalloon();
 	
 	public Help() {
 		addClickHandler(this);
