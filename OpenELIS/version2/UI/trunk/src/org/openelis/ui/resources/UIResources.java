@@ -127,7 +127,7 @@ public interface UIResources extends ClientBundle {
 	HelpCSS help();
 	
 	@Source("css/error.css")
-	HelpCSS errorCss();
+	ErrorCss errorCss();
 	
 	@Source("css/cal.css")
 	CalCSS cal();
