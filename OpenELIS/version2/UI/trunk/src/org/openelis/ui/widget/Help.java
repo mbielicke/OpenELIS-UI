@@ -1,5 +1,7 @@
 package org.openelis.ui.widget;
 
+import org.openelis.ui.resources.HelpCSS;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiChild;
@@ -44,6 +46,12 @@ public class Help extends FocusPanel implements ClickHandler {
 	
 	public void setBalloonHeight(String height) {
 		balloon.setHeight(height);
+	}
+	
+	public void setCss(HelpCSS css) {
+		css.ensureInjected();
+		setStyleName(css.Icon());
+		balloon.setCss(css);
 	}
 
 }
