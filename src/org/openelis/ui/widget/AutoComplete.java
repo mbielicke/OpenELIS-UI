@@ -331,7 +331,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
             @Override
             public void execute() {
-                int modelHeight = table.getModel().size() * cellHeight;
+                int modelHeight = table.getModel() != null ? table.getModel().size() * cellHeight : 0;
                 
                 if(table.hasHeader())
                     modelHeight += 20;
