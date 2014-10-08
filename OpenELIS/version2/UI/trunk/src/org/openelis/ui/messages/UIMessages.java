@@ -2,7 +2,7 @@ package org.openelis.ui.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/home/tschmidt/juno/workspace/OpenELIS-UI/src/org/openelis/ui/messages/UIMessages.properties'.
+ * 	/home/akampoow/workspace/OpenELIS-UI/src/org/openelis/ui/messages/UIMessages.properties'.
  */
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   
@@ -455,6 +455,15 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Check All")
   @Key("drop.check")
   String drop_check();
+
+  /**
+   * Translated "Drop your files to instantly upload them".
+   * 
+   * @return translated "Drop your files to instantly upload them"
+   */
+  @DefaultMessage("Drop your files to instantly upload them")
+  @Key("drop.dropFilesToUpload")
+  String drop_dropFilesToUpload();
 
   /**
    * Translated "options selected".
