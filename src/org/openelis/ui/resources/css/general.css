@@ -37,3 +37,29 @@ legend {
 	text-align:right;
 	vertical-align:top;
 }
+
+.DropIndicator {
+    background: #00f;
+    position:relative;
+    border-radius: 50%;
+    color: white;
+    font-size:15px;
+    text-align: center;
+    line-height:310px;
+    animation : pulse 0.25s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    -webkit-animation: pulse 0.25s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: alternate;
+   }
+   
+   @keyframes pulse {
+    from {top:0px; left:0px;width:315px;height:315px;}
+    to {top:0px;left:0px;width : 310px;height:310px;}
+   }
+   
+   @-webkit-keyframes pulse {
+     from {top:0px; left:0px;width:315px;height:315px;}
+     to {top:0px;left:0px;width : 310px;height:310px;}
+   }

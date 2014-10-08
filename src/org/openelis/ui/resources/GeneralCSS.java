@@ -8,4 +8,5 @@ public interface GeneralCSS extends CssResource {
 	String WhiteContentPanel();
 	String Form();
 	String Prompt();
+    String DropIndicator();
 }
