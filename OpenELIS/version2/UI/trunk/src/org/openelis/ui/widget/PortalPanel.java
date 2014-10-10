@@ -14,7 +14,7 @@ public class PortalPanel extends AbsolutePanel implements RequiresResize, Provid
 
 	
 	public PortalPanel() {
-		getElement().getStyle().setOverflow(Overflow.AUTO);
+		getElement().getStyle().setOverflow(Overflow.VISIBLE);
 	}
 
 	@Override
