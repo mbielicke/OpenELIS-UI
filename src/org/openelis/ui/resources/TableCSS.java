@@ -27,4 +27,9 @@ public interface TableCSS extends CssResource {
 	String InputError();
 	String InputWarning();
 	String ScreenTableWithSides();
+	String TableWithPadding();
+	String GreenStatus();
+	String YellowStatus();
+	String RedStatus();
+	String LargeFont();
 }
