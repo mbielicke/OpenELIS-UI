@@ -44,6 +44,9 @@ public interface UIResources extends ClientBundle {
 	@Source("css/checkbox.css")
 	CheckboxCSS checkbox();
 	
+	@Source("css/mcheckbox.css")
+	MCheckboxCSS mcheckbox();
+	
 	@Source("css/collapse.css")
 	CollapseCSS collapse();
 	
@@ -140,7 +143,6 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("images/minimize.gif")
 	ImageResource minimizeButton();
-	
 
 	@Source("images/trans.gif")
 	ImageResource glass();	
@@ -165,6 +167,15 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("images/unknow.png")
 	ImageResource unknown();
+	
+	@Source("images/mapply.png")
+	ImageResource mapply();
+	
+	@Source("images/munapply.png")
+	ImageResource munapply();
+	
+	@Source("images/munknow.png")
+	ImageResource munknown();
 	
 	@Source("images/icon-warning.gif")
 	ImageResource iconWarning();
