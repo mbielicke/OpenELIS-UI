@@ -394,7 +394,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 		return addHandler(handler,ValueChangeEvent.getType());
 	}
 	
-	public void setCSS(CheckboxCSS css) {
+	public void setCss(CheckboxCSS css) {
 		check.setCSS(css);
 	}
 	
