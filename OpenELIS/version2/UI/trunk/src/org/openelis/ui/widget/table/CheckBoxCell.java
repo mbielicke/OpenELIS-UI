@@ -254,6 +254,11 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         return div;
 	}
 	
+	public void setCss(CheckboxCSS css) {
+		this.css = css;
+		css.ensureInjected();
+	}
+	
 	public void setAlign(String align) {
 	    this.align = align;
 	}
