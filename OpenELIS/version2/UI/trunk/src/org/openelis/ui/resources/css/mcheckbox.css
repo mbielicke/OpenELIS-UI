@@ -1,22 +1,22 @@
 @sprite .Checked {
-    height:45px;
-    width:45px;
+    height:35px;
+    width:35px;
 	gwt-image:'mapply';
     cursor:pointer;
     border:1px solid white;
     margin : auto;
 }
 @sprite .Unchecked {
-    height:45px;
-    width:45px;
+    height:35px;
+    width:35px;
 	gwt-image:'munapply';
     cursor:pointer;
     border:1px solid white;
     margin : auto;
 }
 @sprite .Unknown {
-    height:45px;
-    width:45px;
+    height:35px;
+    width:35px;
 	gwt-image:'munknown';
     cursor:pointer;
     border:1px solid white;

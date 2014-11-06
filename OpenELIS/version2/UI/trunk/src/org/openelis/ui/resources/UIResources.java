@@ -168,13 +168,13 @@ public interface UIResources extends ClientBundle {
 	@Source("images/unknow.png")
 	ImageResource unknown();
 	
-	@Source("images/mapply.png")
+	@Source("images/bt_checkbox_on_2_2x.png")
 	ImageResource mapply();
 	
-	@Source("images/munapply.png")
+	@Source("images/bt_checkbox_off_2_2x.png")
 	ImageResource munapply();
 	
-	@Source("images/munknow.png")
+	@Source("images/bt_checkbox_off_2_2x.png")
 	ImageResource munknown();
 	
 	@Source("images/icon-warning.gif")
