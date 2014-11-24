@@ -2161,10 +2161,12 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         exceptions.add(error);
   
-        if(rowIndex != null && rowIndex.containsKey(row)) {
+        if (rowIndex != null && rowIndex.containsKey(row)) {
             r = rowIndex.get(row).view;
-            renderView(r,r);
+        } else {
+            r = model.indexOf(row);
         }
+        view.renderView(r, r);
     }
 
     /**
