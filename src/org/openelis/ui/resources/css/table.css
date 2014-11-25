@@ -12,7 +12,7 @@
 }
 
 .Table>tbody>tr>td.Disabled {
-	color: grey;
+	color : grey;
 }
 
 .Table>tbody>tr>td {
@@ -23,10 +23,10 @@
 	border-style: solid;
 	border-width: 0px 1px 1px 0px;
 	color: inherit;
-	font-family: inherit;
-	font-size: inherit;
+	font-family:inherit;
+	font-size:inherit;
 	cursor: pointer;
-	/*	padding: 0px 2px 2px 2px;  fixed row cellpadding*/
+/*	padding: 0px 2px 2px 2px;  fixed row cellpadding*/
 	padding: 0px 2px 2px;
 }
 
@@ -38,12 +38,12 @@
 	border-bottom: 1px #f5d852 dashed;
 }
 
-.Table>tbody>tr.Selection>td.InputError {
+.Table>tbody>tr.Selection >td.InputError {
 	border-bottom: 1px red dashed;
 }
 
 .Table>tbody>tr.Selection {
-	background-color: #d8e4f2;
+	background-color:#d8e4f2;
 }
 
 .Table>tbody>tr.Selection>td {
@@ -60,37 +60,6 @@
 	border-left: 1px;
 	background: #B5B8C8;
 	color: white;
-}
-
-.Table>tbody>tr.LargeFont td {
-	font-size: 18px;
-}
-
-.Table>tbody>tr>td.GreenStatus {
-	border-width: 0px 2px 2px 2px;
-	border-style: solid;
-	color: white;
-	background-color: green;
-	border-color: white;
-	padding: 2px;
-}
-
-.Table>tbody>tr>td.YellowStatus {
-	border-width: 0px 2px 2px 2px;
-	border-style: solid;
-	color: black;
-	background-color: yellow;
-	border-color: white;
-	padding: 2px;
-}
-
-.Table>tbody>tr>td.RedStatus {
-	border-width: 0px 2px 2px 2px;
-	border-style: solid;
-	color: white;
-	background-color: red;
-	border-color: white;
-	padding: 2px;
 }
 
 .Header {
@@ -145,6 +114,8 @@
 	border-collapse: collapse;
 }
 
+
+
 .DropdownTable tr {
 	background: white;
 }
@@ -172,19 +143,19 @@
 	margin: 0px -2px -2px -2px;
 }
 
+
 @sprite .FilterButton {
 	width: 16px;
 	height: 19px;
 	border-left: 1px solid #d8d8d8;
 	gwt-image: 'autoArrow';
-	background-position: 3px 6px;
+	background-position:3px 6px;
 }
-
-.FilterButton:hover {
-	cursor: pointer;
-	border: 1px solid #7293BE;
-	border-width: 0 0 0 1px;
-	box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
+.FilterButton:hover{
+     cursor:pointer;
+     border: 1px solid #7293BE;
+     border-width:0 0 0 1px;
+     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
 }
 
 .DropdownPopup {
@@ -231,36 +202,27 @@ sprtite .TableCalendar .CalendarButton {
 	gwt-image: 'iconError';
 }
 
-.ScreenTableWithSides {
-	border: 1px solid #D8D8D8;
-	background: white;
-}
-
-.TableWithPadding {
-	background: #d8d8d8;
-	table-layout: fixed;
-	spacing: 0px;
-	padding: 12px;
-	border-collapse: collapse;
-	border: 0px solid white;
+.ScreenTableWithSides{
+    border:1px solid #D8D8D8;
+    background:white;
 }
 
 .Single .Table>tbody>tr .SelectionCell {
-	display: none;
+	display:none;
 }
 
 @sprite .Table>tbody>tr .SelectionCell {
-	height: 13px;
-	width: 13px;
-	gwt-image: 'unapply';
-	cursor: pointer;
-	border: 1px solid white;
+    height:13px;
+    width:13px;
+	gwt-image:'unapply';
+    cursor:pointer;
+    border:1px solid white;	
 }
 
 @sprite .Table>tbody>tr.Selection .SelectionCell {
-	height: 13px;
-	width: 13px;
-	gwt-image: 'apply';
-	cursor: pointer;
-	border: 1px solid white;
+	height:13px;
+    width:13px;
+	gwt-image:'apply';
+    cursor:pointer;
+    border:1px solid white;
 }

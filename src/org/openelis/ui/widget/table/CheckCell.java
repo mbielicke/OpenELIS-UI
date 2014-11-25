@@ -69,7 +69,7 @@ public class CheckCell implements CellEditor, CellRenderer, IsWidget, HasWidgets
     protected CheckboxCSS css;
     
     public CheckCell() {
-    	setEditor(new Check());
+    	editor = new Check();
     }
     
     /**

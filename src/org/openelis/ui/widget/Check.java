@@ -3,8 +3,6 @@ package org.openelis.ui.widget;
 import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
 
-import com.google.gwt.dev.jjs.ast.HasName.Util;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -218,16 +216,6 @@ public class Check extends FocusPanel implements HasValueChangeHandlers<Boolean>
 		css.ensureInjected();
 		this.css = css;
 		setStyle();
-	}
-	
-	@Override
-	public void setWidth(String width) {
-		getElement().getStyle().setWidth(org.openelis.ui.common.Util.stripUnits(width), Unit.PX);
-	}
-	
-	@Override
-	public void setHeight(String height) {
-		getElement().getStyle().setHeight(org.openelis.ui.common.Util.stripUnits(height), Unit.PX);
 	}
 
 

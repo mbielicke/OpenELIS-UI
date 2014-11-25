@@ -562,11 +562,6 @@ public class StaticView extends ViewInt {
                     else
                         flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeClosedImage());
                 }
-                if(node.getImage() != null) {
-                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).setClassName(node.getImage());
-                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","table-cell");
-                }else
-                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","none");
                 flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.bulkRender(tree.getValueAt(r,c)));                
             }
         }else {
@@ -893,9 +888,9 @@ public class StaticView extends ViewInt {
 
         //if at top level of tree set line cell to invisible;
         if(level == 0) {
-            if(node.isLeaf()) {
+            if(node.isLeaf())
                 grid.getCellFormatter().setWidth(0, 0, "15px");
-            }else
+            else
                 grid.getCellFormatter().setVisible(0, 0, false);
         } else {
             /*
@@ -958,10 +953,9 @@ public class StaticView extends ViewInt {
         }
 
         // Draw node image if one is set in the model
-        if (image != null){
+        if (image != null)
             grid.getCellFormatter().setStyleName(0, 2, image);
-            grid.getCellFormatter().getElement(0, 2).getStyle().setProperty("display", "table-cell");
-        }else
+        else
             grid.getCellFormatter().setVisible(0,2,false);
         
         return grid;
