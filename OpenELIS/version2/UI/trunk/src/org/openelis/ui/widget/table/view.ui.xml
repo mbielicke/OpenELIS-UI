@@ -13,7 +13,7 @@
   	    <table:Header ui:field="header" visible="false"/>
   	    <!--  The Table is placed inside FocusPanel to catch MouseMove and click Events over the table -->
   	    <g:FocusPanel ui:field="fp">
-  	      <g:FlexTable ui:field="flexTable"/>
+  	      <table:FlexTable ui:field="flexTable"/>
   	  	</g:FocusPanel>  
   	  </g:VerticalPanel>
   	</g:ScrollPanel>
