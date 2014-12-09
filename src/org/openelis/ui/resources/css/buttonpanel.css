@@ -1,7 +1,5 @@
 
 .Button {
-    margin: 2px;
-    padding:1px 3px;
 	border:1px solid transparent;
 	-moz-border-radius:2px;
 	border-radius:4px;
@@ -10,16 +8,20 @@
     font-size:inherit;
     display : inline-block;
     text-shadow: 0 1px white;
+	height : 18px;
+	padding : 1px;
 }
 
-.Button Table{border-spacing:0;}
-	
-.Button td{height:16px;}
+.Button > div {
+	padding : 1px;
+	margin : 0px;
+}
 
 .ButtonPanelContainer {
 	height: 26px;
 	background-color:#d8e4f2;
 	border-bottom:1px solid #a9bfd3;
+	padding : 3px;
 }
 
 .BottomButtonPanelContainer {
@@ -40,6 +42,8 @@
 	background:#e7f0f7;
 	cursor:pointer; 
     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
+    outline : none;
+    height : 18px;
 }
 .Pressed:hover {
 	cursor:default; 

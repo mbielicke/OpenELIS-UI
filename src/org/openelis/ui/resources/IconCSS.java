@@ -35,5 +35,6 @@ public interface IconCSS extends CssResource {
     String selectIcon();
     String PreviousPageButtonImage();
     String NextPageButtonImage();
+    String backImage();
 
 }

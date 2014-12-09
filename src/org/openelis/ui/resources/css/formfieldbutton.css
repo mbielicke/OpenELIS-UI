@@ -5,15 +5,16 @@
     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #DDDFE2 inset;
     cursor: pointer;
     color: #000000;
+    font-family:inherit;
+    font-size:inherit;
     text-shadow: 0 1px white;
-    padding:0 3px;
-    margin-left:1px;
+    padding:1px;
+    display : inline-block;
 }
 
-.Button TABLE{
-	border-spacing:0;
-}
+.Button > div {
 
+}
 
 .Button:hover{
      cursor:pointer;
