@@ -9,7 +9,7 @@
         <w:TextBase ui:field="textbox" width="100%"/>
       </g:layer>
       <g:layer right="0" width="16px">
-       <w:Button ui:field="button" CSS="{res.lookupButton}"/>
+       <w:Button ui:field="button" image="{res.autoArrow}" css="{res.lookupButton}"/>
       </g:layer>
     </g:LayoutPanel>
     
