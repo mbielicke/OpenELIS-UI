@@ -1,6 +1,7 @@
 package org.openelis.ui.resources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dev.resource.Resource;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
@@ -137,6 +138,9 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("css/link.css")
 	LinkCSS link();
+	
+	@Source("css/unstyledbutton.css")
+	UnstyledButton unstyledButtonCss();
 	
 	@Source("images/close.png")
 	ImageResource closeButton();
@@ -472,5 +476,6 @@ public interface UIResources extends ClientBundle {
     @Source("images/help.png")
     ImageResource helpImage();
     
-    
+    @Source("images/ic_back_blk_24dp_r2_2x.png")
+    ImageResource backImage();
 }

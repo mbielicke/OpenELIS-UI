@@ -1,0 +1,14 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    
+  <ui:with field="res" type="org.openelis.ui.resources.UIResources"/>
+  
+  <g:HTMLPanel>
+    <div ui:field="outer">
+      <div style="float:left;text-decoration:inherit;display:none" ui:field="left"/>
+      <div style="float:left;text-decoration:inherit;display:none" ui:field="center"/>
+      <div style="float:left;text-decoration:inherit;display:none" ui:field="right"/>
+    </div>
+  </g:HTMLPanel>
+    
+</ui:UiBinder>

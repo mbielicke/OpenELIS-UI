@@ -1,8 +1,5 @@
 
-.Button{
-	margin: 2px;
-    padding:1px 3px;
-	display : inline-block;
+.Button {
 	border:1px solid #7293be;
 	border-radius : 4px;
 	font-family:inherit;
@@ -10,11 +7,14 @@
     color:inherit;
     text-shadow: 0 1px white;
     background:white;
+    display : inline-block;
+    height : inherit;
 }
 
-.Button Table{border-spacing:0;}
-
-.Button td{height:16px;}
+ .Button > div{
+ 	margin: 1px;
+    padding:1px;
+ }
 
  .Button:hover{
      cursor:pointer;

@@ -213,3 +213,7 @@
 @sprite .Disabled .NextPageButtonImage {
 	gwt-image:'nextPageDisabled';
 }
+
+@sprite .backImage {
+	gwt-image:'backImage';
+}
