@@ -51,6 +51,7 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
@@ -102,6 +103,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		icon.ensureInjected();
 		setCss(UIResources.INSTANCE.button());
 		getElement().getStyle().setOutlineStyle(OutlineStyle.NONE);
+		setEnabled(false);
 	}
 	
     public Button(String icon,String label) {
@@ -182,7 +184,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	
 	@Deprecated
 	public void setLeftIcon(String icon) {
-		setButtonElement(left,createIconDiv(icon));
+		if(icon != null && !"".equals(icon))
+			setButtonElement(left,createIconDiv(icon));
 	}
 		
 	@UiChild(limit=1,tagname="left")
@@ -196,7 +199,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	
 	@Deprecated
 	public void setIcon(String icon) {
-		setButtonElement(center,createIconDiv(icon));
+		if(icon != null && !"".equals(icon))
+			setButtonElement(center,createIconDiv(icon));
 	}
 	
 	public void setImage(ImageResource imageResource) {
@@ -214,7 +218,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	
 	@Deprecated
 	public void setRightIcon(String icon) {
-		setButtonElement(right, createIconDiv(icon));
+		if(icon != null && !"".equals(icon))
+			setButtonElement(right, createIconDiv(icon));
 	}
 	
 	@UiChild(limit=1,tagname="right")
@@ -466,6 +471,11 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     		if(width > 0)
     			lockedImage.setPixelSize(width, height);
     	}	
+    }
+    
+    @Override
+    public HandlerRegistration addClickHandler(ClickHandler handler) {
+    	return addHandler(handler,ClickEvent.getType());
     }
     
     private void calcOffsetToCenter(final Element div, final Element content) {
