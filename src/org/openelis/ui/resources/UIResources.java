@@ -139,6 +139,9 @@ public interface UIResources extends ClientBundle {
 	@Source("css/link.css")
 	LinkCSS link();
 	
+	@Source("css/portalstatus.css") 
+	PortalStatusCSS portalStatus();
+	
 	@Source("css/unstyledbutton.css")
 	UnstyledButton unstyledButtonCss();
 	
@@ -478,4 +481,10 @@ public interface UIResources extends ClientBundle {
     
     @Source("images/ic_back_blk_24dp_r2_2x.png")
     ImageResource backImage();
+    
+    @Source("images/spinner.gif")
+    ImageResource spinnerGlobe();
+    
+    @Source("images/attention.png")
+    ImageResource attention();
 }
