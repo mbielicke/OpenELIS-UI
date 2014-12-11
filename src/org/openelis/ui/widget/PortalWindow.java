@@ -10,6 +10,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -17,7 +18,8 @@ public class PortalWindow implements WindowInt {
 	
 	protected AbsolutePanel glass;
 	
-	private Confirm confirm;
+	protected PortalStatus status;
+	protected PopupPanel popup;
 
 	@Override
 	public HandlerRegistration addCloseHandler(CloseHandler<WindowInt> handler) {
@@ -108,14 +110,34 @@ public class PortalWindow implements WindowInt {
 
 	@Override
 	public void setBusy(String message) {
-		confirm = new Confirm(Confirm.Type.BUSY,null,message,null);
-		confirm.show();
+		if(status == null) {
+			status = new PortalStatus();
+		}
+		status.setBusy(message);
+		showStatus(true);
 	}
 
+	private void showStatus(boolean modal) {
+		if(popup == null)
+			popup = new PopupPanel();
+		popup.setWidget(status);
+		popup.setModal(modal);
+		popup.setAutoHideEnabled(!modal);
+		popup.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+
+			@Override
+			public void setPosition(int offsetWidth, int offsetHeight) {
+				int width = com.google.gwt.user.client.Window.getClientWidth();
+				popup.setPopupPosition((width - offsetWidth) / 2, 200);
+			}
+			
+		});
+	}
+	
 	@Override
 	public void clearStatus() {
-		if(confirm != null)
-			confirm.hide();
+		if(popup != null)
+			popup.hide();
 	}
 
 	@Override
@@ -125,9 +147,11 @@ public class PortalWindow implements WindowInt {
 
 	@Override
 	public void setError(String message) {
-	    clearStatus();
-		confirm = new Confirm(Confirm.Type.ERROR,"Error",message,"OK");
-		confirm.show();
+		if(status == null) {
+			status = new PortalStatus();
+		}
+		status.setError(message);
+		showStatus(false);
 	}
 
 	@Override
