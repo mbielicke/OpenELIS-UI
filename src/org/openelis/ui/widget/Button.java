@@ -25,7 +25,6 @@
  */
 package org.openelis.ui.widget;
 
-import org.openelis.ui.common.Util;
 import org.openelis.ui.resources.ButtonCSS;
 import org.openelis.ui.resources.IconCSS;
 import org.openelis.ui.resources.UIResources;
@@ -227,10 +226,17 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		setButtonElement(right,widget.getElement());
 	}
 	
-	private void setButtonElement(DivElement div, Element element) {
+	private void setButtonElement(final DivElement div, Element element) {
 		div.getStyle().setDisplay(Display.BLOCK);
+		div.getStyle().setPosition(Position.RELATIVE);
 		div.appendChild(element);
-		calcOffsetToCenter(div,element);
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			@Override
+			public void execute() {
+				calcOffsetToCenter(outer,div);
+			}
+		});
+		
 	}
 	
 	public void setDisabledImage(ImageResource imageResource) {
@@ -253,7 +259,6 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		DivElement label = Document.get().createDivElement();
 		label.setInnerText(text);
 		label.getStyle().setWhiteSpace(WhiteSpace.PRE);
-		label.getStyle().setPosition(Position.RELATIVE);
 		return label;
 	}
 	
@@ -270,7 +275,6 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		
 		div = Document.get().createDivElement();
 		div.addClassName(style);
-		div.getStyle().setPosition(Position.RELATIVE);
 		return div;
 	}
 	
