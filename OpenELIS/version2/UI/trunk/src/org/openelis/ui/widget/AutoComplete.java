@@ -1069,7 +1069,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     	css.ensureInjected();
     	this.css = css;
     	
-        button.setLeftIcon(css.SelectButton());
+        //button.setLeftIcon(css.SelectButton());
         display.setStyleName(css.SelectBox());
         textbox.setStyleName(css.SelectText());
     }
