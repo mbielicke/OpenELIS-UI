@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:t="urn:import:org.openelis.ui.widget.table"
+             xmlns:c="urn:import:org.openelis.ui.widget.cell"
              xmlns:r="urn:import:org.openelis.ui.widget.tree" 
              xmlns:w="urn:import:org.openelis.ui.widget">
              
@@ -12,19 +12,19 @@
         <r:Column label="col3" width="100"/>
         <r:Leaf key="top">
           <r:LeafColumn>
-            <t:TextBoxCell>
+            <c:TextBoxCell>
               <w:TextBox field="Integer"/> 
-            </t:TextBoxCell>
+            </c:TextBoxCell>
            </r:LeafColumn>
            <r:LeafColumn>
-             <t:TextBoxCell>
+             <c:TextBoxCell>
                 <w:TextBox/> 
-             </t:TextBoxCell>
+             </c:TextBoxCell>
            </r:LeafColumn>
            <r:LeafColumn>
-            <t:TextBoxCell>
+            <c:TextBoxCell>
               <w:TextBox/> 
-            </t:TextBoxCell>
+            </c:TextBoxCell>
           </r:LeafColumn>       
         </r:Leaf> 
       </r:Tree>

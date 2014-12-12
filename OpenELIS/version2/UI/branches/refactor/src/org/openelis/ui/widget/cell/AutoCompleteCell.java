@@ -23,17 +23,20 @@
  * which case the provisions of a UIRF Software License are applicable instead
  * of those above.
  */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableDropdownCSS;
+import org.openelis.ui.resources.DropdownCSS;
+import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.MultiDropdown;
+import org.openelis.ui.widget.AutoComplete;
+import org.openelis.ui.widget.AutoCompleteValue;
+import org.openelis.ui.widget.table.ColumnInt;
+import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -48,42 +51,46 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class implements the CellRenderer and CellEditor interfaces and is used
- * to edit and render cells in a Table using an Dropdown<T> widget
+ * to edit and render cells in a Table using an AutoComplete
  * 
  * @author tschmidt
  * 
- * @param <T>
  */
-public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidgets {
+public class AutoCompleteCell implements CellRenderer,
+                             		     CellEditor,IsWidget,HasWidgets.ForIsWidget {
 
     /**
      * Widget used to edit the cell
      */
-    private MultiDropdown<Integer>      editor;
+    private AutoComplete editor;
 
-    private boolean       query;
+    private boolean      query;
     
-    private ColumnInt     column;
+    private ColumnInt    column;
+    
+    protected TableCSS   css;
+    
+    public AutoCompleteCell() {
 
-    public MultiDropdownCell() {
-    	this(new MultiDropdown<String>());
-    	
     }
+
     /**
      * Constructor that takes the editor to be used for the cell.
      * 
      * @param editor
      */
-    public MultiDropdownCell(MultiDropdown editor) {
-        setEditor(editor);
+    public AutoCompleteCell(AutoComplete editor) {
+    	setEditor(editor);
     }
     
-    public void setEditor(MultiDropdown editor) {
-        TableDropdownCSS css = UIResources.INSTANCE.tableDropdown();
+    public void setEditor(AutoComplete editor) {
         this.editor = editor;
+        DropdownCSS css = UIResources.INSTANCE.tableDropdown();
+        css.ensureInjected();
         editor.setEnabled(true);
         editor.setCSS(css);
         editor.addBlurHandler(new BlurHandler() {
+			@Override
 			public void onBlur(BlurEvent event) {
 				column.finishEditing();
 			}
@@ -92,17 +99,20 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 
     public Object finishEditing() {
     	editor.finishEditing();
-        if (query) 
+        if (query) {
+            editor.validateQuery();
             return editor.getQuery();
-        
+        }
+
         return editor.getValue();
     }
 
     public ArrayList<Exception> validate(Object value) {
-    	
-    	//if(!query) 
-    		//return editor.getHelper().validate(value);
-    	        	
+        if (!query) {
+        	editor.setValue((AutoCompleteValue)value);
+        	editor.hasExceptions();
+            return editor.getValidateExceptions();
+        }
         return null;
     }
 
@@ -110,29 +120,30 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
      * Gets Formatted value from editor and sets it as the cells display
      */
     public void render(HTMLTable table, int row, int col, Object value) {
+        query = false;
         editor.setQueryMode(false);
-       	table.setText(row, col, display(value));
+        table.setText(row, col, display(value));
     }
 
     public String display(Object value) {
-    	if(value != null && value instanceof List) {
-   			editor.setValue((ArrayList<Integer>)value);
+        editor.setQueryMode(false);
+        if(value instanceof AutoCompleteValue) {
+        	editor.setValue((AutoCompleteValue)value);
         	return editor.getDisplay();
-    	}else {
-    		return DataBaseUtil.toString(value);
-    	}
+        }else
+        	return DataBaseUtil.toString(value);
     }
-    
+
     public SafeHtml bulkRender(Object value) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        SafeHtmlBuilder builder;
         
+        builder = new SafeHtmlBuilder();
         builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
         builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }
-
     /**
      * Sets the QueryData to the editor and sets the Query string into the cell
      * text
@@ -150,10 +161,14 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
-        editor.setValue((ArrayList<Integer>)value);
+        if(value instanceof AutoCompleteValue)
+        	editor.setValue((AutoCompleteValue)value);
+        else
+        	editor.setValue(null,DataBaseUtil.toString(value));
+        container.setEditor(editor);
         editor.setWidth(container.getWidth()+"px");
         editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
+        editor.selectAll();
     }
 
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
@@ -164,7 +179,7 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
         editor.setHeight(container.getHeight()+"px");
         container.setEditor(editor);
     }
-    
+
     public boolean ignoreKey(int keyCode) {
         switch(keyCode) {
             case KeyCodes.KEY_ENTER :
@@ -175,45 +190,57 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
                 return false;
         }
     }
-    
+
     public Widget getWidget() {
     	return editor;
     }
-    
+
 	@Override
 	public void setColumn(ColumnInt col) {
 		this.column = col;
 	}
 
 	@Override
-	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public void setWidth(int width) {
-		editor.setWidth(width+"px");
-	}
-	@Override
 	public void add(Widget w) {
-		if(w instanceof MultiDropdown) {
-		    setEditor((MultiDropdown)w);
-		}
+        assert w instanceof AutoComplete;
+        
+        setEditor((AutoComplete)w);
 	}
-	
+
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
 	public Iterator<Widget> iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
 	public boolean remove(Widget w) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void add(IsWidget w) {
+		assert w instanceof AutoComplete;
+		
+		setEditor((AutoComplete)w);
+	}
+
+	@Override
+	public boolean remove(IsWidget w) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Widget asWidget() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

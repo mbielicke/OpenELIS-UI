@@ -34,6 +34,7 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
+import org.openelis.ui.widget.cell.CellRenderer;
 import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 

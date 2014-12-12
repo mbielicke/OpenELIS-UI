@@ -31,6 +31,9 @@ import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.MenuItem;
+import org.openelis.ui.widget.cell.CellEditor;
+import org.openelis.ui.widget.cell.CellRenderer;
+import org.openelis.ui.widget.cell.LabelCell;
 
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasWidgets;

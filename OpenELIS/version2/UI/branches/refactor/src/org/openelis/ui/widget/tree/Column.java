@@ -28,10 +28,10 @@ package org.openelis.ui.widget.tree;
 import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
-import org.openelis.ui.widget.table.CellEditor;
-import org.openelis.ui.widget.table.CellRenderer;
+import org.openelis.ui.widget.cell.CellEditor;
+import org.openelis.ui.widget.cell.CellRenderer;
+import org.openelis.ui.widget.cell.LabelCell;
 import org.openelis.ui.widget.table.ColumnInt;
-import org.openelis.ui.widget.table.LabelCell;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;

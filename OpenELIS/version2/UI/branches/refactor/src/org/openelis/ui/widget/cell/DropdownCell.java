@@ -23,17 +23,18 @@
  * which case the provisions of a UIRF Software License are applicable instead
  * of those above.
  */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
-import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableCalendarCSS;
+import org.openelis.ui.resources.DropdownCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.calendar.Calendar;
+import org.openelis.ui.widget.Dropdown;
+import org.openelis.ui.widget.table.ColumnInt;
+import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -48,36 +49,38 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class implements the CellRenderer and CellEditor interfaces and is used
- * to edit and render cells in a Table using a Calendar
+ * to edit and render cells in a Table using an Dropdown<T> widget
  * 
  * @author tschmidt
  * 
  * @param <T>
  */
-public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidgets.ForIsWidget {
-    /**
-     * Editor used by this cell
-     */
-    private Calendar  editor;
-    private boolean   query;
-    private ColumnInt column;
+public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidgets {
 
+    /**
+     * Widget used to edit the cell
+     */
+    protected Dropdown      editor;
+
+    protected boolean       query;
     
-    public CalendarCell() {
+    private ColumnInt     column;
+
+    public DropdownCell() {
+    	//this(new Dropdown<String>());
     	
     }
-    
     /**
-     * Constructor that takes the editor to be used as a param
+     * Constructor that takes the editor to be used for the cell.
      * 
      * @param editor
      */
-    public CalendarCell(Calendar editor) {
-    	setEditor(editor);
+    public DropdownCell(Dropdown editor) {
+        setEditor(editor);
     }
     
-    public void setEditor(Calendar editor) {
-        TableCalendarCSS css = UIResources.INSTANCE.tableCalendar();
+    public void setEditor(Dropdown editor) {
+        DropdownCSS css = UIResources.INSTANCE.tableDropdown();
         this.editor = editor;
         editor.setEnabled(true);
         editor.setCSS(css);
@@ -88,69 +91,51 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
 		});
     }
 
-    /**
-     * Method to return the editor set for this cell
-     */
-    @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
-        if(value instanceof Datetime)
-        	editor.setValue((Datetime)value);
-        else
-        	editor.setText(DataBaseUtil.toString(value));
-        editor.setWidth(container.getWidth()+"px");
-        editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
-        editor.selectAll();
-    }
-
-    @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
-        query = true;
-        editor.setQueryMode(true);
-        editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+"px");
-        editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
-    }
-
     public Object finishEditing() {
     	editor.finishEditing();
         if (query) 
             return editor.getQuery();
         
-        if(!editor.hasExceptions())
-        	return editor.getValue();
-        else
-        	return editor.getText();
+        return editor.getValue();
     }
 
     public ArrayList<Exception> validate(Object value) {
-        if (!query) 
-        	return editor.getHelper().validate(value);
-        else {
-        	editor.setQuery((QueryData)value);
-        	return editor.getValidateExceptions();
-        }
+    	ArrayList<Exception> exceptions = new ArrayList<Exception>();
+    	
+    	if(!query) {
+    	    if(value != null && !editor.isValidKey(value))
+    	        exceptions.add(new Exception("Invalid key set for dropdown"));
+    	
+    	    exceptions.addAll(editor.getHelper().validate(value));
+    	}
+    	
+        return exceptions;
     }
 
     /**
      * Gets Formatted value from editor and sets it as the cells display
      */
     public void render(HTMLTable table, int row, int col, Object value) {
-        table.setText(row, col, display(value));
+        query = false;
+        editor.setQueryMode(false);
+       	table.setText(row, col, display(value));
     }
 
     public String display(Object value) {
-        query = false;
         editor.setQueryMode(false);
-        if(value instanceof Datetime)
-        	return editor.getHelper().format((Datetime)value);
-        else
-        	return DataBaseUtil.toString(value);
+    	if(value != null && editor.getHelper().isCorrectType(value) && editor.isValidKey(value)) {
+   			editor.setValue(value);
+        	return editor.getDisplay();
+    	}else {
+    		return DataBaseUtil.toString(value);
+    	}
     }
     
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        
+        query = false;
+        editor.setQueryMode(false);
         
         builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
@@ -167,9 +152,32 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
-        table.setText(row, col, editor.getText());
+        table.setText(row, col, editor.getDisplay());
     }
 
+    /**
+     * Returns the current widget set as this cells editor.
+     */
+    @SuppressWarnings("rawtypes")
+	public void startEditing(Object value, final Container container, NativeEvent event) {
+        query = false;
+        editor.setQueryMode(false);
+        editor.setValue(value);
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
+        container.setEditor(editor);
+    }
+
+    @SuppressWarnings("rawtypes")
+	public void startEditingQuery(QueryData qd, final Container container, NativeEvent event) {
+        query = true;
+        editor.setQueryMode(true);
+        editor.setQuery(qd);
+        container.setEditor(editor);
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
+    }
+    
     public boolean ignoreKey(int keyCode) {
         switch(keyCode) {
             case KeyCodes.KEY_ENTER :
@@ -191,50 +199,34 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
 	}
 
 	@Override
-	public void add(Widget w) {
-		assert w instanceof Calendar;
-		
-		setEditor((Calendar)w);
-		
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void add(IsWidget w) {
-		assert w instanceof Calendar;
-		
-		setEditor((Calendar)w);
-	}
-
-	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Widget asWidget() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	public void setWidth(int width) {
+		editor.setWidth(width+"px");
+	}
+	@Override
+	public void add(Widget w) {
+		if(w instanceof Dropdown) {
+		    setEditor((Dropdown)w);
+		}
+	}
 	
-
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public Iterator<Widget> iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public boolean remove(Widget w) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

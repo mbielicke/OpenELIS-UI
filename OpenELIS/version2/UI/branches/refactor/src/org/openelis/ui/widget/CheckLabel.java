@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 import org.openelis.ui.widget.CheckLabel;
 import org.openelis.ui.widget.Balloon.Placement;
-import org.openelis.ui.widget.table.CheckLabelValue;
+import org.openelis.ui.widget.cell.CheckLabelValue;
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;

@@ -2,7 +2,7 @@ package org.openelis.ui.widget.columnar;
 
 import java.util.Iterator;
 
-import org.openelis.ui.widget.table.CellRenderer;
+import org.openelis.ui.widget.cell.CellRenderer;
 
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasWidgets;

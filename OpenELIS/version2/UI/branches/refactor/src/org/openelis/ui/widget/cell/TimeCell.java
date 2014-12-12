@@ -1,4 +1,4 @@
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,8 @@ import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.TextBox;
+import org.openelis.ui.widget.table.ColumnInt;
+import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;

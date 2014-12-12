@@ -4,7 +4,7 @@ import org.openelis.ui.resources.ColumnarCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
-import org.openelis.ui.widget.table.CellRenderer;
+import org.openelis.ui.widget.cell.CellRenderer;
 import org.openelis.ui.widget.table.FlexTable;
 
 import com.google.gwt.core.client.GWT;

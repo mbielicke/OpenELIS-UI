@@ -1,4 +1,4 @@
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 public interface CellTipProvider<T> {
     

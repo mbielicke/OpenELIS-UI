@@ -23,81 +23,130 @@
  * which case the provisions of a UIRF Software License are applicable instead
  * of those above.
  */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
+import org.openelis.ui.common.Datetime;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TextCSS;
+import org.openelis.ui.resources.TableCalendarCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.TextBox;
+import org.openelis.ui.widget.calendar.Calendar;
+import org.openelis.ui.widget.table.ColumnInt;
+import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class implements the CellRenderer and CellEditor interfaces and is used
- * to edit and render cells in a Table using a TextBox<T>
+ * to edit and render cells in a Table using a Calendar
  * 
  * @author tschmidt
  * 
  * @param <T>
  */
-public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidgets.ForIsWidget {
-
+public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidgets.ForIsWidget {
     /**
      * Editor used by this cell
      */
-    protected TextBox     editor;
+    private Calendar  editor;
+    private boolean   query;
+    private ColumnInt column;
 
-    protected boolean     query;
-
-    protected ColumnInt   column;
     
-    protected TextCSS     textCss;
-    
-    public TextBoxCell() {
+    public CalendarCell() {
     	
     }
+    
     /**
      * Constructor that takes the editor to be used as a param
      * 
      * @param editor
      */
-    public TextBoxCell(final TextBox<?> editor) {
+    public CalendarCell(Calendar editor) {
     	setEditor(editor);
     }
     
-    public void setEditor(TextBox<?> editor) {
+    public void setEditor(Calendar editor) {
+        TableCalendarCSS css = UIResources.INSTANCE.tableCalendar();
         this.editor = editor;
-        
-    	textCss = UIResources.INSTANCE.tableText();
-    	textCss.ensureInjected();
-       
         editor.setEnabled(true);
-        editor.setCSS(textCss);
+        editor.setCSS(css);
         editor.addBlurHandler(new BlurHandler() {
-			@Override
 			public void onBlur(BlurEvent event) {
 				column.finishEditing();
 			}
 		});
     }
 
+    /**
+     * Method to return the editor set for this cell
+     */
+    @SuppressWarnings("rawtypes")
+	public void startEditing(Object value, Container container, NativeEvent event) {
+        if(value instanceof Datetime)
+        	editor.setValue((Datetime)value);
+        else
+        	editor.setText(DataBaseUtil.toString(value));
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
+        container.setEditor(editor);
+        editor.selectAll();
+    }
+
+    @SuppressWarnings("rawtypes")
+	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
+        query = true;
+        editor.setQueryMode(true);
+        editor.setQuery(qd);
+        editor.setWidth(container.getWidth()+"px");
+        editor.setHeight(container.getHeight()+"px");
+        container.setEditor(editor);
+    }
+
+    public Object finishEditing() {
+    	editor.finishEditing();
+        if (query) 
+            return editor.getQuery();
+        
+        if(!editor.hasExceptions())
+        	return editor.getValue();
+        else
+        	return editor.getText();
+    }
+
+    public ArrayList<Exception> validate(Object value) {
+        if (!query) 
+        	return editor.getHelper().validate(value);
+        else {
+        	editor.setQuery((QueryData)value);
+        	return editor.getValidateExceptions();
+        }
+    }
+
+    /**
+     * Gets Formatted value from editor and sets it as the cells display
+     */
+    public void render(HTMLTable table, int row, int col, Object value) {
+        table.setText(row, col, display(value));
+    }
+
     public String display(Object value) {
+        query = false;
         editor.setQueryMode(false);
-        if(editor.getHelper().isCorrectType(value))
-        	return editor.getHelper().format(value);
+        if(value instanceof Datetime)
+        	return editor.getHelper().format((Datetime)value);
         else
         	return DataBaseUtil.toString(value);
     }
@@ -113,73 +162,25 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     }
 
     /**
-     * Returns the current widget set as this cells editor.
+     * Sets the QueryData to the editor and sets the Query string into the cell
+     * text
      */
-    @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
-    	if(!editor.getHelper().isCorrectType(value))
-    		editor.setText(DataBaseUtil.toString(value));
-    	else 
-    		editor.setValue(value);
-        editor.setWidth(container.getWidth()+"px");
-        editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
-        editor.selectAll();
-    }
-
-    public void render(HTMLTable table, int row, int col, Object value) {
-   		table.setText(row, col, display(value));
-    }
-
     public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
+        query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
         table.setText(row, col, editor.getText());
     }
 
-    public ArrayList<Exception> validate(Object value) {
-        ArrayList<Exception> exceptions;
-        
-        exceptions = new ArrayList<Exception>();
-        if(query) {
-            try {
-                if(value != null)
-                    editor.getHelper().validateQuery(((QueryData)value).getQuery());
-            }catch(Exception e) {
-                exceptions.add(e);
-            }
-        }else {
-            exceptions.addAll(editor.getHelper().validate(value));
-        }
-        
-        return exceptions;
-    }
-
-    public Object finishEditing() {
-    	editor.finishEditing();
-        if (query)
-            return editor.getQuery();
-        
-        try {
-        	return editor.getHelper().getValue(editor.getText());
-        }catch(Exception e){
-       		return editor.getText();
-        }
-        
-    }
-
-    @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
-        query = true;
-        editor.setQueryMode(true);
-        editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+"px");
-        editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
-    }
-
     public boolean ignoreKey(int keyCode) {
-        return false;
+        switch(keyCode) {
+            case KeyCodes.KEY_ENTER :
+            case KeyCodes.KEY_DOWN :
+            case KeyCodes.KEY_UP :
+                return true;
+            default :
+                return false;
+        }
     }
     
     public Widget getWidget() {
@@ -190,42 +191,52 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
 	public void setColumn(ColumnInt col) {
 		this.column = col;
 	}
+
 	@Override
 	public void add(Widget w) {
-		assert w instanceof TextBox;
+		assert w instanceof Calendar;
 		
-		setEditor((TextBox)w);
+		setEditor((Calendar)w);
+		
 	}
+
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
 	public Iterator<Widget> iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
 	public boolean remove(Widget w) {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 	@Override
 	public void add(IsWidget w) {
-		assert w instanceof TextBox;
+		assert w instanceof Calendar;
 		
-		setEditor((TextBox)w);
+		setEditor((Calendar)w);
 	}
+
 	@Override
 	public boolean remove(IsWidget w) {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 	@Override
 	public Widget asWidget() {
 		// TODO Auto-generated method stub
-		return new Label("TextBox Cell");
+		return null;
 	}
+	
+	
 
 }

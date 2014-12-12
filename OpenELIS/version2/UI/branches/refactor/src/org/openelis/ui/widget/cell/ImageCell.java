@@ -23,12 +23,13 @@
 * license ("UIRF Software License"), in which case the provisions of a
 * UIRF Software License are applicable instead of those above. 
 */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
+import org.openelis.ui.widget.table.ColumnInt;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;

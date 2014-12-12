@@ -23,50 +23,33 @@
 * license ("UIRF Software License"), in which case the provisions of a
 * UIRF Software License are applicable instead of those above. 
 */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
+
+import java.util.ArrayList;
 
 import org.openelis.ui.common.data.QueryData;
+import org.openelis.ui.widget.table.ColumnInt;
 
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.ui.HTMLTable;
 
 /**
- * This interface is implemented by classes that will provide editing functionality to Table cells
+ * This interface is implemented by classes the provide rendering functionality for Table cells
  * @author tschmidt
  *
  * @param <T>
  */
-public interface CellEditor {    
-    
-    /**
-     * Returns the widget used as the editor for this cell
-     * @return
-     */
-    @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event);
-    
-    /**
-     * Returns the widget used for querying this cell
-     * @param qd
-     * @return
-     */
-    @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event); 
-    
-    /**
-     * Pulls the edited value from the editor and returns it.  If in Query mode and QueryData object will be returned 
-     * @return
-     */
-    public Object finishEditing();
-    
-    /**
-     * Returns whether the passed key should be ignored by the KeyHandler when editing;
-     * @param keyCode
-     * @return
-     */
-    public boolean ignoreKey(int keyCode);
-        
-    public Widget getWidget();
+public interface CellRenderer {
 
+    public String display(Object value);
+    
+    public SafeHtml bulkRender(Object value);
+    
+    public void render(HTMLTable table, int row, int col, Object value);
+    
+    public void renderQuery(HTMLTable table, int row, int col, QueryData qd);
+    
+    public ArrayList<Exception> validate(Object value);
+    
+    public void setColumn(ColumnInt col);
 }

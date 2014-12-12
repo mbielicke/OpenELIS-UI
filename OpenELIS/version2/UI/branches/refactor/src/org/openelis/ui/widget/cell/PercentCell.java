@@ -1,10 +1,11 @@
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.PercentBar;
+import org.openelis.ui.widget.table.ColumnInt;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
