@@ -193,7 +193,7 @@ public class StaticView extends ViewInt {
      * Method that will layout the table view and is called on first time
      * attached and when attributes affecting layout are changed in the table
      */
-    protected void layout() {
+    public void layout() {
         
         com.google.gwt.dom.client.Node colgroup;
 
@@ -721,13 +721,13 @@ public class StaticView extends ViewInt {
                 flexTable.setVisible(true);
                 Element svEl = inner.getWidgetContainerElement(scrollView);
                 if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                    tree.setWidth(CSSUtils.getWidth(svEl) - 1);
+                    tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 1));
                 else
-                    tree.setWidth(CSSUtils.getWidth(svEl) -
-                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
+                    tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
+                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1));
                 
                 if (CSSUtils.getWidth( (svEl)) > 0) {
-                    tree.setWidth(CSSUtils.getWidth(svEl) - 2);
+                    tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 2));
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(tree.getElement()) + "px");
                 }
@@ -830,8 +830,8 @@ public class StaticView extends ViewInt {
                                         CSSUtils.getAddedBorderWidth(tree.getElement()) + "px");
 
                     if (CSSUtils.getHeight(inner) > 0) {
-                        int height = CSSUtils.getHeight(inner) - CSSUtils.getHeight(header) -
-                                        CSSUtils.getAddedBorderHeight(tree.getElement());
+                        int height = (int)Math.ceil(CSSUtils.getHeight(inner) - CSSUtils.getHeight(header) -
+                                        CSSUtils.getAddedBorderHeight(tree.getElement()));
                         /*
                          * This check is here only for Unit Testing.  If not done Unit test on the
                          * table will fail here with assertion check from the widget.
@@ -841,10 +841,10 @@ public class StaticView extends ViewInt {
                     }
                     
                     if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                        tree.setWidth(CSSUtils.getWidth(svEl) - 2);
+                        tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 2));
                     else
-                        tree.setWidth(CSSUtils.getWidth(svEl) -
-                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 2);
+                        tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
+                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 2));
 
                 }
             }

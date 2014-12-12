@@ -45,6 +45,19 @@ public class Util {
         return Integer.parseInt(value);
     }
     
+    public static double stripPX(String value)  {
+    	value = value.trim();
+    	
+    	try {
+    		if(value.endsWith("px"))
+    			return Double.parseDouble(value.substring(0,value.length()-2));
+    	
+    		return Double.parseDouble("".equals(value) ? "0" : value);
+    	}catch(Exception e) {
+    		return 0;
+    	}
+    }
+    
     public static int stripUnits(String value) throws NumberFormatException {
         int i = 0;
     	char ch;
