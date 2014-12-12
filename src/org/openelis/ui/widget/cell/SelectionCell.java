@@ -1,4 +1,4 @@
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,6 +9,8 @@ import org.openelis.ui.resources.DropTableCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Label;
+import org.openelis.ui.widget.table.Column;
+import org.openelis.ui.widget.table.ColumnInt;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Overflow;

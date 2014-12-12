@@ -31,8 +31,8 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.VerticalScrollbar;
-import org.openelis.ui.widget.table.CellEditor;
-import org.openelis.ui.widget.table.CellRenderer;
+import org.openelis.ui.widget.cell.CellEditor;
+import org.openelis.ui.widget.cell.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.tree.Tree.Scrolling;
 

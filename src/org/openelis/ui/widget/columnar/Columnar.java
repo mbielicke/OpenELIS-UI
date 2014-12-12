@@ -5,9 +5,9 @@ import java.util.Collections;
 
 import org.openelis.ui.common.Util;
 import org.openelis.ui.widget.CSSUtils;
-import org.openelis.ui.widget.table.CellEditor;
+import org.openelis.ui.widget.cell.CellEditor;
+import org.openelis.ui.widget.cell.LabelCell;
 import org.openelis.ui.widget.table.Column;
-import org.openelis.ui.widget.table.LabelCell;
 import org.openelis.ui.widget.table.event.HasUnselectionHandlers;
 import org.openelis.ui.widget.table.event.UnselectionEvent;
 import org.openelis.ui.widget.table.event.UnselectionHandler;

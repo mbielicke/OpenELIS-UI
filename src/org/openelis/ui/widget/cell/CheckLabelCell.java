@@ -23,7 +23,7 @@
 * license ("UIRF Software License"), in which case the provisions of a
 * UIRF Software License are applicable instead of those above. 
 */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,6 +33,8 @@ import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Check;
 import org.openelis.ui.widget.CheckLabel;
+import org.openelis.ui.widget.table.ColumnInt;
+import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;

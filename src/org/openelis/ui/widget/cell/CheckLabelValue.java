@@ -23,7 +23,7 @@
  * which case the provisions of a UIRF Software License are applicable instead
  * of those above.
  */
-package org.openelis.ui.widget.table;
+package org.openelis.ui.widget.cell;
 
 import org.openelis.ui.common.DataBaseUtil;
 

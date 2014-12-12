@@ -31,6 +31,8 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.VerticalScrollbar;
+import org.openelis.ui.widget.cell.CellEditor;
+import org.openelis.ui.widget.cell.CellRenderer;
 import org.openelis.ui.widget.table.Table.Scrolling;
 
 import com.google.gwt.core.client.GWT;
