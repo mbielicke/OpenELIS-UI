@@ -314,7 +314,7 @@ public class InfiniteView extends ViewInt {
      * This method is called when a column width is changed. It will resize the
      * columns to there currently set width.
      */
-    protected void resize() {
+    protected void sizeTable() {
         for (int c = 0; c < table.getColumnCount(); c++ )
             flexTable.getColumnFormatter().setWidth(c, table.getColumnAt(c).getWidth() + "px");
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
@@ -431,7 +431,7 @@ public class InfiniteView extends ViewInt {
                  * so call resize after that
                  */
                 if (rc == 0)
-                    resize();
+                    sizeTable();
             }
 
             for (int c = 0; c < table.getColumnCount(); c++ )
