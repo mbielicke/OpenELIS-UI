@@ -153,7 +153,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
            			setPressed(!pressed);
            		outer.removeClassName(css.Focus());
            		if(imageSelector != null)
-           			imageSelector.setImage(source);
+           			imageSelector.selectImage(source);
             }
         });
     }
@@ -226,8 +226,18 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		setButtonElement(right,widget.getElement());
 	}
 	
+	public void setTopText(String text) {
+		DivElement div = createTextElement(text);
+		center.insertFirst(div);
+	}
+	
+	public void setBottomText(String text) {
+		DivElement div = createTextElement(text);
+		center.appendChild(div);
+	}
+	
 	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().setDisplay(Display.BLOCK);
+		div.getStyle().clearDisplay();
 		div.getStyle().setPosition(Position.RELATIVE);
 		div.appendChild(element);
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
@@ -291,21 +301,21 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         }
         
         if(imageSelector != null)
-        	imageSelector.setImage(this);
+        	imageSelector.selectImage(this);
     }
     
     public void lock() {
         unsinkEvents(Event.ONCLICK | Event.ONKEYDOWN);
         locked = true;
         if(imageSelector != null)
-        	imageSelector.setImage(this);
+        	imageSelector.selectImage(this);
     }
     
     public void unlock() {
         sinkEvents(Event.ONCLICK | Event.ONKEYDOWN);
         locked = false;
         if(imageSelector != null)
-        	imageSelector.setImage(this);
+        	imageSelector.selectImage(this);
     }
     
 
@@ -422,7 +432,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     	private Image image,disabledImage,pressedImage,lockedImage;
     	private int width=-1,height=-1;
     	
-    	protected void setImage(Button button) {
+    	protected void selectImage(Button button) {
     		if(!button.enabled && disabledImage != null)
     			setWidget(disabledImage);
     		else if(button.pressed && pressedImage != null)
@@ -450,31 +460,34 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     	@UiChild(limit=1,tagname="image")
     	public void setImage(Image image) {
     		this.image = image;
-    		if(width > 0)
-    			image.setPixelSize(width, height);
+    		setImageProperties(image);
     		setWidget(image);
     	}
     	
     	@UiChild(limit=1,tagname="disabled")
     	public void setDisabled(Image image) {
     		this.disabledImage = image;
-    		if(width > 0)
-    			disabledImage.setPixelSize(width, height);
+    		setImageProperties(image);
     	}
     	
     	@UiChild(limit=1,tagname="pressed")
     	public void setPressed(Image image) {
     		this.pressedImage = image;
-    		if(width > 0)
-    			pressedImage.setPixelSize(width, height);
+    		setImageProperties(image);
     	}
     	
     	@UiChild(limit=1,tagname="locked")
     	public void setLocked(Image locked) {
     		this.lockedImage = image;
-    		if(width > 0)
-    			lockedImage.setPixelSize(width, height);
+    		setImageProperties(image);
     	}	
+    	
+    	private void setImageProperties(Image image) {
+    		image.getElement().getStyle().setDisplay(Display.BLOCK);
+    		image.getElement().getStyle().setProperty("margin", "auto");
+    		if(width > 0)
+    			image.setPixelSize(width, height);
+    	}
     }
     
     @Override
