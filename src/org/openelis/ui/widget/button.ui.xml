@@ -5,9 +5,11 @@
   
   <g:HTMLPanel>
     <div ui:field="outer">
-      <div style="float:left;text-decoration:inherit;display:none" ui:field="left"/>
-      <div style="float:left;text-decoration:inherit;display:none" ui:field="center"/>
-      <div style="float:left;text-decoration:inherit;display:none" ui:field="right"/>
+      <div style="display:flex;margin:auto;">
+        <div style="float:left;text-decoration:inherit;display:none;margin:auto;" ui:field="left"/>
+        <div style="float:left;text-decoration:inherit;display:none;margin:auto;" ui:field="center"/>
+        <div style="float:left;text-decoration:inherit;display:none;margin:auto;" ui:field="right"/>
+      </div>
     </div>
   </g:HTMLPanel>
     

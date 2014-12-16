@@ -39,6 +39,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.OutlineStyle;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -83,9 +84,10 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	protected DivElement left,center,right,outer;
 	
     protected Balloon.Options   options;
-    private boolean toggles, enabled, pressed, locked;
-    private String action;
-	private ImageSelector imageSelector;
+    protected boolean toggles, enabled, pressed, locked;
+    protected String action;
+	protected ImageSelector imageSelector;
+	protected int topOffset = -1;
 	
     ButtonCSS css;
     IconCSS icon;
@@ -236,10 +238,16 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		center.appendChild(div);
 	}
 	
+	public void setTopOffset(int topOffset) {
+		this.topOffset = topOffset;
+		center.getStyle().setTop(topOffset, Unit.PX);
+	}
+	
 	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().clearDisplay();
+		div.getStyle().setDisplay(Display.BLOCK);
 		div.getStyle().setPosition(Position.RELATIVE);
 		div.appendChild(element);
+
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 			@Override
 			public void execute() {
@@ -268,7 +276,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	private DivElement createTextElement(String text) {
 		DivElement label = Document.get().createDivElement();
 		label.setInnerText(text);
-		label.getStyle().setWhiteSpace(WhiteSpace.PRE);
+		label.getStyle().setTextAlign(TextAlign.CENTER);
 		return label;
 	}
 	
@@ -427,6 +435,14 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         return options;
     }
     
+    public void setWidth(String width) {
+    	outer.getStyle().setProperty("width", width);
+    }
+    
+    public void setHeight(String height) {
+    	outer.getStyle().setProperty("height",height);
+    }
+    
     public static class ImageSelector extends SimplePanel {
     	
     	private Image image,disabledImage,pressedImage,lockedImage;
@@ -511,7 +527,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 			}
 			
 			private double calcTop(Element div) {
-				return (div.getClientHeight() - content.getClientHeight()) / 2.0;
+				return (topOffset > 0)  ? topOffset : (div.getClientHeight() - content.getClientHeight()) / 2.0;
 			}
 		});
     }
