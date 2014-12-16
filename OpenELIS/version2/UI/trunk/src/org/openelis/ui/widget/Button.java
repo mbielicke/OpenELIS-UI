@@ -238,10 +238,11 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		center.appendChild(div);
 	}
 	
-	public void topOffset(int topOffset) {
+	public void setTopOffset(int topOffset) {
 		this.topOffset = topOffset;
 		center.getStyle().setTop(topOffset, Unit.PX);
 	}
+	
 	private void setButtonElement(final DivElement div, Element element) {
 		div.getStyle().setDisplay(Display.BLOCK);
 		div.getStyle().setPosition(Position.RELATIVE);
