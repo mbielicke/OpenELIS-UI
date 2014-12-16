@@ -237,7 +237,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	}
 	
 	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().clearDisplay();
+		div.getStyle().setDisplay(Display.BLOCK);
 		div.getStyle().setPosition(Position.RELATIVE);
 		div.appendChild(element);
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
