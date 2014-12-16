@@ -268,7 +268,6 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	private DivElement createTextElement(String text) {
 		DivElement label = Document.get().createDivElement();
 		label.setInnerText(text);
-		label.getStyle().setWhiteSpace(WhiteSpace.PRE);
 		return label;
 	}
 	
