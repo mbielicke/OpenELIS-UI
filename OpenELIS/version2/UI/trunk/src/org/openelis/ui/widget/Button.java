@@ -427,6 +427,14 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         return options;
     }
     
+    public void setWidth(String width) {
+    	outer.getStyle().setProperty("width", width);
+    }
+    
+    public void setHeight(String height) {
+    	outer.getStyle().setProperty("height",height);
+    }
+    
     public static class ImageSelector extends SimplePanel {
     	
     	private Image image,disabledImage,pressedImage,lockedImage;
