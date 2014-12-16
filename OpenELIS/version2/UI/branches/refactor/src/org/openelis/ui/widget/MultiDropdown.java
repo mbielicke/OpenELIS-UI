@@ -1255,7 +1255,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
         //image.setStyleName(css.SelectButton());
         display.setStyleName(css.SelectBox());
         textbox.setStyleName(css.SelectText());
-        button.setLeftIcon(css.SelectButton());
     }
 	
     public void setTip(String text) {
