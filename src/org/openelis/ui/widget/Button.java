@@ -81,7 +81,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	public static final ButtonUiBinder uiBinder = GWT.create(ButtonUiBinder.class);
 	
 	@UiField
-	protected DivElement left,center,right,outer;
+	protected DivElement left,center,right,outer,inner;
 	
     protected Balloon.Options   options;
     protected boolean toggles, enabled, pressed, locked;
