@@ -15,14 +15,13 @@ import org.openelis.ui.widget.table.Container;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TimeCell implements CellRenderer, CellEditor, IsWidget {
+public class TimeCell extends Cell implements CellEditor {
 
 	private TextBox<String> editor;
 	private ColumnInt       column;
@@ -205,6 +204,12 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
 	public Widget asWidget() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void add(IsWidget w) {
+		// TODO Auto-generated method stub
+		
 	}
 
     

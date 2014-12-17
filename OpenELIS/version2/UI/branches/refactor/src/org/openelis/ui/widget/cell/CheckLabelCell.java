@@ -26,7 +26,6 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.CheckboxCSS;
@@ -42,11 +41,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -55,7 +52,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  *
  */
-public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWidgets.ForIsWidget {
+public class CheckLabelCell extends Cell implements CellEditor {
 
     /**
      * Widget used to edit the cell
@@ -112,7 +109,6 @@ public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWi
     /**
      * Returns the current widget set as this cells editor.
      */
-    @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
@@ -129,7 +125,6 @@ public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWi
         editor.setFocus(true);
     }
     
-    @SuppressWarnings("rawtypes")
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
         query = true;
         editor.setQueryMode(true);
@@ -146,7 +141,7 @@ public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWi
             });
         } else {
             container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", "center"); 
+            container.getElement().getStyle().setProperty("align", "center"); 
         }
     }
     
@@ -252,31 +247,11 @@ public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWi
         
         return grid;
 	}
-	
-	
-	
+		
 	@Override
 	public void add(Widget w) {
 	    assert w instanceof CheckLabel;	        
 	    setEditor((CheckLabel)w);
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -287,15 +262,8 @@ public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWi
 	}
 
 	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return editor;
 	}
   
 

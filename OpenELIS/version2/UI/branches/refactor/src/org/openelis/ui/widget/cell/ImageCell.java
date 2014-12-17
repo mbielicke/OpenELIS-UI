@@ -44,7 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class ImageCell implements CellRenderer,IsWidget {
+public class ImageCell extends Cell {
     
     
     /**
@@ -89,15 +89,18 @@ public class ImageCell implements CellRenderer,IsWidget {
 
 	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
     @Override
     public void setColumn(ColumnInt col) {
-        // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public void add(IsWidget w) {
+		
+	}
 
     
 }
