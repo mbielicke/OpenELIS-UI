@@ -26,7 +26,6 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.openelis.ui.common.DataBaseUtil;
@@ -44,7 +43,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,7 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @param <T>
  */
-public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidgets {
+public class MultiDropdownCell extends Cell implements CellEditor {
 
     /**
      * Widget used to edit the cell
@@ -189,13 +187,13 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 
 	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return editor;
 	}
 	
 	public void setWidth(int width) {
 		editor.setWidth(width+"px");
 	}
+	
 	@Override
 	public void add(Widget w) {
 		if(w instanceof MultiDropdown) {
@@ -204,18 +202,7 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
 	}
 	
 	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
+	public void add(IsWidget w) {
+		add((Widget)w);	
 	}
 }

@@ -26,7 +26,6 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.CheckboxCSS;
@@ -38,20 +37,14 @@ import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -60,7 +53,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  *
  */
-public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidgets.ForIsWidget {
+public class CheckBoxCell extends Cell implements CellEditor {
 
     /**
      * Widget used to edit the cell
@@ -116,7 +109,6 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
     /**
      * Returns the current widget set as this cells editor.
      */
-    @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
@@ -128,11 +120,10 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         }
 
         container.setEditor(editor);
-        DOM.setStyleAttribute(container.getElement(), "align", align); 
+        container.getElement().getStyle().setProperty("align", align); 
         editor.setFocus(true);
     }
     
-    @SuppressWarnings("rawtypes")
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
         query = true;
         editor.setQueryMode(true);
@@ -149,7 +140,7 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
             });
         } else {
             container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", align); 
+            container.getElement().getStyle().setProperty("align", align); 
         }
     }
     
@@ -266,30 +257,6 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
 	}
 	
 	@Override
-	public void add(Widget w) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void add(IsWidget w) {
 		assert w instanceof CheckBox;
 		
@@ -297,16 +264,8 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
 	}
 
 	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return editor;
 	}
-  
 
 }

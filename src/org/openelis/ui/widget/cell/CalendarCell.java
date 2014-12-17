@@ -26,7 +26,6 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.Datetime;
@@ -44,7 +43,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,7 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @param <T>
  */
-public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidgets.ForIsWidget {
+public class CalendarCell extends Cell implements CellEditor {
     /**
      * Editor used by this cell
      */
@@ -93,7 +91,6 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     /**
      * Method to return the editor set for this cell
      */
-    @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
         if(value instanceof Datetime)
         	editor.setValue((Datetime)value);
@@ -105,7 +102,6 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         editor.selectAll();
     }
 
-    @SuppressWarnings("rawtypes")
 	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
         query = true;
         editor.setQueryMode(true);
@@ -201,24 +197,6 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
 	}
 
 	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void add(IsWidget w) {
 		assert w instanceof Calendar;
 		
@@ -226,17 +204,8 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
 	}
 
 	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return editor;
 	}
-	
-	
 
 }

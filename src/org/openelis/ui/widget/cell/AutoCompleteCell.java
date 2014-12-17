@@ -26,7 +26,6 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
@@ -45,7 +44,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,8 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class AutoCompleteCell implements CellRenderer,
-                             		     CellEditor,IsWidget,HasWidgets.ForIsWidget {
+public class AutoCompleteCell extends Cell implements CellEditor {
 
     /**
      * Widget used to edit the cell
@@ -208,24 +205,6 @@ public class AutoCompleteCell implements CellRenderer,
 	}
 
 	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void add(IsWidget w) {
 		assert w instanceof AutoComplete;
 		
@@ -233,14 +212,7 @@ public class AutoCompleteCell implements CellRenderer,
 	}
 
 	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return editor;
 	}
 }

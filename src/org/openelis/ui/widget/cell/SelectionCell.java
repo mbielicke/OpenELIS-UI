@@ -1,12 +1,10 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.DropTableCSS;
-import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.table.Column;
@@ -21,11 +19,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWidget {
+public class SelectionCell extends Cell {
     private DropTableCSS css = UIResources.INSTANCE.dropTable();
     private Column col;
     
@@ -106,23 +103,6 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         
     }
 
-    @Override
-    public void clear() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public Iterator<Widget> iterator() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean remove(Widget w) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     @Override
     public void add(IsWidget w) {
@@ -130,11 +110,6 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         
     }
 
-    @Override
-    public boolean remove(IsWidget w) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     @Override
     public Widget asWidget() {
@@ -143,8 +118,7 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
 
     @Override
     public void setColumn(ColumnInt col) {
-        this.col = (Column)col;
-        
+        this.col = (Column)col;        
     }
 
 }

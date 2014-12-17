@@ -1,7 +1,6 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.PercentBar;
@@ -10,9 +9,7 @@ import org.openelis.ui.widget.table.ColumnInt;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -20,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
  * This class will display a PercentBar for the value passed into the the Table cell. 
  *
  */
-public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget {
+public class PercentCell extends Cell {
 	
 	/**
 	 * This is the widget used to show Percent in the cell
@@ -52,7 +49,7 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 	@Override
 	public void render(HTMLTable table, int row, int col, Object value) {
 		editor.setPercent((Double)value);
-		table.setHTML(row,col,DOM.getInnerHTML(editor.getElement()));
+		table.setHTML(row,col,editor.getElement().getInnerHTML());
 	}
 	
 	public SafeHtml bulkRender(Object value) {
@@ -81,25 +78,6 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 	@Override
 	public void add(Widget w) {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -110,20 +88,13 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 	}
 
 	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return editor;
 	}
+	
     @Override
     public void setColumn(ColumnInt col) {
         // TODO Auto-generated method stub
         
     }
-
 }
