@@ -8,8 +8,8 @@
     font-family:inherit;
     font-size:inherit;
     text-shadow: 0 1px white;
-    padding:1px;
     display : inline-block;
+    height : 18px;
 }
 
 .Button > div {

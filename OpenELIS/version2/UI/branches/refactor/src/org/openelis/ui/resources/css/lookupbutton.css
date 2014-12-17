@@ -8,7 +8,7 @@
     height:18px;
     width : 16px;
     display : inline-block;
-    
+    white-space:normal;
 }
 
 .Button > div {
