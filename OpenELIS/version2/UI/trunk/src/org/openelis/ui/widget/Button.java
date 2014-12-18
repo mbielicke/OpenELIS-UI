@@ -105,6 +105,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		setCss(UIResources.INSTANCE.button());
 		getElement().getStyle().setOutlineStyle(OutlineStyle.NONE);
 		setEnabled(false);
+		//super.setWidth("auto");
+		//super.setHeight("auto");
 	}
 	
     public Button(String icon,String label) {
@@ -395,7 +397,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		this.css = css;
 	
 		css.ensureInjected();
-		outer.setClassName(css.Button());
+	    outer.setClassName(css.Button());
 	   	
 	   	if(!isEnabled())
 	   		outer.addClassName(css.Disabled());
@@ -437,10 +439,12 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     }
     
     public void setWidth(String width) {
+    	super.setWidth(width);
     	outer.getStyle().setProperty("width", width);
     }
     
     public void setHeight(String height) {
+    	super.setHeight(height);
     	outer.getStyle().setProperty("height",height);
     }
     
