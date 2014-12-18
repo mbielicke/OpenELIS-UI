@@ -218,6 +218,12 @@ public class Label<T> extends Composite implements HasValue<T>,
     	if(field.equals("Date")) {
     		DateHelper helper = new DateHelper();
     		setHelper((WidgetHelper)helper);
+    	}else if(field.equals("Integer")) {
+    		IntegerHelper helper = new IntegerHelper();
+    		setHelper((WidgetHelper)helper);
+    	}else if(field.equals("Double")) {
+    		DoubleHelper helper = new DoubleHelper();
+    		setHelper((WidgetHelper)helper);
     	}
     }
     
