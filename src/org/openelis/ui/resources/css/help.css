@@ -73,5 +73,7 @@
 	background-color :#333;
 	color:white;
 	border-radius : 4px;
-	font-wheight:bold;
+	font-weight:bold;
+	font-size: 12px;
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
