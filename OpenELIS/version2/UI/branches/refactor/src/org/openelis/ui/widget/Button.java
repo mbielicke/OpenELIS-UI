@@ -30,7 +30,6 @@ import org.openelis.ui.resources.IconCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
@@ -38,7 +37,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.OutlineStyle;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -81,7 +79,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	public static final ButtonUiBinder uiBinder = GWT.create(ButtonUiBinder.class);
 	
 	@UiField
-	protected DivElement left,center,right,outer,inner;
+	protected DivElement left,center,right,outer;
 	
     protected Balloon.Options   options;
     protected boolean toggles, enabled, pressed, locked;
@@ -244,17 +242,8 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	}
 	
 	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().setDisplay(Display.BLOCK);
-		div.getStyle().setPosition(Position.RELATIVE);
-		div.appendChild(element);
-
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-			@Override
-			public void execute() {
-				calcOffsetToCenter(outer,div);
-			}
-		});
-		
+		div.getStyle().setDisplay(Display.TABLE_CELL);
+		div.appendChild(element);		
 	}
 	
 	public void setDisabledImage(ImageResource imageResource) {
@@ -395,7 +384,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 		this.css = css;
 	
 		css.ensureInjected();
-		outer.setClassName(css.Button());
+	    outer.setClassName(css.Button());
 	   	
 	   	if(!isEnabled())
 	   		outer.addClassName(css.Disabled());
@@ -437,10 +426,12 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     }
     
     public void setWidth(String width) {
+    	super.setWidth(width);
     	outer.getStyle().setProperty("width", width);
     }
     
     public void setHeight(String height) {
+    	super.setHeight(height);
     	outer.getStyle().setProperty("height",height);
     }
     
@@ -511,26 +502,5 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     public HandlerRegistration addClickHandler(ClickHandler handler) {
     	return addHandler(handler,ClickEvent.getType());
     }
-    
-    private void calcOffsetToCenter(final Element div, final Element content) {
-    	Scheduler.get().scheduleIncremental(new Scheduler.RepeatingCommand() {
-			@Override
-			public boolean execute() {
-				if(isDrawn()) { 
-					content.getStyle().setTop(calcTop(div), Unit.PX);
-					return false;
-				}
-				return true;
-			}
-			
-			private boolean isDrawn() {
-				return isAttached() && div.getClientHeight() > 0 && content.getClientHeight() <= div.getClientHeight();
-			}
-			
-			private double calcTop(Element div) {
-				return (topOffset > 0)  ? topOffset : (div.getClientHeight() - content.getClientHeight()) / 2.0;
-			}
-		});
-    }
-    
+        
 }
