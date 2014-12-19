@@ -1265,6 +1265,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         if ( !fireBeforeRowDeletedEvent(index, row))
             return null;
 
+        if(balloonTimer != null)
+        	balloonTimer.cancel();
+        
         if (rowIndex != null) {
             modelIndex = convertViewIndexToModel(index);
             model.remove(modelIndex);
@@ -2441,7 +2444,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         balloonTimer = new Timer() {
             public void run() {
-        
                 Balloon.drawExceptions(getEndUserExceptions(row, col),
                                        getValidateExceptions(row, col),
                                        view.table().getCellFormatter().getElement(row, col),
