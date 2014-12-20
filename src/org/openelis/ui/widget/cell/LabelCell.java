@@ -26,12 +26,14 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.table.ColumnInt;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -51,9 +53,14 @@ public class LabelCell extends Cell {
      * Widget used to edit the cell
      */
     private Label  editor;
-    
+    private Element element;
     
     public LabelCell() {
+    	this.editor = new Label<String>();
+    }
+    
+    public LabelCell(Element element) {
+    	this.element = element;
     	this.editor = new Label<String>();
     }
     
@@ -71,6 +78,18 @@ public class LabelCell extends Cell {
      */
     public void render(HTMLTable table, int row, int col, Object value) {
    		table.setText(row,col,display(value));
+    }
+    
+    public void render(Element element, Object value) {
+    	element.setInnerText(display(value));
+    }
+    
+    public void render(Object value) {
+    	render(element,getValue(value));
+    }
+    
+    public Object getValue(Object value) {
+    	return value;
     }
     
     public String display(Object value) {

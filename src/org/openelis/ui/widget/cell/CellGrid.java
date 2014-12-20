@@ -21,6 +21,7 @@ public class CellGrid  extends FlexTable {
     
 	Timer clickTimer;
     CellGrid source = this;
+    CellHandler cellHandler = new CellHandler();
    
     @Override
     public void onBrowserEvent(final Event event) {
@@ -112,33 +113,34 @@ public class CellGrid  extends FlexTable {
 	}
 	
 	public HandlerRegistration addCellMouseOverHandler(final CellMouseOverEvent.Handler handler, int row, int column) {
-		return CellHandler.INSTANCE.addHandler( getFlexCellFormatter().getElement(row, column),handler);
+		return cellHandler.addHandler( getFlexCellFormatter().getElement(row, column),handler);
 	}
 	
 	public HandlerRegistration addCellMouseOutHandler(final CellMouseOutEvent.Handler handler, int row, int column) {
-		return CellHandler.INSTANCE.addHandler(getFlexCellFormatter().getElement(row, column), handler);
+		return cellHandler.addHandler(getFlexCellFormatter().getElement(row, column), handler);
 	}
 	
-	enum CellHandler {
-		
-		INSTANCE; 
+	public void removeHandler(int row, int column) {
+		cellHandler.removeHandler(getFlexCellFormatter().getElement(row,column));
+	}
+	
+
+	class CellHandler implements EventListener { 
 		
 	    HashMap<Element, CellMouseOverEvent.Handler> mouseOverHandlers = new HashMap<>();
 	    HashMap<Element, CellMouseOutEvent.Handler> mouseOutHandlers = new HashMap<>();
 		
-	    EventListener listener = new EventListener() {
-	    	@Override
-	    	public void onBrowserEvent(Event event) {
-	    		switch(event.getTypeInt()) { 
-         			case Event.ONMOUSEOVER :
-         				mouseOverHandlers.get(getTd(event)).onCellMouseOver(createMouseOverEvent(event));
-         				break;
-         			case Event.ONMOUSEOUT :
-         				mouseOutHandlers.get(getTd(event)).onCellMouseOut(createMouseOutEvent(event));
-         				break;
-	    		}
-	    	}
-	    };
+	   	@Override
+	  	public void onBrowserEvent(Event event) {
+	   		switch(event.getTypeInt()) { 
+       			case Event.ONMOUSEOVER :
+       				mouseOverHandlers.get(getTd(event)).onCellMouseOver(createMouseOverEvent(event));
+       				break;
+       			case Event.ONMOUSEOUT :
+       				mouseOutHandlers.get(getTd(event)).onCellMouseOut(createMouseOutEvent(event));
+       				break;
+	  		}
+	  	}
 	    
 		public HandlerRegistration addHandler(final Element td,  CellMouseOverEvent.Handler handler) {
 			mouseOverHandlers.put(td, handler);
@@ -150,9 +152,14 @@ public class CellGrid  extends FlexTable {
 			return addHandler(td,Event.ONMOUSEOUT);
 		}
 		
+		public void removeHandler(Element td) {
+			mouseOverHandlers.remove(td);
+			mouseOutHandlers.remove(td);
+		}
+		
 		protected HandlerRegistration addHandler(final Element td, final int event) {
 			DOM.sinkEvents(td, DOM.getEventsSunk(td) | event);
-			DOM.setEventListener(td,listener);
+			DOM.setEventListener(td,this);
 			return new HandlerRegistration() {
 				@Override
 				public void removeHandler() {
@@ -160,25 +167,13 @@ public class CellGrid  extends FlexTable {
 				}
 			};
 		}
-		
-		private Element getTd(Event event) {
-			return event.getCurrentEventTarget().cast();
-		}
-		
+				
 		private CellMouseOverEvent createMouseOverEvent(Event event) {
 			return new CellMouseOverEvent(getRow(event),getColumn(event),event.getClientX(),event.getClientY());
 		}
 		
 		private CellMouseOutEvent createMouseOutEvent(Event event) {
 			return new CellMouseOutEvent(getRow(event),getColumn(event),event.getClientX(),event.getClientY());
-		}
-		
-		private int getRow(Event event) {
-			return TableRowElement.as(getTd(event).getParentElement()).getSectionRowIndex();
-		}
-		
-		private int getColumn(Event event) {
-			return TableCellElement.as(getTd(event)).getCellIndex();
 		}
 	}	
 }
