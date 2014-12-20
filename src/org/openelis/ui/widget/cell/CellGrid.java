@@ -2,84 +2,183 @@ package org.openelis.ui.widget.cell;
 
 import java.util.HashMap;
 
-import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.FlexTable;
 
-public class CellGrid  extends com.google.gwt.user.client.ui.FlexTable {
+/**
+ * This class is is a FlexTable that has been extended to register and
+ * fire events on all cells or individual cells and is the base container
+ * for all cell based widgets.
+ */
+public class CellGrid  extends FlexTable {
     
-    HashMap<String, HandlerRegistration> registeredCells = new HashMap<String,HandlerRegistration>();
-            
-    int row,column,x,y;
-  
-    public CellGrid() {
-        super();
-        
-        sinkEvents(Event.ONMOUSEOVER | Event.ONMOUSEOUT | Event.ONCLICK);
-        
-    }
-    
+	Timer clickTimer;
+    CellGrid source = this;
+   
     @Override
-    public void onBrowserEvent(Event event) {
+    public void onBrowserEvent(final Event event) {
         super.onBrowserEvent(event);
         
-        if(getRowCount() == 0)
-            return;            
-        
-        Element td = super.getEventTargetCell(event);
-        
-        if(td == null)
+        if(getRowCount() == 0 && getTd(event) == null)
             return;
         
-        row = TableRowElement.as(td.getParentElement()).getSectionRowIndex();
-        column = TableCellElement.as(td).getCellIndex();
-        
         switch(event.getTypeInt()) {
-            case Event.ONMOUSEOVER :
-                CellMouseOverEvent.fire(this, row, column, event.getClientX(), event.getClientY());
-                break;
-            case Event.ONMOUSEOUT :
-                CellMouseOutEvent.fire(this, row, column, event.getClientX(), event.getClientY());
-                break;
-                
+        	case Event.ONMOUSEOVER :
+        		fireCellMouseOver(event);
+        		break;
+        	case Event.ONMOUSEOUT :
+        		fireCellMouseOut(event);
+        		break;
+        	case Event.ONCLICK :
+        		fireCellClick(event);
+        		break;
+        	case Event.ONDBLCLICK :
+        		fireCellDoubleClick(event);
+        		break;
         }
     }
+    
+    private void fireCellMouseOver(Event event) {
+    	CellMouseOverEvent.fire(this, getRow(event), getColumn(event), event.getClientX(), event.getClientY());
+    }
 	
-	public int getRowForEvent(NativeEvent event) {
-	    
-	    Element td = getEventTargetCell(Event.as(event));
-	    if (td == null) {
-	      return -1;
-	    }
+    private void fireCellMouseOut(Event event) {
+    	CellMouseOutEvent.fire(this, getRow(event), getColumn(event), event.getClientX(), event.getClientY());
+    }
+    
+    private void fireCellClick(Event event) {
+    	final int row = getRow(event);
+        final int column = getColumn(event);
+    	final boolean ctrlKey = event.getCtrlKey();
+    	final boolean shiftKey = event.getShiftKey();
+    	
+    	if(clickTimer != null) 
+    		clickTimer.cancel();
 
-	    return TableRowElement.as(td.getParentElement()).getSectionRowIndex();
-	}
-	
-	public int getColForEvent(NativeEvent event) {
-	    Element td = getEventTargetCell(Event.as(event));
-	    if (td == null) {
-	      return -1;
-	    }
-
-	    return TableCellElement.as(td).getCellIndex();
-	}
-	
+    	clickTimer = new Timer() {
+    		@Override
+    		public void run() {
+    			CellClickedEvent.fire(source, row, column, ctrlKey, shiftKey);
+    		}
+    	};
+    	clickTimer.schedule(250);
+    }
+    
+    private Element getTd(Event event) {
+    	return getEventTargetCell(event);
+    }
+    
+    private int getRow(Event event) {
+    	 return TableRowElement.as(getTd(event).getParentElement()).getSectionRowIndex();
+    }
+    
+    private int getColumn(Event event) {
+    	return TableCellElement.as(getTd(event)).getCellIndex();
+    }
+    
+    private void fireCellDoubleClick(Event event) {
+    	if(clickTimer != null) { 
+    		clickTimer.cancel();
+    		clickTimer = null;
+    	}
+    	CellDoubleClickedEvent.fire(this, getRow(event), getColumn(event));
+    }
+    
 	public HandlerRegistration addCellMouseOverHandler(CellMouseOverEvent.Handler handler) {
-	    HandlerRegistration handlerReg = addHandler(handler, CellMouseOverEvent.getType());
-	    registeredCells.put(handler.row+":"+handler.col,handlerReg);
-	    return handlerReg;
-	}
-	
-	public void removeHandler(int row, int col) {
-	    if(registeredCells.containsKey(row+":"+col))
-	        registeredCells.remove(row+":"+col).removeHandler();
+		sinkEvents(Event.ONMOUSEOVER);
+	    return addHandler(handler, CellMouseOverEvent.getType());
 	}
 	
 	public HandlerRegistration addCellMouseOutHandler(CellMouseOutEvent.Handler handler) {
+		sinkEvents(Event.ONMOUSEOUT);
 	    return addHandler(handler, CellMouseOutEvent.getType());
 	}
 	
+	public HandlerRegistration addCellClickedHandler(CellClickedHandler handler) {
+		sinkEvents(Event.ONCLICK);
+		return addHandler(handler,CellClickedEvent.getType());
+	}
+	
+	public HandlerRegistration addCellDoubleClickedHandler(CellDoubleClickedEvent.Handler handler) {
+		sinkEvents(Event.ONDBLCLICK);
+		return addHandler(handler,CellDoubleClickedEvent.getType());
+	}
+	
+	public HandlerRegistration addCellMouseOverHandler(final CellMouseOverEvent.Handler handler, int row, int column) {
+		return CellHandler.INSTANCE.addHandler( getFlexCellFormatter().getElement(row, column),handler);
+	}
+	
+	public HandlerRegistration addCellMouseOutHandler(final CellMouseOutEvent.Handler handler, int row, int column) {
+		return CellHandler.INSTANCE.addHandler(getFlexCellFormatter().getElement(row, column), handler);
+	}
+	
+	enum CellHandler {
+		
+		INSTANCE; 
+		
+	    HashMap<Element, CellMouseOverEvent.Handler> mouseOverHandlers = new HashMap<>();
+	    HashMap<Element, CellMouseOutEvent.Handler> mouseOutHandlers = new HashMap<>();
+		
+	    EventListener listener = new EventListener() {
+	    	@Override
+	    	public void onBrowserEvent(Event event) {
+	    		switch(event.getTypeInt()) { 
+         			case Event.ONMOUSEOVER :
+         				mouseOverHandlers.get(getTd(event)).onCellMouseOver(createMouseOverEvent(event));
+         				break;
+         			case Event.ONMOUSEOUT :
+         				mouseOutHandlers.get(getTd(event)).onCellMouseOut(createMouseOutEvent(event));
+         				break;
+	    		}
+	    	}
+	    };
+	    
+		public HandlerRegistration addHandler(final Element td,  CellMouseOverEvent.Handler handler) {
+			mouseOverHandlers.put(td, handler);
+			return addHandler(td,Event.ONMOUSEOVER);
+		}
+		
+		public HandlerRegistration addHandler(final Element td,  CellMouseOutEvent.Handler handler) {
+			mouseOutHandlers.put(td, handler);
+			return addHandler(td,Event.ONMOUSEOUT);
+		}
+		
+		protected HandlerRegistration addHandler(final Element td, final int event) {
+			DOM.sinkEvents(td, DOM.getEventsSunk(td) | event);
+			DOM.setEventListener(td,listener);
+			return new HandlerRegistration() {
+				@Override
+				public void removeHandler() {
+					DOM.sinkEvents(td, DOM.getEventsSunk(td) & (~event));
+				}
+			};
+		}
+		
+		private Element getTd(Event event) {
+			return event.getCurrentEventTarget().cast();
+		}
+		
+		private CellMouseOverEvent createMouseOverEvent(Event event) {
+			return new CellMouseOverEvent(getRow(event),getColumn(event),event.getClientX(),event.getClientY());
+		}
+		
+		private CellMouseOutEvent createMouseOutEvent(Event event) {
+			return new CellMouseOutEvent(getRow(event),getColumn(event),event.getClientX(),event.getClientY());
+		}
+		
+		private int getRow(Event event) {
+			return TableRowElement.as(getTd(event).getParentElement()).getSectionRowIndex();
+		}
+		
+		private int getColumn(Event event) {
+			return TableCellElement.as(getTd(event)).getCellIndex();
+		}
+	}	
 }

@@ -9,7 +9,7 @@ public class CellClickedEvent extends GwtEvent<CellClickedHandler> {
 	private int col;
 	private boolean cancelled,ctrlKey,shiftKey;
 	
-	public static CellClickedEvent fire(HasCellEditedHandlers source, int row, int col, boolean ctrlKey, boolean shiftKey) {
+	public static CellClickedEvent fire(CellGrid source, int row, int col, boolean ctrlKey, boolean shiftKey) {
 		if(TYPE != null) {
 			CellClickedEvent event = new CellClickedEvent(row, col,ctrlKey,shiftKey);
 			source.fireEvent(event);
