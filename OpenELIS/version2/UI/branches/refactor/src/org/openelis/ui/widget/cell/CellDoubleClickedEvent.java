@@ -10,7 +10,7 @@ public class CellDoubleClickedEvent extends GwtEvent<CellDoubleClickedEvent.Hand
 	private int col;
 	private boolean cancelled;
 	
-	public static CellDoubleClickedEvent fire(HasCellEditedHandlers source, int row, int col) {
+	public static CellDoubleClickedEvent fire(CellGrid source, int row, int col) {
 		if(TYPE != null) {
 			CellDoubleClickedEvent event = new CellDoubleClickedEvent(row, col);
 			source.fireEvent(event);
