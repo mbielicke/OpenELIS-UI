@@ -54,7 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @param <T>
  */
-public class TextBoxCell<T,V> extends Cell<T,V> implements CellEditor<T,V> {
+public class TextBoxCell<V> extends Cell<V> implements CellEditor<V> {
 
     /**
      * Editor used by this cell
@@ -68,7 +68,6 @@ public class TextBoxCell<T,V> extends Cell<T,V> implements CellEditor<T,V> {
     protected TextCSS     textCss;
     
     protected Element     element;
-    protected CellDataProvider<T,V> cellDataProvider;
     
     public TextBoxCell() {
     	editor = new TextBox<V>();
@@ -82,9 +81,9 @@ public class TextBoxCell<T,V> extends Cell<T,V> implements CellEditor<T,V> {
     	setEditor(editor);
     }
     
-    public void setDataProvider(CellDataProvider<T,V> cellDataProvider) {
-    	this.cellDataProvider = cellDataProvider;
-    }
+//    public void setDataProvider(CellDataProvider<T,V> cellDataProvider) {
+//    	this.cellDataProvider = cellDataProvider;
+//    }
     
     public void setEditor(TextBox<V> editor) {
         this.editor = editor;
@@ -135,13 +134,13 @@ public class TextBoxCell<T,V> extends Cell<T,V> implements CellEditor<T,V> {
         editor.selectAll();
     }
     
-    public void startEditing(T data) {
-    	editor.setValue(cellDataProvider.getValue(data));
-    	editor.setWidth(element.getClientWidth()+"px");
-    	editor.setHeight(element.getClientHeight()+"px");
-    	element.removeAllChildren();
-    	element.appendChild(editor.getElement());
-    }
+//    public void startEditing(T data) {
+//    	editor.setValue((V)cellDataProvider.getValue(data));
+//    	editor.setWidth(element.getClientWidth()+"px");
+//    	editor.setHeight(element.getClientHeight()+"px");
+//    	element.removeAllChildren();
+//    	element.appendChild(editor.getElement());
+//    }
 
     public void render(HTMLTable table, int row, int col, V value) {
    		table.setText(row, col, display(value));
@@ -157,9 +156,9 @@ public class TextBoxCell<T,V> extends Cell<T,V> implements CellEditor<T,V> {
     	element.setInnerText(display(value));
     }
     
-    public void render(T data) {
-    	render(element,cellDataProvider.getValue(data));
-    }
+//    public void render(T data) {
+//    	render(element,(V)cellDataProvider.getValue(data));
+//    }
     
     public ArrayList<Exception> validate(Object value) {
         ArrayList<Exception> exceptions;

@@ -38,15 +38,14 @@ import com.google.gwt.user.client.ui.Widget;
  *
  * @param <T>
  */
-public interface CellEditor<T,V> {    
+public interface CellEditor<V> {    
     
     /**
      * Returns the widget used as the editor for this cell
      * @return
      */
 	public void startEditing(V value, Container container, NativeEvent event);
-	
-	public void startEditing(T data);
+
     
     /**
      * Returns the widget used for querying this cell
