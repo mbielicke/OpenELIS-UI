@@ -47,13 +47,12 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class LabelCell<T,V> extends Cell<T,V> {
+public class LabelCell<V> extends Cell<V> {
     
     /**
      * Widget used to edit the cell
      */
     private Label<V>  editor;
-    private CellDataProvider<T,V> dataProvider;
     
     public LabelCell() {
     	this.editor = new Label<V>();
@@ -71,10 +70,6 @@ public class LabelCell<T,V> extends Cell<T,V> {
     }
     
     
-    public void setDataProvider(CellDataProvider<T,V> provider) {
-    	this.dataProvider = provider;
-    }
-    
     /**
      * Gets Formatted value from editor and sets it as the cells display
      */
@@ -86,9 +81,9 @@ public class LabelCell<T,V> extends Cell<T,V> {
     	element.setInnerText(display(value));
     }
     
-    public void render(T value) {
-    	render(getRenderElement(),dataProvider.getValue(value));
-    }
+//    public void render(T value) {
+//    	render(getRenderElement(),(V)dataProvider.getValue(value));
+//    }
     
     public Object getValue(V value) {
     	return value;

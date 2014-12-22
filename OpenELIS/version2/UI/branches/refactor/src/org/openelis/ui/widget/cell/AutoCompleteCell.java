@@ -211,7 +211,7 @@ public class AutoCompleteCell extends Cell implements CellEditor {
 		return this;
 	}
 
-	@Override
+
 	public void startEditing(Object data) {
 		// TODO Auto-generated method stub
 		

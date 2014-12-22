@@ -239,7 +239,7 @@ public class CheckCell extends Cell implements CellEditor {
 	}
 
 
-	@Override
+	
 	public void startEditing(Object data) {
 		// TODO Auto-generated method stub
 		
