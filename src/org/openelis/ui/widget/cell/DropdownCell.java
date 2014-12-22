@@ -35,6 +35,7 @@ import org.openelis.ui.widget.Dropdown;
 import org.openelis.ui.widget.table.ColumnInt;
 import org.openelis.ui.widget.table.Container;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -196,7 +197,7 @@ public class DropdownCell extends Cell implements CellEditor {
 
 	@Override
 	public Widget asWidget() {
-		return editor;
+		return this;
 	}
 	
 	public void setWidth(int width) {
@@ -209,10 +210,10 @@ public class DropdownCell extends Cell implements CellEditor {
 		    setEditor((Dropdown)w);
 		}
 	}
+
 	@Override
-	public void add(IsWidget w) {
-		if(w instanceof Dropdown) {
-		    setEditor((Dropdown)w);
-		}
+	public void startEditing(Object data) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -72,6 +72,11 @@ public class CellGrid  extends FlexTable {
     	clickTimer.schedule(250);
     }
     
+    public Element createCell(int row, int column) {
+    	prepareCell(row,column);
+    	return getFlexCellFormatter().getElement(row, column);
+    }
+    
     private Element getTd(Event event) {
     	return getEventTargetCell(event);
     }

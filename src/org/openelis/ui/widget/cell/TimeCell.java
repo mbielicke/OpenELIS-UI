@@ -12,6 +12,7 @@ import org.openelis.ui.widget.TextBox;
 import org.openelis.ui.widget.table.ColumnInt;
 import org.openelis.ui.widget.table.Container;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -202,12 +203,11 @@ public class TimeCell extends Cell implements CellEditor {
 
 	@Override
 	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	@Override
-	public void add(IsWidget w) {
+	public void startEditing(Object data) {
 		// TODO Auto-generated method stub
 		
 	}

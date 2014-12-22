@@ -2,11 +2,28 @@ package org.openelis.ui.widget.cell;
 
 import java.util.Iterator;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class Cell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget {
+public abstract class Cell<T,V> extends Widget implements CellRenderer<V>, HasWidgets {
+	
+	Element proxyElement;
+	
+	public void render(T data) {
+		
+	}
+	
+	public Element getRenderElement() {
+		if(proxyElement != null)
+			return proxyElement;
+		else
+			return super.getElement();
+	}
+	
+	public void setProxyElement(Element element) {
+		this.proxyElement = element;
+	}
 	
 	@Override
 	public void add(Widget w) {
@@ -26,12 +43,6 @@ public abstract class Cell implements CellRenderer, IsWidget, HasWidgets.ForIsWi
 
 	@Override
 	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public boolean remove(IsWidget w) {
 		// TODO Auto-generated method stub
 		return false;
 	}

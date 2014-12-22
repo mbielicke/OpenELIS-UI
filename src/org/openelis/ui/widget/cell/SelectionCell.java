@@ -11,6 +11,7 @@ import org.openelis.ui.widget.table.Column;
 import org.openelis.ui.widget.table.ColumnInt;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.TextOverflow;
@@ -105,20 +106,12 @@ public class SelectionCell extends Cell {
 
 
     @Override
-    public void add(IsWidget w) {
-        // TODO Auto-generated method stub
-        
-    }
-
-
-    @Override
     public Widget asWidget() {
-        return new Label<String>("");
+        return this;
     }
 
     @Override
     public void setColumn(ColumnInt col) {
         this.col = (Column)col;        
     }
-
 }

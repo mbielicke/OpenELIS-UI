@@ -6,6 +6,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.PercentBar;
 import org.openelis.ui.widget.table.ColumnInt;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -80,16 +81,10 @@ public class PercentCell extends Cell {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void add(IsWidget w) {
-		assert w instanceof PercentBar;
-		
-		this.editor = (PercentBar)w;
-	}
 
 	@Override
 	public Widget asWidget() {
-		return editor;
+		return this;
 	}
 	
     @Override

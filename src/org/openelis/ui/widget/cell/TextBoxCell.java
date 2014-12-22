@@ -35,6 +35,7 @@ import org.openelis.ui.widget.TextBox;
 import org.openelis.ui.widget.table.ColumnInt;
 import org.openelis.ui.widget.table.Container;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -53,12 +54,12 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @param <T>
  */
-public class TextBoxCell extends Cell implements CellEditor {
+public class TextBoxCell<T,V> extends Cell<T,V> implements CellEditor<T,V> {
 
     /**
      * Editor used by this cell
      */
-    protected TextBox     editor;
+    protected TextBox<V>     editor;
 
     protected boolean     query;
 
@@ -66,19 +67,26 @@ public class TextBoxCell extends Cell implements CellEditor {
     
     protected TextCSS     textCss;
     
+    protected Element     element;
+    protected CellDataProvider<T,V> cellDataProvider;
+    
     public TextBoxCell() {
-    	
+    	editor = new TextBox<V>();
     }
     /**
      * Constructor that takes the editor to be used as a param
      * 
      * @param editor
      */
-    public TextBoxCell(final TextBox<?> editor) {
+    public TextBoxCell(final TextBox<V> editor) {
     	setEditor(editor);
     }
     
-    public void setEditor(TextBox<?> editor) {
+    public void setDataProvider(CellDataProvider<T,V> cellDataProvider) {
+    	this.cellDataProvider = cellDataProvider;
+    }
+    
+    public void setEditor(TextBox<V> editor) {
         this.editor = editor;
         
     	textCss = UIResources.INSTANCE.tableText();
@@ -94,7 +102,7 @@ public class TextBoxCell extends Cell implements CellEditor {
 		});
     }
 
-    public String display(Object value) {
+    public String display(V value) {
         editor.setQueryMode(false);
         if(editor.getHelper().isCorrectType(value))
         	return editor.getHelper().format(value);
@@ -102,7 +110,7 @@ public class TextBoxCell extends Cell implements CellEditor {
         	return DataBaseUtil.toString(value);
     }
     
-    public SafeHtml bulkRender(Object value) {
+    public SafeHtml bulkRender(V value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
         builder.appendHtmlConstant("<td>");
@@ -116,7 +124,7 @@ public class TextBoxCell extends Cell implements CellEditor {
      * Returns the current widget set as this cells editor.
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(V value, Container container, NativeEvent event) {
     	if(!editor.getHelper().isCorrectType(value))
     		editor.setText(DataBaseUtil.toString(value));
     	else 
@@ -126,8 +134,16 @@ public class TextBoxCell extends Cell implements CellEditor {
         container.setEditor(editor);
         editor.selectAll();
     }
+    
+    public void startEditing(T data) {
+    	editor.setValue(cellDataProvider.getValue(data));
+    	editor.setWidth(element.getClientWidth()+"px");
+    	editor.setHeight(element.getClientHeight()+"px");
+    	element.removeAllChildren();
+    	element.appendChild(editor.getElement());
+    }
 
-    public void render(HTMLTable table, int row, int col, Object value) {
+    public void render(HTMLTable table, int row, int col, V value) {
    		table.setText(row, col, display(value));
     }
 
@@ -136,7 +152,15 @@ public class TextBoxCell extends Cell implements CellEditor {
         editor.setQuery(qd);
         table.setText(row, col, editor.getText());
     }
-
+    
+    public void render(Element element, V value) {
+    	element.setInnerText(display(value));
+    }
+    
+    public void render(T data) {
+    	render(element,cellDataProvider.getValue(data));
+    }
+    
     public ArrayList<Exception> validate(Object value) {
         ArrayList<Exception> exceptions;
         
@@ -197,16 +221,10 @@ public class TextBoxCell extends Cell implements CellEditor {
 		setEditor((TextBox)w);
 	}
 	
-	@Override
-	public void add(IsWidget w) {
-		assert w instanceof TextBox;
-		
-		setEditor((TextBox)w);
-	}
 	
 	@Override
 	public Widget asWidget() {
-		return editor;
+		return this;
 	}
 
 }

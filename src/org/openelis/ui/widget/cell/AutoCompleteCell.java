@@ -37,6 +37,7 @@ import org.openelis.ui.widget.AutoCompleteValue;
 import org.openelis.ui.widget.table.ColumnInt;
 import org.openelis.ui.widget.table.Container;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -204,15 +205,15 @@ public class AutoCompleteCell extends Cell implements CellEditor {
         setEditor((AutoComplete)w);
 	}
 
-	@Override
-	public void add(IsWidget w) {
-		assert w instanceof AutoComplete;
-		
-		setEditor((AutoComplete)w);
-	}
 
 	@Override
 	public Widget asWidget() {
-		return editor;
+		return this;
+	}
+
+	@Override
+	public void startEditing(Object data) {
+		// TODO Auto-generated method stub
+		
 	}
 }
