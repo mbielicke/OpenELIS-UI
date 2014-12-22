@@ -26,18 +26,18 @@
 package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.table.ColumnInt;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -47,59 +47,61 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class LabelCell extends Cell {
+public class LabelCell<T,V> extends Cell<T,V> {
     
     /**
      * Widget used to edit the cell
      */
-    private Label  editor;
-    private Element element;
+    private Label<V>  editor;
+    private CellDataProvider<T,V> dataProvider;
     
     public LabelCell() {
-    	this.editor = new Label<String>();
+    	this.editor = new Label<V>();
+    	
+        setElement(Document.get().createDivElement());
     }
-    
-    public LabelCell(Element element) {
-    	this.element = element;
-    	this.editor = new Label<String>();
-    }
-    
+        
     /**
      * Constructor that takes the editor to be used for the cell.
      * 
      * @param editor
      */
-    public LabelCell(Label editor) {
+    public LabelCell(Label<V> editor) {
         this.editor = editor;
+    }
+    
+    
+    public void setDataProvider(CellDataProvider<T,V> provider) {
+    	this.dataProvider = provider;
     }
     
     /**
      * Gets Formatted value from editor and sets it as the cells display
      */
-    public void render(HTMLTable table, int row, int col, Object value) {
+    public void render(HTMLTable table, int row, int col, V value) {
    		table.setText(row,col,display(value));
     }
     
-    public void render(Element element, Object value) {
+    public void render(Element element, V value) {
     	element.setInnerText(display(value));
     }
     
-    public void render(Object value) {
-    	render(element,getValue(value));
+    public void render(T value) {
+    	render(getRenderElement(),dataProvider.getValue(value));
     }
     
-    public Object getValue(Object value) {
+    public Object getValue(V value) {
     	return value;
     }
     
-    public String display(Object value) {
+    public String display(V value) {
         if(editor.getHelper().isCorrectType(value))
         	return editor.getHelper().format(value);
         else
         	return DataBaseUtil.toString(value);
     }
     
-    public SafeHtml bulkRender(Object value) {
+    public SafeHtml bulkRender(V value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
         builder.appendHtmlConstant("<td>");
@@ -125,20 +127,28 @@ public class LabelCell extends Cell {
 
 
 	@Override
-	public void add(IsWidget w) {
-		assert w instanceof Label;
-		
-		this.editor = (Label)w;
-	}
-
-	@Override
 	public Widget asWidget() {
-		return new Label("");
-	}
+		return (Widget)this;
+	}	
+	
 
     @Override
     public void setColumn(ColumnInt col) {
         // TODO Auto-generated method stub   
     }
     
+    @Override
+    protected void onAttach() {
+    	super.onAttach();
+    	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				setProxyElement(getElement().getParentElement());
+				proxyElement.setInnerHTML(getElement().getInnerHTML());
+				getElement().removeFromParent();
+			}
+		});
+    }
+        
 }

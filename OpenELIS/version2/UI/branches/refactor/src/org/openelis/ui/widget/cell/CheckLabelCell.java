@@ -36,6 +36,7 @@ import org.openelis.ui.widget.table.ColumnInt;
 import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -255,15 +256,14 @@ public class CheckLabelCell extends Cell implements CellEditor {
 	}
 
 	@Override
-	public void add(IsWidget w) {
-		assert w instanceof CheckLabel;
-		
-		setEditor((CheckLabel)w);
+	public Widget asWidget() {
+		return this;
 	}
 
 	@Override
-	public Widget asWidget() {
-		return editor;
+	public void startEditing(Object data) {
+		// TODO Auto-generated method stub
+		
 	}
   
 

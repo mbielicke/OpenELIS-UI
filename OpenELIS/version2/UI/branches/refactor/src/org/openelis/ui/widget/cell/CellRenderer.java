@@ -39,17 +39,17 @@ import com.google.gwt.user.client.ui.HTMLTable;
  *
  * @param <T>
  */
-public interface CellRenderer {
+public interface CellRenderer<V> {
 
-    public String display(Object value);
+    public String display(V value);
     
-    public SafeHtml bulkRender(Object value);
+    public SafeHtml bulkRender(V value);
     
-    public void render(HTMLTable table, int row, int col, Object value);
+    public void render(HTMLTable table, int row, int col, V value);
     
     public void renderQuery(HTMLTable table, int row, int col, QueryData qd);
     
-    public ArrayList<Exception> validate(Object value);
+    public ArrayList<Exception> validate(V value);
     
     public void setColumn(ColumnInt col);
 }

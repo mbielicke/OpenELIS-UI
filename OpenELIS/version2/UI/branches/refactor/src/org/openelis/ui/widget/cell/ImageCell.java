@@ -31,6 +31,7 @@ import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.table.ColumnInt;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -89,18 +90,13 @@ public class ImageCell extends Cell {
 
 	@Override
 	public Widget asWidget() {
-		return null;
+		return this;
 	}
 
     @Override
     public void setColumn(ColumnInt col) {
         
     }
-
-	@Override
-	public void add(IsWidget w) {
-		
-	}
 
     
 }
