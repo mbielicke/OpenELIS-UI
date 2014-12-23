@@ -25,13 +25,8 @@
 */
 package org.openelis.ui.widget.cell;
 
-import java.util.ArrayList;
-
-import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.widget.table.ColumnInt;
-
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.HTMLTable;
 
 /**
  * This interface is implemented by classes the provide rendering functionality for Table cells
@@ -41,15 +36,9 @@ import com.google.gwt.user.client.ui.HTMLTable;
  */
 public interface CellRenderer<V> {
 
-    public String display(V value);
+    public SafeHtml getHTML(V value);
     
-    public SafeHtml bulkRender(V value);
+    public void render(V value);
     
-    public void render(HTMLTable table, int row, int col, V value);
-    
-    public void renderQuery(HTMLTable table, int row, int col, QueryData qd);
-    
-    public ArrayList<Exception> validate(V value);
-    
-    public void setColumn(ColumnInt col);
+    public void render(Element element, V value);
 }

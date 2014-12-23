@@ -185,11 +185,6 @@ public class CalendarCell extends Cell implements CellEditor {
     }
     
 	@Override
-	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
-
-	@Override
 	public void add(Widget w) {
 		assert w instanceof Calendar;
 		

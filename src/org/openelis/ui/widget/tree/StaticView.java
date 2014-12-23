@@ -343,12 +343,12 @@ public class StaticView extends ViewInt {
                     renderer = tree.getCellRenderer(r, c);
                     if(c == 0) {
                         Grid treeGrid = getTreeCell(node, r, c);
-                        renderer.render(treeGrid, 0, treeGrid.getCellCount(0) - 1, tree.getValueAt(r,c));
+                        renderer.render(treeGrid.getCellFormatter().getElement(0, treeGrid.getCellCount(0) - 1), tree.getValueAt(r,c));
                         tb.appendHtmlConstant("<td>");
                         tb.appendHtmlConstant(treeGrid.getElement().getString());
                         tb.appendHtmlConstant("</td>");
                     }else
-                        tb.append(renderer.bulkRender(tree.getValueAt(r,c)));
+                        tb.append(renderer.getHTML(tree.getValueAt(r,c)));
                 } else {
                     tb.appendHtmlConstant("<td/>");
                 }                
@@ -548,7 +548,7 @@ public class StaticView extends ViewInt {
             if(flexTable.getCellCount(r) == 0) {
                 SafeHtmlBuilder tb = new SafeHtmlBuilder();
                 Grid treeGrid = getTreeCell(node, r, c);
-                renderer.render(treeGrid, 0, treeGrid.getCellCount(0) - 1, tree.getValueAt(r,c));
+                renderer.render(treeGrid.getCellFormatter().getElement(0, treeGrid.getCellCount(0) - 1), tree.getValueAt(r,c));
                 tb.appendHtmlConstant("<td>");
                 tb.appendHtmlConstant(treeGrid.getElement().getString());
                 tb.appendHtmlConstant("</td>");
@@ -567,13 +567,13 @@ public class StaticView extends ViewInt {
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","table-cell");
                 }else
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","none");
-                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.bulkRender(tree.getValueAt(r,c)));                
+                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.getHTML(tree.getValueAt(r,c)));                
             }
         }else {
-            if (tree.getQueryMode())
-                renderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
-            else
-                renderer.render(table, row, col, tree.getValueAt(r, c));
+            //if (tree.getQueryMode())
+            //    renderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
+            //else
+                renderer.render(table.getCellFormatter().getElement(row, col), tree.getValueAt(r, c));
         }
         if (tree.hasExceptions(r, c)) {
             flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(tree.getEndUserExceptions(r,c),tree.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());

@@ -193,12 +193,7 @@ public class CheckBoxCell extends Cell implements CellEditor {
     public Widget getWidget() {
     	return editor;
     }
-    
-	@Override
-	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
-	
+    	
 	private void render(String value, HTMLTable table, int row, int col) {
 
 		

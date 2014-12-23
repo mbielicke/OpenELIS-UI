@@ -565,10 +565,10 @@ public class View extends ViewInt {
     	
     	renderer = table.getColumnAt(c).getCellRenderer();
 
-    	if (table.getQueryMode())
-    		renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
-    	else
-    		renderer.render(flexTable, rc, c, table.getValueAt(r, c));
+    	//if (table.getQueryMode())
+    	//	renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
+    	//else
+    		renderer.render(flexTable.getFlexCellFormatter().getElement(rc, c), table.getValueAt(r, c));
     	
     	if (table.hasExceptions(r, c))
     		flexTable.getCellFormatter().addStyleName(rc, c, css.InputError());

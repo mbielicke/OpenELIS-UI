@@ -1895,7 +1895,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
 		column = getNodeDefinition(modelView.get(row).getType()).get(col);
 		
-		exceptions = column.getCellRenderer().validate(value);
+		//TODO fix this
+		//exceptions = column.getCellRenderer().validate(value);
+		exceptions = null;
 		
 		if(column.isRequired() && value == null)
 			exceptions.add(new Exception(Messages.get().exc_fieldRequired()));

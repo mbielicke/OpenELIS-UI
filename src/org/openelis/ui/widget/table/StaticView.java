@@ -302,7 +302,9 @@ public class StaticView extends ViewInt {
     	CellRenderer renderer;
     	
     	renderer = table.getColumnAt(col).getCellRenderer();
-        builder.append(renderer.bulkRender(table.getValueAt(row,col)));
+    	builder.appendHtmlConstant("<td>");
+        builder.append(renderer.getHTML(table.getValueAt(row,col)));
+        builder.appendHtmlConstant("</td>");
     }
 
     protected void addRow(int r) {
@@ -439,10 +441,10 @@ public class StaticView extends ViewInt {
 
         renderer = table.getColumnAt(c).getCellRenderer();
 
-        if (table.getQueryMode())
-            renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
-        else
-            renderer.render(flexTable, r, c, table.getValueAt(r, c));
+        //if (table.getQueryMode())
+          //  renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
+       // else
+            renderer.render(flexTable.getFlexCellFormatter().getElement(r, c), table.getValueAt(r, c));
 
         if (table.hasExceptions(r, c)) {
         	renderCellException(r,c);

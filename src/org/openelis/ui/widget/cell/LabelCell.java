@@ -114,23 +114,12 @@ public class LabelCell<V> extends Cell<V> {
         
     }
 
-	@Override
-	public ArrayList<Exception> validate(Object value) {
-
-		 return editor.getHelper().validate(value);
-	}
-
 
 	@Override
 	public Widget asWidget() {
 		return (Widget)this;
 	}	
 	
-
-    @Override
-    public void setColumn(ColumnInt col) {
-        // TODO Auto-generated method stub   
-    }
     
     @Override
     protected void onAttach() {
