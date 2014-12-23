@@ -252,7 +252,8 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
                 for (int i = 0; i < qds.length; i++ )
                     list.add(qds[i]);
             } else if (query != null) {
-                ((QueryData)query).setKey(key);
+            	if(((QueryData)query).getKey() != null)
+            		((QueryData)query).setKey(key);
                 list.add((QueryData)query);
             }
         }
