@@ -28,28 +28,9 @@ public abstract class Cell<V> extends SimplePanel implements CellRenderer<V> {
 		element.setInnerSafeHtml(asHtml(value));
 	}
 	
-	public abstract SafeHtml asHtml(V value);
-	
  	public void setProxyElement(Element element) {
 		this.proxyElement = element;
 	}
- 	
-// 	@Override
-// 	public Iterator<Widget> iterator() {
-// 		// TODO Auto-generated method stub
-// 		return null;
-// 	};
-// 	
-// 	@Override
-// 	public void clear() {
-// 		// TODO Auto-generated method stub
-// 		
-// 	}
-// 	
-// 	@Override
-// 	public boolean remove(Widget w) {
-// 		// TODO Auto-generated method stub
-// 		return false;
-// 	}
-	
+ 		
+ 	public abstract SafeHtml asHtml(V value);
 }
