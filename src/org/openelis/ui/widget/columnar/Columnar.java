@@ -164,7 +164,7 @@ public class Columnar extends FocusPanel implements RequiresResize,
 	@SuppressWarnings("unchecked")
 	public <T extends Widget> T getLineWidget(int index) {
 		return (T) (index > -1 ? ((CellEditor) getLineAt(index)
-				.getCellRenderer()).getWidget() : null);
+				.getCellRenderer()).getEditor() : null);
 	}
 
 	/**

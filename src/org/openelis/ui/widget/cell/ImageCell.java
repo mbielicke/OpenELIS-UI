@@ -88,5 +88,17 @@ public class ImageCell extends Cell {
 		return this;
 	}
 
+	@Override
+	public void add(Widget w) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SafeHtml asHtml(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
     
 }

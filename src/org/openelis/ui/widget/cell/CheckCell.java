@@ -239,6 +239,36 @@ public class CheckCell extends Cell implements CellEditor {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void add(Widget w) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SafeHtml asHtml(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void startEditing(Element element, Object value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isEditing() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Widget getEditor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
   
 
 }

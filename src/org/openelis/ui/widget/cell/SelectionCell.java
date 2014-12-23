@@ -111,4 +111,11 @@ public class SelectionCell extends Cell {
     public void setColumn(ColumnInt col) {
         this.col = (Column)col;        
     }
+
+
+	@Override
+	public SafeHtml asHtml(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

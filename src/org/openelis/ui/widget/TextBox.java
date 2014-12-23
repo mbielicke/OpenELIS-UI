@@ -12,6 +12,7 @@ import org.openelis.ui.widget.Balloon.Placement;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -104,8 +105,10 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 
 		textbox.addBlurHandler(new BlurHandler() {
 			public void onBlur(BlurEvent event) {
+				GWT.log("In Text Box Blur");
 				textbox.removeStyleName(css.Focus());
 				finishEditing();
+				BlurEvent.fireNativeEvent(Document.get().createBlurEvent(),source);
 			}
 		});
 		

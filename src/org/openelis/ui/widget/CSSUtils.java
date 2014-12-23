@@ -1,12 +1,25 @@
 package org.openelis.ui.widget;
 
-import org.openelis.ui.common.Util;
+import static org.openelis.ui.common.Util.stripPX;
 
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CSSUtils {
 
+	public static String BORDER_TOP_WIDTH = "borderTopWidth";
+	public static String BORDER_BOTTOM_WIDTH = "borderBottomWidth";
+	public static String BORDER_LEFT_WIDTH = "borderLeftWidth";
+	public static String BORDER_RIGHT_WIDTH = "borderRightWidth";
+	public static String PADDING_LEFT = "paddingLeft";
+	public static String PADDING_RIGHT = "paddingRight";
+	public static String PADDING_TOP = "paddingTop";
+	public static String PADDING_BOTTOM = "paddingBottom";
+	public static String MARGIN_TOP = "marginTop";
+	public static String MARGIN_BOTTOM = "marginBottom";
+	public static String MARGIN_LEFT = "marginLeft";
+	public static String MARGIN_RIGHT = "marginRight";
+	
 	public static native String getStyleProperty(Element el, String prop) /*-{
 		var computedStyle;
 		if (document.defaultView && document.defaultView.getComputedStyle) { // standard (includes ie9)
@@ -21,47 +34,43 @@ public class CSSUtils {
 		return computedStyle;
 	}-*/;
 
-	public static native String getStyle(Element el, String prop) /*-{
-		var style = el.style[prop];
-		return style;
-	}-*/;
 
 	public static double getAddedBorderWidth(Element el) {
-		return Util.stripPX(getStyleProperty(el, "borderLeftWidth"))
-				+ Util.stripPX(getStyleProperty(el, "borderRightWidth"));
+		return stripPX(getStyleProperty(el, BORDER_LEFT_WIDTH))
+				+ stripPX(getStyleProperty(el, BORDER_RIGHT_WIDTH));
 	}
 
 	public static double getAddedBorderHeight(Element el) {
-		return Util.stripPX(getStyleProperty(el, "borderTopWidth"))
-				+ Util.stripPX(getStyleProperty(el, "borderBottomWidth"));
+		return stripPX(getStyleProperty(el, BORDER_TOP_WIDTH))
+				+ stripPX(getStyleProperty(el, BORDER_BOTTOM_WIDTH));
 	}
 
-	public static double getAddedBorderWidth(
-			com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(getStyleProperty(el, "borderLeftWidth"))
-				+ Util.stripPX(getStyleProperty(el, "borderRightWidth"));
+	public static double getAddedPaddingWidth(Element el) {
+		return stripPX(getStyleProperty(el,PADDING_LEFT)) +
+			   stripPX(getStyleProperty(el, PADDING_RIGHT));
 	}
-
-	public static double getAddedBorderHeight(
-			com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(getStyleProperty(el, "borderTopWidth"))
-				+ Util.stripPX(getStyleProperty(el, "borderBottomWidth"));
+	
+	public static double getAddedPaddingHeight(Element el) {
+		return stripPX(getStyleProperty(el,PADDING_BOTTOM)) +
+			   stripPX(getStyleProperty(el,PADDING_TOP));
+	}
+	
+	public static double getAddedMarginWidth(Element el) {
+		return stripPX(getStyleProperty(el,MARGIN_LEFT)) +
+			   stripPX(getStyleProperty(el,MARGIN_RIGHT));
+	}
+	
+	public static double getAddedMarginHeight(Element el) {
+		return stripPX(getStyleProperty(el,MARGIN_TOP)) +
+			   stripPX(getStyleProperty(el,MARGIN_BOTTOM));
 	}
 
 	public static double getWidth(Element el) {
-		return Util.stripPX(getStyleProperty(el, "width"));
+		return stripPX(getStyleProperty(el, "width"));
 	}
 
 	public static double getHeight(Element el) {
-		return Util.stripPX(getStyleProperty(el, "height"));
-	}
-
-	public static double getWidth(com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(getStyleProperty(el, "width"));
-	}
-
-	public static double getHeight(com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(getStyleProperty(el, "height"));
+		return stripPX(getStyleProperty(el, "height"));
 	}
 
 	public static double getWidth(Widget widget) {
@@ -72,30 +81,4 @@ public class CSSUtils {
 		return getHeight(widget.getElement());
 	}
 
-	public static String getStyle(com.google.gwt.dom.client.Element el,
-			String prop) {
-		return getStyle((Element) el, prop);
-	}
-
-	public static String getStyleProperty(com.google.gwt.dom.client.Element el,
-			String prop) {
-		return getStyleProperty((Element) el, prop);
-	}
-
-	public static double getAddedMarginWidth(
-			com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(el.getStyle().getMarginRight())
-				+ Util.stripPX(el.getStyle().getMarginLeft());
-	}
-
-	public static double getAddPaddingWidth(com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(el.getStyle().getPaddingLeft())
-				+ Util.stripPX(el.getStyle().getPaddingRight());
-	}
-
-	public static double getAddPaddingHeight(
-			com.google.gwt.dom.client.Element el) {
-		return Util.stripPX(el.getStyle().getPaddingTop())
-				+ Util.stripPX(el.getStyle().getPaddingBottom());
-	}
 }

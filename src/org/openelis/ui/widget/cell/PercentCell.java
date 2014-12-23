@@ -92,4 +92,9 @@ public class PercentCell extends Cell {
         // TODO Auto-generated method stub
         
     }
+	@Override
+	public SafeHtml asHtml(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

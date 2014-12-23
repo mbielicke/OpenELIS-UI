@@ -1002,7 +1002,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Widget> T getColumnWidget(int index) {
-		return (T) (index > -1 ? getColumnAt(index).getCellEditor().getWidget()
+		return (T) (index > -1 ? getColumnAt(index).getCellEditor().getEditor()
 				: null);
 	}
 
@@ -2841,7 +2841,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 					choice = new FilterChoice();
 					values.put(value, choice);
 					choice.setValue(value);
-					choice.setDisplay(renderer.getHTML(value).toString());
+					choice.setDisplay(renderer.asHtml(value).toString());
 					choices.add(choice);
 				}
 			}
