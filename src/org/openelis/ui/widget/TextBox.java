@@ -119,7 +119,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	}
 
 	public void setText(String text) {
-		textbox.setText(text);
+		textbox.setText(text != null ? text : "");
 	}
 
 	/**
