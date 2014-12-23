@@ -1751,8 +1751,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		modelView.get(row).setCell(col, value);
 
 		column = getColumnAt(col);
-
-		exceptions = column.getCellRenderer().validate(value);
+		
+		//TODO Fix this
+		//exceptions = column.getCellRenderer().validate(value);
+		exceptions = null;
 
 		if (!queryMode) {
 			if (column.isRequired() && value == null) {
@@ -2839,7 +2841,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 					choice = new FilterChoice();
 					values.put(value, choice);
 					choice.setValue(value);
-					choice.setDisplay(renderer.display(value));
+					choice.setDisplay(renderer.getHTML(value).toString());
 					choices.add(choice);
 				}
 			}

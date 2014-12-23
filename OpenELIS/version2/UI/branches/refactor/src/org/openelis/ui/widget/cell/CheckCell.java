@@ -186,11 +186,6 @@ public class CheckCell extends Cell implements CellEditor {
     	return editor;
     }
     
-	@Override
-	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
-	
 	private void render(Boolean value, HTMLTable table, int row, int col) {
 		String style;
 		AbsolutePanel div;

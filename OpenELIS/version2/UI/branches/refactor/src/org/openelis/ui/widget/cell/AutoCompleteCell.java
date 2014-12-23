@@ -193,10 +193,6 @@ public class AutoCompleteCell extends Cell implements CellEditor {
     	return editor;
     }
 
-	@Override
-	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
 
 	@Override
 	public void add(Widget w) {

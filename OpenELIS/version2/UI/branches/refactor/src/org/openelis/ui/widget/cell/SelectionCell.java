@@ -31,12 +31,12 @@ public class SelectionCell extends Cell {
         css.ensureInjected();
     }
     
-    @Override
+
     public String display(Object value) {
        return DataBaseUtil.toString(value);
     }
 
-    @Override
+
     public void render(HTMLTable table, int row, int col, Object value) {
         Grid editor = (Grid)table.getWidget(row, col);
         
@@ -86,13 +86,11 @@ public class SelectionCell extends Cell {
         return builder.toSafeHtml();
     }
 
-    @Override
     public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
         // TODO Auto-generated method stub
         
     }
 
-    @Override
     public ArrayList<Exception> validate(Object value) {
         // TODO Auto-generated method stub
         return null;
@@ -110,7 +108,6 @@ public class SelectionCell extends Cell {
         return this;
     }
 
-    @Override
     public void setColumn(ColumnInt col) {
         this.col = (Column)col;        
     }

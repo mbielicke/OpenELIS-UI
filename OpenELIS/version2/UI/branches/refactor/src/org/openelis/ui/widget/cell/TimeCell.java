@@ -75,7 +75,6 @@ public class TimeCell extends Cell implements CellEditor {
         }
 	}
 
-	@Override
 	public ArrayList<Exception> validate(Object validate) {
 		ArrayList<Exception> exceptions = new ArrayList<Exception>();
 		
@@ -96,7 +95,6 @@ public class TimeCell extends Cell implements CellEditor {
 		return editor;
 	}
 
-	@Override
 	public String display(Object value) {
 		if(value instanceof Double)
 			return getTime((Double)value);
@@ -114,12 +112,10 @@ public class TimeCell extends Cell implements CellEditor {
 	    return builder.toSafeHtml();
 	}
 
-	@Override
 	public void render(HTMLTable table, int row, int col, Object value) {
 		table.setText(row, col, display(value));
 	}
 
-	@Override
 	public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
 		
 	}
@@ -196,7 +192,6 @@ public class TimeCell extends Cell implements CellEditor {
     }
       
     
-	@Override
 	public void setColumn(ColumnInt col) {
 		this.column = col;
 	}

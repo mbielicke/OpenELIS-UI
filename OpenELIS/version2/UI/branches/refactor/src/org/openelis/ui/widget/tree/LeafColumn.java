@@ -61,7 +61,7 @@ public class LeafColumn implements ColumnInt,IsWidget, HasWidgets.ForIsWidget {
      */
     public void setCellRenderer(CellRenderer renderer) {
         this.renderer = renderer;
-        renderer.setColumn(this);
+        //renderer.setColumn(this);
         if (renderer instanceof CellEditor) {
             editor = (CellEditor)renderer;
         }

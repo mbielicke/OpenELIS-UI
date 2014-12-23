@@ -209,7 +209,6 @@ public class TextBoxCell<V> extends Cell<V> implements CellEditor<V> {
     	return editor;
     }
     
-	@Override
 	public void setColumn(ColumnInt col) {
 		this.column = col;
 	}

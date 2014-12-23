@@ -182,11 +182,6 @@ public class MultiDropdownCell extends Cell implements CellEditor {
     }
     
 	@Override
-	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
-
-	@Override
 	public Widget asWidget() {
 		return this;
 	}

@@ -274,7 +274,7 @@ public class View extends ResizeComposite {
         //if (table.getQueryMode())
         //    renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
         //else
-        renderer.render(flexTable, l, d, columnar.getValueAt(d, l));
+        renderer.render(flexTable.getFlexCellFormatter().getElement(l, d), columnar.getValueAt(d, l));
         
         /*
         if (table.hasExceptions(r, c)) {

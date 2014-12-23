@@ -84,19 +84,9 @@ public class ImageCell extends Cell {
     }
 
 	@Override
-	public ArrayList<Exception> validate(Object value) {
-		return null;
-	}
-
-	@Override
 	public Widget asWidget() {
 		return this;
 	}
-
-    @Override
-    public void setColumn(ColumnInt col) {
-        
-    }
 
     
 }

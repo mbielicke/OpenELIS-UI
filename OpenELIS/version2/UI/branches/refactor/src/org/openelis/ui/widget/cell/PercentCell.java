@@ -39,7 +39,7 @@ public class PercentCell extends Cell {
 	/**
 	 * Returns the value of the percentage formatted as a string
 	 */
-	@Override
+
 	public String display(Object value) {
 		return NumberFormat.getFormat("###0.0").format((Double)value)+"%";
 	}
@@ -47,7 +47,7 @@ public class PercentCell extends Cell {
 	/**
 	 * Gets the HTML to display the Percentage from the editor and sets it into the cell
 	 */
-	@Override
+	
 	public void render(HTMLTable table, int row, int col, Object value) {
 		editor.setPercent((Double)value);
 		table.setHTML(row,col,editor.getElement().getInnerHTML());
@@ -65,12 +65,12 @@ public class PercentCell extends Cell {
 	/**
 	 * Blanks out the table cell since this is a display only cell and cannot accept Query input
 	 */
-	@Override
+	
 	public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
 		table.setText(row,col,"");
 	}
 
-	@Override
+	
 	public ArrayList<Exception> validate(Object value) {
 		// TODO Auto-generated method stub
 		return null;
@@ -87,7 +87,7 @@ public class PercentCell extends Cell {
 		return this;
 	}
 	
-    @Override
+    
     public void setColumn(ColumnInt col) {
         // TODO Auto-generated method stub
         
