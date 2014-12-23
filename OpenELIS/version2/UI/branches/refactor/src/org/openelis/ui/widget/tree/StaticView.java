@@ -348,7 +348,7 @@ public class StaticView extends ViewInt {
                         tb.appendHtmlConstant(treeGrid.getElement().getString());
                         tb.appendHtmlConstant("</td>");
                     }else
-                        tb.append(renderer.getHTML(tree.getValueAt(r,c)));
+                        tb.append(renderer.asHtml(tree.getValueAt(r,c)));
                 } else {
                     tb.appendHtmlConstant("<td/>");
                 }                
@@ -567,7 +567,7 @@ public class StaticView extends ViewInt {
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","table-cell");
                 }else
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","none");
-                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.getHTML(tree.getValueAt(r,c)));                
+                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.asHtml(tree.getValueAt(r,c)));                
             }
         }else {
             //if (tree.getQueryMode())

@@ -303,7 +303,7 @@ public class StaticView extends ViewInt {
     	
     	renderer = table.getColumnAt(col).getCellRenderer();
     	builder.appendHtmlConstant("<td>");
-        builder.append(renderer.getHTML(table.getValueAt(row,col)));
+        builder.append(renderer.asHtml(table.getValueAt(row,col)));
         builder.appendHtmlConstant("</td>");
     }
 

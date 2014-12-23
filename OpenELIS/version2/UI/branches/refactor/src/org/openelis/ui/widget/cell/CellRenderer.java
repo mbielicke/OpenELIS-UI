@@ -36,7 +36,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  */
 public interface CellRenderer<V> {
 
-    public SafeHtml getHTML(V value);
+    public SafeHtml asHtml(V value);
     
     public void render(V value);
     

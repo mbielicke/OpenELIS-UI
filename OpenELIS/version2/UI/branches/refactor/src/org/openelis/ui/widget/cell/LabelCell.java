@@ -134,5 +134,17 @@ public class LabelCell<V> extends Cell<V> {
 			}
 		});
     }
+
+	@Override
+	public void add(Widget w) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SafeHtml asHtml(V value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
         
 }

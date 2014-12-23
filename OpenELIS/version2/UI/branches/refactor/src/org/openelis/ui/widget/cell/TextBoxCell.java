@@ -224,5 +224,30 @@ public class TextBoxCell<V> extends Cell<V> implements CellEditor<V> {
 	public Widget asWidget() {
 		return this;
 	}
+	@Override
+	public SafeHtml asHtml(V value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void startEditing(Element element, V value) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void startEditing(V value) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean isEditing() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public Widget getEditor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

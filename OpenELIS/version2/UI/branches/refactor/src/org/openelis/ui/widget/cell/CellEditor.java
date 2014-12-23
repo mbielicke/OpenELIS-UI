@@ -28,6 +28,7 @@ package org.openelis.ui.widget.cell;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.table.Container;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,7 +47,11 @@ public interface CellEditor<V> {
      */
 	public void startEditing(V value, Container container, NativeEvent event);
 
+	public void startEditing(V value);
+	
+	public void startEditing(Element element, V value);
     
+	public boolean isEditing();
     /**
      * Returns the widget used for querying this cell
      * @param qd
@@ -66,7 +71,8 @@ public interface CellEditor<V> {
      * @return
      */
     public boolean ignoreKey(int keyCode);
+    
+    public Widget getEditor();
         
-    public Widget getWidget();
 
 }
