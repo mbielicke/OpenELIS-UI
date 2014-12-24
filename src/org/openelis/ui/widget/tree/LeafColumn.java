@@ -3,10 +3,10 @@ package org.openelis.ui.widget.tree;
 import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
-import org.openelis.ui.widget.cell.CellEditor;
-import org.openelis.ui.widget.cell.CellRenderer;
-import org.openelis.ui.widget.cell.LabelCell;
+import org.openelis.ui.widget.table.CellEditor;
+import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.ColumnInt;
+import org.openelis.ui.widget.table.LabelCell;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -61,7 +61,7 @@ public class LeafColumn implements ColumnInt,IsWidget, HasWidgets.ForIsWidget {
      */
     public void setCellRenderer(CellRenderer renderer) {
         this.renderer = renderer;
-        //renderer.setColumn(this);
+        renderer.setColumn(this);
         if (renderer instanceof CellEditor) {
             editor = (CellEditor)renderer;
         }

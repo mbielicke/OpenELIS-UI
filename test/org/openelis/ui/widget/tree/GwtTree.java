@@ -264,7 +264,7 @@ public class GwtTree extends GWTTestCase {
 		
 		assertTrue(test.startEditing(0,0));
 		assertEquals(0,test.getSelectedNode());
-		assertEquals(test.getNodeDefinition("top").get(0).getCellEditor().getEditor(),((AbsolutePanel)((TreeGrid)test.view.table().getWidget(0, 0)).getWidget(0,3)).getWidget(0));
+		assertEquals(test.getNodeDefinition("top").get(0).getCellEditor().getWidget(),((AbsolutePanel)((TreeGrid)test.view.table().getWidget(0, 0)).getWidget(0,3)).getWidget(0));
 		
 	}
 	
@@ -275,7 +275,7 @@ public class GwtTree extends GWTTestCase {
 		
 		test.startEditing(0,0);
 		assertTrue(test.isEditing());
-		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getEditor()).setText("10");
+		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getWidget()).setText("10");
 		test.finishEditing();
 		assertFalse(test.isEditing());
 		assertEquals(10,test.getValueAt(0,0));
@@ -283,7 +283,7 @@ public class GwtTree extends GWTTestCase {
 		test.startEditing(0,0);
 		assertTrue(test.isEditing());
 		
-		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getEditor()).setText("ASDA");
+		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getWidget()).setText("ASDA");
 		test.finishEditing();
 		assertFalse(test.isEditing());
 		assertEquals("ASDA",test.getValueAt(0, 0));
@@ -366,7 +366,7 @@ public class GwtTree extends GWTTestCase {
 		test.setQueryMode(true);
 		
 		test.startEditing(0, 0);
-		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getEditor()).setText("> 1");
+		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getWidget()).setText("> 1");
 		test.finishEditing();
 		
 		QueryData[] qds = (QueryData[])test.getQuery();

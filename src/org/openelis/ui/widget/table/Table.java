@@ -44,9 +44,6 @@ import org.openelis.ui.widget.HasBalloon;
 import org.openelis.ui.widget.HasExceptions;
 import org.openelis.ui.widget.Queryable;
 import org.openelis.ui.widget.ScreenWidgetInt;
-import org.openelis.ui.widget.cell.CellRenderer;
-import org.openelis.ui.widget.cell.CellTipProvider;
-import org.openelis.ui.widget.cell.CheckBoxCell;
 import org.openelis.ui.widget.table.event.BeforeCellEditedEvent;
 import org.openelis.ui.widget.table.event.BeforeCellEditedHandler;
 import org.openelis.ui.widget.table.event.BeforeRowAddedEvent;
@@ -1002,7 +999,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Widget> T getColumnWidget(int index) {
-		return (T) (index > -1 ? getColumnAt(index).getCellEditor().getEditor()
+		return (T) (index > -1 ? getColumnAt(index).getCellEditor().getWidget()
 				: null);
 	}
 
@@ -1976,7 +1973,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		if (hasHeader)
 			view.getHeader().resize();
 
-		view.sizeTable();
+		((StaticView)view).sizeTable();
 	}
 
 	/**
@@ -2841,7 +2838,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 					choice = new FilterChoice();
 					values.put(value, choice);
 					choice.setValue(value);
-					choice.setDisplay(renderer.asHtml(value).toString());
+					choice.setDisplay(renderer.display(value).toString());
 					choices.add(choice);
 				}
 			}

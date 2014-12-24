@@ -23,29 +23,32 @@
 * license ("UIRF Software License"), in which case the provisions of a
 * UIRF Software License are applicable instead of those above. 
 */
-package org.openelis.ui.widget.cell;
+package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.CheckboxCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Check;
-import org.openelis.ui.widget.CheckLabel;
-import org.openelis.ui.widget.table.CheckLabelValue;
-import org.openelis.ui.widget.table.ColumnInt;
-import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -54,20 +57,19 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  *
  */
-public class CheckLabelCell extends Cell implements CellEditor {
+public class CheckCell implements CellEditor, CellRenderer, IsWidget, HasWidgets.ForIsWidget {
 
     /**
      * Widget used to edit the cell
      */
-    private CheckLabel editor;
-    private boolean    query;
-    private ColumnInt  column;
-    
+    private Check     editor;
+    private boolean   query;
+    private ColumnInt column;
     
     protected CheckboxCSS css;
     
-    public CheckLabelCell() {
-    	setEditor(new CheckLabel());
+    public CheckCell() {
+    	setEditor(new Check());
     }
     
     /**
@@ -75,65 +77,49 @@ public class CheckLabelCell extends Cell implements CellEditor {
      * 
      * @param editor
      */
-    public CheckLabelCell(CheckLabel editor) {
+    public CheckCell(Check editor) {
     	setEditor(editor);
     }
     
-    public void setEditor(CheckLabel editor) {
+    public void setEditor(Check editor) {
         this.editor = editor;
         
         css = UIResources.INSTANCE.checkbox();
         css.ensureInjected();
         
         editor.setEnabled(true);
-        //editor.addBlurHandler(new BlurHandler() {
-		//	public void onBlur(BlurEvent event) {
-		//		column.finishEditing();
-	//		}
-	//	});
+        editor.addBlurHandler(new BlurHandler() {
+			public void onBlur(BlurEvent event) {
+				column.finishEditing();
+			}
+		});
     }
     
     public Object finishEditing() {
-        if(query){
-            return editor.getQuery();
-        }
-        
-        return editor.getValue();
+
+        return editor.isUnknown() ? null : new Boolean(editor.isChecked());
     }
 
     public ArrayList<Exception> validate(Object value) {
-        if (query){
-            return editor.getValidateExceptions();
-        }        
-        return editor.getValidateExceptions();
+        return null;
     }
     
     /**
      * Returns the current widget set as this cells editor.
      */
+    @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
         query = false;
-        editor.setQueryMode(false);
-        if(value != null)
-            editor.setValue((CheckLabelValue)value);
-        else
-            editor.setValue(null);
         
+        if(value == null)
+        	editor.uncheck();
+        else if(((Boolean)value) == true)
+        	editor.check();
+        else
+        	editor.uncheck();
+
         if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-        	ClickEvent.fireNativeEvent(event, editor.getCheck());
-   	        column.finishEditing();
-        }
-        container.setEditor(editor);
-        editor.setFocus(true);
-    }
-    
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
-        query = true;
-        editor.setQueryMode(true);
-        editor.setQuery(qd);
-       
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-            ClickEvent.fireNativeEvent(event, editor.getCheck());
+            ClickEvent.fireNativeEvent(event, editor);
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             
                 @Override
@@ -143,8 +129,27 @@ public class CheckLabelCell extends Cell implements CellEditor {
             });
         } else {
             container.setEditor(editor);
-            container.getElement().getStyle().setProperty("align", "center"); 
+            DOM.setStyleAttribute(container.getElement(), "align", "center"); 
         }
+    }
+    
+    @SuppressWarnings("rawtypes")
+	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
+        query = true;
+
+        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
+            ClickEvent.fireNativeEvent(event, editor);
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            
+                @Override
+                public void execute() {
+                    column.finishEditing();
+                }
+            });
+        } else {
+            container.setEditor(editor);
+            DOM.setStyleAttribute(container.getElement(), "align", "center"); 
+        }        
     }
     
     /**
@@ -153,16 +158,11 @@ public class CheckLabelCell extends Cell implements CellEditor {
     public void render(HTMLTable table, int row, int col, Object value) {
         
         query = false;
-        editor.setQueryMode(false);
-        String checkValue = null;
         
-        if(value != null)
-            checkValue = ((CheckLabelValue)value).getChecked();
-                
-        if(editor.getMode() == Check.Mode.TWO_STATE && checkValue == null)
-        	checkValue  = "N";
+        if(editor.getMode() == Check.Mode.TWO_STATE && value == null)
+        	value = "N";
         
-        render(checkValue,(value != null ? ((CheckLabelValue)value).getLabel() : ""),table,row,col);
+        render((Boolean)value,table,row,col);
     }
     
     public String display(Object value) {
@@ -174,17 +174,7 @@ public class CheckLabelCell extends Cell implements CellEditor {
      * text
      */
     public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
-        String value;
-        
-        query = true;
-        editor.setQueryMode(true);
-        
-        if(qd == null)
-        	value = null;
-        else 
-        	value = qd.getQuery();
-        
-        render(value,"",table,row,col);
+     
     }
 
     public boolean ignoreKey(int keyCode) {
@@ -199,89 +189,92 @@ public class CheckLabelCell extends Cell implements CellEditor {
     public Widget getWidget() {
     	return editor;
     }
-    	
-	private void render(String value, String label, HTMLTable table, int row, int col) {
-
-		table.setWidget(row, col, getCheckDiv(value,label));
-		   
+    
+	@Override
+	public void setColumn(ColumnInt col) {
+		this.column = col;
 	}
 	
-	public SafeHtml bulkRender(Object value) {
-	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
-	  
-	    CheckLabelValue val = (CheckLabelValue)value;
-	    
-	    builder.appendHtmlConstant("<td>");
-	    builder.appendHtmlConstant(getCheckDiv(((CheckLabelValue)value).getChecked(),((CheckLabelValue)value).getLabel()).toString());
-	    builder.appendHtmlConstant("</td>");
-	    
-	    return builder.toSafeHtml();
+	private void render(Boolean value, HTMLTable table, int row, int col) {
+		String style;
+		AbsolutePanel div;
+		
+        if(value == null)
+        	style = css.Unknown();
+        else if(value == true)
+        	style = css.Checked();
+        else
+        	style = css.Unchecked();
+        	
+        div = new AbsolutePanel();
+        div.setStyleName(style);
+        table.setWidget(row, col, div);
+        table.getCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_CENTER);
 	}
 
-	private Grid getCheckDiv(String value, String label) {
-	    Grid grid = new Grid(1,2);
-	    grid.setCellSpacing(0);
-	    grid.setBorderWidth(0);
-	    grid.setCellPadding(0);
-	    grid.setHeight("16px");
-	   
-	    String style;
-	    
-	    if(value == null)
-	        style = css.Unknown();
-	    else if("Y".equals(value))
-	        style = css.Checked();
-	    else
-	        style = css.Unchecked();
-	    
-	    if(editor.getLabelPosition() == CheckLabel.LabelPosition.LEFT) {
-	        grid.getCellFormatter().setStyleName(0, 1, style);
-	        grid.setText(0, 0, label);
-	    }else{
-	        grid.getCellFormatter().setStyleName(0, 0, style);
-	        grid.setText(0, 1, label);
+	   public SafeHtml bulkRender(Object value) {
+	        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+	        
+	        builder.appendHtmlConstant("<td align='"+HasAlignment.ALIGN_CENTER.getTextAlignString()+"'>"+getCheckDiv((String)value).getElement().getString()+"</td>");
+	        
+	        return builder.toSafeHtml();
 	    }
-        
-        return grid;
-	}
-		
+
+	    private AbsolutePanel getCheckDiv(String value) {
+	        String style;
+	        AbsolutePanel div;
+	            
+	        if(value == null)
+	            style = css.Unknown();
+	        else if("Y".equals(value))
+	            style = css.Checked();
+	        else
+	            style = css.Unchecked();
+	            
+	        div = new AbsolutePanel();
+	        div.setStyleName(style);
+	        
+	        return div;
+	    }
 	@Override
 	public void add(Widget w) {
-	    assert w instanceof CheckLabel;	        
-	    setEditor((CheckLabel)w);
-	}
-
-	@Override
-	public Widget asWidget() {
-		return this;
-	}
-
-	
-	public void startEditing(Object data) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public SafeHtml asHtml(Object value) {
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Iterator<Widget> iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void startEditing(Element element, Object value) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isEditing() {
+	public boolean remove(Widget w) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Widget getEditor() {
+	public void add(IsWidget w) {
+		assert w instanceof Check;
+		
+		setEditor((Check)w);
+	}
+
+	@Override
+	public boolean remove(IsWidget w) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Widget asWidget() {
 		// TODO Auto-generated method stub
 		return null;
 	}

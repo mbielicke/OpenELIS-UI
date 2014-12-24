@@ -31,9 +31,6 @@ import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.MenuItem;
-import org.openelis.ui.widget.cell.CellEditor;
-import org.openelis.ui.widget.cell.CellRenderer;
-import org.openelis.ui.widget.cell.LabelCell;
 
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -217,7 +214,7 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 	@UiChild(limit=1,tagname="renderer")
 	public void setCellRenderer(CellRenderer renderer) {
         this.renderer = renderer;
-        //renderer.setColumn(this);
+        renderer.setColumn(this);
         
         if (renderer instanceof CellEditor) 
             editor = (CellEditor)renderer;

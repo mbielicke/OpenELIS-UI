@@ -1,14 +1,12 @@
 package org.openelis.ui.widget.cell;
 
 import org.openelis.ui.common.DataBaseUtil;
-import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.CSSUtils;
+import org.openelis.ui.widget.Dropdown;
 import org.openelis.ui.widget.TextBox;
 import org.openelis.ui.widget.table.Container;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -17,14 +15,18 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
+public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 	
-	TextBox<V> editor;
+	Dropdown<V> editor;
 	boolean editing;
 	
 
-	public CellTextbox() {
-		editor = new TextBox<V>();
+	public CellDropdown() {
+		setEditor(new Dropdown<V>());
+	}
+	
+	public void setEditor(Dropdown<V> dropdown) {
+		this.editor = dropdown;
 		editor.setEnabled(true);
 		editor.addBlurHandler(new BlurHandler() {
 			@Override
@@ -37,8 +39,8 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Widget w) {
-		if(w instanceof TextBox)
-			editor = (TextBox<V>)w;
+		if(w instanceof Dropdown)
+			setEditor((Dropdown<V>)w);
 	}
 	
 	@Override
@@ -98,7 +100,7 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 			return new SafeHtmlBuilder().appendEscaped(DataBaseUtil.toString(value)).toSafeHtml();
         editor.setQueryMode(false);
         if(editor.getHelper().isCorrectType(value))
-        	return new SafeHtmlBuilder().appendEscaped(editor.getHelper().format(value)).toSafeHtml();
+        	return new SafeHtmlBuilder().appendEscaped(editor.getDisplay()).toSafeHtml();
         else
         	return new SafeHtmlBuilder().appendEscaped(DataBaseUtil.toString(value)).toSafeHtml();
 	}
@@ -114,34 +116,22 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 		setWidget(editor);
 	}
 	
-	protected void sizeEditor(final Widget editor, final Element element) {
-//		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-			
-//			@Override
-//			public void execute() {
-				editor.setWidth(getWidth(element)+"px");
-				editor.setHeight(getHeight(element)+"px");
-//			}
-//		});
+	protected void sizeEditor(Widget editor, Element element) {
+		editor.setWidth(getWidth(element)+"px");
+		editor.setHeight(getHeight(element)+"px");
 	}
 	
 	private double getWidth(Element element) {
 		double width = element.getClientWidth();
-		GWT.log("Before Width = "+width);
-		GWT.log("padding = "+CSSUtils.getAddedPaddingWidth(element));
-		GWT.log("border = "+CSSUtils.getAddedBorderWidth(editor.getElement()));
 		width -= CSSUtils.getAddedPaddingWidth(element);
-		width -= Util.stripPX(editor.getElement().getStyle().getBorderWidth()) * 2;//CSSUtils.getAddedBorderWidth(editor.getElement());
-		GWT.log("After Width = "+width);
+		width -= CSSUtils.getAddedBorderWidth(editor.getElement());
 		return width;
 	}
 	
 	private double getHeight(Element element) {
 		double height = element.getClientHeight();
-		GWT.log("Before height = "+height);
 		height -= CSSUtils.getAddedPaddingHeight(element);
 		height -= CSSUtils.getAddedBorderHeight(editor.getElement());
-		GWT.log("After Height = "+height);
 		return height;
 	}
 }

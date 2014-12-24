@@ -34,7 +34,6 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
-import org.openelis.ui.widget.cell.CellRenderer;
 import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 
@@ -303,7 +302,7 @@ public class StaticView extends ViewInt {
     	
     	renderer = table.getColumnAt(col).getCellRenderer();
     	builder.appendHtmlConstant("<td>");
-        builder.append(renderer.asHtml(table.getValueAt(row,col)));
+        builder.append(renderer.bulkRender(table.getValueAt(row,col)));
         builder.appendHtmlConstant("</td>");
     }
 
@@ -444,7 +443,7 @@ public class StaticView extends ViewInt {
         //if (table.getQueryMode())
           //  renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
        // else
-            renderer.render(flexTable.getFlexCellFormatter().getElement(r, c), table.getValueAt(r, c));
+            renderer.render(flexTable,r, c, table.getValueAt(r, c));
 
         if (table.hasExceptions(r, c)) {
         	renderCellException(r,c);
@@ -674,6 +673,12 @@ public class StaticView extends ViewInt {
 
 	@Override
 	void adjustScrollBarHeight() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	void resize() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -35,8 +35,8 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.cell.CellEditor;
-import org.openelis.ui.widget.cell.CellRenderer;
+import org.openelis.ui.widget.table.CellEditor;
+import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.table.FlexTable;
 import org.openelis.ui.widget.table.Row;
@@ -193,7 +193,7 @@ public class StaticView extends ViewInt {
      * Method that will layout the table view and is called on first time
      * attached and when attributes affecting layout are changed in the table
      */
-    public void layout() {
+    protected void layout() {
         
         com.google.gwt.dom.client.Node colgroup;
 
@@ -343,12 +343,12 @@ public class StaticView extends ViewInt {
                     renderer = tree.getCellRenderer(r, c);
                     if(c == 0) {
                         Grid treeGrid = getTreeCell(node, r, c);
-                        renderer.render(treeGrid.getCellFormatter().getElement(0, treeGrid.getCellCount(0) - 1), tree.getValueAt(r,c));
+                        renderer.render(treeGrid, 0, treeGrid.getCellCount(0) - 1, tree.getValueAt(r,c));
                         tb.appendHtmlConstant("<td>");
                         tb.appendHtmlConstant(treeGrid.getElement().getString());
                         tb.appendHtmlConstant("</td>");
                     }else
-                        tb.append(renderer.asHtml(tree.getValueAt(r,c)));
+                        tb.append(renderer.bulkRender(tree.getValueAt(r,c)));
                 } else {
                     tb.appendHtmlConstant("<td/>");
                 }                
@@ -548,7 +548,7 @@ public class StaticView extends ViewInt {
             if(flexTable.getCellCount(r) == 0) {
                 SafeHtmlBuilder tb = new SafeHtmlBuilder();
                 Grid treeGrid = getTreeCell(node, r, c);
-                renderer.render(treeGrid.getCellFormatter().getElement(0, treeGrid.getCellCount(0) - 1), tree.getValueAt(r,c));
+                renderer.render(treeGrid, 0, treeGrid.getCellCount(0) - 1, tree.getValueAt(r,c));
                 tb.appendHtmlConstant("<td>");
                 tb.appendHtmlConstant(treeGrid.getElement().getString());
                 tb.appendHtmlConstant("</td>");
@@ -567,13 +567,13 @@ public class StaticView extends ViewInt {
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","table-cell");
                 }else
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).getStyle().setProperty("display","none");
-                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.asHtml(tree.getValueAt(r,c)));                
+                flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3).setInnerSafeHtml(renderer.bulkRender(tree.getValueAt(r,c)));                
             }
         }else {
-            //if (tree.getQueryMode())
-            //    renderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
-            //else
-                renderer.render(table.getCellFormatter().getElement(row, col), tree.getValueAt(r, c));
+            if (tree.getQueryMode())
+                renderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
+            else
+                renderer.render(table, row, col, tree.getValueAt(r, c));
         }
         if (tree.hasExceptions(r, c)) {
             flexTable.getCellFormatter().addStyleName(r, c, Balloon.isWarning(tree.getEndUserExceptions(r,c),tree.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
@@ -721,19 +721,19 @@ public class StaticView extends ViewInt {
                 flexTable.setVisible(true);
                 Element svEl = inner.getWidgetContainerElement(scrollView);
                 if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                    tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 1));
+                    tree.setWidth((int)CSSUtils.getWidth(svEl) - 1);
                 else
-                    tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
-                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1));
+                    tree.setWidth((int)CSSUtils.getWidth(svEl) -
+                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
                 
                 if (CSSUtils.getWidth( (svEl)) > 0) {
-                    tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 2));
+                    tree.setWidth((int)CSSUtils.getWidth(svEl) - 2);
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(tree.getElement()) + "px");
                 }
 
                 if (CSSUtils.getHeight(svEl) > 0) {
-                    scrollView.setHeight(CSSUtils.getHeight(svEl) - CSSUtils.getHeight(header) -
+                    scrollView.setHeight((int)CSSUtils.getHeight(svEl) - CSSUtils.getHeight(header) -
                                          CSSUtils.getAddedBorderHeight(tree.getElement()) + "px");
 
                 }
@@ -830,8 +830,8 @@ public class StaticView extends ViewInt {
                                         CSSUtils.getAddedBorderWidth(tree.getElement()) + "px");
 
                     if (CSSUtils.getHeight(inner) > 0) {
-                        int height = (int)Math.ceil(CSSUtils.getHeight(inner) - CSSUtils.getHeight(header) -
-                                        CSSUtils.getAddedBorderHeight(tree.getElement()));
+                        int height = (int)CSSUtils.getHeight(inner) - (int)CSSUtils.getHeight(header) -
+                                        (int)CSSUtils.getAddedBorderHeight(tree.getElement());
                         /*
                          * This check is here only for Unit Testing.  If not done Unit test on the
                          * table will fail here with assertion check from the widget.
@@ -841,10 +841,10 @@ public class StaticView extends ViewInt {
                     }
                     
                     if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                        tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 2));
+                        tree.setWidth((int)CSSUtils.getWidth(svEl) - 2);
                     else
-                        tree.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
-                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 2));
+                        tree.setWidth((int)CSSUtils.getWidth(svEl) -
+                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 2);
 
                 }
             }

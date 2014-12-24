@@ -4,7 +4,7 @@ import org.openelis.ui.resources.ColumnarCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.CSSUtils;
-import org.openelis.ui.widget.cell.CellRenderer;
+import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.FlexTable;
 
 import com.google.gwt.core.client.GWT;
@@ -74,17 +74,17 @@ public class View extends ResizeComposite {
                 if (CSSUtils.getWidth(svEl) > 0) {
 
                     if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                        columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 1));
+                        columnar.setWidth((int)CSSUtils.getWidth(svEl) - 1);
                     else
-                        columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
-                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 1));
+                        columnar.setWidth((int)CSSUtils.getWidth(svEl) -
+                                       NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
 
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(columnar.getElement()) + "px");
 
                     if (CSSUtils.getHeight(inner) > 0) {
-                        int height = (int)Math.ceil(CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
-                                        CSSUtils.getAddedBorderHeight(columnar.getElement()));
+                        int height = (int)CSSUtils.getHeight(inner) -  (int)CSSUtils.getHeight(header) -
+                                        (int)CSSUtils.getAddedBorderHeight(columnar.getElement());
                         /*
                          * This check is here only for Unit Testing.  If not done Unit test on the
                          * table will fail here with assertion check from the widget.
@@ -274,7 +274,7 @@ public class View extends ResizeComposite {
         //if (table.getQueryMode())
         //    renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
         //else
-        renderer.render(flexTable.getFlexCellFormatter().getElement(l, d), columnar.getValueAt(d, l));
+        renderer.render(flexTable, l, d, columnar.getValueAt(d, l));
         
         /*
         if (table.hasExceptions(r, c)) {
@@ -361,13 +361,13 @@ public class View extends ResizeComposite {
                 Element svEl = inner.getWidgetContainerElement(scrollView);
                 
                 if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                    columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 1));
+                    columnar.setWidth((int)CSSUtils.getWidth(svEl) - 1);
                 else
-                    columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
-                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1));
+                    columnar.setWidth((int)CSSUtils.getWidth(svEl) -
+                                   NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
                 
                 if (CSSUtils.getWidth( (svEl)) > 0) {
-                    columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 1));
+                    columnar.setWidth((int)CSSUtils.getWidth(svEl) - 1);
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(columnar.getElement()) + "px");
                 }
@@ -445,17 +445,17 @@ public class View extends ResizeComposite {
         if (CSSUtils.getWidth(svEl) > 0) {
 
             if (scrollView.getMaximumVerticalScrollPosition() == 0)
-                columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) - 1));
+                columnar.setWidth((int)CSSUtils.getWidth(svEl) - 1);
             else
-                columnar.setWidth((int)Math.ceil(CSSUtils.getWidth(svEl) -
-                               NativeVerticalScrollbar.getNativeScrollbarWidth() - 1));
+                columnar.setWidth((int)CSSUtils.getWidth(svEl) -
+                               NativeVerticalScrollbar.getNativeScrollbarWidth() - 1);
 
             scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                 CSSUtils.getAddedBorderWidth(columnar.getElement()) + "px");
 
             if (CSSUtils.getHeight(inner) > 0) {
-                int height = (int)Math.ceil(CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
-                                CSSUtils.getAddedBorderHeight(columnar.getElement()));
+                int height = (int)CSSUtils.getHeight(inner) -  (int)CSSUtils.getHeight(header) -
+                                (int)CSSUtils.getAddedBorderHeight(columnar.getElement());
                 /*
                  * This check is here only for Unit Testing.  If not done Unit test on the
                  * table will fail here with assertion check from the widget.

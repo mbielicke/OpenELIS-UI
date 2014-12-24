@@ -31,8 +31,8 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.VerticalScrollbar;
-import org.openelis.ui.widget.cell.CellEditor;
-import org.openelis.ui.widget.cell.CellRenderer;
+import org.openelis.ui.widget.table.CellEditor;
+import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.Container;
 import org.openelis.ui.widget.tree.Tree.Scrolling;
 
@@ -607,10 +607,10 @@ public class View extends Composite {
             col = 2;
         }
 
-        //if (tree.getQueryMode())
-        //    cellRenderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
-        //else
-            cellRenderer.render(table.getCellFormatter().getElement(row, col), tree.getValueAt(r, c));
+        if (tree.getQueryMode())
+            cellRenderer.renderQuery(table, row, col, (QueryData)tree.getValueAt(r, c));
+        else
+            cellRenderer.render(table, row, col, tree.getValueAt(r, c));
 
         if (tree.hasExceptions(r, c))
             flexTable.getCellFormatter().addStyleName(rc, c, css.InputError());
