@@ -1,16 +1,9 @@
 package org.openelis.ui.widget.cell;
 
 import org.openelis.ui.common.DataBaseUtil;
-import org.openelis.ui.common.Util;
-import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.TextBox;
-import org.openelis.ui.widget.table.Container;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -21,10 +14,13 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 	
 	TextBox<V> editor;
 	boolean editing;
-	
 
 	public CellTextbox() {
-		editor = new TextBox<V>();
+		initEditor(new TextBox<V>());
+	}
+	
+	public void initEditor(TextBox<V> editor) {
+		this.editor = editor;
 		editor.setEnabled(true);
 		editor.addBlurHandler(new BlurHandler() {
 			@Override
@@ -38,18 +34,12 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 	@Override
 	public void add(Widget w) {
 		if(w instanceof TextBox)
-			editor = (TextBox<V>)w;
+			initEditor((TextBox<V>)w);
 	}
 	
 	@Override
 	public boolean isEditing() {
 		return editing;
-	}
-
-	@Override
-	public void startEditing(V value, Container container, NativeEvent event) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -70,13 +60,6 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 	}
 
 	@Override
-	public void startEditingQuery(QueryData qd, Container container,
-			NativeEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Object finishEditing() {
 		V value = editor.getValue();
 		remove(editor);
@@ -84,13 +67,6 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 		editing = false;
 		return value;
 	}
-
-	@Override
-	public boolean ignoreKey(int keyCode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 
 	@Override
 	public SafeHtml asHtml(V value) {
@@ -103,45 +79,4 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
         	return new SafeHtmlBuilder().appendEscaped(DataBaseUtil.toString(value)).toSafeHtml();
 	}
 
-	@Override
-	public Widget getEditor() {
-		return editor;
-	}
-
-	
-	protected void setEditor(Widget editor) {
-		getElement().removeAllChildren();
-		setWidget(editor);
-	}
-	
-	protected void sizeEditor(final Widget editor, final Element element) {
-//		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-			
-//			@Override
-//			public void execute() {
-				editor.setWidth(getWidth(element)+"px");
-				editor.setHeight(getHeight(element)+"px");
-//			}
-//		});
-	}
-	
-	private double getWidth(Element element) {
-		double width = element.getClientWidth();
-		GWT.log("Before Width = "+width);
-		GWT.log("padding = "+CSSUtils.getAddedPaddingWidth(element));
-		GWT.log("border = "+CSSUtils.getAddedBorderWidth(editor.getElement()));
-		width -= CSSUtils.getAddedPaddingWidth(element);
-		width -= Util.stripPX(editor.getElement().getStyle().getBorderWidth()) * 2;//CSSUtils.getAddedBorderWidth(editor.getElement());
-		GWT.log("After Width = "+width);
-		return width;
-	}
-	
-	private double getHeight(Element element) {
-		double height = element.getClientHeight();
-		GWT.log("Before height = "+height);
-		height -= CSSUtils.getAddedPaddingHeight(element);
-		height -= CSSUtils.getAddedBorderHeight(editor.getElement());
-		GWT.log("After Height = "+height);
-		return height;
-	}
 }

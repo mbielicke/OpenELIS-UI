@@ -1,7 +1,8 @@
 package org.openelis.ui.widget.cell;
 
 import org.openelis.ui.common.DataBaseUtil;
-import org.openelis.ui.widget.Dropdown;
+import org.openelis.ui.widget.AutoComplete;
+import org.openelis.ui.widget.AutoCompleteValue;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
@@ -11,18 +12,18 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
+public class CellAutoComplete extends Cell<AutoCompleteValue> implements CellEditor<AutoCompleteValue> {
 	
-	Dropdown<V> editor;
+	AutoComplete editor;
 	boolean editing;
 	
 
-	public CellDropdown() {
-		initEditor(new Dropdown<V>());
+	public CellAutoComplete() {
+		initEditor(new AutoComplete());
 	}
 	
-	public void initEditor(Dropdown<V> dropdown) {
-		this.editor = dropdown;
+	public void initEditor(AutoComplete auto) {
+		this.editor = auto;
 		editor.setEnabled(true);
 		editor.addBlurHandler(new BlurHandler() {
 			@Override
@@ -32,11 +33,10 @@ public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 		});
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Widget w) {
-		if(w instanceof Dropdown)
-			initEditor((Dropdown<V>)w);
+		if(w instanceof AutoComplete)
+			initEditor((AutoComplete)w);
 	}
 	
 	@Override
@@ -45,12 +45,12 @@ public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 	}
 	
 	@Override
-	public void startEditing(V value) {
+	public void startEditing(AutoCompleteValue value) {
 		GWT.log("in Start Editing");
 		startEditing(getElement().getParentElement(),value);		
 	}
 	
-	public void startEditing(Element container, V value) {
+	public void startEditing(Element container, AutoCompleteValue value) {
 		if(editing)
 			return;
 		editor.setValue(value);
@@ -64,7 +64,7 @@ public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 
 	@Override
 	public Object finishEditing() {
-		V value = editor.getValue();
+		AutoCompleteValue value = editor.getValue();
 		remove(editor);
 		render(value);
 		editing = false;
@@ -72,12 +72,12 @@ public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 	}
 
 	@Override
-	public SafeHtml asHtml(V value) {
+	public SafeHtml asHtml(AutoCompleteValue value) {
 		if(editor == null)
 			return new SafeHtmlBuilder().appendEscaped(DataBaseUtil.toString(value)).toSafeHtml();
         editor.setQueryMode(false);
         editor.setValue(value);
-        return new SafeHtmlBuilder().appendEscaped(editor.getDisplay()).toSafeHtml();
+       	return new SafeHtmlBuilder().appendEscaped(editor.getDisplay()).toSafeHtml();
 	}
 
 }

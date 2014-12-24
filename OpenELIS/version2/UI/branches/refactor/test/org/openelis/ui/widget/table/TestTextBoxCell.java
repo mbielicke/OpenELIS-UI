@@ -1,4 +1,4 @@
-package org.openelis.ui.widget.cell;
+package org.openelis.ui.widget.table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,7 +16,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.IntegerHelper;
 import org.openelis.ui.widget.StringHelper;
 import org.openelis.ui.widget.TextBox;
-import org.openelis.ui.widget.cell.TextBoxCell;
+import org.openelis.ui.widget.table.TextBoxCell;
 import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.core.shared.GWT;

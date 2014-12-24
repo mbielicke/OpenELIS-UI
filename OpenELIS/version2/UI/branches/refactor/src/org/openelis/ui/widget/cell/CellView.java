@@ -2,12 +2,10 @@ package org.openelis.ui.widget.cell;
 
 import java.util.ArrayList;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.HTMLPanel;
 
 public class CellView<T> extends HTMLPanel {
@@ -36,12 +34,14 @@ public class CellView<T> extends HTMLPanel {
 	public void add(final CellDataProvider<T,?> cell) {
 		cells.add(cell);
 		if(cell.cell instanceof CellEditor) {
-			cell.cell.addDomHandler(new ClickHandler() {
+			DOM.setEventListener(cell.cell.getElement().getParentElement(), new EventListener() {
 				@Override
-				public void onClick(ClickEvent event) {
-					((CellEditor)cell.cell).startEditing(cell.getValue(data));
+				public void onBrowserEvent(Event event) {
+					if(event.getTypeInt() == Event.ONCLICK)
+						((CellEditor)cell.cell).startEditing(cell.getValue(data));
 				}
-			},ClickEvent.getType());
+			});
+			DOM.sinkEvents(cell.cell.getElement().getParentElement(),Event.ONCLICK);
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package org.openelis.ui.widget.cell;
+package org.openelis.ui.widget.table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openelis.ui.widget.IntegerHelper;
 import org.openelis.ui.widget.Label;
-import org.openelis.ui.widget.cell.LabelCell;
+import org.openelis.ui.widget.table.LabelCell;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwtmockito.GwtMockitoTestRunner;
