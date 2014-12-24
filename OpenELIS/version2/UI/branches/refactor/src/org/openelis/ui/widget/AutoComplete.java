@@ -976,11 +976,15 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      * QueryData object for the passed type T.
      */
     public Object getQuery() {
-    	Object query;
+    	Object query = null;
     	
-    	query = helper.getQuery(textbox.getText());
-                
-        return query;
+    	if(queryMode)
+    		query = helper.getQuery(textbox.getText());
+    	else if (getValue() != null) {
+    		query = new QueryData(QueryData.Type.INTEGER,String.valueOf(getValue().getId()));
+    	}
+        
+    	return query;
     }
     
     /**

@@ -33,8 +33,6 @@ import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.VerticalScrollbar;
-import org.openelis.ui.widget.cell.CellEditor;
-import org.openelis.ui.widget.cell.CellRenderer;
 import org.openelis.ui.widget.table.Table.Scrolling;
 
 import com.google.gwt.core.client.GWT;
@@ -316,7 +314,7 @@ public class InfiniteView extends ViewInt {
      * This method is called when a column width is changed. It will resize the
      * columns to there currently set width.
      */
-    protected void sizeTable() {
+    protected void resize() {
         for (int c = 0; c < table.getColumnCount(); c++ )
             flexTable.getColumnFormatter().setWidth(c, table.getColumnAt(c).getWidth() + "px");
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
@@ -433,7 +431,7 @@ public class InfiniteView extends ViewInt {
                  * so call resize after that
                  */
                 if (rc == 0)
-                    sizeTable();
+                    resize();
             }
 
             for (int c = 0; c < table.getColumnCount(); c++ )
@@ -532,10 +530,10 @@ public class InfiniteView extends ViewInt {
     	
     	renderer = table.getColumnAt(c).getCellRenderer();
 
-    	//if (table.getQueryMode())
-    		//renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
-    	//else
-    		renderer.render(flexTable.getFlexCellFormatter().getElement(rc, c), table.getValueAt(r, c));
+    	if (table.getQueryMode())
+    		renderer.renderQuery(flexTable, rc, c,(QueryData)table.getValueAt(r, c));
+    	else
+    		renderer.render(flexTable, rc, c, table.getValueAt(r, c));
     	
     	if (table.hasExceptions(r, c))
     		flexTable.getCellFormatter().addStyleName(rc, c, css.InputError());

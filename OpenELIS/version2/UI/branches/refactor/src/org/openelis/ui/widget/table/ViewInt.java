@@ -34,7 +34,7 @@ public abstract class ViewInt extends ResizeComposite {
     
     abstract Header getHeader();
     
-    abstract void sizeTable();
+    abstract void resize();
     
     abstract void adjustScrollBarHeight();
     
@@ -55,4 +55,5 @@ public abstract class ViewInt extends ResizeComposite {
     abstract void setCSS(TableCSS css);
     
     abstract void createRow(int row);
+
 }
