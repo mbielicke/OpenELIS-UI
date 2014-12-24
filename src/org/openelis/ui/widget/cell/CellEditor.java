@@ -41,38 +41,12 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public interface CellEditor<V> {    
     
-    /**
-     * Returns the widget used as the editor for this cell
-     * @return
-     */
-	public void startEditing(V value, Container container, NativeEvent event);
-
 	public void startEditing(V value);
 	
 	public void startEditing(Element element, V value);
     
 	public boolean isEditing();
-    /**
-     * Returns the widget used for querying this cell
-     * @param qd
-     * @return
-     */
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event); 
     
-    /**
-     * Pulls the edited value from the editor and returns it.  If in Query mode and QueryData object will be returned 
-     * @return
-     */
-    public Object finishEditing();
-    
-    /**
-     * Returns whether the passed key should be ignored by the KeyHandler when editing;
-     * @param keyCode
-     * @return
-     */
-    public boolean ignoreKey(int keyCode);
-    
-    public Widget getEditor();
-        
+    public Object finishEditing();     
 
 }

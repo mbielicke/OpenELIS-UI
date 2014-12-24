@@ -301,9 +301,9 @@ public class StaticView extends ViewInt {
     	CellRenderer renderer;
     	
     	renderer = table.getColumnAt(col).getCellRenderer();
-    	builder.appendHtmlConstant("<td>");
+    	//builder.appendHtmlConstant("<td>");
         builder.append(renderer.bulkRender(table.getValueAt(row,col)));
-        builder.appendHtmlConstant("</td>");
+        //builder.appendHtmlConstant("</td>");
     }
 
     protected void addRow(int r) {
@@ -540,8 +540,14 @@ public class StaticView extends ViewInt {
             return;
             
         attached = true;
-        layout();
-        adjustViewPort();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+		        layout();
+		        adjustViewPort();
+			}
+		});
     }
 
     /**
@@ -679,7 +685,7 @@ public class StaticView extends ViewInt {
 
 	@Override
 	void resize() {
-		// TODO Auto-generated method stub
+		adjustViewPort();
 		
 	}
 }

@@ -1,4 +1,4 @@
-package org.openelis.ui.widget.cell;
+package org.openelis.ui.widget.table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,7 +17,7 @@ import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.Dropdown;
 import org.openelis.ui.widget.IntegerHelper;
 import org.openelis.ui.widget.TextBox;
-import org.openelis.ui.widget.cell.DropdownCell;
+import org.openelis.ui.widget.table.DropdownCell;
 import org.openelis.ui.widget.table.Container;
 
 import com.google.gwt.core.client.GWT;
@@ -40,7 +40,7 @@ public class TestDropdownCell {
     
     @Test
     public void setEditor() {
-        assertEquals(editor,cell.editor);
+        assertEquals(editor,cell.getWidget());
         verifyEnabled(editor);
     }
     
