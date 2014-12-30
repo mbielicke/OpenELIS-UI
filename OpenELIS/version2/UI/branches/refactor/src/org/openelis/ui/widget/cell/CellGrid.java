@@ -3,6 +3,7 @@ package org.openelis.ui.widget.cell;
 import java.util.HashMap;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -54,7 +55,7 @@ public class CellGrid  extends FlexTable {
     	CellMouseOutEvent.fire(this, getRow(event), getColumn(event), event.getClientX(), event.getClientY());
     }
     
-    private void fireCellClick(Event event) {
+    private void fireCellClick(final Event event) {
     	final int row = getRow(event);
         final int column = getColumn(event);
     	final boolean ctrlKey = event.getCtrlKey();
@@ -66,7 +67,7 @@ public class CellGrid  extends FlexTable {
     	clickTimer = new Timer() {
     		@Override
     		public void run() {
-    			CellClickedEvent.fire(source, row, column, ctrlKey, shiftKey);
+    			CellClickedEvent.fire(source, row, column, ctrlKey, shiftKey,event);
     		}
     	};
     	clickTimer.schedule(250);

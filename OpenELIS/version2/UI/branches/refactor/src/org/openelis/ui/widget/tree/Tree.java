@@ -27,6 +27,7 @@ package org.openelis.ui.widget.tree;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.openelis.ui.common.Util;
@@ -44,6 +45,10 @@ import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.CellTipProvider;
+import org.openelis.ui.widget.table.Column;
+import org.openelis.ui.widget.table.Controller;
+import org.openelis.ui.widget.table.Row;
+import org.openelis.ui.widget.table.Table.UniqueFilter;
 import org.openelis.ui.widget.table.event.BeforeCellEditedEvent;
 import org.openelis.ui.widget.table.event.BeforeCellEditedHandler;
 import org.openelis.ui.widget.table.event.CellClickedEvent;
@@ -115,29 +120,13 @@ import com.google.gwt.user.client.ui.RootPanel;
  * @author tschmidt
  * 
  */
-public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
-                                    HasBeforeSelectionHandlers<Integer>,
-                                    HasSelectionHandlers<Integer>, HasUnselectionHandlers<Integer>,
-                                    HasBeforeCellEditedHandlers, HasCellEditedHandlers, HasCellClickedHandlers,
+public class Tree extends Controller implements ScreenWidgetInt, Queryable,
                                     HasBeforeNodeAddedHandlers, HasNodeAddedHandlers,
                                     HasBeforeNodeDeletedHandlers, HasNodeDeletedHandlers,
                                     HasBeforeNodeOpenHandlers, HasNodeClosedHandlers,
                                     HasBeforeNodeCloseHandlers, HasNodeOpenedHandlers, HasBalloon,
                                     HasValue<Node>, HasExceptions, FocusHandler, RequiresResize {
 
-    /**
-     * Cell that is currently being edited.
-     */
-    protected int                    editingRow = -1, 
-                                     editingCol = -1;
-
-    /**
-     * Table dimensions
-     */
-    protected int                    rowHeight, 
-                                     visibleNodes = 10, 
-                                     viewWidth = -1,
-                                     totalColumnWidth;
 
     /**
      * Root for the Tree and currently displayed rows
@@ -153,11 +142,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     protected HashMap<String, ArrayList<LeafColumn>> nodeDefs;
 
     /**
-     * List of selected Rows by index in the displayed Tree
-     */
-    protected ArrayList<Integer>     selections = new ArrayList<Integer>();
-
-    /**
      * Exception lists for the Tree
      */
     protected HashMap<Node, HashMap<Integer, ArrayList<Exception>>> endUserExceptions,
@@ -169,44 +153,15 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     /**
      * Tree state values
      */
-    protected boolean                enabled, 
-                                     multiSelect,
-                                     editing, 
-                                     hasFocus, 
-                                     queryMode, 
-                                     hasHeader, 
-                                     fixScrollBar = true, 
+    protected boolean                hasFocus,
                                      showRoot;
 
-    /**
-     * Enum representing the state of when the scroll bar should be shown.
-     */
-    public enum Scrolling {
-        ALWAYS, AS_NEEDED, NEVER
-    };
-
-    /**
-     * Fields to hold state of whether the scroll bars are shown
-     */
-    protected Scrolling          verticalScroll, 
-                                 horizontalScroll;
 
     /**
      * Reference to the View composite for this widget.
      */
     protected ViewInt            view;
 
-
-    /**
-     * Arrays for determining relative X positions for columns
-     */
-    protected short[]            xForColumn, columnForX;
-
-    /**
-     * Drag and Drop controllers
-     */
-    protected TreeDragController dragController;
-    protected TreeDropController dropController;
     
     protected TreeCSS            css;
     
@@ -229,198 +184,10 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     	rowHeight = 19;
         view = new StaticView(this);
         setWidget(view);
-
-        /*
-         * This Handler takes care of all key events on the tree when editing
-         * and when only selection is on
-         */
-        addDomHandler(new KeyDownHandler() {
-            public void onKeyDown(KeyDownEvent event) {
-                int row, col, keyCode;
-
-                if ( !isEnabled())
-                    return;
-                
-                keyCode = event.getNativeEvent().getKeyCode();
-                row = editingRow;
-                col = editingCol;
-
-                if(isEditing() && getCellEditor(row,col).ignoreKey(keyCode))
-                    return;
-                    
-                switch (keyCode) {
-                    case (KeyCodes.KEY_TAB):
-                     // Ignore if no cell is currently being edited
-                        if ( !editing)
-                            break;
-
-                        // Tab backwards if shift pressed otherwise tab forward
-                        if ( !event.isShiftKeyDown()) {
-                            while (true) {
-                                col++ ;
-                                if (col >= getColumnCount()) {
-                                    col = 0;
-                                    row++ ;
-                                    if (row >= getRowCount()) {
-                                    	setFocus(true);
-                                    	finishEditing();
-                                        break;
-                                    }
-
-                                }
-                                if (startEditing(row, col, event.getNativeEvent())) {
-                                	event.preventDefault();
-                                    event.stopPropagation();
-                                    break;
-                                }
-                            }
-                        } else {
-                            while (true) {
-                                col-- ;
-                                if (col < 0) {
-                                    col = getColumnCount() - 1;
-                                    row-- ;
-                                    if (row < 0) {
-                                    	setFocus(true);
-                                    	finishEditing();
-                                        break;
-                                    }
-                                }
-                                if (startEditing(row, col, event.getNativeEvent())) {
-                                	event.preventDefault();
-                                	event.stopPropagation();
-                                    break;
-                                }
-                            }
-                        }
-
-                        break;
-                    case (KeyCodes.KEY_DOWN):
-                        // If Not editing select the next row below the current
-                        // selection
-                        if ( !isEditing()) {
-                            if (isAnyNodeSelected()) {
-                                row = getSelectedNode();
-                                while (true) {
-                                    row++ ;
-                                    if (row >= getRowCount())
-                                        break;
-                                    
-                                    selectNodeAt(row,event.getNativeEvent());
-                                    
-                                    if(isNodeSelected(row))
-                                    	break;
-                                }
-                            }
-                            break;
-                        }
-                        // If editing set focus to the same col cell in the next
-                        // selectable row below
-                        while (true) {
-                            row++ ;
-                            if (row >= getRowCount())
-                                break;
-                            if (startEditing(row, col, event.getNativeEvent())) {
-                                event.stopPropagation();
-                                event.preventDefault();
-                                break;
-                            }
-                        }
-                        break;
-                    case (KeyCodes.KEY_UP):
-                        // If Not editing select the next row above the current
-                        // selection
-                        if ( !isEditing()) {
-                            if (isAnyNodeSelected()) {
-                                row = getSelectedNode();
-                                while (true) {
-                                    row-- ;
-                                    if (row < 0)
-                                        break;
-                                    
-                                    selectNodeAt(row,event.getNativeEvent());
-                                    
-                                    if(isNodeSelected(row))
-                                        break;
-                                }
-                            }
-                            break;
-                        }
-                        // If editing set focus to the same col cell in the next
-                        // selectable row above
-                        while (true) {
-                            row-- ;
-                            if (row < 0)
-                                break;
-                            if (startEditing(row, col, event.getNativeEvent())) {
-                                event.stopPropagation();
-                                event.preventDefault();
-                                break;
-                            }
-                        }
-                        break;
-                    case (KeyCodes.KEY_ENTER):
-                        // If editing just finish and return
-                        if (isEditing()) {
-                            finishEditing();
-                            return;
-                        }
-                        // If not editing and a row is selected, focus on first
-                        // editable cell
-                        if (!isAnyNodeSelected()) 
-                        	row = 0;
-                        else
-                            row = getSelectedNode();
-                        
-                        col = 0;
-                        while (col < getColumnCount()) {
-                            if (startEditing(row, col, event.getNativeEvent()))
-                                break;
-                            col++ ;
-                        }
-                        break;
-                }
-            }
-        }, KeyDownEvent.getType());
-
+        
+        setKeyHandling();
     }
 
-    // ********* Tree Definition Methods *************
-    /**
-     * Returns the currently used Row Height for the tree layout
-     */
-    public int getRowHeight() {
-        return rowHeight;
-    }
-
-    /**
-     * Sets the Row Height to be used in the tree layout.
-     * 
-     * @param rowHeight
-     */
-    public void setRowHeight(int rowHeight) {
-        this.rowHeight = rowHeight;
-        layout();
-    }
-
-    /**
-     * Returns how many physical rows are used in the tree layout.
-     * 
-     * @return
-     */
-    public int getVisibleRows() {
-        return visibleNodes;
-    }
-
-    /**
-     * Sets how many physical rows are used in the tree layout.
-     * 
-     * @param visibleNodes
-     */
-    public void setVisibleRows(int visibleNodes) {
-        this.visibleNodes = visibleNodes;
-        layout();
-    }
 
     /**
      * Returns the Root node for this tree.
@@ -602,7 +369,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     protected void open(int row, NativeEvent event) {
         finishEditing();
         
-        selectNodeAt(row,event);
+        setSelection(row,event);
         
         Node node;
         int pos;
@@ -668,7 +435,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         finishEditing();
         
-        selectNodeAt(row,event);
+        setSelection(row,event);
         
         Node node;
         int pos;
@@ -799,81 +566,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     /**
-     * Used to determine if the tree currently allows multiple selection.
-     * 
-     * @return
-     */
-    public boolean isMultipleSelectionAllowed() {
-        return multiSelect;
-    }
-
-    /**
-     * Used to put the tree into Multiple Selection mode.
-     * 
-     * @param multiSelect
-     */
-    public void setAllowMultipleSelection(boolean multiSelect) {
-        this.multiSelect = multiSelect;
-    }
-
-    /**
-     * Returns the current Vertical Scrollbar view rule set.
-     * 
-     * @return
-     */
-    public Scrolling getVerticalScroll() {
-        return verticalScroll;
-    }
-
-    /**
-     * Sets the current Vertical Scrollbar view rule.
-     * 
-     * @param verticalScroll
-     */
-    public void setVerticalScroll(Scrolling verticalScroll) {
-        this.verticalScroll = verticalScroll;
-        layout();
-    }
-
-    /**
-     * Returns the current Horizontal Scrollbar view rule set
-     * 
-     * @return
-     */
-    public Scrolling getHorizontalScroll() {
-        return horizontalScroll;
-    }
-
-    /**
-     * Sets the current Horizontal Scrollbar view rule.
-     * 
-     * @param horizontalScroll
-     */
-    public void setHorizontalScroll(Scrolling horizontalScroll) {
-        this.horizontalScroll = horizontalScroll;
-        layout();
-    }
-
-    /**
-     * Sets a flag to set the size of the tree to always set room aside for
-     * scrollbars defaults to true
-     * 
-     * @param fixScrollBar
-     */
-    public void setFixScrollbar(boolean fixScrollBar) {
-        this.fixScrollBar = fixScrollBar;
-    }
-
-    /**
-     * Returns the flag indicating if the tree reserves space for the scrollbar
-     * 
-     * @return
-     */
-    public boolean getFixScrollbar() {
-        return fixScrollBar;
-    }
-
-    /**
      * Sets the width of the tree view
      * 
      * @param width
@@ -900,29 +592,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public int getWidth() {
         return viewWidth;
-    }
-
-    /**
-     * Returns the view width of the tree minus the the width of the scrollbar
-     * if the scrollbar is visible or if space has been reserved for it
-     * 
-     * @return
-     */
-    protected int getWidthWithoutScrollbar() {
-        //if (verticalScroll != Scrolling.NEVER && fixScrollBar  && viewWidth > -1)
-            //return viewWidth - 18;
-
-        return viewWidth == -1 ? totalColumnWidth : viewWidth;
-    }
-
-    /**
-     * Returns the width of the all the column widths added together which is
-     * the physical width of the tree
-     * 
-     * @return
-     */
-    protected int getTotalColumnWidth() {
-        return totalColumnWidth;
     }
 
     
@@ -1003,45 +672,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         return columns.indexOf(col);
     }
 
-    /**
-     * Returns the X coordinate on the Screen of the Column passed.
-     * 
-     * @param index
-     * @return
-     */
-    protected int getXForColumn(int index) {
-        if (xForColumn != null && index >= 0 && index < xForColumn.length)
-            return xForColumn[index];
-        return -1;
-    }
-
-    /**
-     * Returns the Column for the current mouse x position passed in the header
-     * 
-     * @param x
-     * @return
-     */
-    protected int getColumnForX(int x) {
-        if (columnForX != null && x >= 0 && x < columnForX.length)
-            return columnForX[x];
-        return -1;
-    }
-
-    /**
-     * Sets whether the tree as a header or not.
-     */
-    public void setHeader(boolean hasHeader) {
-        this.hasHeader = hasHeader;
-    }
-
-    /**
-     * Used to determine if tree has header
-     * 
-     * @return
-     */
-    public boolean hasHeader() {
-        return hasHeader;
-    }
 
     /**
      * Sets the list columns to be used by this Tree
@@ -1052,7 +682,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         this.columns = columns;
 
         for (Column column : columns)
-            column.setTree(this);
+            column.setController(this);
 
         layout();
     }
@@ -1096,7 +726,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         Column column;
 
         column = new Column.Builder(75).name(name).label(label).build();
-        column.setTree(this);
+        column.setController(this);
         columns.add(index, column);
         for(Node node : getAllNodes()) {
         	if(node.getCells().size() >= index)
@@ -1420,7 +1050,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param index
      */
     public void selectNodeAt(int index) {
-        selectNodeAt(index, null);
+        setSelection(index, null);
     }
 
     /**
@@ -1446,7 +1076,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * 
      * @param index
      */
-    public void selectNodeAt(int index, NativeEvent event) {
+    public void setSelection(int index, NativeEvent event) {
         if(index < 0) {
             unselectAll();
             return;
@@ -1495,7 +1125,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void selectNodeAt(Node node, NativeEvent event) {
         if(isDisplayed(node))
-        	selectNodeAt(nodeIndex.get(node).index,event);
+        	setSelection(nodeIndex.get(node).index,event);
     }
     
     public void selectAll() {
@@ -1715,83 +1345,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             NodeClosedEvent.fire(this, index, getNodeAt(index));
     }
     
-    /**
-     * Private method that will fire a BeforeSelectionEvent for the passed
-     * index. Returns false if the selection is canceled by registered handler
-     * and true if the selection is allowed.
-     */
-    private boolean fireBeforeSelectionEvent(int index) {
-        BeforeSelectionEvent<Integer> event = null;
-
-        if ( !queryMode)
-            event = BeforeSelectionEvent.fire(this, index);
-
-        return event == null || !event.isCanceled();
-    }
-
-    /**
-     * Private method that will fire a SelectionEvent for the passed index to
-     * notify all registered handlers that row at the passed index was selected.
-     * Returns true as a default.
-     * 
-     * @param index
-     * @return
-     */
-    private boolean fireSelectionEvent(int index) {
-
-        if ( !queryMode)
-            SelectionEvent.fire(this, index);
-
-        return true;
-    }
-
-    /**
-     * Private method that will fire an UnselectionEvent for the passed index.
-     * Returns false if the unselection was canceled by a registered handler and
-     * true if the unselection is allowed.
-     * 
-     * @param index
-     * @return
-     */
-    public void fireUnselectEvent(int index) {
-
-        if ( !queryMode)
-            UnselectionEvent.fire(this, index);
-    }
-
-    /**
-     * Private method that will fire a BeforeCellEditedEvent for a cell in the
-     * table. Returns false if the cell editing is canceled by a registered
-     * handler and true if the user is allowed to edit the cell.
-     * 
-     * @param row
-     * @param col
-     * @param val
-     * @return
-     */
-    private boolean fireBeforeCellEditedEvent(int row, int col, Object val) {
-        BeforeCellEditedEvent event = null;
-
-        if ( !queryMode)
-            event = BeforeCellEditedEvent.fire(this, row, col, val);
-
-        return event == null || !event.isCancelled();
-    }
-
-    /**
-     * Private method that will fire a CellEditedEvent after the value of a cell
-     * is changed by a user input. Returns true as default.
-     * 
-     * @param index
-     * @return
-     */
-    private boolean fireCellEditedEvent(int row, int col) {
-
-        if ( !queryMode)
-            CellEditedEvent.fire(this, row, col);
-
-        return true;
-    }
 
     /**
      * Private method that fires a BeforeRowAddedEvent for the passed index and
@@ -1862,22 +1415,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         return true;
     }
     
-    protected boolean fireCellClickedEvent(int row, int col, boolean ctrlKey, boolean shiftKey) {
-    	CellClickedEvent event = null;
-    	
-    	if( !queryMode) 
-    		event = CellClickedEvent.fire(this, row, col, ctrlKey, shiftKey);
-    	
-    	return event == null || !event.isCancelled();
-    }
-
-    // ********* Edit Tree Methods *******************
-    /**
-     * Used to determine if a cell is currently being edited in the Tree
-     */
-    public boolean isEditing() {
-        return editing;
-    }
 
     /**
      * Sets the value of a cell in Tree model.
@@ -1996,7 +1533,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         finishEditing();
 
-        selectNodeAt(row,event);
+        setSelection(row,event);
 
         // Check if the row was able to be selected, if not return.
         if ( !isNodeSelected(row))
@@ -2079,23 +1616,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 			setFocus(true);
     }
 
-    /**
-     * Returns the current row where cell is being edited
-     * 
-     * @return
-     */
-    public int getEditingRow() {
-        return editingRow;
-    }
-
-    /**
-     * Returns the current column where cell is being edited
-     * 
-     * @return
-     */
-    public int getEditingCol() {
-        return editingCol;
-    }
     
     @SuppressWarnings("rawtypes")
 	protected CellEditor getCellEditor(int r, int c) {
@@ -2168,34 +1688,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     /**
-     * Method computes the XForColumn and ColumForX arrays and set the
-     * totoalColumnWidth
-     */
-    private void computeColumnsWidth() {
-        int from, to;
-
-        //
-        // compute total width
-        //
-        totalColumnWidth = 0;
-        xForColumn = new short[getColumnCount()];
-        for (int i = 0; i < getColumnCount(); i++ ) {
-            xForColumn[i] = (short)totalColumnWidth;
-            totalColumnWidth += getColumnAt(i).getWidth();
-        }
-        //
-        // mark the array
-        //
-        from = 0;
-        columnForX = new short[totalColumnWidth];
-        for (int i = 0; i < getColumnCount(); i++ ) {
-            to = from + getColumnAt(i).getWidth();
-            while (from < to)
-                columnForX[from++ ] = (short)i;
-        }
-    }
-
-    /**
      * redraws data in the cell passed
      * 
      * @param row
@@ -2210,21 +1702,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
 
     // ************* Implementation of ScreenWidgetInt *************
-
-    /**
-     * Sets whether this tree allows selection
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-
-    }
-
-    /**
-     * Used to determine if the tree is enabled for selection.
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     /**
      * Sets the Focus style to the Tree
@@ -2269,7 +1746,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         for (int i = 0; i < getColumnCount(); i++ ) {
             qd = (QueryData)getValueAt(0, i);
             if (qd != null) {
-                qd.setKey(getColumnAt(i).name);
+                qd.setKey(getColumnAt(i).getName());
                 qds.add(qd);
             }
         }
@@ -2619,96 +2096,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                                x, y);
     }
 
-    // ************ Drag and Drop methods **********************************
-    /**
-     * Method will enable the rows in the tree to be dragged. This must be
-     * called before the model is first set.
-     */
-    public void enableDrag() {
-        assert root == null : "Drag must be set before model is loaded";
-
-        dragController = new TreeDragController(this, RootPanel.get());
-    }
-
-    /**
-     * Method will enable this tree to receive drop events from a drag
-     */
-    public void enableDrop() {
-        dropController = new TreeDropController(this);
-    }
-
-    /**
-     * Adds a DropController as a drop target for rows from this tree
-     * 
-     * @param target
-     */
-    public void addDropTarget(DropController target) {
-        dragController.registerDropController(target);
-    }
-
-    /**
-     * Removes a DropController as a drop target for rows from this tree
-     * 
-     * @param target
-     */
-    public void removeDropTarget(DropController target) {
-        dragController.unregisterDropController(target);
-    }
-
-    /**
-     * Returns the TreeDragController for this Tree.
-     * 
-     * @return
-     */
-    public TreeDragController getDragController() {
-        return dragController;
-    }
-
-    /**
-     * Returns the TreeDropController for this Tree.
-     * 
-     * @return
-     */
-    public TreeDropController getDropController() {
-        return dropController;
-    }
-
     // ********* Registration of Handlers ******************
-    /**
-     * Registers a BeforeSelectionHandler to this Tree
-     */
-    public HandlerRegistration addBeforeSelectionHandler(BeforeSelectionHandler<Integer> handler) {
-        return addHandler(handler, BeforeSelectionEvent.getType());
-    }
-
-    /**
-     * Registers a SelectionHandler to this Tree
-     */
-    public HandlerRegistration addSelectionHandler(SelectionHandler<Integer> handler) {
-        return addHandler(handler, SelectionEvent.getType());
-    }
-
-    /**
-     * Registers an UnselectionHandler to this Tree
-     */
-    public HandlerRegistration addUnselectionHandler(UnselectionHandler<Integer> handler) {
-        return addHandler(handler, UnselectionEvent.getType());
-    }
-
-    /**
-     * Registers a BeforeCellEditedHandler to this Tree
-     */
-    public HandlerRegistration addBeforeCellEditedHandler(BeforeCellEditedHandler handler) {
-        return addHandler(handler, BeforeCellEditedEvent.getType());
-    }
-
-    /**
-     * Registers a CellEditedHandler to this Tree
-     */
-    public HandlerRegistration addCellEditedHandler(CellEditedHandler handler) {
-        return addHandler(handler, CellEditedEvent.getType());
-    }
-
     /**
      * Registers a BeforeRowAddedHandler to this Tree
      */
@@ -2765,13 +2153,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         return addHandler(handler, NodeOpenedEvent.getType());
     }
     
-    /**
-     * Registers a CellClickedEvent to this Tree
-     */
-    public HandlerRegistration addCellClickedHandler(CellClickedHandler handler) {
-    	return addHandler(handler, CellClickedEvent.getType());
-    }
-
     /**
      * This method will check the model to make sure that all required cells
      * have values
@@ -2908,7 +2289,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     @Override
     public void add(IsWidget w) {
         if(w instanceof Column) {
-            ((Column)w).setTree(this);
+            ((Column)w).setController(this);
             addColumn((Column)w);
         } else if (w instanceof Leaf) {
             addNodeDefinition(((Leaf)w).getKey(),((Leaf)w).getColumns());
@@ -2989,4 +2370,60 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
            
        });
     }
+
+
+	@Override
+	protected void cancelBalloonTimer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	protected <T extends Row> T getRowAt(int row) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public boolean isRowSelected(int row) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	protected <T extends Row> ArrayList<T> getModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	protected org.openelis.ui.widget.table.ViewInt view() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	protected void applyFilters() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	protected void applySort(int col, int dir, Comparator<? super Row> sort) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	protected UniqueFilter newFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

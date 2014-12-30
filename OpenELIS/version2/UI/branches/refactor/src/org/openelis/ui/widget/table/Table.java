@@ -55,7 +55,7 @@ import org.openelis.ui.widget.table.event.CellClickedHandler;
 import org.openelis.ui.widget.table.event.CellDoubleClickedEvent;
 import org.openelis.ui.widget.table.event.CellEditedEvent;
 import org.openelis.ui.widget.table.event.CellEditedHandler;
-import org.openelis.ui.widget.table.event.CellMouseOverEvent;
+import org.openelis.ui.widget.cell.CellMouseOverEvent;
 import org.openelis.ui.widget.table.event.FilterEvent;
 import org.openelis.ui.widget.table.event.FilterHandler;
 import org.openelis.ui.widget.table.event.HasBeforeCellEditedHandlers;
@@ -115,25 +115,13 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
-		HasBeforeSelectionHandlers<Integer>, HasSelectionHandlers<Integer>,
-		HasUnselectionHandlers<Integer>, HasBeforeCellEditedHandlers,
-		RequiresResize, HasCellEditedHandlers, HasBeforeRowAddedHandlers,
+public class Table extends Controller implements ScreenWidgetInt, Queryable,
+		
+		RequiresResize,  HasBeforeRowAddedHandlers,
 		HasRowAddedHandlers, HasBeforeRowDeletedHandlers,
-		HasRowDeletedHandlers, HasCellClickedHandlers,
+		HasRowDeletedHandlers,
 		HasValue<ArrayList<? extends Row>>, HasExceptions, Focusable,
-		FocusHandler, HasFilterHandlers, HasBalloon {
-
-	/**
-	 * Cell that is currently being edited.
-	 */
-	protected int editingRow = -1, editingCol = -1;
-
-	/**
-	 * Table dimensions
-	 */
-	protected int rowHeight, visibleRows = 10, viewWidth = -1,
-			totalColumnWidth;
+		FocusHandler, HasFilterHandlers, HasBalloon {			
 
 	/**
 	 * Model used by the Table
@@ -148,10 +136,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 */
 	protected ArrayList<Column> columns;
 
-	/**
-	 * List of selected Rows by index in the table
-	 */
-	protected ArrayList<Integer> selections = new ArrayList<Integer>(5);
+	
 
 	/**
 	 * Exception lists for the table
@@ -162,36 +147,15 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	/**
 	 * Table state values
 	 */
-	protected boolean enabled, multiSelect, editing, hasFocus, queryMode,
-			hasHeader, unitTest, fixScrollBar = true, ctrlDefault;
+	protected boolean hasFocus, unitTest, fixScrollBar = true, ctrlDefault;
 
-	/**
-	 * Enum representing the state of when the scroll bar should be shown.
-	 */
-	public enum Scrolling {
-		ALWAYS, AS_NEEDED, NEVER
-	};
-
-	/**
-	 * Fields to hold state of whether the scroll bars are shown
-	 */
-	protected Scrolling verticalScroll, horizontalScroll;
 
 	/**
 	 * Reference to the View composite for this widget.
 	 */
 	protected ViewInt view;
 
-	/**
-	 * Arrays for determining relative X positions for columns
-	 */
-	protected short[] xForColumn, columnForX;
 
-	/**
-	 * Drag and Drop controllers
-	 */
-	protected TableDragController dragController;
-	protected TableDropController dropController;
 
 	protected HandlerRegistration visibleHandler;
 
@@ -215,8 +179,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		int rowHeight = 16;
 		Integer width;
 		boolean multiSelect, hasHeader, fixScroll = true;
-		Scrolling verticalScroll = Scrolling.ALWAYS;
-		Scrolling horizontalScroll = Scrolling.ALWAYS;
 		ArrayList<Column> columns = new ArrayList<Column>(5);
 
 		public Builder(int visibleRows) {
@@ -230,16 +192,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 		public Builder multiSelect(boolean multiSelect) {
 			this.multiSelect = multiSelect;
-			return this;
-		}
-
-		public Builder verticalScroll(Scrolling vertical) {
-			this.verticalScroll = vertical;
-			return this;
-		}
-
-		public Builder horizontalScroll(Scrolling horizontal) {
-			this.horizontalScroll = horizontal;
 			return this;
 		}
 
@@ -281,10 +233,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	public Table(Builder builder) {
 
 		rowHeight = builder.rowHeight;
-		visibleRows = builder.visibleRows;
 		multiSelect = builder.multiSelect;
-		verticalScroll = builder.verticalScroll;
-		horizontalScroll = builder.horizontalScroll;
 		fixScrollBar = builder.fixScroll;
 		hasHeader = builder.hasHeader;
 		view = new StaticView(this);
@@ -297,223 +246,9 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		setKeyHandling();
 	}
 
-	public void setInfiniteView() {
-		view = new InfiniteView(this);
-		setWidget(view);
-	}
-
-	private void setKeyHandling() {
-		/*
-		 * This Handler takes care of all key events on the table when editing
-		 * and when only selection is on
-		 */
-		addDomHandler(new KeyDownHandler() {
-			public void onKeyDown(KeyDownEvent event) {
-				int row, col, keyCode;
-
-				if (!isEnabled())
-					return;
-				keyCode = event.getNativeEvent().getKeyCode();
-				row = editingRow;
-				col = editingCol;
-
-				if (isEditing()
-						&& getColumnAt(col).getCellEditor().ignoreKey(keyCode))
-					return;
-
-				switch (keyCode) {
-				case (KeyCodes.KEY_TAB):
-
-					// Ignore if no cell is currently being edited
-					if (!editing)
-						break;
-
-					// Tab backwards if shift pressed otherwise tab forward
-					if (!event.isShiftKeyDown()) {
-						while (true) {
-							col++;
-							if (col >= getColumnCount()) {
-								col = 0;
-								row++;
-								if (row >= getRowCount()) {
-									setFocus(true);
-									break;
-								}
-
-							}
-							if (startEditing(row, col, event.getNativeEvent())) {
-								event.preventDefault();
-								event.stopPropagation();
-								break;
-							}
-						}
-					} else {
-						while (true) {
-							col--;
-							if (col < 0) {
-								col = getColumnCount() - 1;
-								row--;
-								if (row < 0) {
-									setFocus(true);
-									break;
-								}
-							}
-							if (startEditing(row, col, event.getNativeEvent())) {
-								event.preventDefault();
-								event.stopPropagation();
-								break;
-							}
-						}
-					}
-
-					break;
-				case (KeyCodes.KEY_DOWN):
-					// If Not editing select the next row below the current
-					// selection
-					if (!isEditing()) {
-						if (isAnyRowSelected()) {
-							row = getSelectedRow();
-							while (true) {
-								row++;
-								if (row >= getRowCount())
-									break;
-
-								selectRowAt(row, event.getNativeEvent());
-
-								if (isRowSelected(row))
-									break;
-							}
-						}
-						break;
-					}
-					// If editing set focus to the same col cell in the next
-					// selectable row below
-					while (true) {
-						row++;
-						if (row >= getRowCount())
-							break;
-						if (startEditing(row, col, event.getNativeEvent())) {
-							event.stopPropagation();
-							event.preventDefault();
-							break;
-						}
-					}
-					break;
-				case (KeyCodes.KEY_UP):
-					// If Not editing select the next row above the current
-					// selection
-					if (!isEditing()) {
-						if (isAnyRowSelected()) {
-							row = getSelectedRow();
-							while (true) {
-								row--;
-								if (row < 0)
-									break;
-
-								selectRowAt(row, event.getNativeEvent());
-
-								if (isRowSelected(row))
-									break;
-							}
-						}
-						break;
-					}
-					// If editing set focus to the same col cell in the next
-					// selectable row above
-					while (true) {
-						row--;
-						if (row < 0)
-							break;
-						if (startEditing(row, col, event.getNativeEvent())) {
-							event.stopPropagation();
-							event.preventDefault();
-							break;
-						}
-					}
-					break;
-				case (KeyCodes.KEY_ENTER):
-					// If editing just finish and return
-					if (isEditing()) {
-						finishEditing();
-						return;
-					}
-
-					if (getRowCount() == 0)
-						return;
-
-					// If not editing and a row is selected, focus on first
-					// editable cell
-					if (!isAnyRowSelected())
-						row = 0;
-					else
-						row = getSelectedRow();
-					col = 0;
-					while (col < getColumnCount()) {
-						if (startEditing(row, col, event.getNativeEvent()))
-							break;
-						col++;
-					}
-					break;
-				}
-			}
-		}, KeyDownEvent.getType());
-
-		addDomHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				// removeStyleName(UIResources.INSTANCE.text().Focus());
-			}
-		}, BlurEvent.getType());
-
-		addDomHandler(new FocusHandler() {
-			@Override
-			public void onFocus(FocusEvent event) {
-				// addStyleName(UIResources.INSTANCE.text().Focus());
-			}
-		}, FocusEvent.getType());
-	}
-
 	// ********* Table Definition Methods *************
-	/**
-	 * Returns the currently used Row Height for the table layout
-	 */
-	public int getRowHeight() {
-		return rowHeight;
-	}
 
-	public int getCellHeight() {
-		return view.rowHeight();
-	}
 
-	/**
-	 * Sets the Row Height to be used in the table layout.
-	 * 
-	 * @param rowHeight
-	 */
-	public void setRowHeight(int rowHeight) {
-		this.rowHeight = rowHeight;
-		// view.firstAttach = true;
-		layout();
-	}
-
-	/**
-	 * Returns how many physical rows are used in the table layout.
-	 * 
-	 * @return
-	 */
-	public int getVisibleRows() {
-		return visibleRows;
-	}
-
-	/**
-	 * Sets how many physical rows are used in the table layout.
-	 * 
-	 * @param visibleRows
-	 */
-	public void setVisibleRows(int visibleRows) {
-		this.visibleRows = visibleRows;
-		layout();
-	}
 
 	/**
 	 * Returns the data model currently being displayed by this table. The
@@ -796,82 +531,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	}
 
 	/**
-	 * Used to determine if the table currently allows multiple selection.
-	 * 
-	 * @return
-	 */
-	public boolean isMultipleSelectionAllowed() {
-		return multiSelect;
-	}
-
-	/**
-	 * Used to put the table into Multiple Selection mode.
-	 * 
-	 * @param multiSelect
-	 */
-	public void setAllowMultipleSelection(boolean multiSelect) {
-		this.multiSelect = multiSelect;
-	}
-
-	/**
-	 * Returns the current Vertical Scrollbar view rule set.
-	 * 
-	 * @return
-	 */
-	public Scrolling getVerticalScroll() {
-		return verticalScroll;
-	}
-
-	/**
-	 * Sets the current Vertical Scrollbar view rule.
-	 * 
-	 * @param verticalScroll
-	 */
-	public void setVerticalScroll(String verticalScroll) {
-		this.verticalScroll = Scrolling.valueOf(verticalScroll);
-		layout();
-
-	}
-
-	/**
-	 * Returns the current Horizontal Scrollbar view rule set
-	 * 
-	 * @return
-	 */
-	public Scrolling getHorizontalScroll() {
-		return horizontalScroll;
-	}
-
-	/**
-	 * Sets the current Horizontal Scrollbar view rule.
-	 * 
-	 * @param horizontalScroll
-	 */
-	public void setHorizontalScroll(String horizontalScroll) {
-		this.horizontalScroll = Scrolling.valueOf(horizontalScroll);
-		layout();
-	}
-
-	/**
-	 * Sets a flag to set the size of the table to always set room aside for
-	 * scrollbars defaults to true
-	 * 
-	 * @param fixScrollBar
-	 */
-	public void setFixScrollbar(boolean fixScrollBar) {
-		this.fixScrollBar = fixScrollBar;
-	}
-
-	/**
-	 * Returns the flag indicating if the table reserves space for the scrollbar
-	 * 
-	 * @return
-	 */
-	public boolean getFixScrollbar() {
-		return fixScrollBar;
-	}
-
-	/**
 	 * Sets the width of the table view
 	 * 
 	 * @param width
@@ -896,41 +555,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 * 
 	 * @return
 	 */
-	public int getWidth() {
-		return viewWidth;
-	}
-
-	/**
-	 * Returns the view width of the table minus the the width of the scrollbar
-	 * if the scrollbar is visible or if space has been reserved for it
-	 * 
-	 * @return
-	 */
-	protected int getWidthWithoutScrollbar() {
-		if (viewWidth < 0 && totalColumnWidth == 0 && getParent() != null) {
-			if (getParent() instanceof LayoutPanel)
-				return ((LayoutPanel) getParent()).getWidgetContainerElement(
-						this).getOffsetWidth()
-						- (int) Math.ceil(CSSUtils
-								.getAddedBorderWidth(getElement()));
-			else
-				return getParent().getOffsetWidth()
-						- (int) Math.ceil(CSSUtils
-								.getAddedBorderWidth(getElement()));
-		}
-		return (viewWidth == -1 ? totalColumnWidth : viewWidth)
-				- (int) Math.ceil(CSSUtils.getAddedBorderWidth(getElement()));
-	}
-
-	/**
-	 * Returns the width of the all the column widths added together which is
-	 * the physical width of the table
-	 * 
-	 * @return
-	 */
-	public int getTotalColumnWidth() {
-		return totalColumnWidth;
-	}
+	//public int getWidth() {
+	//	return viewWidth;
+	//}
+	
 
 	/**
 	 * Returns the number of columns used in this Table
@@ -985,7 +613,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 * @param col
 	 */
 	public void setColumnAt(int index, Column col) {
-		col.setTable(this);
+		col.setController(this);
 		columns.set(index, col);
 		layout();
 	}
@@ -1014,45 +642,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		return (T) getColumnWidget(getColumnByName(name));
 	}
 
-	/**
-	 * Returns the X coordinate on the Screen of the Column passed.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	protected int getXForColumn(int index) {
-		if (xForColumn != null && index >= 0 && index < xForColumn.length)
-			return xForColumn[index];
-		return -1;
-	}
 
-	/**
-	 * Returns the Column for the current mouse x position passed in the header
-	 * 
-	 * @param x
-	 * @return
-	 */
-	protected int getColumnForX(int x) {
-		if (columnForX != null && x >= 0 && x < columnForX.length)
-			return columnForX[x];
-		return -1;
-	}
 
-	/**
-	 * Sets whether the table as a header or not.
-	 */
-	public void setHeader(boolean hasHeader) {
-		this.hasHeader = hasHeader;
-	}
-
-	/**
-	 * Used to determine if table has header
-	 * 
-	 * @return
-	 */
-	public boolean hasHeader() {
-		return hasHeader;
-	}
 
 	/**
 	 * Sets the list columns to be used by this Table
@@ -1064,7 +655,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 		if (columns != null) {
 			for (Column column : columns)
-				column.setTable(this);
+				column.setController(this);
 		}
 
 		layout();
@@ -1114,7 +705,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 		column = new Column.Builder(width).name(name).label(label).build();
 		addColumnAt(index, column);
-		column.setTable(this);
+		column.setController(this);
 		return column;
 	}
 
@@ -1131,7 +722,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 	public void addColumnAt(int index, Column column) {
 		columns.add(index, column);
-		column.setTable(this);
+		column.setController(this);
 		if (model != null) {
 			for (Row row : model)
 				row.cells.add(index, null);
@@ -1350,7 +941,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 * @param index
 	 */
 	public void selectRowAt(int index) {
-		selectRowAt(index, null);
+		setSelection(index, null);
 	}
 
 	/**
@@ -1362,7 +953,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 * 
 	 * @param index
 	 */
-	protected void selectRowAt(int row, NativeEvent event) {
+	protected void setSelection(int row, NativeEvent event) {
 
 		if (row < 0) {
 			unselectAll();
@@ -1554,83 +1145,10 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 	// ********* Event Firing Methods ********************
 
-	/**
-	 * Private method that will fire a BeforeSelectionEvent for the passed
-	 * index. Returns false if the selection is canceled by registered handler
-	 * and true if the selection is allowed.
-	 */
-	private boolean fireBeforeSelectionEvent(int index) {
-		BeforeSelectionEvent<Integer> event = null;
 
-		if (!queryMode)
-			event = BeforeSelectionEvent.fire(this, index);
 
-		return event == null || !event.isCanceled();
-	}
 
-	/**
-	 * Private method that will fire a SelectionEvent for the passed index to
-	 * notify all registered handlers that row at the passed index was selected.
-	 * Returns true as a default.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	private boolean fireSelectionEvent(int index) {
 
-		if (!queryMode)
-			SelectionEvent.fire(this, index);
-
-		return true;
-	}
-
-	/**
-	 * Private method that will fire an UnselectionEvent for the passed index.
-	 * Returns false if the unselection was canceled by a registered handler and
-	 * true if the unselection is allowed.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	private void fireUnselectEvent(int index) {
-
-		if (!queryMode)
-			UnselectionEvent.fire(this, index);
-	}
-
-	/**
-	 * Private method that will fire a BeforeCellEditedEvent for a cell in the
-	 * table. Returns false if the cell editing is canceled by a registered
-	 * handler and true if the user is allowed to edit the cell.
-	 * 
-	 * @param row
-	 * @param col
-	 * @param val
-	 * @return
-	 */
-	private boolean fireBeforeCellEditedEvent(int row, int col, Object val) {
-		BeforeCellEditedEvent event = null;
-
-		if (!queryMode)
-			event = BeforeCellEditedEvent.fire(this, row, col, val);
-
-		return event == null || !event.isCancelled();
-	}
-
-	/**
-	 * Private method that will fire a CellEditedEvent after the value of a cell
-	 * is changed by a user input. Returns true as default.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	private boolean fireCellEditedEvent(int row, int col) {
-
-		if (!queryMode)
-			CellEditedEvent.fire(this, row, col);
-
-		return true;
-	}
 
 	/**
 	 * Private method that fires a BeforeRowAddedEvent for the passed index and
@@ -1701,22 +1219,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		return true;
 	}
 
-	protected boolean fireCellClickedEvent(int row, int col, boolean ctrlKey,
-			boolean shiftKey) {
-		CellClickedEvent event = null;
-
-		if (!queryMode)
-			event = CellClickedEvent.fire(this, row, col, ctrlKey, shiftKey);
-
-		return event == null || !event.isCancelled();
-
-	}
-
-	protected void fireCellDoubleClickedEvent(int row, int col) {
-		if (!queryMode)
-			CellDoubleClickedEvent.fire(this, row, col);
-	}
-
 	/**
 	 * Fires a Filter event after this table has been filtered and the new model
 	 * is displayed.
@@ -1726,12 +1228,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	}
 
 	// ********* Edit Table Methods *******************
-	/**
-	 * Used to determine if a cell is currently being edited in the Table
-	 */
-	public boolean isEditing() {
-		return editing;
-	}
+
 
 	/**
 	 * Sets the value of a cell in Table model.
@@ -1814,7 +1311,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	protected boolean startEditing(final int row, final int col,
+	public boolean startEditing(final int row, final int col,
 			final NativeEvent event) {
 
 		/*
@@ -1831,7 +1328,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 		finishEditing();
 
-		selectRowAt(row, event);
+		setSelection(row, event);
 
 		// Check if the row was able to be selected, if not return.
 		if (!isRowSelected(row))
@@ -1909,23 +1406,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 			setFocus(true);
 	}
 
-	/**
-	 * Returns the current row where cell is being edited
-	 * 
-	 * @return
-	 */
-	public int getEditingRow() {
-		return editingRow;
-	}
 
-	/**
-	 * Returns the current column where cell is being edited
-	 * 
-	 * @return
-	 */
-	public int getEditingCol() {
-		return editingCol;
-	}
 
 	// ********* Draw Scroll Methods ****************
 	/**
@@ -1987,39 +1468,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 		view.renderView(startR, endR);
 	}
 
-	/**
-	 * Method computes the XForColumn and ColumForX arrays and set the
-	 * totoalColumnWidth
-	 */
-	private void computeColumnsWidth() {
-		int from, to;
 
-		//
-		// compute total width
-		//
-		totalColumnWidth = 0;
-		int xmark = 0;
-		xForColumn = new short[getColumnCount()];
-		for (int i = 0; i < getColumnCount(); i++) {
-			if (getColumnAt(i).isDisplayed()) {
-				xForColumn[i] = (short) xmark;
-				xmark += getColumnAt(i).getWidth();
-			}
-			totalColumnWidth += getColumnAt(i).getWidth();
-		}
-		//
-		// mark the array
-		//
-		from = 0;
-		columnForX = new short[xmark];
-		for (int i = 0; i < getColumnCount(); i++) {
-			if (getColumnAt(i).isDisplayed()) {
-				to = from + getColumnAt(i).getWidth();
-				while (from < to && from + 1 < xmark)
-					columnForX[from++] = (short) i;
-			}
-		}
-	}
 
 	/**
 	 * redraws data in the cell passed
@@ -2033,20 +1482,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 	// ************* Implementation of ScreenWidgetInt *************
 
-	/**
-	 * Sets whether this table allows selection
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
 
-	}
-
-	/**
-	 * Used to determine if the table is enabled for selection.
-	 */
-	public boolean isEnabled() {
-		return enabled;
-	}
 
 	/**
 	 * Sets the Focus style to the Table
@@ -2454,7 +1890,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 * @param x
 	 * @param y
 	 */
-	protected void drawExceptions(final int row, final int col, final int x,
+	public void drawExceptions(final int row, final int col, final int x,
 			final int y) {
 		if (row == editingRow && col == editingCol)
 			return;
@@ -2463,108 +1899,14 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 			public void run() {
 
 				Balloon.drawExceptions(getEndUserExceptions(row, col),
-						getValidateExceptions(row, col), view.table()
+						getValidateExceptions(row, col), view.grid()
 								.getCellFormatter().getElement(row, col), x, y);
 			}
 		};
 		balloonTimer.schedule(500);
 	}
 
-	// ******************** Drag and Drop methods
-	// ****************************************
-	/**
-	 * Method will enable the rows in the table to be dragged. This must be
-	 * called before the model is first set.
-	 */
-	public void enableDrag() {
-		assert model == null : "Drag must be set before model is loaded";
-
-		dragController = new TableDragController(this, RootPanel.get());
-	}
-
-	/**
-	 * Method will enable this table to receive drop events from a drag
-	 */
-	public void enableDrop() {
-		dropController = new TableDropController(this);
-	}
-
-	/**
-	 * Adds a DropController as a drop target for rows from this table
-	 * 
-	 * @param target
-	 */
-	public void addDropTarget(DropController target) {
-		dragController.registerDropController(target);
-	}
-
-	/**
-	 * Removes a DropController as a drop target for rows from this table
-	 * 
-	 * @param target
-	 */
-	public void removeDropTarget(DropController target) {
-		dragController.unregisterDropController(target);
-	}
-
-	/**
-	 * Returns the TableDragController for this Table.
-	 * 
-	 * @return
-	 */
-	public TableDragController getDragController() {
-		return dragController;
-	}
-
-	/**
-	 * Returns the TableDropController for this Table.
-	 * 
-	 * @return
-	 */
-	public TableDropController getDropController() {
-		return dropController;
-	}
-
 	// ********* Registration of Handlers ******************
-	/**
-	 * Registers a BeforeSelectionHandler to this Table
-	 */
-	public HandlerRegistration addBeforeSelectionHandler(
-			BeforeSelectionHandler<Integer> handler) {
-		return addHandler(handler, BeforeSelectionEvent.getType());
-	}
-
-	/**
-	 * Registers a SelectionHandler to this Table
-	 */
-	public HandlerRegistration addSelectionHandler(
-			SelectionHandler<Integer> handler) {
-		return addHandler(handler, SelectionEvent.getType());
-	}
-
-	/**
-	 * Registers an UnselectionHandler to this Table
-	 */
-	public HandlerRegistration addUnselectionHandler(
-			UnselectionHandler<Integer> handler) {
-		return addHandler(handler, UnselectionEvent.getType());
-	}
-
-	/**
-	 * Registers a BeforeCellEditedHandler to this Table
-	 */
-	public HandlerRegistration addBeforeCellEditedHandler(
-			BeforeCellEditedHandler handler) {
-		return addHandler(handler, BeforeCellEditedEvent.getType());
-	}
-
-	/**
-	 * Registers a CellEditedHandler to this Table
-	 */
-	public HandlerRegistration addCellEditedHandler(CellEditedHandler handler) {
-		return addHandler(handler, CellEditedEvent.getType());
-	}
-
 	/**
 	 * Registers a BeforeRowAddedHandler to this Table
 	 */
@@ -2593,18 +1935,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	 */
 	public HandlerRegistration addRowDeletedHandler(RowDeletedHandler handler) {
 		return addHandler(handler, RowDeletedEvent.getType());
-	}
-
-	/**
-	 * Register a CellClickedHandler to this Table
-	 */
-	public HandlerRegistration addCellClickedHandler(CellClickedHandler handler) {
-		return addHandler(handler, CellClickedEvent.getType());
-	}
-
-	public HandlerRegistration addCellDoubleClickedHandler(
-			CellDoubleClickedEvent.Handler handler) {
-		return addHandler(handler, CellDoubleClickedEvent.getType());
 	}
 
 	/**
@@ -2914,7 +2244,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	public void add(IsWidget w) {
 		assert w instanceof Column;
 
-		((Column) w).setTable(this);
+		((Column) w).setController(this);
 		addColumn((Column) w);
 	}
 
@@ -2960,7 +2290,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
 		options.setPlacement(Placement.MOUSE);
 
-		view.table().addCellMouseOverHandler(new CellMouseOverEvent.Handler() {
+		view.grid().addCellMouseOverHandler(new CellMouseOverEvent.Handler() {
 
 			@Override
 			public void onCellMouseOver(CellMouseOverEvent event) {
@@ -3015,6 +2345,14 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 	public void cancelBalloonTimer() {
 		if (balloonTimer != null)
 			balloonTimer.cancel();
+	}
+	
+	public ViewInt view() {
+		return view;
+	}
+	
+	public UniqueFilter newFilter() {
+		return new UniqueFilter();
 	}
 
 }

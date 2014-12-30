@@ -49,7 +49,7 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     /**
      * Reference to the Table containing this column
      */
-    protected Table        table;
+    protected Controller    controller;
     
     /**
      * Filter used for this column
@@ -225,8 +225,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      * 
      * @return
      */
-    public Table getTable() {
-        return table;
+    public Controller getController() {
+        return controller;
     }
 
     /**
@@ -234,8 +234,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      * 
      * @param table
      */
-    public void setTable(Table table) {
-        this.table = table;
+    public void setController(Controller table) {
+        this.controller = table;
     }
 
     /**
@@ -272,14 +272,14 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public void setLabel(String label) {
         this.label = label;
-        if(table != null && table.view != null && table.view.getHeader() != null)
-        	table.view.getHeader().layout();
+        if(controller != null && controller.view() != null && controller.view().getHeader() != null)
+        	controller.view().getHeader().layout();
     }
 
     public void setStyle(String style) {
     	this.style = style;
-    	if(table != null)
-    		table.layout();
+    	if(controller != null)
+    		controller.layout();
     }
     
     public String getStyle() {
@@ -295,19 +295,19 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 
         int totalWidth, lastColumn;
 
-        if (table == null)
+        if (controller == null)
             return minWidth;
 
         /*
          * If this is the last column calculate its width if the overall width 
          * will be less then the set width of the table
          */
-        lastColumn = table.getColumnCount() - 1;
-        if (lastColumn >= 0 && table.getColumnAt(lastColumn) == this) {
-            totalWidth = table.getXForColumn(lastColumn);
+        lastColumn = controller.getColumnCount() - 1;
+        if (lastColumn >= 0 && controller.getColumnAt(lastColumn) == this) {
+            totalWidth = controller.getXForColumn(lastColumn);
             //if (totalWidth + width < table.getWidthWithoutScrollbar())
                 int w;
-                return ((((w = (table.getWidthWithoutScrollbar()) - totalWidth))) < width) ? width : w;
+                return ((((w = (controller.getWidthWithoutScrollbar()) - totalWidth))) < width) ? width : w;
         }
      
         return width;
@@ -320,8 +320,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public void setWidth(int width) {
         this.width = Math.max(width, minWidth);
-        if(table != null)
-        	table.resize();
+        if(controller != null)
+        	controller.resize();
     }
 
     /**
@@ -486,12 +486,12 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     
     public void setDisplay(boolean display) {
     	this.display = display;
-    	table.layout();
+    	controller.layout();
     }
 
 	@Override
 	public void finishEditing() {
-		table.finishEditing();
+		controller.finishEditing();
 	}
 
 	

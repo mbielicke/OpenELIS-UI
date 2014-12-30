@@ -84,7 +84,7 @@ public class GwtTree extends GWTTestCase {
 		test.setRoot(getRoot());
 		test.setAllowMultipleSelection(true);
 		test.selectNodeAt(0);
-		test.selectNodeAt(1,null);
+		test.setSelection(1,null);
 		assertEquals(true,test.isMultipleRowsSelected());
 	}
 	
@@ -167,7 +167,7 @@ public class GwtTree extends GWTTestCase {
 		assertFalse(test.view.table().getRowFormatter().getStyleName(0).contains(((StaticView)test.view).css.Selection()));
 		
 		test.setAllowMultipleSelection(true);
-		test.selectNodeAt(2,Document.get().createClickEvent(0, 0, 0, 0, 0, true, false, false, false));
+		test.setSelection(2,Document.get().createClickEvent(0, 0, 0, 0, 0, true, false, false, false));
 		
 		assertEquals(1,test.getSelectedNode());
 		assertTrue(Arrays.deepEquals(new Integer[]{1,2},test.getSelectedNodes()));
@@ -178,7 +178,7 @@ public class GwtTree extends GWTTestCase {
 		assertTrue(test.view.table().getRowFormatter().getStyleName(1).contains(((StaticView)test.view).css.Selection()));
 		assertTrue(test.view.table().getRowFormatter().getStyleName(2).contains(((StaticView)test.view).css.Selection()));
 		
-		test.selectNodeAt(3,Document.get().createClickEvent(0, 0, 0, 0, 0, false, false, false, false));
+		test.setSelection(3,Document.get().createClickEvent(0, 0, 0, 0, 0, false, false, false, false));
 		
 		assertEquals(3,test.getSelectedNode());
 		assertTrue(Arrays.deepEquals(new Integer[]{3},test.getSelectedNodes()));

@@ -75,7 +75,7 @@ public class Header extends FocusPanel {
     /**
      * Reference to the Table this header is used for.
      */
-    protected Table     table;
+    protected Controller    table;
     
     /**
      * Popuppanel used to display the resize bar.
@@ -110,13 +110,13 @@ public class Header extends FocusPanel {
     /**
      * Constructor that takes the containing table as a parameter
      * 
-     * @param table
+     * @param controller
      */
     public Header() {
         
     }
     
-    public void init(final Table table) {
+    public void init(final Controller table) {
     	css = UIResources.INSTANCE.table();
     	css.ensureInjected();
     	
@@ -152,7 +152,7 @@ public class Header extends FocusPanel {
                     popResize = new PopupPanel();
                     bar = new FocusPanel();
                     bar.setWidth("1px");
-                    bar.setHeight((table.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
+                    bar.setHeight((table.view().scrollView().getOffsetHeight() + getOffsetHeight())+"px");
                     DOM.setStyleAttribute(bar.getElement(), "background", "red");
                     popResize.add(bar);
                     /*
@@ -205,10 +205,10 @@ public class Header extends FocusPanel {
                 
                 popResize.setPopupPosition(startX, ((Widget)event.getSource()).getAbsoluteTop());
                 popResize.show();
-                if(table.view.scrollView().getMaximumHorizontalScrollPosition() > 0)
-                    bar.setHeight(table.view.scrollView().getOffsetHeight() + getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()+"px");
+                if(table.view().scrollView().getMaximumHorizontalScrollPosition() > 0)
+                    bar.setHeight(table.view().scrollView().getOffsetHeight() + getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()+"px");
                 else
-                    bar.setHeight((table.view.scrollView().getOffsetHeight() + getOffsetHeight())+"px");
+                    bar.setHeight((table.view().scrollView().getOffsetHeight() + getOffsetHeight())+"px");
                 /*
                  * We set the capture of mouse events now to the resize bar itself.  This allows us
                  * to simplify the logic of dragging the bar, as well as provide smoother dragging and 
@@ -360,7 +360,7 @@ public class Header extends FocusPanel {
              * then just return
              */
             if (x > table.getWidthWithoutScrollbar() +
-                    table.view.scrollView().getHorizontalScrollPosition())
+                    table.view().scrollView().getHorizontalScrollPosition())
                 return;
             x -= 17;
             /*
@@ -518,7 +518,7 @@ public class Header extends FocusPanel {
         
         if(column.isFilterable()) {
             if(column.getFilter() == null) {
-                filter = table.new UniqueFilter();
+                filter = table.newFilter();
                 filter.setColumn(col);
                 column.setFilter(filter);
             }
