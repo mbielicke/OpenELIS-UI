@@ -31,38 +31,27 @@ import java.util.HashMap;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
+import org.openelis.ui.widget.Balloon;
 import org.openelis.ui.widget.CSSUtils;
 import org.openelis.ui.widget.DragItem;
-import org.openelis.ui.widget.Balloon;
-import org.openelis.ui.widget.table.event.CellMouseOutEvent;
-import org.openelis.ui.widget.table.event.CellMouseOverEvent;
+import org.openelis.ui.widget.cell.CellClickedEvent;
+import org.openelis.ui.widget.cell.CellDoubleClickedEvent;
+import org.openelis.ui.widget.cell.CellGrid;
+import org.openelis.ui.widget.cell.CellMouseOutEvent;
+import org.openelis.ui.widget.cell.CellMouseOverEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -86,13 +75,13 @@ public class StaticView extends ViewInt {
     /**
      * Reference to Table this View is used in
      */
-    protected Table                  table;
-
+    protected Controller             table;
+    
     /**
      * Table used to draw Table flexTable
      */
     @UiField
-    protected FlexTable              flexTable;
+    protected CellGrid              grid;
 
     /**
      * Table used to draw Header flexTable for the table
@@ -130,7 +119,7 @@ public class StaticView extends ViewInt {
      * 
      * @param tree
      */
-    public StaticView(Table tbl) {
+    public StaticView(Controller tbl) {
     	this.table = tbl;
         
     	header = GWT.create(Header.class);
@@ -149,41 +138,21 @@ public class StaticView extends ViewInt {
     	header.getElement().getStyle().setProperty("left",-scrollView.getHorizontalScrollPosition(),Unit.PX);
     }
     
-    @UiHandler("flexTable")
+    @UiHandler("grid")
     protected void handleCellMouseOut(CellMouseOutEvent event) {
     	table.cancelBalloonTimer();
         Balloon.hide();
     }
     
-    @UiHandler("flexTable")
-    protected void handleDoubleClick(DoubleClickEvent event) {
-        int r,c;
-
-        if (userMousedOutOfCell(event))
-            return;
-        
-        r = flexTable.getRowForEvent(event.getNativeEvent());
-        c = flexTable.getColForEvent(event.getNativeEvent());
-        
-        table.fireCellDoubleClickedEvent(r,c);
+    @UiHandler("grid")
+    protected void handleDoubleClick(CellDoubleClickedEvent event) {
+        table.fireCellDoubleClickedEvent(event.getRow(),event.getCol());
     }
     
-    @UiHandler("flexTable")
-    protected void cellClick(ClickEvent event) {
-        int row,col;
-
-        if (userMousedOutOfCell(event))
-            return;
-        
-        row = flexTable.getRowForEvent(event.getNativeEvent());
-        col = flexTable.getColForEvent(event.getNativeEvent());
-
-        if (table.fireCellClickedEvent(row, col, event.isControlKeyDown(), event.isShiftKeyDown()))
-            table.startEditing(row, col, event.getNativeEvent());
-    }
-    
-    private boolean userMousedOutOfCell(MouseEvent<?> event) {
-    	return event.getClientX() < 0;
+    @UiHandler("grid")
+    protected void cellClick(CellClickedEvent event) {
+        if (table.fireCellClickedEvent(event.getRow(), event.getCol(), event.isCtrlKeyDown(), event.isShiftKeyDown()))
+            table.startEditing(event.getRow(), event.getCol(), event.getNativeEvent());
     }
 
     /**
@@ -207,10 +176,10 @@ public class StaticView extends ViewInt {
     private void removeExtraColumns() {
     	Node colgroup;
     	
-    	if(!flexTable.getElement().hasTagName("colgroup"))
+    	if(!grid.getElement().hasTagName("colgroup"))
     		return;
     	 
-        colgroup = flexTable.getElement().getElementsByTagName("colgroup").getItem(0);
+        colgroup = grid.getElement().getElementsByTagName("colgroup").getItem(0);
          
         while(colgroup.getChildCount() > table.getColumnCount()) {
            colgroup.removeChild(colgroup.getChild(0));
@@ -219,14 +188,14 @@ public class StaticView extends ViewInt {
 
     protected void sizeTable() {
         for (int c = 0; c < table.getColumnCount(); c++ ) {
-            flexTable.getColumnFormatter().setWidth(c, table.getColumnAt(c).getWidth() + "px");
+            grid.getColumnFormatter().setWidth(c, table.getColumnAt(c).getWidth() + "px");
         }
-        flexTable.setWidth(table.getTotalColumnWidth() + "px");
+        grid.setWidth(table.getTotalColumnWidth() + "px");
     }
     
     protected void setColumnStyles() {
     	for (int c = 0; c < table.getColumnCount(); c++) {
-    		flexTable.getColumnFormatter().setStyleName(c, table.getColumnAt(c).getStyle());
+    		grid.getColumnFormatter().setStyleName(c, table.getColumnAt(c).getStyle());
     	}
     }
     
@@ -244,13 +213,13 @@ public class StaticView extends ViewInt {
     }
 
     protected void createRow(int row) {
-        flexTable.insertRow(row);
-        flexTable.getRowFormatter().getElement(row).setAttribute("height", (table.getRowHeight()+3)+"px");
-        flexTable.getRowFormatter().getElement(row).setAttribute("index", "" + row);
+        grid.insertRow(row);
+        grid.getRowFormatter().getElement(row).setAttribute("height", (table.getRowHeight()+3)+"px");
+        grid.getRowFormatter().getElement(row).setAttribute("index", "" + row);
 
-        if (table.getDragController() != null)
-            table.dragController.makeDraggable(new DragItem(table, flexTable.getRowFormatter()
-                                                                            .getElement(row)));
+        //if (table.getDragController() != null)
+        //    table.dragController.makeDraggable(new DragItem(table, grid.getRowFormatter()
+        //                                                                    .getElement(row)));
     }
 
     protected void renderView(int startRow, int endRow) {
@@ -260,8 +229,8 @@ public class StaticView extends ViewInt {
         if (endRow < 0) endRow = table.getRowCount() - 1;
 
         for (int row = startRow;  row <= endRow; row++ ) {
-            if (row >= flexTable.getRowCount()) {
-                createRow(flexTable.getRowCount());
+            if (row >= grid.getRowCount()) {
+                createRow(grid.getRowCount());
             }
             renderRow(row);
             applyRowStyle(row);
@@ -271,8 +240,8 @@ public class StaticView extends ViewInt {
     }
     
     protected void removeExtraRows() {
-    	 while (flexTable.getRowCount() > table.getRowCount())
-             flexTable.removeRow(table.getRowCount());
+    	 while (grid.getRowCount() > table.getRowCount())
+             grid.removeRow(table.getRowCount());
     }
     
     protected void bulkRender() {
@@ -283,7 +252,7 @@ public class StaticView extends ViewInt {
         	bulkRenderRow(builder,row);
         }
         
-        flexTable.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(builder.toSafeHtml());
+        grid.getElement().getElementsByTagName("tbody").getItem(0).setInnerSafeHtml(builder.toSafeHtml());
         
         adjustViewPort();
     }
@@ -318,43 +287,43 @@ public class StaticView extends ViewInt {
     }
 
     protected void addColumn(int c) {
-        for (int i = 0; i < flexTable.getRowCount(); i++ ) {
-            flexTable.insertCell(i, c);
+        for (int i = 0; i < grid.getRowCount(); i++ ) {
+            grid.insertCell(i, c);
         }
         layout();
-        for (int i = 0; i < flexTable.getRowCount(); i++ ) {
+        for (int i = 0; i < grid.getRowCount(); i++ ) {
             renderCell(i, c);
         }
     }
 
     protected void removeColumn(int c) {
-        for (int i = 0; i < flexTable.getRowCount(); i++ ) {
-            flexTable.removeCell(i, c);
+        for (int i = 0; i < grid.getRowCount(); i++ ) {
+            grid.removeCell(i, c);
         }
         layout();
     }
 
     protected void removeRow(int r) {
-        flexTable.removeRow(r);
+        grid.removeRow(r);
         adjustTableWidthForScrollbar();
     }
 
     protected void removeAllRows() {
-        flexTable.removeAllRows();
+        grid.removeAllRows();
     }
 
     protected void renderSelections(int start, int end) {
         for (int r = start; r <= end; r++ ) {
             if (table.isRowSelected(r))
-                flexTable.getRowFormatter().addStyleName(r, css.Selection());
+                grid.getRowFormatter().addStyleName(r, css.Selection());
             else
-                flexTable.getRowFormatter().removeStyleName(r, css.Selection());
+                grid.getRowFormatter().removeStyleName(r, css.Selection());
         }
     }
 
     protected void renderExceptions(int start, int end) {
         if(start < 0) start = 0;
-        if(end < 0) end = flexTable.getRowCount() - 1;
+        if(end < 0) end = grid.getRowCount() - 1;
 
         for (int r = start; r <= end; r++ ) {
             for (int c = 0; c < table.getColumnCount(); c++ ) {
@@ -368,12 +337,12 @@ public class StaticView extends ViewInt {
     }
     
     protected void renderCellException(int r, int c) {
-    	 flexTable.getCellFormatter().addStyleName(r, c, getExceptionStyle(r, c));
-         flexTable.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
+    	 grid.getCellFormatter().addStyleName(r, c, getExceptionStyle(r, c));
+         grid.addCellMouseOverHandler(new CellMouseOverEvent.Handler(r, c) {
              @Override
              public void onCellMouseOver(CellMouseOverEvent event) {
                  int x,y;
-                 Element td = flexTable.getCellFormatter().getElement(event.getRow(), event.getCol());
+                 Element td = grid.getCellFormatter().getElement(event.getRow(), event.getCol());
                  
                  y = td.getAbsoluteTop();
                  x = td.getAbsoluteLeft() + (td.getOffsetWidth()/2);
@@ -383,9 +352,9 @@ public class StaticView extends ViewInt {
     }
     
     protected void clearCellException(int r, int c) {
-    	 flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
-         flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
-         flexTable.removeHandler(r, c);
+    	 grid.getCellFormatter().removeStyleName(r, c, css.InputWarning());
+         grid.getCellFormatter().removeStyleName(r, c, css.InputError());
+         grid.removeHandler(r, c);
     }
     
     protected String getExceptionStyle(int r, int c) {
@@ -404,12 +373,12 @@ public class StaticView extends ViewInt {
 
         style = table.getRowAt(r).getStyle(r);
         if (style != null)
-            flexTable.getRowFormatter().setStyleName(r, style);
+            grid.getRowFormatter().setStyleName(r, style);
 
         if (table.isRowSelected(r))
-            flexTable.getRowFormatter().addStyleName(r, css.Selection());
+            grid.getRowFormatter().addStyleName(r, css.Selection());
         else
-            flexTable.getRowFormatter().removeStyleName(r, css.Selection());
+            grid.getRowFormatter().removeStyleName(r, css.Selection());
     }
 
     /**
@@ -418,7 +387,7 @@ public class StaticView extends ViewInt {
      * @param r
      */
     protected void applySelectionStyle(int r) {
-    	flexTable.getRowFormatter().addStyleName(r, css.Selection());
+    	grid.getRowFormatter().addStyleName(r, css.Selection());
     }
 
     /**
@@ -427,7 +396,7 @@ public class StaticView extends ViewInt {
      * @param r
      */
     protected void applyUnselectionStyle(int r) {
-    	flexTable.getRowFormatter().removeStyleName(r, css.Selection());
+    	grid.getRowFormatter().removeStyleName(r, css.Selection());
     }
 
     protected void renderRow(int r) {
@@ -440,10 +409,10 @@ public class StaticView extends ViewInt {
 
         renderer = table.getColumnAt(c).getCellRenderer();
 
-        //if (table.getQueryMode())
-          //  renderer.renderQuery(flexTable, r, c, (QueryData)table.getValueAt(r, c));
-       // else
-            renderer.render(flexTable,r, c, table.getValueAt(r, c));
+        if (table.getQueryMode())
+            renderer.renderQuery(grid, r, c, (QueryData)table.getValueAt(r, c));
+        else
+            renderer.render(grid,r, c, table.getValueAt(r, c));
 
         if (table.hasExceptions(r, c)) {
         	renderCellException(r,c);
@@ -464,7 +433,7 @@ public class StaticView extends ViewInt {
     protected void startEditing(int r,int c, Object value, NativeEvent event) {
         container.setWidth( (table.getColumnAt(c).getWidth() - 3));
         container.setHeight( (table.getRowHeight()));
-        flexTable.setWidget(r, c, container);
+        grid.setWidget(r, c, container);
        
 
         if (table.getQueryMode())
@@ -499,7 +468,7 @@ public class StaticView extends ViewInt {
 
         horizontalScrollPosition = scrollView.getHorizontalScrollPosition();
 
-        flexTable.getRowFormatter().getElement(r).scrollIntoView();
+        grid.getRowFormatter().getElement(r).scrollIntoView();
 
         // scrollIntoView moves horizontalScroll, this sets it back
         scrollView.setHorizontalScrollPosition(horizontalScrollPosition);
@@ -518,7 +487,7 @@ public class StaticView extends ViewInt {
      * @return
      */
     protected boolean isRowVisible(int r) {
-        Element row = flexTable.getRowFormatter().getElement(r);
+        Element row = grid.getRowFormatter().getElement(r);
         int top = row.getOffsetTop();
         int height = row.getOffsetHeight();
 
@@ -563,34 +532,34 @@ public class StaticView extends ViewInt {
      * Returns the actual drawn row height on the screen
      */
     protected int getRowHeight() {
-        return table.rowHeight;
+        return table.getRowHeight();
     }
 
     public void setCSS(TableCSS css) {
         css.ensureInjected();
 
-        for (int i = 0; i < flexTable.getRowCount(); i++ ) {
-            if (flexTable.getRowFormatter().getStyleName(i).contains(this.css.Selection())) {
-                flexTable.getRowFormatter().removeStyleName(i, this.css.Selection());
-                flexTable.getRowFormatter().addStyleName(i, css.Selection());
+        for (int i = 0; i < grid.getRowCount(); i++ ) {
+            if (grid.getRowFormatter().getStyleName(i).contains(this.css.Selection())) {
+                grid.getRowFormatter().removeStyleName(i, this.css.Selection());
+                grid.getRowFormatter().addStyleName(i, css.Selection());
             }
-            for (int j = 0; j < flexTable.getCellCount(i); j++ ) {
-                if (flexTable.getCellFormatter().getStyleName(i, j).contains(this.css.InputError())) {
-                    flexTable.getCellFormatter().removeStyleName(i, j, this.css.InputError());
-                    flexTable.getCellFormatter().addStyleName(i, j, css.InputError());
+            for (int j = 0; j < grid.getCellCount(i); j++ ) {
+                if (grid.getCellFormatter().getStyleName(i, j).contains(this.css.InputError())) {
+                    grid.getCellFormatter().removeStyleName(i, j, this.css.InputError());
+                    grid.getCellFormatter().addStyleName(i, j, css.InputError());
                 }
-                if (flexTable.getCellFormatter()
+                if (grid.getCellFormatter()
                              .getStyleName(i, j)
                              .contains(this.css.InputWarning())) {
-                    flexTable.getCellFormatter().removeStyleName(i, j, this.css.InputWarning());
-                    flexTable.getCellFormatter().addStyleName(i, j, css.InputWarning());
+                    grid.getCellFormatter().removeStyleName(i, j, this.css.InputWarning());
+                    grid.getCellFormatter().addStyleName(i, j, css.InputWarning());
                 }
             }
         }
 
         this.css = css;
 
-        flexTable.setStyleName(css.Table());
+        grid.setStyleName(css.Table());
 
     }
 
@@ -601,7 +570,12 @@ public class StaticView extends ViewInt {
 
     @Override
     FlexTable table() {
-        return flexTable;
+        return null;
+    }
+    
+    @Override
+    CellGrid grid() {
+    	return grid;
     }
 
     @Override
@@ -657,13 +631,13 @@ public class StaticView extends ViewInt {
      * This public method added for unit testing 
      */
     public String getCellDisplay(int row, int col) {
-        return flexTable.getText(row, col);
+        return grid.getText(row, col);
     }
     
     public Widget getCellWidget(int row, int col) {
         Widget wid;
         
-        wid = flexTable.getWidget(row, col);
+        wid = grid.getWidget(row, col);
        
         if(wid == container)
             return container.editor;

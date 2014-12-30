@@ -1,5 +1,5 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:table="urn:import:org.openelis.ui.widget.table"
-  xmlns:shl="urn:import:org.openelis.ui.widget">
+  xmlns:shl="urn:import:org.openelis.ui.widget" xmlns:cell="urn:import:org.openelis.ui.widget.cell">
 
 
     <g:LayoutPanel ui:field="inner">
@@ -8,7 +8,7 @@
       </g:layer>
       <g:layer top="25px" bottom="0px" left="0px" right="0px">
         <g:ScrollPanel ui:field="scrollView">
-          <table:FlexTable ui:field="flexTable" />
+          <cell:CellGrid ui:field="grid" />
         </g:ScrollPanel>
       </g:layer>
     </g:LayoutPanel>

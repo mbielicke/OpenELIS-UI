@@ -568,9 +568,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      */
     public void setVisibleItems(int itemCount) {
         this.itemCount = itemCount;
-
-        if (table != null)
-            table.setVisibleRows(itemCount);
     }
 
     /**

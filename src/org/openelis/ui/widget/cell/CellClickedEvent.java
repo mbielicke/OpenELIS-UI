@@ -1,5 +1,6 @@
 package org.openelis.ui.widget.cell;
 
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class CellClickedEvent extends GwtEvent<CellClickedHandler> {
@@ -8,21 +9,23 @@ public class CellClickedEvent extends GwtEvent<CellClickedHandler> {
 	private int row;
 	private int col;
 	private boolean cancelled,ctrlKey,shiftKey;
+	private NativeEvent event;
 	
-	public static CellClickedEvent fire(CellGrid source, int row, int col, boolean ctrlKey, boolean shiftKey) {
+	public static CellClickedEvent fire(CellGrid source, int row, int col, boolean ctrlKey, boolean shiftKey,NativeEvent event) {
 		if(TYPE != null) {
-			CellClickedEvent event = new CellClickedEvent(row, col,ctrlKey,shiftKey);
-			source.fireEvent(event);
-			return event;
+			CellClickedEvent cellClick = new CellClickedEvent(row, col,ctrlKey,shiftKey,event);
+			source.fireEvent(cellClick);
+			return cellClick;
 		}
 		return null;
 	}
 	
-	protected CellClickedEvent(int row, int col,boolean ctrlKey,boolean shiftKey) {
+	protected CellClickedEvent(int row, int col,boolean ctrlKey,boolean shiftKey, NativeEvent event) {
 		this.row = row;
 		this.col = col;
 		this.ctrlKey = ctrlKey;
 		this.shiftKey = shiftKey;
+		this.event = event;
 	}
 
 	@Override
@@ -67,4 +70,7 @@ public class CellClickedEvent extends GwtEvent<CellClickedHandler> {
 		return shiftKey;
 	}
 
+	public NativeEvent getNativeEvent() {
+		return event;
+	}
 }

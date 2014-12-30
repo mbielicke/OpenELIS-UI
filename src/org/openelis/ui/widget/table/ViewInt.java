@@ -1,6 +1,7 @@
 package org.openelis.ui.widget.table;
 
 import org.openelis.ui.resources.TableCSS;
+import org.openelis.ui.widget.cell.CellGrid;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -47,6 +48,8 @@ public abstract class ViewInt extends ResizeComposite {
     abstract int rowHeight();
     
     abstract FlexTable table();
+    
+    abstract CellGrid grid();
     
     abstract ScrollPanel scrollView();
     

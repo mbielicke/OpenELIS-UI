@@ -27,6 +27,7 @@ package org.openelis.ui.widget.tree;
 
 import org.openelis.ui.resources.TreeCSS;
 import org.openelis.ui.resources.UIResources;
+import org.openelis.ui.widget.table.Column;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;

@@ -256,10 +256,6 @@ public class StaticView extends ViewInt {
         flexTable.insertRow(rc);
         flexTable.getRowFormatter().getElement(rc).setAttribute("height", tree.getRowHeight()+"px");
         flexTable.getRowFormatter().getElement(rc).setAttribute("index", "" + rc);
-
-        if (tree.getDragController() != null)
-            tree.dragController.makeDraggable(new DragItem(tree, flexTable.getRowFormatter()
-                                                                            .getElement(rc)));
     }
 
     /**
@@ -310,18 +306,6 @@ public class StaticView extends ViewInt {
             flexTable.removeRow(tree.getRowCount());
 
         adjustForScroll(startMax);
-
-        if ( !tree.fixScrollBar && !sized) {
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    if (flexTable.getOffsetHeight() < scrollView.getOffsetHeight())
-                        tree.getParent().setHeight(CSSUtils.getHeight(flexTable) + "px");
-                    sized = true;
-                }
-
-            });
-        }
 
     }
     
@@ -756,7 +740,7 @@ public class StaticView extends ViewInt {
      * Returns the actual drawn row height on the screen
      */
     protected int getRowHeight() {
-        return tree.rowHeight;
+        return tree.getRowHeight();
     }
 
     public void setCSS(TreeCSS css) {
@@ -906,7 +890,7 @@ public class StaticView extends ViewInt {
             lineDiv = new AbsolutePanel();
             
             lineDiv.setWidth("100%");
-            lineDiv.setHeight(tree.rowHeight+"px");
+            lineDiv.setHeight(tree.getRowHeight()+"px");
             
             grid.setWidget(0,0,lineDiv);
             
@@ -933,10 +917,10 @@ public class StaticView extends ViewInt {
                     line.getElement().getStyle().setWidth(1, Unit.PX);
                     line.getElement().getStyle().setBackgroundColor("black");
                     if(node.getParent().getLastChild() == node && i + 1 == level) {
-                        line.getElement().getStyle().setHeight(tree.rowHeight/2,Unit.PX);
-                        line.getElement().getStyle().setTop(-((tree.rowHeight/2)-1),Unit.PX);
+                        line.getElement().getStyle().setHeight(tree.getRowHeight()/2,Unit.PX);
+                        line.getElement().getStyle().setTop(-((tree.getRowHeight()/2)-1),Unit.PX);
                     }else
-                        line.getElement().getStyle().setHeight(tree.rowHeight, Unit.PX);
+                        line.getElement().getStyle().setHeight(tree.getRowHeight(), Unit.PX);
                 
                     lineDiv.add(line,(i*15)+8,0);
 
@@ -949,7 +933,7 @@ public class StaticView extends ViewInt {
                     line.getElement().getStyle().setWidth(5, Unit.PX);
                     line.getElement().getStyle().setBackgroundColor("black");
                     line.getElement().getStyle().setHeight(1, Unit.PX);
-                    lineDiv.add(line,(i*15)+8,(tree.rowHeight/2));
+                    lineDiv.add(line,(i*15)+8,(tree.getRowHeight()/2));
 
                 }
                 
