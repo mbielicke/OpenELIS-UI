@@ -263,6 +263,8 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
     public <T> void addScreenHandler(Widget widget, String meta, ScreenHandler<T> screenHandler) {
         assert widget != null : "addScreenHandler received a null widget : "+meta;
+        assert meta != null : "Meta can not be null";
+        assert !handlers.containsKey(meta) : "Meta must be unique between all widgets on a screen";
 
         if (widget instanceof HasFocusHandlers)
             ((HasFocusHandlers)widget).addFocusHandler(this);
