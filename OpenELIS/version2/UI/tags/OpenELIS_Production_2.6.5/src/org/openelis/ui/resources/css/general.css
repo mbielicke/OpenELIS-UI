@@ -1,0 +1,39 @@
+body {
+    font-family:"Open Sans",sans-serif;
+    font-size:11px;
+    color:black;
+}
+
+fieldSet {
+    border:1px solid #8db2e3;
+    padding: 2px;
+    margin-left : 2px;
+    margin-right : 2px;
+}
+
+legend {
+   -moz-user-select: none;
+   color: #486095;
+   padding:2px 4px 2px 2px;
+   text-align:right;
+   vertical-align:top;
+}
+
+.ScreenLabel{	
+}
+
+.WhiteContentPanel {
+	background:white;
+}
+
+.Form {
+    margin:4px 8px ;
+}
+
+.Prompt {
+    -moz-user-select: none;
+	color:gray;
+	padding:2px 0 2px 2px;
+	text-align:right;
+	vertical-align:top;
+}
