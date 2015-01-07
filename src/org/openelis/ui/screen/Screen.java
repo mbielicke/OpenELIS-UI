@@ -152,7 +152,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         focused = (Focusable)event.getSource();
         
         //Focus window if not the focused window the browser
-        if(window != null && window.asWidget() != null && window.asWidget().getStyleName().contains(css.unfocused())) {
+        if(window != null && window.asWidget().getStyleName().contains(css.unfocused())) {
          	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
          	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 				public void execute() {
@@ -252,8 +252,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
                 for (int i = 0; i < qds.length; i++ )
                     list.add(qds[i]);
             } else if (query != null) {
-            	if(((QueryData)query).getKey() == null)
-            		((QueryData)query).setKey(key);
+                ((QueryData)query).setKey(key);
                 list.add((QueryData)query);
             }
         }
@@ -263,8 +262,6 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
 
     public <T> void addScreenHandler(Widget widget, String meta, ScreenHandler<T> screenHandler) {
         assert widget != null : "addScreenHandler received a null widget : "+meta;
-        assert meta != null : "Meta can not be null";
-        assert !handlers.containsKey(meta) : "Meta must be unique between all widgets on a screen";
 
         if (widget instanceof HasFocusHandlers)
             ((HasFocusHandlers)widget).addFocusHandler(this);
@@ -302,7 +299,7 @@ public class Screen extends ResizeComposite implements FocusHandler, HasDataChan
         return bus.addHandlerToSource(StateChangeEvent.getType(), this, handler);
     }
 
-    public void fireDataChange() {
+    protected void fireDataChange() {
         bus.fireEventFromSource(new DataChangeEvent(), this);
     }
 

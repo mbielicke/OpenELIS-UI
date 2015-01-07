@@ -1336,7 +1336,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         this.css = css;
         display.setStyleName(css.SelectBox());
         textbox.setStyleName(css.SelectText());
-        //button.setLeftIcon(css.SelectButton());
+        button.setLeftIcon(css.SelectButton());
     }
 
     public void setField(String field) {

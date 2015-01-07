@@ -414,7 +414,7 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     public void setFilter(Filter filter) {
         this.filter = filter;
         isFiltered = false;
-        isFilterable = true;
+        isSortable = true;
     }
     
     /**

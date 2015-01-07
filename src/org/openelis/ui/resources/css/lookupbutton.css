@@ -6,12 +6,6 @@
     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #DDDFE2 inset;
     cursor: pointer;
     height:18px;
-    width : 16px;
-    display : flex;
-    white-space:normal;
-}
-
-.Button > div {
 }
 
 .Button:hover {

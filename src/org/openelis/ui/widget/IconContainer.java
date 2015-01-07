@@ -1,9 +1,6 @@
 package org.openelis.ui.widget;
 
 
-import org.openelis.ui.widget.Balloon.Placement;
-
-import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasAllMouseHandlers;
@@ -21,60 +18,34 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Widget;
 
-public class IconContainer extends FocusPanel implements HasAllMouseHandlers, HasClickHandlers, HasBalloon {
-	
-	protected Balloon.Options options;
+public class IconContainer extends FocusPanel implements HasAllMouseHandlers, HasClickHandlers, MouseOverHandler, MouseOutHandler {
+    
+
+    private boolean enabled = true;
     
     public IconContainer() {
-
+        addMouseOverHandler(this);
+        addMouseOutHandler(this);
     }
     
     public IconContainer(String style) {
         this();
         setStyleName(style);
+        addMouseOverHandler(this);
+        addMouseOutHandler(this);
     }
     
     public void enable(boolean enabled) {
-        if(!enabled) {
+        this.enabled = enabled;
+        if(!enabled)
         	unsinkEvents(Event.ONCLICK | Event.MOUSEEVENTS | Event.ONKEYPRESS);
-        	getElement().getStyle().setCursor(Cursor.AUTO);
-        }else {
+        else
         	sinkEvents(Event.ONCLICK | Event.MOUSEEVENTS | Event.ONKEYPRESS);
-        	getElement().getStyle().setCursor(Cursor.POINTER);
-        }
         	
-    }
-    
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
     }
 
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
@@ -104,4 +75,16 @@ public class IconContainer extends FocusPanel implements HasAllMouseHandlers, Ha
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return addDomHandler(handler,ClickEvent.getType());
 	}
+
+	public void onMouseOver(MouseOverEvent event) {
+		if(enabled)
+			((Widget)event.getSource()).addStyleName("Hover");
+		
+	}
+
+	public void onMouseOut(MouseOutEvent event) {
+		((Widget)event.getSource()).removeStyleName("Hover");
+		
+	}
+    
 }

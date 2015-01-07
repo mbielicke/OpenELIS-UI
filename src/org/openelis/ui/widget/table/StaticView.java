@@ -193,11 +193,6 @@ public class StaticView extends ViewInt {
         
         r = flexTable.getRowForEvent(event.getNativeEvent());
         c = flexTable.getColForEvent(event.getNativeEvent());
-        
-        // chrome does not return -x if moused out while holding button
-        // but does return negative col index
-        if(r < 0 || c < 0)
-        	return;
 
         if (table.fireCellClickedEvent(r, c, event.isControlKeyDown(), event.isShiftKeyDown()))
             table.startEditing(r, c, event.getNativeEvent());

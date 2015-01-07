@@ -44,7 +44,8 @@ public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateCh
 	    if(widget instanceof Screen) 
 	        return ((Screen)widget).getQueryFields();
 	    else if(widget instanceof Queryable)
-			return ((Queryable)widget).getQuery();
+			if(((Queryable)widget).isQueryMode())
+				return ((Queryable)widget).getQuery();
 		
 		return null;
 	}

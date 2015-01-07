@@ -234,7 +234,7 @@ public class Prompt implements Serializable {
     /**
      * get/set the multiSelect option for OptionList
      */
-    public Prompt setMultiSelect(boolean multiSelect) {
+    public Prompt setMutiSelect(boolean multiSelect) {
         this.multiSelect = multiSelect;
         return this;
     }

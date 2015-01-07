@@ -31,15 +31,8 @@ import org.openelis.ui.resources.UIResources;
 import org.openelis.ui.widget.Balloon.Placement;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.OutlineStyle;
-import com.google.gwt.dom.client.Style.TextAlign;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.WhiteSpace;
+import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,10 +40,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
@@ -58,9 +51,6 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This widget class implements a Button on the screen. We have not used or
@@ -74,37 +64,93 @@ import com.google.gwt.user.client.ui.Widget;
  * be disabled on the initial state of the screen set enable="false" in the xsl.
  */
 public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
-	@UiTemplate("button.ui.xml")
+	@UiTemplate("Button.ui.xml")
 	interface ButtonUiBinder extends UiBinder<HTMLPanel,Button>{};
 	public static final ButtonUiBinder uiBinder = GWT.create(ButtonUiBinder.class);
 	
-	@UiField
-	protected DivElement left,center,right,outer;
-	
-    protected Balloon.Options   options;
-    protected boolean toggles, enabled, pressed, locked;
-    protected String action;
-	protected ImageSelector imageSelector;
-	protected int topOffset = -1;
-	
-    ButtonCSS css;
-    IconCSS icon;
-    
-    private Button source = this;
 
-	public Button() {
-		setWidget(uiBinder.createAndBindUi(this));
-		setKeyHandler();
-		setFocusHandler();
-		setBlurHandler();
-		setClickHandler();
-		icon = UIResources.INSTANCE.icon();
-		icon.ensureInjected();
-		setCss(UIResources.INSTANCE.button());
-		getElement().getStyle().setOutlineStyle(OutlineStyle.NONE);
-		setEnabled(false);
-	}
-	
+    /*
+     * State variables for the button.
+     */
+    private boolean toggles, enabled, pressed, locked;
+    private String  action;
+    private ButtonCSS css;
+    private IconCSS icon;
+    int eventsToSink;
+    
+    @UiField
+    protected TableCellElement leftIcon,text,rightIcon;
+    
+    protected Balloon.Options   options;
+       
+    /**
+     * Default no-arg constructor
+     */
+    public Button() {
+    	final Button source = this;
+    	
+    	setWidget(uiBinder.createAndBindUi(this));
+     
+    	/**
+         * Click Handler to check if the button toggles and to set the 
+         * Pressed Style.
+         */
+        addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+           		if (toggles)
+           			setPressed(!pressed);
+           		removeStyleName(css.Focus());
+            }
+        });
+
+        /**
+         * Change the KeyEvent to ClickEvent and fire on this button.
+         */
+        addKeyUpHandler(new KeyUpHandler() {
+            public void onKeyUp(KeyUpEvent event) {
+           		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+           			NativeEvent clickEvent = com.google.gwt.dom.client.Document.get()
+           					.createClickEvent(
+           							0,
+           							getAbsoluteLeft(),
+           							getAbsoluteTop(),
+           							-1,
+          							-1,
+           							event.isControlKeyDown(),
+           							event.isAltKeyDown(),
+           							event.isShiftKeyDown(),
+           							event.isMetaKeyDown());
+            			ClickEvent.fireNativeEvent(clickEvent, source);
+            			event.stopPropagation();
+            			event.preventDefault();
+           		}
+            }
+        });
+        
+        icon = UIResources.INSTANCE.icon();
+        icon.ensureInjected();
+        
+        setCss(UIResources.INSTANCE.button());
+        
+        addFocusHandler(new FocusHandler() {
+            
+            @Override
+            public void onFocus(FocusEvent event) {
+                if(isEnabled())
+                    addStyleName(css.Focus());
+            }
+        });
+        
+        addBlurHandler(new BlurHandler() {
+            
+            @Override
+            public void onBlur(BlurEvent event) {
+                removeStyleName(css.Focus());
+            }
+        });
+        
+    }
+    
     public Button(String icon,String label) {
     	this();
     	setLeftIcon(icon);
@@ -117,175 +163,20 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
     	setText(label);
     	setRightIcon(rightIcon);
     }
-    
-    public Button(Image image) {
-    	this();
-    	setCenter(image);
+
+
+    /**
+     * Sets up event handling for the button.
+     */
+    public void init() {
+        final Button source = this;
     }
-    
-    private void setKeyHandler() {
-    	addKeyUpHandler(new KeyUpHandler() {
-    		public void onKeyUp(KeyUpEvent event) {
-    			if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-    				NativeEvent clickEvent = com.google.gwt.dom.client.Document.get()
-    						.createClickEvent(
-    								0,
-    								getAbsoluteLeft(),
-    								getAbsoluteTop(),
-    								-1,
-    								-1,
-    								event.isControlKeyDown(),
-    								event.isAltKeyDown(),
-    								event.isShiftKeyDown(),
-    								event.isMetaKeyDown());
-    				ClickEvent.fireNativeEvent(clickEvent, source);
-    				event.stopPropagation();
-    				event.preventDefault();
-    			}
-    		}
-    	});
-    }
-    
-    private void setClickHandler() {
-        addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-           		if (toggles)
-           			setPressed(!pressed);
-           		outer.removeClassName(css.Focus());
-           		if(imageSelector != null)
-           			imageSelector.selectImage(source);
-            }
-        });
-    }
-    
-    private void setFocusHandler() {
-    	addFocusHandler(new FocusHandler() {
-    		@Override
-    		public void onFocus(FocusEvent event) {
-    			if(isEnabled())
-    				outer.addClassName(css.Focus());
-    		}
-    	});
-    }
-    
-    private void setBlurHandler() {
-       addBlurHandler(new BlurHandler() {
-            @Override
-            public void onBlur(BlurEvent event) {
-                outer.removeClassName(css.Focus());
-            }
-        });
-    }
-	
-	public void setLeftText(String text) {
-		setButtonElement(left,createTextElement(text));
-	}
-	
-	@Deprecated
-	public void setLeftIcon(String icon) {
-		if(icon != null && !"".equals(icon))
-			setButtonElement(left,createIconDiv(icon));
-	}
-		
-	@UiChild(limit=1,tagname="left")
-	public void setLeft(Widget widget) {
-		setButtonElement(left,widget.getElement());
-	}
-	
-	public void setText(String text) {
-		setButtonElement(center,createTextElement(text));
-	}
-	
-	@Deprecated
-	public void setIcon(String icon) {
-		if(icon != null && !"".equals(icon))
-			setButtonElement(center,createIconDiv(icon));
-	}
-	
-	public void setImage(ImageResource imageResource) {
-		getImageSelector().setImage(new Image(imageResource));
-	}
-	
-	@UiChild(limit=1,tagname="center")
-	public void setCenter(Widget widget) {
-		setButtonElement(center,widget.getElement());
-	}
-	
-	public void setRightText(String text) {
-		setButtonElement(right,createTextElement(text));
-	}
-	
-	@Deprecated
-	public void setRightIcon(String icon) {
-		if(icon != null && !"".equals(icon))
-			setButtonElement(right, createIconDiv(icon));
-	}
-	
-	@UiChild(limit=1,tagname="right")
-	public void setRight(Widget widget) {
-		setButtonElement(right,widget.getElement());
-	}
-	
-	public void setTopText(String text) {
-		DivElement div = createTextElement(text);
-		center.insertFirst(div);
-	}
-	
-	public void setBottomText(String text) {
-		DivElement div = createTextElement(text);
-		center.appendChild(div);
-	}
-	
-	public void setTopOffset(int topOffset) {
-		this.topOffset = topOffset;
-		center.getStyle().setTop(topOffset, Unit.PX);
-	}
-	
-	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().setDisplay(Display.TABLE_CELL);
-		div.appendChild(element);		
-	}
-	
-	public void setDisabledImage(ImageResource imageResource) {
-		getImageSelector().setDisabled(new Image(imageResource));
-	}
-	
-	public void setPressedImage(ImageResource imageResource) {
-		getImageSelector().setPressed(new Image(imageResource));
-	}
-	
-	public void setLockedImage(ImageResource imageResource) {
-		getImageSelector().setLocked(new Image(imageResource));
-	}
-	
-	public void setPixelSize(int width, int height) {
-		getImageSelector().setPixelSize(width, height);
-	}
-	
-	private DivElement createTextElement(String text) {
-		DivElement label = Document.get().createDivElement();
-		label.setInnerText(text);
-		label.getStyle().setTextAlign(TextAlign.CENTER);
-		label.getStyle().setWhiteSpace(WhiteSpace.PRE);
-		return label;
-	}
-	
-	private ImageSelector getImageSelector() {
-		if(imageSelector == null) {
-			imageSelector = new ImageSelector();
-			setCenter(imageSelector);
-		}
-		return imageSelector;
-	}
-	
-	private DivElement createIconDiv(String style) {
-		DivElement div;
-		
-		div = Document.get().createDivElement();
-		div.addClassName(style);
-		return div;
-	}
-	
+
+    /**
+     * If pressed equals true the Pressed style will be applied to the button if the 
+     * button allows toggles
+     * @param pressed
+     */
     public void setPressed(boolean pressed) {
         if(!toggles)
         	return;
@@ -293,110 +184,183 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         this.pressed = pressed;
         
         if (pressed){
-            outer.addClassName(css.Pressed());
+            addStyleName(css.Pressed());
         }else {
-            outer.removeClassName(css.Pressed());
+            removeStyleName(css.Pressed());
         }
-        
-        if(imageSelector != null)
-        	imageSelector.selectImage(this);
     }
-    
+
+    /**
+     * Unsinks all events on this button leaving it in it's current state for
+     * styling but removes functionality.
+     */
     public void lock() {
         unsinkEvents(Event.ONCLICK | Event.ONKEYDOWN);
         locked = true;
-        if(imageSelector != null)
-        	imageSelector.selectImage(this);
     }
-    
+
+    /**
+     * Sinks all events on this button to restore functionality leaving the
+     * current state styling.
+     */
     public void unlock() {
         sinkEvents(Event.ONCLICK | Event.ONKEYDOWN);
         locked = false;
-        if(imageSelector != null)
-        	imageSelector.selectImage(this);
+    }
+
+    /**
+     * Call this function with true to enable the button and false to disable.
+     * 
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+              
+        removeStyleName(css.Pressed());
+        
+        if (enabled) {
+            unlock();
+            removeStyleName(css.Disabled());
+            removeStyleName(icon.Disabled());
+            //leftIcon.removeClassName(icon.Disabled());
+            //rightIcon.removeClassName(icon.Disabled());
+        } else {
+            lock();
+            addStyleName(css.Disabled());
+            addStyleName(icon.Disabled());
+            //leftIcon.addClassName(icon.Disabled());
+            //rightIcon.removeClassName(icon.Disabled());
+        }
+    }
+
+    /**
+     * Method to check if the button is enabled.
+     * 
+     * @return True if the button is enabled
+     */
+    public boolean isEnabled() {
+        return enabled;
     }
     
-
-	@Override
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-		
-		outer.removeClassName(css.Pressed());
-		
-		if (enabled) {
-			unlock();
-			outer.removeClassName(css.Disabled());
-			outer.removeClassName(icon.Disabled());
-		} else {
-			lock();
-			outer.addClassName(css.Disabled());
-			outer.addClassName(icon.Disabled());
-		}
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-	
-	public boolean isLocked() {
-	    return locked;
-	}
-	
+    /**
+     * Method to check if the button is locked.
+     * @return
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+    
+    /**
+     * Method to check if the button is pressed.
+     * @return
+     */
     public boolean isPressed() {
         return pressed;
     }
     
+    /**
+     * Method to set if this button toggles or not.
+     * @param toggles
+     */
     public void setToggles(boolean toggles) {
         this.toggles = toggles;
     }
-    
+
+    /**
+     * Method to add a focus style to the button.
+     */
     public void addFocusStyle(String style) {
-        outer.addClassName(css.Focus());
+       addStyleName(css.Focus());
     }
 
+    /**
+     * Method remove a focus style from the button.
+     */
     public void removeFocusStyle(String style) {
-        outer.removeClassName(css.Focus());
+       removeStyleName(css.Focus());
     }
-    
+        
+    /**
+     * This a string value that can be set to the button.  Used mostly for 
+     * query strings and useful for distinguishing buttons used in ButtonGroup 
+     * @param action
+     */
     public void setAction(String action) {
         this.action = action;
     }
-
+    
+    /**
+     * Returns the action string set for this button.
+     * @param action
+     * @return
+     */
     public String getAction() {
         return action;
     }
     
+    /**
+     * Method will change the text of a button
+     * @param text
+     */
+    public void setText(String text) {
+    	if(text != null && !"".equals(text)) {
+    		this.text.setInnerText(text);
+    		this.text.removeAttribute("style");
+    	}else
+    		this.text.setAttribute("style","display:none;");
+    }
+    
+    /**
+     * Method will change the icon of a button
+     * @param icon
+     */
+    public void setLeftIcon(String icon) {
+    	if(icon != null && !"".equals(icon)) {
+    		leftIcon.setAttribute("class",icon);
+    		leftIcon.removeAttribute("style");
+    	}else
+    		leftIcon.setAttribute("style","display:none;");
+    }
+    
+    public void setRightIcon(String icon) {
+    	if(icon != null && !"".equals(icon)) {
+    		rightIcon.setAttribute("class",icon);
+    		rightIcon.removeAttribute("style");
+    	}else
+    		rightIcon.setAttribute("style","display:none;");
+    }
+
 	@Override
 	public void finishEditing() {
-		// Null implementation for interface
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void setCss(ButtonCSS css) {
 		if(!isEnabled() && this.css != null) {
-			outer.removeClassName(this.css.Disabled());
-			outer.removeClassName(icon.Disabled());
+			removeStyleName(this.css.Disabled());
+			removeStyleName(icon.Disabled());
 		}
 		
 		if(pressed && this.css != null)
-			outer.removeClassName(this.css.Pressed());
-	
+			removeStyleName(this.css.Pressed());
+		
 		this.css = css;
-	
 		css.ensureInjected();
-	    outer.setClassName(css.Button());
+		setStyleName(css.Button());
 	   	
 	   	if(!isEnabled())
-	   		outer.addClassName(css.Disabled());
+	   		addStyleName(css.Disabled());
 	   	
 	   	if(pressed)
-	   		outer.addClassName(css.Pressed());
+	   		addStyleName(css.Pressed());
+	   		
 	}
 	
 	public void setCSS(ButtonCSS css) {
 		setCss(css);
 	}
-	
+    
     public void setTip(String text) {
         if(text != null) {
             if(options == null) 
@@ -425,82 +389,4 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
         return options;
     }
     
-    public void setWidth(String width) {
-    	super.setWidth(width);
-    	outer.getStyle().setProperty("width", width);
-    }
-    
-    public void setHeight(String height) {
-    	super.setHeight(height);
-    	outer.getStyle().setProperty("height",height);
-    }
-    
-    public static class ImageSelector extends SimplePanel {
-    	
-    	private Image image,disabledImage,pressedImage,lockedImage;
-    	private int width=-1,height=-1;
-    	
-    	protected void selectImage(Button button) {
-    		if(!button.enabled && disabledImage != null)
-    			setWidget(disabledImage);
-    		else if(button.pressed && pressedImage != null)
-    			setWidget(pressedImage);
-    		else if(button.locked && lockedImage != null)
-    			setWidget(lockedImage);
-    		else if(image != null)
-    			setWidget(image);
-    	}
-    	
-    	public void setPixelSize(int width, int height) {
-    		this.width = width;
-    		this.height = height;
-    		
-    		if(image != null)
-    			image.setPixelSize(width, height);
-    		if(disabledImage != null)
-    			disabledImage.setPixelSize(width, height);
-    		if(pressedImage != null)
-    			pressedImage.setPixelSize(width, height);
-    		if(lockedImage != null)
-    			lockedImage.setPixelSize(width, height);
-    	}
-    	
-    	@UiChild(limit=1,tagname="image")
-    	public void setImage(Image image) {
-    		this.image = image;
-    		setImageProperties(image);
-    		setWidget(image);
-    	}
-    	
-    	@UiChild(limit=1,tagname="disabled")
-    	public void setDisabled(Image image) {
-    		this.disabledImage = image;
-    		setImageProperties(image);
-    	}
-    	
-    	@UiChild(limit=1,tagname="pressed")
-    	public void setPressed(Image image) {
-    		this.pressedImage = image;
-    		setImageProperties(image);
-    	}
-    	
-    	@UiChild(limit=1,tagname="locked")
-    	public void setLocked(Image locked) {
-    		this.lockedImage = image;
-    		setImageProperties(image);
-    	}	
-    	
-    	private void setImageProperties(Image image) {
-    		image.getElement().getStyle().setDisplay(Display.BLOCK);
-    		image.getElement().getStyle().setProperty("margin", "auto");
-    		if(width > 0)
-    			image.setPixelSize(width, height);
-    	}
-    }
-    
-    @Override
-    public HandlerRegistration addClickHandler(ClickHandler handler) {
-    	return addHandler(handler,ClickEvent.getType());
-    }
-        
 }

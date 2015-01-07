@@ -235,25 +235,4 @@ public class QueryFieldUtil {
         return "";
     }
 
-    public static String convert(String value) throws Exception {
-    	QueryFieldUtil util;
-    	StringBuilder sb;
-    	
-    	util = new QueryFieldUtil();
-    	util.parse(value);
-    	
-    	sb = new StringBuilder();
-    	for(int i = 0; i < util.parameter.size(); i++) {
-    		sb.append(util.comparator.get(i));
-    		sb.append(" ");
-    		sb.append(util.parameter.get(i));
-    		if(i < util.logical.size()) {
-    			sb.append(" " );
-    			sb.append(util.logical.get(i));
-    			sb.append(" ");
-    		}
-    	}
-    	
-    	return sb.toString();
-    }
 }

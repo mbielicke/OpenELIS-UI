@@ -34,7 +34,6 @@ import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.resources.CheckboxCSS;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -143,7 +142,6 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
         
         exceptions = new Exceptions();
         
-        setWidth("13px");
     }
 
     /**
@@ -394,7 +392,7 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
 		return addHandler(handler,ValueChangeEvent.getType());
 	}
 	
-	public void setCss(CheckboxCSS css) {
+	public void setCSS(CheckboxCSS css) {
 		check.setCSS(css);
 	}
 	
@@ -428,18 +426,6 @@ public class CheckBox extends FocusPanel implements ScreenWidgetInt,
     
     public Balloon.Options getBalloonOptions() {
         return options;
-    }
-    
-    @Override
-    public void setWidth(String width) {
-    	getElement().getStyle().setWidth(Util.stripUnits(width), Unit.PX);
-    	check.setWidth(width);
-    }
-    
-    @Override
-    public void setHeight(String height) {
-    	getElement().getStyle().setHeight(Util.stripUnits(height), Unit.PX);
-    	check.setHeight(height);
     }
 
 }

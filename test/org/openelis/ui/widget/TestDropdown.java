@@ -123,7 +123,7 @@ public class TestDropdown {
         drop.setEnabled(false);
         
         assertFalse(drop.enabled);
-        //verifyNotEnabled(drop.button);
+        verifyNotEnabled(drop.button);
         verify(drop.textbox,last()).setEnabled(false);
         verifyNotEnabled(drop.table);
     }
@@ -133,7 +133,7 @@ public class TestDropdown {
         drop.setEnabled(true);
         
         assertTrue(drop.enabled);
-        //verifyEnabled(drop.button);
+        verifyEnabled(drop.button);
         verify(drop.textbox,last()).setEnabled(true);
         verifyEnabled(drop.table);
     }

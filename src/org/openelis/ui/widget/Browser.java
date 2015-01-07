@@ -208,10 +208,8 @@ public class Browser extends ResizeComposite {
     	windowsByKey.put(key+index,window);
     	window.addCloseHandler(new CloseHandler<WindowInt>() {
     	    public void onClose(CloseEvent<WindowInt> event) {
-    	      if(windows.containsKey(event.getSource())) 
-    	    	  windowsByKey.remove(windows.remove(event.getSource()).key);
-    	      
-    	      setFocusedWindow();
+    	       windowsByKey.remove(windows.remove(event.getSource()).key);
+    	       setFocusedWindow();
     	    }
     	});
     	

@@ -4,6 +4,8 @@
 }
 
 .Button {
+    margin:2px;
+    padding:1px;
 	border:1px solid transparent;
 	-moz-border-radius:2px;
 	border-radius:2px;
@@ -11,15 +13,9 @@
     font-size:11px;
     text-shadow: 0 1px white;
     color:inherit;
-    display : inline-block;
-    height : 16px;
-    padding : 1px;
   }
     
-.Button > div {
-	margin : 1px;
-	padding : 1px;
-}
+    .Button Table{border-spacing:0;}
     
 .Button:hover {
    border:1px solid #7293be;

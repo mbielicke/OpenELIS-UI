@@ -1,7 +1,6 @@
 package org.openelis.ui.resources;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dev.resource.Resource;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.resources.client.CssResource.NotStrict;
@@ -44,9 +43,6 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("css/checkbox.css")
 	CheckboxCSS checkbox();
-	
-	@Source("css/mcheckbox.css")
-	MCheckboxCSS mcheckbox();
 	
 	@Source("css/collapse.css")
 	CollapseCSS collapse();
@@ -127,29 +123,18 @@ public interface UIResources extends ClientBundle {
 	@Source("css/tooltip.css")
     ToolTipCSS toolTip();
 	
-	@Source("css/help.css")
-	HelpCSS help();
-	
-	@Source("css/error.css")
-	ErrorCss errorCss();
-	
 	@Source("css/cal.css")
 	CalCSS cal();
 	
 	@Source("css/link.css")
 	LinkCSS link();
 	
-	@Source("css/portalstatus.css") 
-	PortalStatusCSS portalStatus();
-	
-	@Source("css/unstyledbutton.css")
-	UnstyledButton unstyledButtonCss();
-	
 	@Source("images/close.png")
 	ImageResource closeButton();
 	
 	@Source("images/minimize.gif")
 	ImageResource minimizeButton();
+	
 
 	@Source("images/trans.gif")
 	ImageResource glass();	
@@ -174,15 +159,6 @@ public interface UIResources extends ClientBundle {
 	
 	@Source("images/unknow.png")
 	ImageResource unknown();
-	
-	@Source("images/bt_checkbox_on_2_2x.png")
-	ImageResource mapply();
-	
-	@Source("images/bt_checkbox_off_2_2x.png")
-	ImageResource munapply();
-	
-	@Source("images/bt_checkbox_off_2_2x.png")
-	ImageResource munknown();
 	
 	@Source("images/icon-warning.gif")
 	ImageResource iconWarning();
@@ -476,15 +452,5 @@ public interface UIResources extends ClientBundle {
     @Source("images/selectdisabled.png")
     ImageResource selectDisabled();
     
-    @Source("images/help.png")
-    ImageResource helpImage();
     
-    @Source("images/ic_back_blk_24dp_r2_2x.png")
-    ImageResource backImage();
-    
-    @Source("images/spinner.gif")
-    ImageResource spinnerGlobe();
-    
-    @Source("images/attention.png")
-    ImageResource attention();
 }

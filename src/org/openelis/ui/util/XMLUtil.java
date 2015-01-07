@@ -50,8 +50,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -107,33 +105,6 @@ public class XMLUtil {
         
         return new String(output.toByteArray(),"UTF-8");
         }catch(Exception e){
-            return null;
-        }
-    }
-
-    /**
-     * This method is used to convert a Node object into an XML String.
-     * 
-     * @param node
-     * @return
-     * @throws TransformerConfigurationException
-     * @throws TransformerException
-     */
-    public static String toString(Node node) throws TransformerConfigurationException,
-                                                    TransformerException {
-        ByteArrayOutputStream output;
-        DOMSource source;
-        StreamResult result;
-        Transformer transformer;
-        
-        transformer = TransformerFactory.newInstance().newTransformer();
-        source = new DOMSource(node);
-        try {
-            output = new ByteArrayOutputStream();
-            result = new StreamResult(output);
-            transformer.transform(source, result);
-            return new String(output.toByteArray(),"UTF-8");
-        } catch (Exception e) {
             return null;
         }
     }
@@ -236,13 +207,4 @@ public class XMLUtil {
             saxParser.parse(new ByteArrayInputStream(xml.getBytes()), handler);
     }
     
-    public static String getNodeText(Element el, String nodeName) {
-        Node node;
-        
-        node = el.getElementsByTagName(nodeName).item(0);
-        if (node != null && node.getFirstChild() != null)
-            return node.getFirstChild().getNodeValue().trim();
-        else
-            return null;
-    }
 }

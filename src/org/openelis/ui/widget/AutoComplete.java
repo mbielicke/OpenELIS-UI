@@ -331,7 +331,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
             @Override
             public void execute() {
-                int modelHeight = table.getModel() != null ? table.getModel().size() * cellHeight : 0;
+                int modelHeight = table.getModel().size() * cellHeight;
                 
                 if(table.hasHeader())
                     modelHeight += 20;
@@ -976,15 +976,11 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      * QueryData object for the passed type T.
      */
     public Object getQuery() {
-    	Object query = null;
+    	Object query;
     	
-    	if(queryMode)
-    		query = helper.getQuery(textbox.getText());
-    	else if (getValue() != null) {
-    		query = new QueryData(QueryData.Type.INTEGER,String.valueOf(getValue().getId()));
-    	}
-        
-    	return query;
+    	query = helper.getQuery(textbox.getText());
+                
+        return query;
     }
     
     /**
@@ -1073,7 +1069,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     	css.ensureInjected();
     	this.css = css;
     	
-        //button.setLeftIcon(css.SelectButton());
+        button.setLeftIcon(css.SelectButton());
         display.setStyleName(css.SelectBox());
         textbox.setStyleName(css.SelectText());
     }
