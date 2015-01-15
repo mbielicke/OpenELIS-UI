@@ -51,7 +51,7 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         editor.setText(0, 1, display(value));
         
         //Style the editor to not wrap words
-        editor.setWidth((this.col.getWidth())+"px");
+        editor.setWidth("100%");
         editor.getCellFormatter().setWidth(0, 0, "20px");
         editor.getCellFormatter().setWidth(0, 1, "100%");
         editor.getElement().getStyle().setTableLayout(TableLayout.FIXED);
@@ -73,7 +73,7 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         editor.setText(0, 1, display(value));
         
         //Style the editor to not wrap words
-        editor.setWidth((this.col.getWidth())+"px");
+        editor.setWidth("100%");
         editor.getCellFormatter().setWidth(0, 0, "20px");
         editor.getCellFormatter().setWidth(0, 1, "100%");
         editor.getElement().getStyle().setTableLayout(TableLayout.FIXED);
