@@ -87,7 +87,6 @@ public class OpenELISUserPropertiesModule extends UsersRolesLoginModule {
             super.login();
         } catch (LoginException e) {
             loginAttempt.fail(getUsername(), getIP());
-            e.printStackTrace();
             throw e;
         }
         
