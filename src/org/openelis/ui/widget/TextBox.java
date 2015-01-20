@@ -259,7 +259,13 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * ValueChangeEvent.
 	 */
 	public void setValue(T value) {
-		setValue(value, false);
+		clearValidateExceptions();
+		try {
+			setValue(value, false);
+		}catch(Exception e) {
+			addValidateException(e);
+		}
+		hasExceptions();
 	}
 
 	/**
