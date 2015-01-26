@@ -605,6 +605,7 @@ public class StaticView extends ViewInt {
      * @param event
      */
     protected void startEditing(int r, final int c, Object value, NativeEvent event) {
+    	container.dettach();
         if(c > 0) {
             container.setWidth( (tree.getColumnAt(c).getWidth() - 4));
             container.setHeight( (tree.getRowHeight()-4));
