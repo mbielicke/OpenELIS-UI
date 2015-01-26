@@ -248,14 +248,17 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	
 	public void setDisabledImage(ImageResource imageResource) {
 		getImageSelector().setDisabled(new Image(imageResource));
+		getImageSelector().selectImage(this);
 	}
 	
 	public void setPressedImage(ImageResource imageResource) {
 		getImageSelector().setPressed(new Image(imageResource));
+		getImageSelector().selectImage(this);
 	}
 	
 	public void setLockedImage(ImageResource imageResource) {
 		getImageSelector().setLocked(new Image(imageResource));
+		getImageSelector().selectImage(this);
 	}
 	
 	public void setPixelSize(int width, int height) {
