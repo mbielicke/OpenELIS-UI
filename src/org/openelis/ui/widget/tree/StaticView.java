@@ -58,8 +58,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
@@ -608,14 +610,17 @@ public class StaticView extends ViewInt {
             container.setHeight( (tree.getRowHeight()-4));
             flexTable.setWidget(r, c, container);
         } else {
-            Element tableCell = flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3);
-            if(tableCell.hasChildNodes())
-                tableCell.removeChild(tableCell.getChild(0));
-            tableCell.appendChild(container.getElement());
-            int width = tableCell.getOffsetWidth() - 3;
-            if(width > 0)
-                container.setWidth(width);
-            container.setHeight(tree.getRowHeight()-5);
+        	Element tableCell = flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(3);
+        	if(tableCell.hasChildNodes())
+        		tableCell.removeChild(tableCell.getChild(0));
+
+        	tableCell.appendChild(container.getElement());
+        	container.attach();
+
+        	int width = tableCell.getOffsetWidth() - 3;
+        	if(width > 0)
+        		container.setWidth(width);
+        	container.setHeight(tree.getRowHeight()-5);
         }
 
         if (tree.getQueryMode())
@@ -968,6 +973,11 @@ public class StaticView extends ViewInt {
     }
     
     protected class TreeGrid extends Grid {
+    	
+    	public TreeGrid(Element grid) {
+    		claimElement(grid);
+    	}
+    	
         public TreeGrid(int level) {
             super(1,4);
             addStyleName(css.TreeCell());

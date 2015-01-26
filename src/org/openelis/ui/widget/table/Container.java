@@ -85,5 +85,9 @@ public class Container extends AbsolutePanel {
     public void focusWidget() {
         Scheduler.get().scheduleDeferred(command);
     }
+    
+    public void attach() {
+    	onAttach();
+    }
    
 }
