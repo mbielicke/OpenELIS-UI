@@ -32,6 +32,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Container extends AbsolutePanel {
@@ -87,7 +88,13 @@ public class Container extends AbsolutePanel {
     }
     
     public void attach() {
-    	onAttach();
+    	if(!isAttached())
+    		onAttach();
+    }
+    
+    public void dettach() {
+    	if(isAttached())
+    		onDetach();
     }
    
 }
