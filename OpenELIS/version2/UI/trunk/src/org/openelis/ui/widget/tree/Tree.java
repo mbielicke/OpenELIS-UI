@@ -1211,19 +1211,19 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void addNodeAfter(Node selected, Node node) {
         Node parent = selected.getParent();
         
-        if(node.isLastChild())
+        if(selected.isLastChild())
             addNodeAt(parent,node);
         else
-            addNodeAt(parent,node,node.getChildIndex()+1);
+            addNodeAt(parent,node,selected.getChildIndex()+1);
     }
     
     public void addNodeBefore(Node selected, Node node) {
         Node parent = selected.getParent();
         
-        if(node.isFirstChild())
+        if(selected.isFirstChild())
             addNodeAt(parent,node,0);
         else 
-            addNodeAt(parent,node,node.getChildIndex()-1);
+            addNodeAt(parent,node,selected.getChildIndex()-1);
     }
     
     /**
