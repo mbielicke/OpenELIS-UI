@@ -293,9 +293,10 @@
 
 .SelectText {
    background:white;
-   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+   font-family:inherit;
    font-weight: normal;
-   font-size: 11px;
+   font-size: inherit;
+   color:inherit;
    height: 16px;
    cursor: default;
    border: none;
