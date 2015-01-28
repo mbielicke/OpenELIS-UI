@@ -136,6 +136,10 @@ public abstract class ScreenNavigator<T extends Serializable> {
         executeQuery(query);
     }
 
+    public Query getQuery() {
+    	return query;
+    }
+    
     /**
      * Set the query result list.
      * 
