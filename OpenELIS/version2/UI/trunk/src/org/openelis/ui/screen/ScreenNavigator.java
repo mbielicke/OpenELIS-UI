@@ -69,19 +69,24 @@ import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
  */
 public abstract class ScreenNavigator<T extends Serializable> {
     protected int          selection, oldPage;
-    protected boolean      byRow, enable;
+    protected boolean      selectLastRow, noSelection, enable;
     protected ArrayList<T> result;
     protected Query        query;
     protected Table        table;
-    protected Button       atozNext, atozPrev;
+    protected Button       nextPage, prevPage;
 
     public ScreenNavigator(Table table, Button next, Button prev) {
         oldPage = -1;
         selection = -1;
         this.table = table;
-        atozNext = next;
-        atozPrev = prev;
+        nextPage = next;
+        prevPage = prev;
         initialize();
+    }
+    
+    public ScreenNavigator(Table table, Button loadMore) {
+    	this(table,loadMore,null);
+    	noSelection = true;
     }
 
     protected void initialize() {
@@ -89,13 +94,8 @@ public abstract class ScreenNavigator<T extends Serializable> {
         if (table != null) {
             table.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
                 public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-                    // since we don't know if the fetch will succeed, we are
-                    // going
-                    // cancel this selection and select the table row ourselves.
                     if (enable && selection != event.getItem())
                         select(event.getItem());
-                    // else
-                    // event.cancel();
                 }
             });
             table.addBeforeCellEditedHandler(new BeforeCellEditedHandler() {
@@ -103,21 +103,18 @@ public abstract class ScreenNavigator<T extends Serializable> {
                     event.cancel();
                 }
             });
-            // we don't want the table to get focus; we can still select because
-            // we will get the onBeforeSelection event.
-            table.setEnabled(false);
         }
 
-        if (atozNext != null) {
-            atozNext.addClickHandler(new ClickHandler() {
+        if (nextPage != null) {
+            nextPage.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     setPage(query.getPage() + 1);
                 }
             });
         }
 
-        if (atozPrev != null) {
-            atozPrev.addClickHandler(new ClickHandler() {
+        if (prevPage != null) {
+            prevPage.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     setPage(query.getPage() - 1);
                 }
@@ -130,7 +127,6 @@ public abstract class ScreenNavigator<T extends Serializable> {
      */
     public void setQuery(Query query) {
         oldPage = -1;
-        byRow = false;
 
         this.query = query;
         executeQuery(query);
@@ -166,30 +162,35 @@ public abstract class ScreenNavigator<T extends Serializable> {
         
         if (table != null)
             table.setModel(getModel());
-        //
-        // we are going back a page and we want to select the last row in
-        // in the list
-        //
-        if (result != null && oldPage > query.getPage() && byRow) {
-            row = result.size() - 1;
-            byRow = false;
-        }
+        
+        if(!noSelection) {
+        	// we are going back a page and we want to select the last row in
+        	// in the list
+        	if (result != null && selectLastRow) {
+        		row = result.size() - 1;
+        		selectLastRow = false;
+        	}
 
-        select(row);
+        	select(row);
+        }
     }
 
     public ArrayList<T> getQueryResult() {
         return result;
     }
 
+    public void setNoSelection(boolean noSelection) {
+    	this.noSelection = noSelection;
+    }
+    
     /**
      * enable the table and next previous page buttons
      */
     public void enable(boolean enable) {
-        if (atozNext != null)
-            atozNext.setEnabled(enable && result != null);
-        if (atozPrev != null)
-            atozPrev.setEnabled(enable && result != null);
+        if (nextPage != null)
+            nextPage.setEnabled(enable && result != null);
+        if (prevPage != null)
+            prevPage.setEnabled(enable && result != null);
         this.enable = enable;
         
         if(table != null)
@@ -202,7 +203,6 @@ public abstract class ScreenNavigator<T extends Serializable> {
      */
     public void next() {
         if (enable) {
-            byRow = true;
             if (selection != -1)
                 select(selection + 1);
         }
@@ -215,7 +215,6 @@ public abstract class ScreenNavigator<T extends Serializable> {
      */
     public void previous() {
         if (enable) {
-            byRow = true;
             if (selection != -1)
                 select(selection - 1);
         }
@@ -259,23 +258,24 @@ public abstract class ScreenNavigator<T extends Serializable> {
             }
             if (table != null)
                 table.unselectRowAt(selection);
-            if (atozNext != null)
-                atozNext.setEnabled(false);
-            if (atozPrev != null)
-                atozPrev.setEnabled(false);
+            if (nextPage != null)
+                nextPage.setEnabled(false);
+            if (prevPage != null)
+                prevPage.setEnabled(false);
         } else if (row > result.size() - 1) {
             setPage(query.getPage() + 1);
         } else if (row < 0) {
+        	selectLastRow = true;
             setPage(query.getPage() - 1);
         } else {
             if (fetch(result.get(row))) {
                 selection = row;
                 if (table != null)
                     table.selectRowAt(selection);
-                if (atozNext != null)
-                    atozNext.setEnabled(true);
-                if (atozPrev != null)
-                    atozPrev.setEnabled(true);
+                if (nextPage != null)
+                    nextPage.setEnabled(true);
+                if (prevPage != null)
+                    prevPage.setEnabled(true);
             } else {
                 clearSelection();
             }
