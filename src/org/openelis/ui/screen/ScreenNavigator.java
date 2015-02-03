@@ -146,7 +146,6 @@ public abstract class ScreenNavigator<T extends Serializable> {
     public void setQueryResult(ArrayList result) {
         int row;
 
-        enable(true);
         //
         // if next page failed, reset the query page # to the old page #
         //
@@ -156,8 +155,7 @@ public abstract class ScreenNavigator<T extends Serializable> {
             return;
         }
 
-        row = 0;
-        
+        row = 0;        
         this.result = result;
         
         if (table != null)
@@ -173,6 +171,8 @@ public abstract class ScreenNavigator<T extends Serializable> {
 
         	select(row);
         }
+        
+        enable(true);
     }
 
     public ArrayList<T> getQueryResult() {
