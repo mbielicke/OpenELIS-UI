@@ -153,6 +153,7 @@ public abstract class ScreenNavigator<T extends Serializable> {
         if (result == null && oldPage != -1) {
             query.setPage(oldPage);
             oldPage = -1;
+            enable(true);
             return;
         }
 
