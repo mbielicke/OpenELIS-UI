@@ -39,10 +39,12 @@ public class OpenELISLDAPModule extends LdapExtLoginModule {
     
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+    	addValidOptions(new String[]{"loginLockoutTime","loginNameRetryCount","loginIPRetryCount"});
         super.initialize(subject, callbackHandler, sharedState, options);
         
-        if(options.containsKey("loginLockoutTime"))
+        if(options.containsKey("loginLockoutTime")) {
             loginLockoutTime = Integer.parseInt((String)options.get("loginLockoutTime"));
+        }
         
         if(options.containsKey("loginIPRetryCount"))
             loginIPRetryCount = Integer.parseInt((String)options.get("loginIPRetryCount"));
