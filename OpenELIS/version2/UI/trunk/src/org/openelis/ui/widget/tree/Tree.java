@@ -2815,7 +2815,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         	 getDisplayedRows();
             ((StaticView)view).bulkRender();
         
-            ((StaticView)view).bulkExceptions(endUserExceptions);
+            ((StaticView)view).bulkExceptions(validateExceptions);
         
             if(isAnyNodeSelected()) {
                 for(Integer index : selections) 
