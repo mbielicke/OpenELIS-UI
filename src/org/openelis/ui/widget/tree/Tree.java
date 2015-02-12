@@ -28,6 +28,7 @@ package org.openelis.ui.widget.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.openelis.ui.common.Util;
 import org.openelis.ui.common.data.QueryData;
@@ -2366,7 +2367,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void addException(int row, int col, Exception error) {
         getEndUserExceptionList(getNodeAt(row), col).add(error);
-        renderView(row, row);
+        view.renderExceptions(row,row);
     }
 
     /**
@@ -2377,12 +2378,15 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param error
      */
     public void setValidateException(int row, int col, ArrayList<Exception> errors) {
-        HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
-        HashMap<Integer, ArrayList<Exception>> rowExceptions; 
         Node node;
         
         node = getNodeAt(row);
-
+        setValidateException(node,col,errors);
+    }
+    
+    public void setValidateException(Node node, int col, ArrayList<Exception> errors) {
+        HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
+        HashMap<Integer, ArrayList<Exception>> rowExceptions; 
         // If hash is null and errors are passed as null, nothing to reset so
         // return
         if (validateExceptions == null && (errors == null || errors.isEmpty()))
@@ -2575,11 +2579,17 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     private ArrayList<Exception> getValidateExceptionList(int row, int col) {
-        HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
-        ArrayList<Exception> list;
+       
         Node key;
 
         key = getNodeAt(row);
+        return getValidateExceptionList(key,col);
+    }
+    
+    private ArrayList<Exception> getValidateExceptionList(Node key, int col) {
+    	 HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
+         ArrayList<Exception> list;
+         
         if (validateExceptions == null)
             validateExceptions = new HashMap<Node, HashMap<Integer, ArrayList<Exception>>>();
 
@@ -2598,7 +2608,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         }
 
         return list;
-
     }
 
     /**
@@ -2777,26 +2786,26 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * have values
      */
     public void validate() {
-        ArrayList<Exception> exceptions;
-        boolean render = false;
+        HashSet<String> required = new HashSet<>();
 
         finishEditing();
 
-        for (int col = 0; col < getColumnCount(); col++ ) {
-            if (getColumnAt(col).isRequired()) {
-                for (int row = 0; row < getRowCount(); row++ ) {
-                    if (getValueAt(row, col) == null) {
-				        exceptions = getValidateExceptionList(row, col);
-				        exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
-				        setValidateException(row, col, exceptions);
-						render = true;
-                        render = true;
-                    }
-                }
-            }
+        for (String type : nodeDefs.keySet()) {
+        	ArrayList<LeafColumn> columns = nodeDefs.get(type);
+        	for (int i = 0; i < columns.size(); i++) {
+        		if (columns.get(i).isRequired()) {
+        			required.add(type);
+        		}
+        	}
         }
-
-        if (render) {
+        
+        if (required.isEmpty()) {
+        	return;
+        }
+        
+        validateNode(required, root);
+        
+        if(validateExceptions != null && !validateExceptions.isEmpty()) {
             ((StaticView)view).bulkRender();
         
             if(hasExceptions()) 
@@ -2806,9 +2815,34 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
                 for(Integer index : selections) 
                     ((StaticView)view).applySelectionStyle(index);
             }
-        }
+    	}
     }
 
+    public void validateNode(HashSet<String> required, Node node) {
+    	if (required.contains(node.getType())) {
+    		for(int i = 0; i < nodeDefs.get(node.type).size(); i++) {
+    			if (nodeDefs.get(node.type).get(i).isRequired()) {
+    				if(node.getCell(i) == null) {
+    					ArrayList<Exception> exceptions = getValidateExceptionList(node, i);
+    					exceptions.add(new Exception(Messages.get().exc_fieldRequired()));
+ 				        setValidateException(node, i, exceptions);
+ 				        node.isOpen = true;
+ 				        Node parent = node.getParent();
+ 				        while(!parent.isOpen) {
+ 				        	parent.isOpen = true;
+ 				        	parent = parent.getParent();
+ 				        }
+    				}
+    			}
+    		}
+    	}
+    	if (node.hasChildren()) {
+    		for (Node child : node.children()) {
+    			validateNode(required,child);
+    		}
+    	}
+    }
+    
     /**
      * Returns the model as part of the HasValue interface
      */
