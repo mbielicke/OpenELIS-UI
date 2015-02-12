@@ -2361,7 +2361,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         if(nodeIndex != null && nodeIndex.containsKey(node)) {
             r = nodeIndex.get(node).index;
-            renderView(r,r);
+            view.renderExceptions(r, r);
         }
     }
 
@@ -2370,7 +2370,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void addException(int row, int col, Exception error) {
         getEndUserExceptionList(getNodeAt(row), col).add(error);
-        renderView(row, row);
+        view.renderExceptions(row, row);
     }
 
     /**
