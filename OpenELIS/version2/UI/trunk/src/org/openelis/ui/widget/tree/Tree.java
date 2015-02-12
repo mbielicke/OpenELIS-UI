@@ -1373,10 +1373,14 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param node
      */
     public void removeNode(Node node) {
-        if(!isDisplayed(node))
-            node.removeFromParent();
-        else
+        if (!isDisplayed(node)) {
+            if (fireBeforeRowDeletedEvent(-1, node)) {
+            	node.removeFromParent();
+            }
+            fireRowDeletedEvent(-1, node);
+        } else {
             removeNodeAt(nodeIndex.get(node).index);
+        }
     }
 
     /**
