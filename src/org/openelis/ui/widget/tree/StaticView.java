@@ -452,11 +452,10 @@ public class StaticView extends ViewInt {
 
                     });
                 } else {
-                    flexTable.getCellFormatter().removeStyleName(r, c, Balloon.isWarning(tree.getEndUserExceptions(r, c), tree.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
+                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
+                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
                     flexTable.removeHandler(r, c);
                 }
-
-                //flexTable.getCellFormatter().setVisible(r, c, tree.getColumnAt(c).isDisplayed());
             }
         }
     }
@@ -592,7 +591,6 @@ public class StaticView extends ViewInt {
             flexTable.removeHandler(r, c);
         }
 
-        //flexTable.getCellFormatter().setVisible(r, c, tree.getColumnAt(c).isDisplayed());
     }
 
     /**
