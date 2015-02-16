@@ -1374,10 +1374,14 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param node
      */
     public void removeNode(Node node) {
-        if(!isDisplayed(node))
-            node.removeFromParent();
-        else
+        if (!isDisplayed(node)) {
+            if (fireBeforeRowDeletedEvent(-1, node)) {
+            	node.removeFromParent();
+            }
+            fireRowDeletedEvent(-1, node);
+        } else {
             removeNodeAt(nodeIndex.get(node).index);
+        }
     }
 
     /**
@@ -2358,7 +2362,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         if(nodeIndex != null && nodeIndex.containsKey(node)) {
             r = nodeIndex.get(node).index;
-            renderView(r,r);
+            view.renderExceptions(r, r);
         }
     }
 
@@ -2367,7 +2371,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public void addException(int row, int col, Exception error) {
         getEndUserExceptionList(getNodeAt(row), col).add(error);
-        view.renderExceptions(row,row);
+        view.renderExceptions(row, row);
     }
 
     /**
@@ -2387,6 +2391,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     public void setValidateException(Node node, int col, ArrayList<Exception> errors) {
         HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
         HashMap<Integer, ArrayList<Exception>> rowExceptions; 
+
         // If hash is null and errors are passed as null, nothing to reset so
         // return
         if (validateExceptions == null && (errors == null || errors.isEmpty()))
@@ -2579,7 +2584,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @return
      */
     private ArrayList<Exception> getValidateExceptionList(int row, int col) {
-       
         Node key;
 
         key = getNodeAt(row);
@@ -2587,9 +2591,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     }
     
     private ArrayList<Exception> getValidateExceptionList(Node key, int col) {
-    	 HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
-         ArrayList<Exception> list;
-         
+        HashMap<Integer, ArrayList<Exception>> cellExceptions = null;
+        ArrayList<Exception> list;
         if (validateExceptions == null)
             validateExceptions = new HashMap<Node, HashMap<Integer, ArrayList<Exception>>>();
 
@@ -2608,6 +2611,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         }
 
         return list;
+
     }
 
     /**
@@ -2803,13 +2807,15 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         	return;
         }
         
+        validateExceptions = null;
+        
         validateNode(required, root);
         
-        if(validateExceptions != null && !validateExceptions.isEmpty()) {
+        if(validateExceptions != null) {
+        	 getDisplayedRows();
             ((StaticView)view).bulkRender();
         
-            if(hasExceptions()) 
-                ((StaticView)view).bulkExceptions(endUserExceptions);
+            ((StaticView)view).bulkExceptions(validateExceptions);
         
             if(isAnyNodeSelected()) {
                 for(Integer index : selections) 
@@ -2842,7 +2848,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     		}
     	}
     }
-    
+
     /**
      * Returns the model as part of the HasValue interface
      */

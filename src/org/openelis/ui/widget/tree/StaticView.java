@@ -452,19 +452,10 @@ public class StaticView extends ViewInt {
 
                     });
                 } else {
-                	final int defr = r, defc = c;
-                	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-						
-						@Override
-						public void execute() {
-		                    flexTable.getCellFormatter().removeStyleName(defr, defc, Balloon.isWarning(tree.getEndUserExceptions(defr, defc), tree.getValidateExceptions(defr, defc)) ? css.InputWarning() : css.InputError());
-		                    flexTable.removeHandler(defr, defc);
-						}
-					});
-
+                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
+                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
+                    flexTable.removeHandler(r, c);
                 }
-
-                //flexTable.getCellFormatter().setVisible(r, c, tree.getColumnAt(c).isDisplayed());
             }
         }
     }
@@ -600,7 +591,6 @@ public class StaticView extends ViewInt {
             flexTable.removeHandler(r, c);
         }
 
-        //flexTable.getCellFormatter().setVisible(r, c, tree.getColumnAt(c).isDisplayed());
     }
 
     /**
