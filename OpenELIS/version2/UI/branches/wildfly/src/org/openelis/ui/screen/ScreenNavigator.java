@@ -69,7 +69,7 @@ import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
  */
 public abstract class ScreenNavigator<T extends Serializable> {
     protected int          selection, oldPage;
-    protected boolean      selectLastRow, noSelection, enable;
+    protected boolean      selectLastRow, loadMore, noSelection, enable;
     protected ArrayList<T> result;
     protected Query        query;
     protected Table        table;
@@ -86,7 +86,7 @@ public abstract class ScreenNavigator<T extends Serializable> {
     
     public ScreenNavigator(Table table, Button loadMore) {
     	this(table,loadMore,null);
-    	noSelection = true;
+    	this.loadMore = true;
     }
 
     protected void initialize() {
@@ -108,6 +108,7 @@ public abstract class ScreenNavigator<T extends Serializable> {
         if (nextPage != null) {
             nextPage.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
+                	noSelection = true;
                     setPage(query.getPage() + 1);
                 }
             });
@@ -146,18 +147,17 @@ public abstract class ScreenNavigator<T extends Serializable> {
     public void setQueryResult(ArrayList result) {
         int row;
 
-        enable(true);
         //
         // if next page failed, reset the query page # to the old page #
         //
         if (result == null && oldPage != -1) {
             query.setPage(oldPage);
             oldPage = -1;
+            enable(true);
             return;
         }
 
-        row = 0;
-        
+        row = 0;        
         this.result = result;
         
         if (table != null)
@@ -173,6 +173,8 @@ public abstract class ScreenNavigator<T extends Serializable> {
 
         	select(row);
         }
+        noSelection = false;
+        enable(true);
     }
 
     public ArrayList<T> getQueryResult() {

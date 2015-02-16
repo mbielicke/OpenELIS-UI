@@ -209,7 +209,6 @@ public class Node extends Row {
     public void removeFromParent() {
         if(parent != null) {
             parent.remove(this);
-            parent = null;
         }
     }
     
