@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="OpenELIS-UI/openelis-apt.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/OpenELIS-UI/openelis-apt.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=OpenELIS-UI/src&lt;org.openelis.ui.processor"/>
+        <javaElement handleIdentifier="=OpenELIS-UI/src&lt;org.openelis.ui.screen"/>
+        <folder path="/OpenELIS-UI/META-INF"/>
+        <javaElement handleIdentifier="=OpenELIS-UI/src&lt;org.openelis.ui.annotation"/>
+    </selectedElements>
+</jardesc>
