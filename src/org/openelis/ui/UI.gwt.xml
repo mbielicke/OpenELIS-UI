@@ -31,6 +31,8 @@
     <source path="event" />
     <source path="scriptlet"/>
     <source path="test"/>
+    <source path="mvp"/>
+    <source path="annotation"/>
 
     <replace-with
         class="org.openelis.ui.widget.fileupload.FileLoadButton.FileLoadButtonImplClick">
