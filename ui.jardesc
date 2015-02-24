@@ -11,6 +11,7 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <folder path="/OpenELIS-UI/META-INF"/>
         <javaElement handleIdentifier="=OpenELIS-UI/src"/>
     </selectedElements>
 </jardesc>

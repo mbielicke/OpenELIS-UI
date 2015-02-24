@@ -3,12 +3,15 @@ package org.openelis.ui.processor;
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.FilerException;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -18,8 +21,14 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
+import javax.tools.FileObject;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 
 import org.openelis.ui.annotation.Enable;
 import org.openelis.ui.annotation.Field;
@@ -39,12 +48,14 @@ public class ViewProcessor extends AbstractProcessor {
     private PrintWriter writer;
     String indent = "";
     boolean applyIndent = true;
+    JavaFileObject file;
 
 	@Override
-	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)  {
 		if (!roundEnv.processingOver()) {
 			for (TypeElement element : annotations) {
 				for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(element)) {
+					processingEnv.getMessager().printMessage(Kind.NOTE, "View Processing = "+annotatedElement.asType().toString());
 					process((TypeElement)annotatedElement);
 				}
 			}
@@ -54,26 +65,29 @@ public class ViewProcessor extends AbstractProcessor {
 	
 	protected void process(TypeElement element) {
 		try {
+			//compileDummy(element);
 			setWriter(element);
 			String template = element.getAnnotation(View.class).template();
-			String presenterClass = element.getAnnotation(View.class).presenter();
+			String presenterClass = "";// = element.getAnnotation(View.class).presenter();
 			TypeElement presenter = null;
 			try {
-				presenter = processingEnv.getElementUtils().getTypeElement(presenterClass);
-			} catch (Exception e) {
-				processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+				element.getAnnotation(View.class).presenter();
+			} catch (MirroredTypeException e) {
+				presenterClass = e.getTypeMirror().toString();
+				processingEnv.getMessager().printMessage(Kind.NOTE,"PresenterClass = "+presenterClass);
+				presenter = processingEnv.getElementUtils().getTypeElement(e.getTypeMirror().toString());
 			}
 			String superName = element.getSimpleName().toString(); 
 			String className = element.getSimpleName().toString()+"Impl";
 			
-			List<VariableElement> fields = getUiFields(ElementFilter.fieldsIn(element.getEnclosedElements()));
+			List<VariableElement> fields = getUiFields(ElementFilter.fieldsIn(processingEnv.getElementUtils().getAllMembers(element)));
 			
 			writePackage(element);
 			writeImports(fields);
 			writeClassDeclaration(className,superName);
 			indent();
 			writeTemplate(template,className);
-			writeFieldsName(fields);
+			//writeFieldsName(fields);
 			//println("{0} presenter;",presenterClass);
 			println();
 			writeConstructor(className,presenterClass);
@@ -89,13 +103,22 @@ public class ViewProcessor extends AbstractProcessor {
 			writeDebugIds(fields);
 			outdent();
 			println("}");
+			writer.flush();
 			writer.close();
+			//JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+			//processingEnv.getFiler().getResource(StandardLocation., pkg, relativeName)
+			//compiler.run(null, null, null, file.toUri().getPath());
+			processingEnv.getMessager().printMessage(Kind.NOTE, "Processed "+element.asType().toString());
+		} catch (FilerException e) {
+			processingEnv.getMessager().printMessage(Kind.NOTE, "By Passing "+element.asType().toString());
 		} catch (Exception e) {
 			e.printStackTrace();
-			processingEnv.getMessager().printMessage(Kind.ERROR, e.toString());
+			processingEnv.getMessager().printMessage(Kind.ERROR, "Error "+e.toString(),element);
+			writer.flush();
 			writer.close();
 		}
-		processingEnv.getMessager().printMessage(Kind.NOTE, "Processed "+element.asType().toString());
+		
+		
 	}
 	
 	private void writePackage(TypeElement element) {
@@ -117,6 +140,8 @@ public class ViewProcessor extends AbstractProcessor {
 		println("import org.openelis.ui.screen.State;");
 		println("import org.openelis.ui.common.data.QueryData;");
 		println("import java.util.ArrayList;");
+		println("import javax.inject.Inject;");
+		println("import javax.annotation.Generated;");
 		HashSet<String> imports = new HashSet<>();
 		for (VariableElement field : fields) {
 			if (!imports.contains(field.asType().toString())) {
@@ -133,16 +158,39 @@ public class ViewProcessor extends AbstractProcessor {
 	}
 	
 	private void writeClassDeclaration(String className, String superName) {
+		println("@Generated(\"org.openelis.ui.processor.ViewProcessor\")");
 		println("public class {0} extends {1} { ",className,superName);
 		println();
 	}
 	
-	private void setWriter(TypeElement element) throws Exception {
-		Writer sourceWriter = processingEnv
+	private void compileDummy(TypeElement element) throws Exception {
+		Writer sourceWriter;
+		file = processingEnv
 				.getFiler()
 				.createSourceFile(
-						element.getQualifiedName().toString() + "Impl", element)
-				.openWriter();
+						element.getQualifiedName().toString() + "Impl", element);
+		
+				sourceWriter = file.openWriter();
+
+		BufferedWriter bufferedWriter = new BufferedWriter(sourceWriter);
+		writer = new PrintWriter(bufferedWriter);
+		writePackage(element);
+		println("public class {0} {",element.getSimpleName().toString()+"Impl");
+		println("}");
+		writer.flush();
+		writer.close();
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		compiler.run(null, null, null, file.toUri().getPath());
+	}
+	
+	private void setWriter(TypeElement element) throws Exception {
+		Writer sourceWriter;
+		file = processingEnv
+				.getFiler()
+				.createSourceFile(
+						element.getQualifiedName().toString() + "Impl", element);
+		
+				sourceWriter = file.openWriter();
 
 		BufferedWriter bufferedWriter = new BufferedWriter(sourceWriter);
 		writer = new PrintWriter(bufferedWriter);
@@ -178,10 +226,10 @@ public class ViewProcessor extends AbstractProcessor {
 	}
 	
 	private void writeConstructor(String className, String presenter) {
-		println("public {0}({1} presenter) {",className,presenter);
+		println("@Inject");
+		println("public {0}() {",className);
 		indent();
 		println("super();");
-		println("this.presenter = presenter;");
 		println("initWidget(uiBinder.createAndBindUi(this));");
 		println("initialize();");
 		outdent();
@@ -224,7 +272,7 @@ public class ViewProcessor extends AbstractProcessor {
 				states = field.getAnnotation(Enable.class).value();
 			}
 			if (states != null) {
-				print("{0}.setEnabled(isState(",field.getSimpleName());
+				print("this.{0}.setEnabled(isState(",field.getSimpleName());
 				for (int i = 0; i < states.length; i++) {
 					if(i > 0)
 						print(",");
@@ -239,7 +287,7 @@ public class ViewProcessor extends AbstractProcessor {
 				queryable = true;
 			}
 		    if (queryable) {
-		    	println("{0}.setQueryMode(state == State.QUERY);",field.getSimpleName());
+		    	println("this.{0}.setQueryMode(state == State.QUERY);",field.getSimpleName());
 		    }
 		}
 		println("super.setState(state);");
@@ -273,7 +321,7 @@ public class ViewProcessor extends AbstractProcessor {
 			    println("}");
 			}
 		}
-		println("return null;");
+		println("return super.getNextWidget(widget,forward);");
 		outdent();
 		println("}");
 		println();
@@ -303,6 +351,7 @@ public class ViewProcessor extends AbstractProcessor {
 				println("getQuery(list,{0}.getQuery(),\"{1}\");",field.getSimpleName(),meta);
 			}
 		}
+		println("super.getQueryFields(list);");
 		println("return list;");
 		outdent();
 		println("}");
@@ -324,6 +373,7 @@ public class ViewProcessor extends AbstractProcessor {
 				println("isValid({0},validation);",field.getSimpleName());
 			}
 		}
+		println("super.validate(validation);");
 		println("return validation;");
 		outdent();
 		println("}");
@@ -344,6 +394,7 @@ public class ViewProcessor extends AbstractProcessor {
 				println("{0}.clearExceptions();",field.getSimpleName());
 			}
 		}
+		println("super.clearErrors();");
 		outdent();
 		println("}");
 		println();
@@ -364,7 +415,7 @@ public class ViewProcessor extends AbstractProcessor {
 				println("})");
 				println("protected void handler{0}({1} arg) {",i++,method.getParameters().get(0).asType().toString());
 				indent();
-				println("presenter.{0}(arg);",method.getSimpleName());
+				println("(({0})presenter).{1}(arg);",presenter.asType().toString(),method.getSimpleName());
 				outdent();
 				println("}");
 				println();
