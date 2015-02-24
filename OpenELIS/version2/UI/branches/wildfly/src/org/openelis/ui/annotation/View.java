@@ -6,11 +6,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.openelis.ui.mvp.Presenter;
+
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
 @Inherited
 public @interface View {
 	String template();
-	String presenter();
+	Class<? extends Presenter> presenter() default Presenter.class;
 
 }

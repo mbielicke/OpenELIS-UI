@@ -71,11 +71,10 @@ import com.google.gwt.user.client.ui.Widget;
  * is presented to the user.
  * 
  */
-public class View extends ResizeComposite implements FocusHandler, Focusable, ScreenWidgetInt {
+public abstract class View extends ResizeComposite implements FocusHandler, Focusable, ScreenWidgetInt {
 
     protected Focusable                         focused;
     protected HashMap<Shortcut, Focusable>      shortcuts;
-    protected HashMap<String, View>             subViews;
 
     protected AbsolutePanel                     glass;
 
@@ -85,8 +84,7 @@ public class View extends ResizeComposite implements FocusHandler, Focusable, Sc
 
     public View() {
         shortcuts = new HashMap<Shortcut, Focusable>();
-        subViews = new HashMap<String, View>();
-        addDomHandler(new ScreenKeyHandler(), KeyDownEvent.getType());
+        addDomHandler(new ViewKeyHandler(), KeyDownEvent.getType());
     }
 
     protected void clickButton(final Button button) {
@@ -147,29 +145,17 @@ public class View extends ResizeComposite implements FocusHandler, Focusable, Sc
     public void finishEditing() {
         if (focused != null && focused instanceof ScreenWidgetInt)
             ((ScreenWidgetInt)focused).finishEditing();
-
-        for (View tab : subViews.values())
-            tab.finishEditing();
     }
 
-    public Validation validate() {
-    	return new Validation();
+    public void validate(Validation validation) {
+    	
     }
+
     
 	protected void isValid(Widget widget, Validation validation) {
 	    HasExceptions he;
 	    
-	    if(widget instanceof View) {
-	        Validation tabValid = ((View)widget).validate();
-        
-	        if(tabValid.getStatus().value > validation.getStatus().value)
-	            validation.setStatus(tabValid.getStatus());
-        
-	        if(tabValid.getExceptions() != null) 
-	            for(Exception exception : tabValid.getExceptions())
-	                validation.addException(exception);
-	            
-        }else if(widget instanceof HasExceptions) {
+        if(widget instanceof HasExceptions) {
 	        he = (HasExceptions)widget;
 	        if(he.hasExceptions()) {
 	            if(Balloon.isWarning(he))
@@ -204,15 +190,10 @@ public class View extends ResizeComposite implements FocusHandler, Focusable, Sc
                 Window.alert(ex.getMessage());
         }
 
-        if (tabErrors.size() > 0) {
-            for (View tab : subViews.values()) {
-                tab.showErrors(tabErrors);
-            }
-        }
-
     }
 
     public void clearErrors() {
+    	
     }
     
     public void setState(State state) {
@@ -226,9 +207,11 @@ public class View extends ResizeComposite implements FocusHandler, Focusable, Sc
      * 
      * @return
      */
-    public ArrayList<QueryData> getQueryFields() {
-        return null;
+    public void getQueryFields(ArrayList<QueryData> queries){
+    	
     }
+    
+    
     
     protected void getQuery(ArrayList<QueryData> list, Object query, String key) {
     	if (query instanceof ArrayList<?>) {
@@ -300,7 +283,7 @@ public class View extends ResizeComposite implements FocusHandler, Focusable, Sc
         }
     }
 
-    protected class ScreenKeyHandler implements KeyDownHandler {
+    protected class ViewKeyHandler implements KeyDownHandler {
 
         @Override
         public void onKeyDown(KeyDownEvent event) {
@@ -397,6 +380,8 @@ public class View extends ResizeComposite implements FocusHandler, Focusable, Sc
 		super.onAttach();
 		setTabIndex(0);
 	}
+	
+	public abstract void setPresenter(Presenter presenter);
 	
 
 }
