@@ -10,7 +10,7 @@
             <packagesToUnSeal/>
         </sealing>
     </manifest>
-    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
         <javaElement handleIdentifier="=OpenELIS-UI/src&lt;org.openelis.ui.processor"/>
         <javaElement handleIdentifier="=OpenELIS-UI/src&lt;org.openelis.ui.screen"/>
         <folder path="/OpenELIS-UI/META-INF"/>

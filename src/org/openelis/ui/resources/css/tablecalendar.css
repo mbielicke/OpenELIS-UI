@@ -121,7 +121,7 @@
 @sprite .Hover .PreviousMonth{
 	gwt-image:'previousMonthHover';
 }
-@sprtie .MonthSelect{
+@sprite .MonthSelect{
 	gwt-image:'monthSelect';
 }
 @sprite .Hover .MonthSelect{

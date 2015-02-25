@@ -15,9 +15,9 @@ import org.openelis.ui.screen.State;
 public @interface Field {
 	String shortcut() default "";
 	ShortKeys shortModifier() default ShortKeys.CTRL;
-	State[] enable() default {};
-	boolean queryable() default false;
+	State[] enable() default {State.ADD,State.UPDATE,State.QUERY};
+	boolean queryable() default true;
 	String[] tab() default {};
 	String meta() default "";
-	boolean validate() default false;
+	boolean validate() default true;
 }
