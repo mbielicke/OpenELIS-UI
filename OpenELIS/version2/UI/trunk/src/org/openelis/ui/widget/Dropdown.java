@@ -233,10 +233,9 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
 
         setCSS(UIResources.INSTANCE.dropdown());
         
-
-        setPopupContext(new Table.Builder(10).column(new Column.Builder(10).renderer(new SelectionCell())
-                                                                           .build())
-                                             .build());
+        table = GWT.create(Table.class);
+        table.addColumn(new Column.Builder(10).renderer(new SelectionCell()).build());
+        setPopupContext(table);
         
         setWidth("150px");
         
