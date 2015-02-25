@@ -138,9 +138,6 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
     public void show() {
         super.show();
         center();
-        if (buttonPanel.getWidgetCount() > 0) {
-        	((Focusable)buttonPanel.getWidget(0)).setFocus(true);
-        }
     }
     
     public void hide() {
