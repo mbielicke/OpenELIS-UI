@@ -61,5 +61,13 @@
             <when-property-is name="user.agent" value="ie9"/>
         </any>
     </replace-with>
+    
+    <replace-with class="org.openelis.ui.widget.Dropdown_IE8_IE9">
+        <when-type-is class="org.openelis.ui.widget.Dropdown"/>
+        <any>
+            <when-property-is name="user.agent" value="ie8"/>
+            <when-property-is name="user.agent" value="ie9"/>
+        </any>
+    </replace-with>
 
 </module>

@@ -38,7 +38,10 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
 
     @Override
     public void render(HTMLTable table, int row, int col, Object value) {
-        Grid editor = (Grid)table.getWidget(row, col);
+    	Grid editor = null;
+    	if(table.getRowCount() > row && table.getCellCount(row) > col) { 
+    		editor = (Grid)table.getWidget(row, col);
+    	}
         
         if(editor == null) {
             editor = new Grid(1,2);
