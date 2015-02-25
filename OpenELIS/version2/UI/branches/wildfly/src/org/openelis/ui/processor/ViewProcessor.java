@@ -3,13 +3,12 @@ package org.openelis.ui.processor;
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Generated;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.FilerException;
 import javax.annotation.processing.RoundEnvironment;
@@ -25,10 +24,6 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
-import javax.tools.ToolProvider;
 
 import org.openelis.ui.annotation.Enable;
 import org.openelis.ui.annotation.Field;
@@ -48,66 +43,56 @@ public class ViewProcessor extends AbstractProcessor {
     private PrintWriter writer;
     String indent = "";
     boolean applyIndent = true;
-    JavaFileObject file;
+    Set<String> fieldNames;
+    List<VariableElement> fields;
+    String template,presenterClass,superName,className,packageName;
+    TypeElement presenter;
+    
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)  {
 		if (!roundEnv.processingOver()) {
 			for (TypeElement element : annotations) {
 				for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(element)) {
-					processingEnv.getMessager().printMessage(Kind.NOTE, "View Processing = "+annotatedElement.asType().toString());
-					process((TypeElement)annotatedElement);
+					if(!wasGeneratedByThis(annotatedElement)) {
+						processingEnv.getMessager().printMessage(Kind.NOTE, "Processing View : "+annotatedElement.asType().toString());
+						process((TypeElement)annotatedElement);
+					}
 				}
 			}
 		}
 		return true;
 	}
 	
+	private boolean wasGeneratedByThis(Element element) {
+		Generated gen = element.getAnnotation(Generated.class);
+		return gen != null;
+	}
+	
 	protected void process(TypeElement element) {
 		try {
-			//compileDummy(element);
-			setWriter(element);
-			String template = element.getAnnotation(View.class).template();
-			String presenterClass = "";// = element.getAnnotation(View.class).presenter();
-			TypeElement presenter = null;
-			try {
-				element.getAnnotation(View.class).presenter();
-			} catch (MirroredTypeException e) {
-				presenterClass = e.getTypeMirror().toString();
-				processingEnv.getMessager().printMessage(Kind.NOTE,"PresenterClass = "+presenterClass);
-				presenter = processingEnv.getElementUtils().getTypeElement(e.getTypeMirror().toString());
-			}
-			String superName = element.getSimpleName().toString(); 
-			String className = element.getSimpleName().toString()+"Impl";
-			
-			List<VariableElement> fields = getUiFields(ElementFilter.fieldsIn(processingEnv.getElementUtils().getAllMembers(element)));
-			
-			writePackage(element);
-			writeImports(fields);
-			writeClassDeclaration(className,superName);
+			initialize(element);
+			writePackage();
+			writeImports();
+			writeClassDeclaration();
 			indent();
-			writeTemplate(template,className);
-			//writeFieldsName(fields);
-			//println("{0} presenter;",presenterClass);
+			writeTemplate();
 			println();
-			writeConstructor(className,presenterClass);
-			writeInitialize(fields);
-			writeSetState(fields);
-			writeTabs(fields);
-			writeGetQueryFields(fields);
-			writeValidate(fields);
-			writeClearErrors(fields);
+			writeConstructor();
+			writeInitialize();
+			writeSetState();
+			writeTabs();
+			writeGetQueryFields();
+			writeValidate();
+			writeClearErrors();
 			if(presenter != null)
-				writeHandlers(presenter);
-			writeGetters(fields);
-			writeDebugIds(fields);
+				writeHandlers();
+			writeGetters();
+			writeDebugIds();
 			outdent();
 			println("}");
 			writer.flush();
 			writer.close();
-			//JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-			//processingEnv.getFiler().getResource(StandardLocation., pkg, relativeName)
-			//compiler.run(null, null, null, file.toUri().getPath());
 			processingEnv.getMessager().printMessage(Kind.NOTE, "Processed "+element.asType().toString());
 		} catch (FilerException e) {
 			processingEnv.getMessager().printMessage(Kind.NOTE, "By Passing "+element.asType().toString());
@@ -117,20 +102,40 @@ public class ViewProcessor extends AbstractProcessor {
 			writer.flush();
 			writer.close();
 		}
-		
-		
 	}
 	
-	private void writePackage(TypeElement element) {
-		println("package {0};",getPackageName(element));
+	private void initialize(TypeElement element) throws Exception {
+		try {
+			setWriter(element);
+		} catch (Exception e) {
+			
+		}
+		template = element.getAnnotation(View.class).template();
+		presenterClass = "";
+		presenter = null;
+		try {
+			element.getAnnotation(View.class).presenter();
+		} catch (MirroredTypeException e) {
+			presenterClass = e.getTypeMirror().toString();
+			presenter = processingEnv.getElementUtils().getTypeElement(e.getTypeMirror().toString());
+		}
+		superName = element.getSimpleName().toString(); 
+		className = element.getSimpleName().toString()+"Impl";
+		packageName = element.getQualifiedName().toString().replace("."+element.getSimpleName().toString(), "");
+		
+		fields = getUiFields(ElementFilter.fieldsIn(processingEnv.getElementUtils().getAllMembers(element)));
+		fieldNames = new HashSet<String>();
+		for(VariableElement field : fields) {
+			fieldNames.add(field.getSimpleName().toString());
+		}
+	}
+	
+	private void writePackage() {
+		println("package {0};",packageName);
 		println();
 	}
-	
-	private String getPackageName(TypeElement element) {
-		return element.getQualifiedName().toString().replace("."+element.getSimpleName().toString(), "");
-	}
-	
-	private void writeImports(List<VariableElement> fields) {
+		
+	private void writeImports() {
 		println("import com.google.gwt.uibinder.client.UiHandler;");
 		println("import com.google.gwt.uibinder.client.UiTemplate;");
 		println("import com.google.gwt.uibinder.client.UiBinder;");
@@ -142,50 +147,19 @@ public class ViewProcessor extends AbstractProcessor {
 		println("import java.util.ArrayList;");
 		println("import javax.inject.Inject;");
 		println("import javax.annotation.Generated;");
-		HashSet<String> imports = new HashSet<>();
-		for (VariableElement field : fields) {
-			if (!imports.contains(field.asType().toString())) {
-				println("import {0};",getTypeForImport(field));
-				imports.add(field.asType().toString());
-			}
-		}
-		println();
+		println();		
 	}
 	
-	private String getTypeForImport(VariableElement field) {
-		String imp = field.asType().toString();
-		return imp.substring(0,imp.indexOf("<") > 0 ? imp.indexOf("<") : imp.length());
-	}
-	
-	private void writeClassDeclaration(String className, String superName) {
+	private void writeClassDeclaration() {
 		println("@Generated(\"org.openelis.ui.processor.ViewProcessor\")");
 		println("public class {0} extends {1} { ",className,superName);
 		println();
 	}
 	
-	private void compileDummy(TypeElement element) throws Exception {
-		Writer sourceWriter;
-		file = processingEnv
-				.getFiler()
-				.createSourceFile(
-						element.getQualifiedName().toString() + "Impl", element);
-		
-				sourceWriter = file.openWriter();
-
-		BufferedWriter bufferedWriter = new BufferedWriter(sourceWriter);
-		writer = new PrintWriter(bufferedWriter);
-		writePackage(element);
-		println("public class {0} {",element.getSimpleName().toString()+"Impl");
-		println("}");
-		writer.flush();
-		writer.close();
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		compiler.run(null, null, null, file.toUri().getPath());
-	}
-	
 	private void setWriter(TypeElement element) throws Exception {
+
 		Writer sourceWriter;
-		file = processingEnv
+		FileObject file = processingEnv
 				.getFiler()
 				.createSourceFile(
 						element.getQualifiedName().toString() + "Impl", element);
@@ -195,38 +169,15 @@ public class ViewProcessor extends AbstractProcessor {
 		BufferedWriter bufferedWriter = new BufferedWriter(sourceWriter);
 		writer = new PrintWriter(bufferedWriter);
 	}
-		
-	private String getShortTypeName(VariableElement field) {
-		return getClassType(field.asType().toString());
-	}
-	
-	private void writeTemplate(String template,String className) {
+			
+	private void writeTemplate() {
 		println("@UiTemplate(\"{0}\")",template);
 		println("interface ViewUiBinder extends UiBinder<Widget, {0}>{};",className);
         println("protected static final ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);");
         println();
 	}
-	
-	private void writeFieldsName(List<VariableElement> fields) {
-		println("public static final String ");
-		indent();
-		for (int i = 0; i < fields.size(); i++) {
-			print("{0}_NAME = \"{1}\"",getStaticName(fields.get(i)),fields.get(i).getSimpleName());
-			if (i < fields.size()-1) {
-				println(",");
-			}
-		}
-		println(";");
-		println();
-		outdent();
-	}
-	
-	private String getStaticName(VariableElement field) {
-		return field.getSimpleName().toString().toUpperCase();
-	}
-	
-	private void writeConstructor(String className, String presenter) {
-		println("@Inject");
+		
+	private void writeConstructor() {
 		println("public {0}() {",className);
 		indent();
 		println("super();");
@@ -237,40 +188,41 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private void writeInitialize(List<VariableElement> fields) {
+	private void writeInitialize() {
 		println("protected void initialize() {");
 		indent();
-		writeShortcuts(fields);
-		//writeEnableHandler(fields);
+		writeShortcuts();
 		outdent();
 		println("}");
 		println();
 	}
 	
-	private void writeShortcuts(List<VariableElement> fields) {
+	private void writeShortcuts() {
+		String shortcut;
 		for (VariableElement field : fields) {
-			String shortcut = null;
-			if (field.getAnnotation(Field.class) != null) {
-				shortcut = field.getAnnotation(Field.class).shortcut();
-			} else if (field.getAnnotation(Shortcut.class) != null) {
-				shortcut = field.getAnnotation(Shortcut.class).value();
-			}
+			shortcut = getShortcutValue(field);
 			if (shortcut != null && !"".equals(shortcut)) {
 				println("addShortcut({0},'{1}', ShortKeys.CTRL);",field.getSimpleName(),shortcut);
 			}
 		}
 	}
 	
-	private void writeSetState(List<VariableElement> fields) {
+	private String getShortcutValue(VariableElement field) {
+		if (field.getAnnotation(Shortcut.class) != null) {
+			return field.getAnnotation(Shortcut.class).value();
+		} else if (field.getAnnotation(Field.class) != null) {
+			return field.getAnnotation(Field.class).shortcut();
+		} 
+		return null;
+	}
+	
+	private void writeSetState() {
+		State[] states;
+		
 		println("public void setState(State state) {");
 		indent();
 		for (VariableElement field : fields) {
-			State[] states = null;
-			if (field.getAnnotation(Field.class) != null) {
-				states = field.getAnnotation(Field.class).enable();
-			} else if (field.getAnnotation(Enable.class) != null) {
-				states = field.getAnnotation(Enable.class).value();
-			}
+			states = getStatesValue(field);
 			if (states != null) {
 				print("this.{0}.setEnabled(isState(",field.getSimpleName());
 				for (int i = 0; i < states.length; i++) {
@@ -280,13 +232,7 @@ public class ViewProcessor extends AbstractProcessor {
 				}
 				println(").contains(state));");
 			}
-			boolean queryable = false;
-			if (field.getAnnotation(Field.class) != null) {
-				queryable = field.getAnnotation(Field.class).queryable();
-			} else if (field.getAnnotation(Queryable.class) != null) {
-				queryable = true;
-			}
-		    if (queryable) {
+		    if (getQueryableValue(field)) {
 		    	println("this.{0}.setQueryMode(state == State.QUERY);",field.getSimpleName());
 		    }
 		}
@@ -296,16 +242,32 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private void writeTabs(List<VariableElement> fields) {
+	private State[] getStatesValue(VariableElement field) {
+		if (field.getAnnotation(Enable.class) != null) {
+			return field.getAnnotation(Enable.class).value();
+		} else if (field.getAnnotation(Field.class) != null) {
+			return field.getAnnotation(Field.class).enable();
+		} 
+		return null;
+	}
+	
+	private boolean getQueryableValue(VariableElement field) {
+		if (field.getAnnotation(Queryable.class) != null) {
+			return true;
+		} else if (field.getAnnotation(Field.class) != null) {
+			return field.getAnnotation(Field.class).queryable();
+		} 
+		return false;
+	}
+	
+	private void writeTabs() {
+		String[] tab;
+		
 		println("protected Focusable getNextWidget(Focusable widget, boolean forward) {");
 		indent();
 		for (VariableElement field : fields) {
-			String[] tab = null;
-			if (field.getAnnotation(Field.class) != null) {
-				tab = field.getAnnotation(Field.class).tab();
-			} else if (field.getAnnotation(Tab.class) != null) {
-				tab = field.getAnnotation(Tab.class).value();
-			}
+			tab = getTabValue(field);
+			validateTab(field);
 			if(tab != null && tab.length > 0) {
 			    println("if ({0}.equals(widget)) {",field.getSimpleName());
 			    indent();
@@ -327,23 +289,40 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private void writeGetQueryFields(List<VariableElement> fields) {
+	private void validateTab(VariableElement field) {
+		String[] tabs;
+		
+		tabs = getTabValue(field);
+		
+		if(tabs == null)
+			return;
+		
+		for (String tab : tabs) {
+			if (!fieldNames.contains(tab)) {
+				processingEnv.getMessager().printMessage(Kind.ERROR, "View does not contain field : "+tab+" for tab value",field);
+			}
+		}
+	}
+	
+	private String[] getTabValue(VariableElement field) {
+		if (field.getAnnotation(Tab.class) != null) {
+			return field.getAnnotation(Tab.class).value();
+		} else if (field.getAnnotation(Field.class) != null) {
+			return field.getAnnotation(Field.class).tab();
+		} 
+		return null;
+	}
+	
+	private void writeGetQueryFields() {
+		String meta;
+		boolean queryable;
+		
 		println("public ArrayList<QueryData> getQueryFields() {");
 		indent();
 		println("ArrayList<QueryData> list = new ArrayList<>();");
 		for (VariableElement field : fields) {
-			boolean queryable = false;
-			if (field.getAnnotation(Field.class) != null) {
-				queryable = field.getAnnotation(Field.class).queryable();
-			} else if (field.getAnnotation(Queryable.class) != null) {
-				queryable = true;
-			}
-			String meta = "";
-			if (field.getAnnotation(Field.class) != null) {
-				meta = field.getAnnotation(Field.class).meta();
-			} else if (field.getAnnotation(Meta.class) != null) {
- 				meta = field.getAnnotation(Meta.class).value();
-			}
+			meta = getMetaValue(field);
+			queryable= getQueryableValue(field);
 			if(queryable && "".equals(meta)) {
 				processingEnv.getMessager().printMessage(Kind.ERROR, "Meta must be defined for queryable field", field);
 			}
@@ -358,18 +337,21 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private void writeValidate(List<VariableElement> fields) {
+	private String getMetaValue(VariableElement field) {
+		if (field.getAnnotation(Meta.class) != null) {
+			return field.getAnnotation(Meta.class).value();
+		} else if (field.getAnnotation(Field.class) != null) {
+			return field.getAnnotation(Field.class).meta();
+		} 
+		return "";
+	}
+	
+	private void writeValidate() {
 		println("public Validation validate() {");
 		indent();
 		println("Validation validation = new Validation();");
-		for (VariableElement field : fields) {
-			boolean validate = false;
-			if (field.getAnnotation(Field.class) != null) {
-				validate = field.getAnnotation(Field.class).validate();
-			} else if (field.getAnnotation(Validate.class) != null) {
-				validate = true;
-			}
-		    if (validate) {
+		for (VariableElement field : fields) {			
+		    if (getValidateValue(field)) {
 				println("isValid({0},validation);",field.getSimpleName());
 			}
 		}
@@ -380,17 +362,20 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private void writeClearErrors(List<VariableElement> fields) {
+	private boolean getValidateValue(VariableElement field) {
+		if (field.getAnnotation(Validate.class) != null) {
+			return true;
+		} else if (field.getAnnotation(Field.class) != null) {
+			return field.getAnnotation(Field.class).validate();
+		} 
+		return false;
+	}
+	
+	private void writeClearErrors() {
 		println("public void clearErrors() {");
 		indent();
 		for (VariableElement field : fields) {
-			boolean validate = false;
-			if (field.getAnnotation(Field.class) != null) {
-				validate = field.getAnnotation(Field.class).validate();
-			} else if (field.getAnnotation(Validate.class) != null) {
-				validate = true;
-			}
-		    if (validate) {
+		    if (getValidateValue(field)) {
 				println("{0}.clearExceptions();",field.getSimpleName());
 			}
 		}
@@ -400,17 +385,24 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private void writeHandlers(TypeElement presenter) {
+	private void writeHandlers() {
+		Handler handler;
+		
 		int i = 0;
 		for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(presenter)))  {
-			if (method.getAnnotation(Handler.class) != null) {
-				Handler handler = method.getAnnotation(Handler.class);
+			handler = method.getAnnotation(Handler.class);
+			if (handler != null) {
+				if (!fieldNames.contains(handler.value()[0])) {
+					processingEnv.getMessager().printMessage(Kind.ERROR, "View does not contain field : "+handler.value()[0], method,method.getAnnotationMirrors().get(0));
+					continue;
+				}
 				print("@UiHandler({");
 				for(int j = 0; j < handler.value().length; j++) {
 					if (j > 0) {
 						print(",");
 					}
 					print("\""+handler.value()[j]+"\"");
+
 				}
 				println("})");
 				println("protected void handler{0}({1} arg) {",i++,method.getParameters().get(0).asType().toString());
@@ -423,9 +415,9 @@ public class ViewProcessor extends AbstractProcessor {
 		}
 	}
 	
-	private void writeGetters(List<VariableElement> fields) {
+	private void writeGetters() {
 		for (VariableElement field : fields) {
-			println("public {0} {1}() {",getShortTypeName(field),formatGetterName(field.getSimpleName().toString()));
+			println("public {0} {1}() {",field.asType().toString(),formatGetterName(field.getSimpleName().toString()));
 			indent();
 			println("return {0};",field.getSimpleName());
 			outdent();
@@ -434,13 +426,16 @@ public class ViewProcessor extends AbstractProcessor {
 		}
 	}
 	
-	private void writeDebugIds(List<VariableElement> fields) {
+	private void writeDebugIds() {
+		String meta;
+		
 		println("public void onEnsureDebugId(String baseId) {");
 		indent();
 		for (VariableElement field : fields) {
 			print("{0}.ensureDebugId(baseId + \".",field.getSimpleName());
-			if (field.getAnnotation(Meta.class) != null) {
-				println(field.getAnnotation(Meta.class).value()+"\");");
+			meta = getMetaValue(field);
+			if (!"".equals(meta) && meta != null) {
+				println(meta+"\");");
 			} else {
 				println(field.getSimpleName()+"\");");
 			}
@@ -450,11 +445,11 @@ public class ViewProcessor extends AbstractProcessor {
 		println();
 	}
 	
-	private List<VariableElement> getUiFields(List<VariableElement> fields) {
+	private List<VariableElement> getUiFields(List<VariableElement> members) {
 		ArrayList<VariableElement> uiFields = new ArrayList<>();
-		for (VariableElement field : fields) {
+		for (VariableElement field : members) {
 			for(AnnotationMirror mirror : field.getAnnotationMirrors()) {
-				if (mirror.getAnnotationType().asElement().getSimpleName().toString().contains("UiField")) {
+				if (mirror.getAnnotationType().asElement().getSimpleName().toString().contains("Field")) {
 					uiFields.add(field);
 				}
 			}
@@ -462,10 +457,6 @@ public class ViewProcessor extends AbstractProcessor {
 		return uiFields;
 	}
 	
-	private String getClassType(String full) {
-		return full.substring(full.lastIndexOf(".",full.indexOf("<") > 0 ? full.indexOf("<") : full.length())+1,full.length());
-	}
-
 	private String formatGetterName(String name) {
 		return name = "get" + name.substring(0,1).toUpperCase() + name.substring(1);
 	}

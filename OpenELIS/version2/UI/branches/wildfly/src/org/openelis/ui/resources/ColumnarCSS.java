@@ -25,4 +25,5 @@ public interface ColumnarCSS extends CssResource {
 	String InputError();
 	String InputWarning();
 	String ScreenTableWithSides();
+	String CalendarButton();
 }

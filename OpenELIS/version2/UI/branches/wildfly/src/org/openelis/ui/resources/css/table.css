@@ -198,8 +198,7 @@
 	margin-left: -2px;
 }
 
-@
-sprtite .TableCalendar .CalendarButton {
+@sprite .TableCalendar .CalendarButton {
 	width: 14px;
 	gwt-image: 'dateTrigger';
 }

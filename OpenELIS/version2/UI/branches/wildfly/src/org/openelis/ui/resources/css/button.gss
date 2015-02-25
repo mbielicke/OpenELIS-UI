@@ -23,29 +23,29 @@
  }
 
 
-@if user.agent gecko1_8 {
+@if (is("gecko1_8")) {
 	.Button:hover{
 	}
-}@elif user.agent ie6 ie8 ie9 {
+}@elseif (is("ie8") || is("ie9")) {
 	.Button:hover {
 	}	
-}@elif user.agent safari {
+}@elseif (is("safari")) {
 	.Button:hover {
 
 	}
 }
 
-@if user.agent gecko1_8 {
+@if (is("gecko1_8")) {
 	.Button, .Disabled:hover {
 	    background:white;
     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #dddfe2 inset;
 		}
-}@elif user.agent ie6 ie8 ie9 {
+}@elseif (is("ie8") || is("ie9")) {
 	.Button, .Disabled:hover {
 	    background:white;
 	    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #dddfe2 inset;
 	}
-}@elif user.agent safari {
+}@elseif (is("safari")) {
 	.Button, .Disabled:hover {
 	    background:white;
     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #dddfe2 inset;}

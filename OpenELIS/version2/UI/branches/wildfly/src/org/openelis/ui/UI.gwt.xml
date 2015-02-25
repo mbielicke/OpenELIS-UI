@@ -55,5 +55,8 @@
             <when-property-is name="user.agent" value="opera" />
         </any>
     </replace-with>
-
+    
+    <set-configuration-property name="CssResource.enableGss" value="true" />
+	<set-configuration-property name="CssResource.legacy" value="true" />
+    <set-configuration-property name="CssResource.conversionMode" value="lenient" />
 </module>
