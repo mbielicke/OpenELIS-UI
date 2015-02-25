@@ -25,6 +25,7 @@ import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -137,6 +138,9 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
     public void show() {
         super.show();
         center();
+        if (buttonPanel.getWidgetCount() > 0) {
+        	((Focusable)buttonPanel.getWidget(0)).setFocus(true);
+        }
     }
     
     public void hide() {
