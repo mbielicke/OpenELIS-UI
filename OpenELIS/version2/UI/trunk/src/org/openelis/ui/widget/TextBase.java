@@ -4,6 +4,7 @@ import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -569,8 +570,16 @@ public class TextBase extends Composite {
         return box.addBlurHandler(handler);
     }
     
-    public void setMaxLength(int length) {
-        box.setMaxLength(length);
+    public void setMaxLength(final int length) {
+    	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			
+			@Override
+			public void execute() {
+				 box.setMaxLength(length);
+				
+			}
+		});
+       
     }
     
     public int getMaxLength() {
