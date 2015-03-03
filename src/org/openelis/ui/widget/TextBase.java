@@ -571,15 +571,7 @@ public class TextBase extends Composite {
     }
     
     public void setMaxLength(final int length) {
-    	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-			
-			@Override
-			public void execute() {
-				 box.setMaxLength(length);
-				
-			}
-		});
-       
+    	box.getElement().setAttribute("maxLength", String.valueOf(length));       
     }
     
     public int getMaxLength() {
