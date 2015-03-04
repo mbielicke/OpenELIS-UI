@@ -394,8 +394,11 @@ public class TextBase extends Composite {
 		/*
 		 * This event is before the textbox's check for Max Length so we need to do the check 
 		 */
-		if(applied.length() >= mask.length())
+		if(applied.length() >= mask.length()) {
+			event.preventDefault();
+			event.stopPropagation();
 			return;
+		}
 
 		mc = mask.charAt(applied.length());  // Get the Mask char for the position typed
 
@@ -570,8 +573,8 @@ public class TextBase extends Composite {
         return box.addBlurHandler(handler);
     }
     
-    public void setMaxLength(final int length) {
-    	box.getElement().setAttribute("maxLength", String.valueOf(length));       
+    public void setMaxLength(int length) {
+    	box.setMaxLength(length);
     }
     
     public int getMaxLength() {
