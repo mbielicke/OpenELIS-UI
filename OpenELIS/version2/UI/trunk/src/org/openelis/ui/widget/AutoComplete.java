@@ -680,6 +680,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         	popup.hide();
         	finishEditing();
         } else { 
+        	setDisplay();
         	finishEditing();
         }
     }
