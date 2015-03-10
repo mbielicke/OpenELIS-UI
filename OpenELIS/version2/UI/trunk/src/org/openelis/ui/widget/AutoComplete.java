@@ -219,7 +219,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
 
                 cursorPos = text.length();
 
-                setSelectedIndex(0);
+                //setSelectedIndex(0);
                 
                 if(textbox.getText().length() > cursorPos)
                 	textbox.setSelectionRange(cursorPos, textbox.getText().length() - cursorPos);
