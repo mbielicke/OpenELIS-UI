@@ -1,32 +1,25 @@
 package org.openelis.ui.processor;
 
-import java.io.BufferedWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Generated;
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.FilerException;
-import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
-import javax.tools.FileObject;
 
 import org.openelis.ui.annotation.Enable;
 import org.openelis.ui.annotation.Field;
+import org.openelis.ui.annotation.Focus;
 import org.openelis.ui.annotation.Handler;
 import org.openelis.ui.annotation.Meta;
 import org.openelis.ui.annotation.Queryable;
@@ -34,45 +27,22 @@ import org.openelis.ui.annotation.Shortcut;
 import org.openelis.ui.annotation.Tab;
 import org.openelis.ui.annotation.Validate;
 import org.openelis.ui.annotation.View;
+import org.openelis.ui.screen.Permission;
 import org.openelis.ui.screen.State;
 
 @SupportedAnnotationTypes("org.openelis.ui.annotation.View")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class ViewProcessor extends AbstractProcessor {
+public class ViewProcessor extends Processor {
 
-    private PrintWriter writer;
-    String indent = "";
-    boolean applyIndent = true;
     Set<String> fieldNames;
     List<VariableElement> fields;
     String template,presenterClass,superName,className,packageName;
     TypeElement presenter;
-    
-
-	@Override
-	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)  {
-		if (!roundEnv.processingOver()) {
-			for (TypeElement element : annotations) {
-				for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(element)) {
-					if(!wasGeneratedByThis(annotatedElement)) {
-						processingEnv.getMessager().printMessage(Kind.NOTE, "Processing View : "+annotatedElement.asType().toString());
-						process((TypeElement)annotatedElement);
-					}
-				}
-			}
-		}
-		return true;
-	}
-	
-	private boolean wasGeneratedByThis(Element element) {
-		Generated gen = element.getAnnotation(Generated.class);
-		return gen != null;
-	}
 	
 	protected void process(TypeElement element) {
 		try {
 			initialize(element);
-			writePackage();
+			writePackage(packageName);
 			writeImports();
 			writeClassDeclaration();
 			indent();
@@ -105,11 +75,6 @@ public class ViewProcessor extends AbstractProcessor {
 	}
 	
 	private void initialize(TypeElement element) throws Exception {
-		try {
-			setWriter(element);
-		} catch (Exception e) {
-			
-		}
 		template = element.getAnnotation(View.class).template();
 		presenterClass = "";
 		presenter = null;
@@ -128,11 +93,11 @@ public class ViewProcessor extends AbstractProcessor {
 		for(VariableElement field : fields) {
 			fieldNames.add(field.getSimpleName().toString());
 		}
-	}
-	
-	private void writePackage() {
-		println("package {0};",packageName);
-		println();
+		try {
+			setWriter(element,packageName+"."+className);
+		} catch (Exception e) {
+			
+		}
 	}
 		
 	private void writeImports() {
@@ -154,20 +119,6 @@ public class ViewProcessor extends AbstractProcessor {
 		println("@Generated(\"org.openelis.ui.processor.ViewProcessor\")");
 		println("public class {0} extends {1} { ",className,superName);
 		println();
-	}
-	
-	private void setWriter(TypeElement element) throws Exception {
-
-		Writer sourceWriter;
-		FileObject file = processingEnv
-				.getFiler()
-				.createSourceFile(
-						element.getQualifiedName().toString() + "Impl", element);
-		
-				sourceWriter = file.openWriter();
-
-		BufferedWriter bufferedWriter = new BufferedWriter(sourceWriter);
-		writer = new PrintWriter(bufferedWriter);
 	}
 			
 	private void writeTemplate() {
@@ -217,7 +168,8 @@ public class ViewProcessor extends AbstractProcessor {
 	}
 	
 	private void writeSetState() {
-		State[] states;
+		State[] states,focus;
+		Permission permission;
 		
 		println("public void setState(State state) {");
 		indent();
@@ -230,16 +182,72 @@ public class ViewProcessor extends AbstractProcessor {
 						print(",");
 					print("State."+states[i].toString());
 				}
-				println(").contains(state));");
+				print(").contains(state)");
+				permission = getPermissionValue(field);
+				if (permission != null) {
+					print(" && presenter.permissions().has");
+					switch (permission) {
+						case SELECT :
+							print("Select");
+							break;
+						case UPDATE :
+							print("Update");
+							break;
+						case DELETE :
+							print("Delete");
+							break;
+						case ADD :
+							print("Add");
+							break;
+					}
+					print("Permission()");
+				}
+				println(");");
 			}
 		    if (getQueryableValue(field)) {
 		    	println("this.{0}.setQueryMode(state == State.QUERY);",field.getSimpleName());
+		    }
+		    focus = getFocusValue(field);
+		    if (getFocusValue(field) != null) {
+		    	print("if (isState(");
+		    	for (int i = 0; i < focus.length; i++) {
+					if(i > 0)
+						print(",");
+					print("State."+focus[i].toString());
+				}
+				println(").contains(state)) {");
+				indent();
+				println("this.{0}.setFocus(true);",field.getSimpleName());
+				outdent();
+				println("}");
 		    }
 		}
 		println("super.setState(state);");
 		outdent();
 		println("}");
 		println();
+	}
+	
+	private Permission getPermissionValue(VariableElement field) {
+		Permission val = null;
+		
+		if (field.getAnnotation(org.openelis.ui.annotation.Permission.class) != null) {
+			val = field.getAnnotation(org.openelis.ui.annotation.Permission.class).value();
+		} else if (field.getAnnotation(Field.class) != null) {
+			val = field.getAnnotation(Field.class).permission();
+		}
+		return val != Permission.NONE ? val : null;
+	}
+	
+	private State[] getFocusValue(VariableElement field) {
+		State[] ret = null;
+		
+		if (field.getAnnotation(Focus.class) != null) {
+			ret = field.getAnnotation(Focus.class).value();
+		} else if (field.getAnnotation(Field.class) != null) {
+			ret = field.getAnnotation(Field.class).focus();
+		}
+		return ret != null && ret.length > 0 ? ret : null;
 	}
 	
 	private State[] getStatesValue(VariableElement field) {
@@ -449,7 +457,7 @@ public class ViewProcessor extends AbstractProcessor {
 		ArrayList<VariableElement> uiFields = new ArrayList<>();
 		for (VariableElement field : members) {
 			for(AnnotationMirror mirror : field.getAnnotationMirrors()) {
-				if (mirror.getAnnotationType().asElement().getSimpleName().toString().contains("Field")) {
+				if (mirror.getAnnotationType().asElement().getSimpleName().toString().contains("UiField")) {
 					uiFields.add(field);
 				}
 			}
@@ -460,40 +468,5 @@ public class ViewProcessor extends AbstractProcessor {
 	private String formatGetterName(String name) {
 		return name = "get" + name.substring(0,1).toUpperCase() + name.substring(1);
 	}
-	
-	private void println() {
-		writer.println();
-		
-		applyIndent = true;
-	}
-	
-	private void println(String target,Object... parameters) {
-		writer.println((applyIndent ? indent : "") + replaceParameters(target, parameters));
-		applyIndent = true;
-	}
-	
-	private void print(String target,Object... parameters) {
-		writer.print((applyIndent ? indent : "") + replaceParameters(target,parameters));
-		applyIndent = false;
-	}
-	
-	private void indent() {
-		indent += "    ";
-	}
-	
-	private void outdent() {
-		if(indent.length() > 0)
-			indent = indent.substring(0,indent.length()-4);
-	}
-    
-	private String replaceParameters(String target, Object... parameters) {
-        String result = target;
-        if (parameters != null) {
-            for (int i = 0; i < parameters.length; i++) {
-                result = result.replace("{" + i + "}", String.valueOf(parameters[i]));
-            }
-        }
-        return result;
-    }
 
 }
