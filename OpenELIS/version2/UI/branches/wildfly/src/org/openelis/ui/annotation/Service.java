@@ -11,8 +11,6 @@ import org.openelis.ui.mvp.Presenter;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
 @Inherited
-public @interface View {
-	String template();
-	Class<?> presenter();
-
+public @interface Service {
+	
 }

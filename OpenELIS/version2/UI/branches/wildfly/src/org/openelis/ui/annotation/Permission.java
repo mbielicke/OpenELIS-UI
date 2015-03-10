@@ -6,13 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.openelis.ui.mvp.Presenter;
+import org.openelis.ui.screen.State;
 
-@Target({ElementType.TYPE})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 @Inherited
-public @interface View {
-	String template();
-	Class<?> presenter();
-
+public @interface Permission {
+	org.openelis.ui.screen.Permission value();
+	
 }

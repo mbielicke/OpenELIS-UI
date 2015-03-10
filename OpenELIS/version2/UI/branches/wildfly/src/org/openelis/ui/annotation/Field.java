@@ -20,4 +20,6 @@ public @interface Field {
 	String[] tab() default {};
 	String meta() default "";
 	boolean validate() default true;
+	State[] focus() default {};
+	org.openelis.ui.screen.Permission permission() default org.openelis.ui.screen.Permission.NONE;
 }
