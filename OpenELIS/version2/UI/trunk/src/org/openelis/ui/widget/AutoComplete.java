@@ -674,10 +674,12 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * user has moved on from the widget so the first entry in the results
          * will be selected and displayed
          */
-        if (getStyleName().indexOf(css.Focus()) > -1 && model != null && model.size() > 0)
+        if (getStyleName().indexOf(css.Focus()) > -1 && model != null && model.size() > 0) {
             showPopup();
-        else  if(popup != null) 
+        } else  if(popup != null) {
         	popup.hide();
+        	finishEditing();
+        }
     }
     
 	/**
