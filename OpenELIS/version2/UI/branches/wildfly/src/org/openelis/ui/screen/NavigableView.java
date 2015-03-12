@@ -57,18 +57,6 @@ public abstract class NavigableView<T> extends View<T> {
 	@UiField
     public Button atozNext, atozPrev; 
     
-	@UiField
-    @Enable(State.DISPLAY)
-    public Button optionsButton;
-
-	@UiField
-    @Enable(State.DISPLAY)
-    public Menu optionsMenu;
-    
-	@UiField
-    @Enable(State.DISPLAY)
-    public MenuItem history;
-    
     @UiField
     public AtoZButtons atozButtons;
 
