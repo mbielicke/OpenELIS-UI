@@ -56,6 +56,14 @@
         </any>
     </replace-with>
     
+    <replace-with class="org.openelis.ui.widget.table.Table_IE8_IE9">
+        <when-type-is class="org.openelis.ui.widget.table.Table"/>
+        <any>
+            <when-property-is name="user.agent" value="ie8"/>
+            <when-property-is name="user.agent" value="ie9"/>
+        </any>
+    </replace-with>
+    
     <set-configuration-property name="CssResource.enableGss" value="true" />
 	<set-configuration-property name="CssResource.legacy" value="true" />
     <set-configuration-property name="CssResource.conversionMode" value="lenient" />
