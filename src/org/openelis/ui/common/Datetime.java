@@ -26,9 +26,15 @@
 package org.openelis.ui.common;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalField;
 import java.util.Date;
 
 import org.openelis.ui.common.Datetime;
+
+import com.google.gwt.core.shared.GwtIncompatible;
 
 /**
  * This class is used to manage date and date & time values. Because the class is
@@ -45,9 +51,9 @@ public class Datetime implements Serializable, Comparable<Datetime> {
      */
     public static final byte  YEAR = 0, MONTH = 1, DAY = 2, HOUR = 3, MINUTE = 4,
                               SECOND = 5, FRACTION = 6;
-    private byte              startCode, endCode;
-    private Date              timestamp;
-    private int               year, month, date = -1;
+    protected byte              startCode, endCode;
+    protected Date              timestamp;
+    protected int               year, month, date = -1;
 
     /**
      * Provided solely for GWT RPC Serialization
@@ -61,7 +67,43 @@ public class Datetime implements Serializable, Comparable<Datetime> {
     public Datetime(byte startCode, byte endCode, Date date) {
         setDate(startCode, endCode, date);
     }
-
+    
+    public Datetime(LocalDate date) {
+    	
+    }
+    
+    public Datetime(LocalTime time) {
+    	
+    }
+    
+    public Datetime(LocalDateTime datetime) {
+    	
+    }
+    
+    public static Datetime getInstance(LocalDate date) {
+    	if(date == null)
+    		return null;
+    	return new Datetime(YEAR,DAY,new Date(date.getYear()-1900,date.getMonthValue()-1,date.getDayOfMonth()));
+    }
+    
+    public static Datetime getInstance(LocalTime time) {
+    	if (time == null)
+    		return null;
+    	return new Datetime(HOUR,MINUTE,new Date(0,0,0,time.getHour(),time.getMinute(),0));
+    }
+    
+    public static Datetime getInstance(LocalDateTime datetime) {
+    	if (datetime == null)
+    		return null;
+    	return new Datetime(YEAR,MINUTE,new Date(datetime.getYear()-1900,
+    											 datetime.getMonthValue()-1,
+    											 datetime.getDayOfMonth(),
+    											 datetime.getHour(),
+    											 datetime.getMinute(),
+    											 0));
+    }
+    
+    
     public static Datetime getInstance(byte startCode, byte endCode, Date date) {
         if (date == null)
             return null;
@@ -90,6 +132,21 @@ public class Datetime implements Serializable, Comparable<Datetime> {
         if (endCode < HOUR)
             return new Date(year, month, date);
         return timestamp;
+    }
+    
+   
+    public LocalDate getLocalDate() {
+    	return LocalDate.of(year+1900,month+1,date);
+    }
+    
+   
+    public LocalTime getLocalTime() {
+    	return LocalTime.of(timestamp.getHours(), timestamp.getMinutes(),0);
+    }
+    
+   
+    public LocalDateTime getLocalDateTime() {
+    	return LocalDateTime.of(year+1900,month+1,date,timestamp.getHours(),timestamp.getMinutes(),0);
     }
 
     /**
