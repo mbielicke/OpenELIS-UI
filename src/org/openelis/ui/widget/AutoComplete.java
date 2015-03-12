@@ -206,7 +206,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         timer = new Timer() {
             public void run() {
             	BeforeGetMatchesEvent bgme;
-                int cursorPos;
                 String text;
                 
                 text = textbox.getText();
@@ -216,15 +215,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             		return;
                 
                 GetMatchesEvent.fire(source, text);
-
-                cursorPos = text.length();
-
-                setSelectedIndex(0);
-                
-                if(textbox.getText().length() > cursorPos)
-                	textbox.setSelectionRange(cursorPos, textbox.getText().length() - cursorPos);
-                
-                
             }
         };
         
@@ -310,7 +300,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             popup.addCloseHandler(new CloseHandler<PopupPanel>() {
                 public void onClose(CloseEvent<PopupPanel> event) {
                 	showingOptions = false;
-                	setDisplay();
                 	setFocus(true);
                 }
             });
@@ -504,10 +493,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
      */
     public void setSelectedIndex(int index) {
         table.selectRowAt(index);
-        if(getSelectedIndex() > -1)
-            textbox.setText(renderer.getDisplay(getSelectedItem()));
-        else
-            textbox.setText("");
     }
 
     /**
@@ -674,10 +659,14 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * user has moved on from the widget so the first entry in the results
          * will be selected and displayed
          */
-        if (getStyleName().indexOf(css.Focus()) > -1 && model != null && model.size() > 0)
+        if (getStyleName().indexOf(css.Focus()) > -1 && model != null && model.size() > 0) {
             showPopup();
-        else  if(popup != null) 
+        } else  if(popup != null) {
         	popup.hide();
+        	finishEditing();
+        } else { 
+        	finishEditing();
+        }
     }
     
 	/**
@@ -703,7 +692,6 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * This method handles all key down events for this table
          */
         public void onKeyDown(KeyDownEvent event) {
-            int start;
             
             if(queryMode)
                 return;
@@ -713,22 +701,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                 case KeyCodes.KEY_TAB:
                     if (popup != null && popup.isShowing())
                         popup.hide();
-                    //event.stopPropagation();
                     break;
-                case KeyCodes.KEY_BACKSPACE:
-                    
-                    int selectLength;
-                    /*
-                     * If text is selected we want to select one more position back so the correct 
-                     * text will be received in the key up event.
-                     */ 
-                    selectLength = textbox.getSelectionLength();
-                    if (selectLength > 1 && selectLength < textbox.getText().length()) {
-                        selectLength++ ;
-                        start = textbox.getText().length() - selectLength;
-                        textbox.setSelectionRange(start > -1 ? start : 0, selectLength);
-                    }
-                    
             }
         }
         
@@ -746,13 +719,11 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
                 case KeyCodes.KEY_DOWN:
                     if (popup != null && popup.isShowing()) { 
                         table.selectRowAt(findNextActive(table.getSelectedRow()));
-                        setDisplay();
                     }
                     break;
                 case KeyCodes.KEY_UP:
                     if (popup != null && popup.isShowing()) { 
                         table.selectRowAt(findPrevActive(table.getSelectedRow()));
-                        setDisplay();
                     }
                     break;
                 case KeyCodes.KEY_ENTER:

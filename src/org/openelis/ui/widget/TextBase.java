@@ -4,6 +4,7 @@ import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -393,8 +394,11 @@ public class TextBase extends Composite {
 		/*
 		 * This event is before the textbox's check for Max Length so we need to do the check 
 		 */
-		if(applied.length() >= mask.length())
+		if(applied.length() >= mask.length()) {
+			event.preventDefault();
+			event.stopPropagation();
 			return;
+		}
 
 		mc = mask.charAt(applied.length());  // Get the Mask char for the position typed
 
@@ -570,7 +574,7 @@ public class TextBase extends Composite {
     }
     
     public void setMaxLength(int length) {
-        box.setMaxLength(length);
+    	box.setMaxLength(length);
     }
     
     public int getMaxLength() {

@@ -22,10 +22,10 @@ import org.openelis.ui.common.ReportStatus;
  */
 public class ReportServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+    private static final long   serialVersionUID = 1L;
 
-    private static final Logger log = Logger.getLogger("openelis");
-    
+    private static final Logger log              = Logger.getLogger("openelis");
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
                     IOException {
@@ -36,6 +36,7 @@ public class ReportServlet extends HttpServlet {
 
         key = null;
         out = null;
+        path = null;
         try {
             /*
              * make sure the requested file is in user session (we have
@@ -53,7 +54,6 @@ public class ReportServlet extends HttpServlet {
                 return;
             }
 
-            path = null;
             try {
                 path = Paths.get(status.getPath());
             } catch (InvalidPathException e) {
@@ -83,15 +83,20 @@ public class ReportServlet extends HttpServlet {
 
             out = resp.getOutputStream();
             Files.copy(path, out);
-            Files.delete(path);
         } catch (Exception e) {
             log.log(Level.SEVERE, e.getMessage(), e);
             throw new ServletException(e.getMessage());
         } finally {
-            if (out != null)
-                out.close();
-            if (key != null)
-                req.getSession().removeAttribute(key);
+            try {
+                if (out != null)
+                    out.close();
+                if (key != null)
+                    req.getSession().removeAttribute(key);
+                if (path != null)
+                    Files.delete(path);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, e.getMessage(), e);
+            }
         }
     }
 
@@ -123,7 +128,7 @@ public class ReportServlet extends HttpServlet {
      */
     protected String getContentType(String filename) {
         String temp;
-        
+
         temp = filename.toLowerCase();
         if (DataBaseUtil.isEmpty(temp))
             return "text/html";
