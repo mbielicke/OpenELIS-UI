@@ -10,14 +10,17 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
+public class CellTextbox<V> extends EditableCell<V> {
 	
-	TextBox<V> editor;
-	boolean editing;
+	protected TextBox<V> editor;
 
 	public CellTextbox() {
 		initEditor(new TextBox<V>());
 	}
+	
+    public CellTextbox(TextBox<V> editor) {
+    	initEditor(editor);
+    }
 	
 	public void initEditor(TextBox<V> editor) {
 		this.editor = editor;
@@ -38,29 +41,22 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 	}
 	
 	@Override
-	public boolean isEditing() {
-		return editing;
-	}
-	
-	@Override
 	public void startEditing(V value) {
 		startEditing(getElement().getParentElement(),value);		
 	}
-	
+		
+	@Override
 	public void startEditing(Element container, V value) {
-		if(editing)
+		if(isEditing())
 			return;
 		editor.setValue(value);
-		sizeEditor(editor,container);
-		setEditor(editor);
-		container.removeAllChildren();
-		container.appendChild(getElement());
-		editor.setFocus(true);		
+		setEditor(editor,container);
 		editing = true;
 	}
 
 	@Override
 	public Object finishEditing() {
+		editor.finishEditing();
 		V value = editor.getValue();
 		remove(editor);
 		render(value);
