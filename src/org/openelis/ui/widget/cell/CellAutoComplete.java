@@ -4,7 +4,6 @@ import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.widget.AutoComplete;
 import org.openelis.ui.widget.AutoCompleteValue;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -12,11 +11,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CellAutoComplete extends Cell<AutoCompleteValue> implements CellEditor<AutoCompleteValue> {
+public class CellAutoComplete extends EditableCell<AutoCompleteValue> {
 	
 	AutoComplete editor;
-	boolean editing;
-	
 
 	public CellAutoComplete() {
 		initEditor(new AutoComplete());
@@ -38,15 +35,9 @@ public class CellAutoComplete extends Cell<AutoCompleteValue> implements CellEdi
 		if(w instanceof AutoComplete)
 			initEditor((AutoComplete)w);
 	}
-	
-	@Override
-	public boolean isEditing() {
-		return editing;
-	}
-	
+		
 	@Override
 	public void startEditing(AutoCompleteValue value) {
-		GWT.log("in Start Editing");
 		startEditing(getElement().getParentElement(),value);		
 	}
 	
@@ -54,11 +45,7 @@ public class CellAutoComplete extends Cell<AutoCompleteValue> implements CellEdi
 		if(editing)
 			return;
 		editor.setValue(value);
-		sizeEditor(editor,container);
-		setEditor(editor);
-		container.removeAllChildren();
-		container.appendChild(getElement());
-		editor.setFocus(true);		
+		setEditor(editor,container);
 		editing = true;
 	}
 

@@ -8,12 +8,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CellLabel<V> extends Cell<V> {
 	
-	Label<V> editor;
+	protected Label<V> editor;
+	
+	public CellLabel(Label<V> editor) {
+		this.editor = editor; 
+	}
 	
 	public CellLabel() {
 		editor = new Label<V>();
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Widget w) {

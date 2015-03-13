@@ -11,11 +11,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
+public class CellDropdown<V> extends EditableCell<V> {
 	
 	Dropdown<V> editor;
-	boolean editing;
-	
 
 	public CellDropdown() {
 		initEditor(new Dropdown<V>());
@@ -38,12 +36,7 @@ public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 		if(w instanceof Dropdown)
 			initEditor((Dropdown<V>)w);
 	}
-	
-	@Override
-	public boolean isEditing() {
-		return editing;
-	}
-	
+		
 	@Override
 	public void startEditing(V value) {
 		GWT.log("in Start Editing");
@@ -54,11 +47,7 @@ public class CellDropdown<V> extends Cell<V> implements CellEditor<V> {
 		if(editing)
 			return;
 		editor.setValue(value);
-		sizeEditor(editor,container);
-		setEditor(editor);
-		container.removeAllChildren();
-		container.appendChild(getElement());
-		editor.setFocus(true);		
+		setEditor(editor,container);
 		editing = true;
 	}
 
