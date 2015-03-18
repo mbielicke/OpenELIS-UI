@@ -536,13 +536,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     
     private void adjustNodeIndexes(int row, int adj) {     
         for(int i = row; i < modelView.size(); i++) {
-        	Integer origIndex = nodeIndex.get(modelView.get(i)).index;
-        	Integer newIndex = origIndex + adj;
-            nodeIndex.get(modelView.get(i)).index = newIndex;
-            if(selections.contains(origIndex)) {
-            	selections.remove(origIndex);
-            	selections.add(newIndex);
-            }
+            nodeIndex.get(modelView.get(i)).index += adj;
         }
             
     }
@@ -1336,7 +1330,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         finishEditing();
         
-        unselectNodeAt(index);
+        unselectAll();
 
         node = getNodeAt(index);
 
@@ -1420,6 +1414,16 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public Integer[] getSelectedNodes() {
         return selections.toArray(new Integer[] {});
+    }
+    
+    public ArrayList<Node> getAllSelectedNodes() {
+    	ArrayList<Node> nodes;
+    	
+    	nodes = new ArrayList<Node>();
+    	for (Integer index : selections) {
+    		nodes.add(getNodeAt(index));
+    	}
+    	return nodes;
     }
 
     /**
