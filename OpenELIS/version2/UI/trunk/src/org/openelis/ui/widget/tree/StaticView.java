@@ -563,8 +563,10 @@ public class StaticView extends ViewInt {
                     else
                         flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeClosedImage());
                 } else {
-                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).removeClassName(css.treeOpenImage());
-                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).removeClassName(css.treeClosedImage());
+                	if (level == 0) {
+                		flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(0).getStyle().setProperty("display","table-cell");
+                	}
+                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName("");
                 }
                 if(node.getImage() != null) {
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).setClassName(node.getImage());
