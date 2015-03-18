@@ -300,6 +300,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             popup.addCloseHandler(new CloseHandler<PopupPanel>() {
                 public void onClose(CloseEvent<PopupPanel> event) {
                 	showingOptions = false;
+                	setDisplay();
                 	setFocus(true);
                 }
             });
