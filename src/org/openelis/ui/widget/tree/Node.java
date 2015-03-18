@@ -203,7 +203,7 @@ public class Node extends Row {
     }
     
     public void remove(Node node) {
-        children.remove(children.indexOf(node));
+        remove(children.indexOf(node));
     }
     
     public void removeAllChildren() {
