@@ -902,10 +902,10 @@ public class StaticView extends ViewInt {
 
         //if at top level of tree set line cell to invisible;
         if(level == 0) {
-            if(node.isLeaf()) {
-                grid.getCellFormatter().setWidth(0, 0, "15px");
-            }else
+        	grid.getCellFormatter().setWidth(0, 0, "15px");
+            if (!node.isLeaf()) {
                 grid.getCellFormatter().setVisible(0, 0, false);
+            }
         } else {
             /*
              * Create div to draw lines and set cell to appropiate width
