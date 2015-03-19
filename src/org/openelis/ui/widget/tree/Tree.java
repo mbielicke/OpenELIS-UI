@@ -603,7 +603,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     protected void open(int row, NativeEvent event) {
         finishEditing();
         
-        selectNodeAt(row,event);
+        if(event != null)
+        	selectNodeAt(row,event);
         
         Node node;
         int pos;
