@@ -1327,6 +1327,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     public Node removeNodeAt(int index) {
         int adj = 0;
         Node node,parent;
+        boolean lastChild;
 
         finishEditing();
         
@@ -1344,6 +1345,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         adjustNodeIndexes(index,adj);
         
+        lastChild = node.isLastChild();
         parent = node.getParent();
         parent.remove(node);
 
@@ -1364,8 +1366,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         fireRowDeletedEvent(index, node);
          
-        if (parent.isOpen) {
-        	view.renderView(nodeIndex.get(parent.getLastChild()).index,nodeIndex.get(parent.getLastChild()).index);
+        if (parent.isOpen && lastChild) {
+        	close(parent);
+        	open(parent);
         } else {
         	view.renderView(nodeIndex.get(parent).index,nodeIndex.get(parent).index);
         }
