@@ -1368,7 +1368,7 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         fireRowDeletedEvent(index, node);
          
-        if (parent.isOpen && lastChild) {
+        if (parent != root && parent.isOpen && lastChild) {
         	close(parent);
         	open(parent);
         } else {
