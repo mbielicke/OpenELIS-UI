@@ -1372,7 +1372,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         	close(parent);
         	open(parent);
         } else {
-        	view.renderView(nodeIndex.get(parent).index,nodeIndex.get(parent).index);
+        	if (parent != root) {
+        		view.renderView(nodeIndex.get(parent).index,nodeIndex.get(parent).index);
+        	}
         }
 
         return node;
