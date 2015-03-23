@@ -562,11 +562,6 @@ public class StaticView extends ViewInt {
                         flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeOpenImage());
                     else
                         flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName(css.treeClosedImage());
-                } else {
-                	if (level == 0) {
-                		flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(0).getStyle().setProperty("display","table-cell");
-                	}
-                	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(1).setClassName("");
                 }
                 if(node.getImage() != null) {
                 	flexTable.getCellFormatter().getElement(r,c).getElementsByTagName("td").getItem(2).setClassName(node.getImage());
@@ -902,10 +897,10 @@ public class StaticView extends ViewInt {
 
         //if at top level of tree set line cell to invisible;
         if(level == 0) {
-        	grid.getCellFormatter().setWidth(0, 0, "15px");
-            if (!node.isLeaf()) {
+            if(node.isLeaf()) {
+                grid.getCellFormatter().setWidth(0, 0, "15px");
+            }else
                 grid.getCellFormatter().setVisible(0, 0, false);
-            }
         } else {
             /*
              * Create div to draw lines and set cell to appropiate width

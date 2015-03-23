@@ -96,12 +96,10 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
 
     public String display(Object value) {
         editor.setQueryMode(false);
-        if (editor.getHelper().isCorrectType(value)) {
-        	editor.setValue(value);
-        	return editor.getText();
-        } else {
+        if(editor.getHelper().isCorrectType(value))
+        	return editor.getHelper().format(value);
+        else
         	return DataBaseUtil.toString(value);
-        }
     }
     
     public SafeHtml bulkRender(Object value) {

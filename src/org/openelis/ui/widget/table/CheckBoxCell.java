@@ -184,8 +184,6 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         else 
         	value = qd.getQuery();
         
-        editor.setValue(value);
-        
         render(value,table,row,col);
     }
 
