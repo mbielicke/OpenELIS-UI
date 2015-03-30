@@ -269,7 +269,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
          * Call showPopup because the textbox will have lost focus so
          * showMatches will not call.
          */
-        showPopup();
+        //showPopup();
         textbox.setFocus(true);
     }
     
