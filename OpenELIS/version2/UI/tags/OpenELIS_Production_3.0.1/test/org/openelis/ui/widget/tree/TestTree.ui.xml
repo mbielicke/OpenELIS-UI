@@ -1,0 +1,33 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:t="urn:import:org.openelis.ui.widget.table"
+             xmlns:r="urn:import:org.openelis.ui.widget.tree" 
+             xmlns:w="urn:import:org.openelis.ui.widget">
+             
+  <g:LayoutPanel ui:field="panel" width="300px" height="75px">
+    <g:layer top="0px" bottom="0px">
+      <r:Tree ui:field="test" header="false">
+        <r:Column label="col1" width="100"/>
+        <r:Column label="col2" width="100"/>
+        <r:Column label="col3" width="100"/>
+        <r:Leaf key="top">
+          <r:LeafColumn>
+            <t:TextBoxCell>
+              <w:TextBox field="Integer"/> 
+            </t:TextBoxCell>
+           </r:LeafColumn>
+           <r:LeafColumn>
+             <t:TextBoxCell>
+                <w:TextBox/> 
+             </t:TextBoxCell>
+           </r:LeafColumn>
+           <r:LeafColumn>
+            <t:TextBoxCell>
+              <w:TextBox/> 
+            </t:TextBoxCell>
+          </r:LeafColumn>       
+        </r:Leaf> 
+      </r:Tree>
+    </g:layer>
+  </g:LayoutPanel>
+</ui:UiBinder> 
