@@ -264,9 +264,13 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     	if(bgme != null && bgme.isCancelled())
     		return;
     	
-    	textbox.setFocus(true);
-    	
         GetMatchesEvent.fire(this, textbox.getText());
+        /*
+         * Call showPopup because the textbox will have lost focus so
+         * showMatches will not call.
+         */
+        showPopup();
+        textbox.setFocus(true);
     }
     
     @UiHandler("button")

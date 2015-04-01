@@ -449,8 +449,7 @@ public class StaticView extends ViewInt {
 
                     });
                 } else {
-                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputWarning());
-                    flexTable.getCellFormatter().removeStyleName(r, c, css.InputError());
+                    flexTable.getCellFormatter().removeStyleName(r, c, Balloon.isWarning(table.getEndUserExceptions(r, c), table.getValidateExceptions(r, c)) ? css.InputWarning() : css.InputError());
                     flexTable.removeHandler(r, c);
                 }
 
