@@ -1,0 +1,62 @@
+
+.Button{
+	background: none repeat scroll 0 0 #E7F0F7;
+    border: 1px solid #D8D8D8;
+    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #DDDFE2 inset;
+    cursor: pointer;
+    color: #000000;
+    font-family:inherit;
+    font-size:inherit;
+    text-shadow: 0 1px white;
+    display : flex;
+    height : 18px;
+}
+
+.Button > div {
+
+}
+
+.Button:hover{
+     cursor:pointer;
+     border: 1px solid #7293BE;
+     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
+}
+
+@if user.agent gecko1_8 {
+	.Button:hover{
+/* 		background-image: -moz-linear-gradient(top,#b4c9e2,#e7f0f7); */
+	}
+}@elif user.agent ie6 ie8 ie9 {
+	.Button:hover {
+/* 		background-image: -ms-linear-gradient(top,#b4c9e2,#e7f0f7); */
+	}	
+}@elif user.agent safari {
+	.Button:hover {
+/* 		background-image: -webkit-linear-gradient(top,#b4c9e2,#e7f0f7); */
+	}
+}
+
+.Pressed{}
+
+.Disabled{
+	border-color: #D8D8D8;
+	color:gray;
+	background: none repeat scroll 0 0 white;
+	box-shadow:none;
+	color: #808080;
+}
+
+.Disabled:hover{
+	color: #808080;
+	border-color: #D8D8D8;
+	background:none;
+	cursor:default;
+    box-shadow:none;
+}
+
+.Focus {
+	cursor:pointer;
+     box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
+	 background:#e7f0f7;
+}
+
