@@ -878,6 +878,28 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         setDisplay();
 
     }
+    
+    public void disableItem(T key) {
+    	setItemEnabled(key,false);
+    }
+    
+    public void enableItem(T key) {
+    	setItemEnabled(key, true);
+    }
+    
+    public void setItemEnabled(T key, boolean enabled) {
+    	int index = -1;
+    	Item<T> item;
+    	
+    	if (keyHash.containsKey(key)) {
+    		index = keyHash.get(key);
+    		item = getModel().get(index);
+    		item.setEnabled(enabled);
+    		table.setRowAt(index, item);
+    	}
+    }
+    
+   
 
     // *************** Search methods ******************
 
