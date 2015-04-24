@@ -37,9 +37,12 @@
 	</target>
 
 	<target name="ui.jar" depends="javac"  description="Creates ui.jar artiface">
-		<jar destfile="ui.jar" indexMetaInf="true">
+		<jar destfile="ui.jar">
 			<fileset dir="src"/>
 			<fileset dir="bin"/>
+			<metainf>
+				<fileset dir="META-INF"/>
+			</metainf>
 		</jar>
 	</target>
 		
