@@ -1,31 +1,40 @@
 package org.openelis.ui.widget.cell;
 
-import org.openelis.ui.widget.CSSUtils;
+import org.openelis.ui.common.data.QueryData;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Cell<V> extends SimplePanel implements CellRenderer<V> {
-	
-	public Cell() {
-	}
 
 	Element proxyElement;
 	
+	public Cell() {
+		addAttachHandler(new AttachEvent.Handler() {
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				if(event.isAttached()) {
+					takeOverParentElement();
+				}
+			}
+		});
+	}
 	
 	protected Element getRenderElement() {
 		if(proxyElement != null)
 			return proxyElement;
 		else
-			return super.getElement();
+			return getElement();
 	}
 	
 	public void render(V value) {
-		render(getElement(),value);
+		render(getRenderElement(),value);
+	}
+	
+	public void render(QueryData qd) {
+		render(getRenderElement(),qd);
 	}
 	
 	public void render(Element element, V value) {
@@ -33,32 +42,26 @@ public abstract class Cell<V> extends SimplePanel implements CellRenderer<V> {
 		element.setInnerSafeHtml(asHtml(value));
 	}
 	
+	public void render(Element element, QueryData qd) {
+		element.removeAllChildren();
+		element.setInnerSafeHtml(asHtml(qd));
+	}
+	
  	public void setProxyElement(Element element) {
 		this.proxyElement = element;
 	}
- 	
-	protected void setEditor(Widget editor) {
-		getElement().removeAllChildren();
-		setWidget(editor);
+	
+	private void takeOverParentElement() {
+		setProxyElement(getElement().getParentElement());
+		proxyElement.setInnerHTML(getElement().getInnerHTML());
+		getElement().removeFromParent();
 	}
 	
-	protected void sizeEditor(final Widget editor, final Element element) {
-		editor.setVisible(false);
-		final double width = element.getClientWidth() - CSSUtils.getAddedPaddingWidth(element);;
-		final double height = element.getClientHeight() - CSSUtils.getAddedPaddingHeight(element); 
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-			
-			@Override
-			public void execute() {
-				editor.setWidth((width - CSSUtils.getAddedBorderWidth(editor.getElement())
-						               - CSSUtils.getAddedPaddingWidth(editor.getElement()))+"px");
-				editor.setHeight((height - CSSUtils.getAddedBorderHeight(editor.getElement())
-						                 - CSSUtils.getAddedPaddingHeight(editor.getElement()))+"px");
-				editor.setVisible(true);
-				((Focusable)editor).setFocus(true);
-			}
-		});
+	public SafeHtml asHtml(QueryData qd) {
+		return null;
 	}
- 		
- 	public abstract SafeHtml asHtml(V value);
+
+	public String asString(QueryData qd) {
+		return null;
+	}
 }

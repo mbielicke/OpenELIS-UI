@@ -122,8 +122,8 @@ public class Columnar extends FocusPanel implements RequiresResize,HasBeforeSele
      */
     protected int getWidthWithoutScrollbar() {
         if (viewWidth < 0 && totalColumnWidth == 0 && getParent() != null)
-            return ((LayoutPanel)getParent()).getWidgetContainerElement(this).getOffsetWidth() - CSSUtils.getAddedBorderWidth(getElement());
-        return (viewWidth == -1 ? totalColumnWidth : viewWidth) - CSSUtils.getAddedBorderWidth(getElement());
+            return ((LayoutPanel)getParent()).getWidgetContainerElement(this).getOffsetWidth() - (int)CSSUtils.getAddedBorderWidth(getElement());
+        return (viewWidth == -1 ? totalColumnWidth : viewWidth) - (int)CSSUtils.getAddedBorderWidth(getElement());
     }
     
     /**

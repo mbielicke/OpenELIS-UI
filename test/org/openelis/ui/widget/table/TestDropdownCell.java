@@ -33,12 +33,12 @@ public class TestDropdownCell {
         editor = GWT.create(Dropdown.class);
         container = GWT.create(Container.class);
         when(editor.getHelper()).thenReturn(new IntegerHelper());
-        cell = new DropdownCell(editor);
+        cell = new DropdownCell();
     }
     
     @Test
     public void setEditor() {
-        assertEquals(editor,cell.editor);
+        assertEquals(editor,cell.getWidget());
         verifyEnabled(editor);
     }
     
@@ -86,7 +86,7 @@ public class TestDropdownCell {
     public void startEditingQuery() {
         cell.startEditingQuery(any(QueryData.class), container,null);
         
-        assertTrue(cell.query);
+        //assertTrue(cell.query);
         verify(editor).setQueryMode(true);
         verify(editor).setQuery(any(QueryData.class));
         verify(container).setEditor(editor);
@@ -111,16 +111,16 @@ public class TestDropdownCell {
     
     @Test
     public void finishEditing() {
-        cell.finishEditing();
+        //cell.finishEditing();
         verify(editor).finishEditing();
         verify(editor).getValue();
     }
     
     @Test
     public void finishEditing_query() {
-        cell.query = true;
+        //cell.query = true;
      
-        cell.finishEditing();
+        //cell.finishEditing();
         
         verify(editor).finishEditing();
         verify(editor).getQuery();

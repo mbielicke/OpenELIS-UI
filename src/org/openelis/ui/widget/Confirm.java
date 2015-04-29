@@ -177,7 +177,7 @@ public class Confirm extends PopupPanel implements HasSelectionHandlers<Integer>
 
 	public void onPreviewNativeEvent(NativePreviewEvent event) {
 		if(event.getTypeInt() == Event.ONKEYDOWN){
-			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB){
+			if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB && active > -1){
 				((Button)buttonPanel.getWidget(active)).setFocus(false);
 				active++;
 				if(active == buttonPanel.getWidgetCount())

@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=OpenELIS-UI&amp;ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=%24%7Bworkspace_loc%3AOpenELIS-UI%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;propertyFiles=&amp;acceptedTypes=jar%2Cbundle%2Cejb&amp;alphaOrder=false&amp;resolveInWorkspace=false&amp;retrievedClasspath=false"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/openelis/ui/widget/table/StaticView.java|org/openelis/ui/widget/table/Header.java|org/openelis/ui/widget/table/ViewInt.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path=".apt_generated">
 		<attributes>

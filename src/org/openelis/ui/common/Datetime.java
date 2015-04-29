@@ -68,30 +68,21 @@ public class Datetime implements Serializable, Comparable<Datetime> {
         setDate(startCode, endCode, date);
     }
     
-    public Datetime(LocalDate date) {
-    	
-    }
-    
-    public Datetime(LocalTime time) {
-    	
-    }
-    
-    public Datetime(LocalDateTime datetime) {
-    	
-    }
-    
+    @GwtIncompatible
     public static Datetime getInstance(LocalDate date) {
     	if(date == null)
     		return null;
     	return new Datetime(YEAR,DAY,new Date(date.getYear()-1900,date.getMonthValue()-1,date.getDayOfMonth()));
     }
     
+    @GwtIncompatible
     public static Datetime getInstance(LocalTime time) {
     	if (time == null)
     		return null;
     	return new Datetime(HOUR,MINUTE,new Date(0,0,0,time.getHour(),time.getMinute(),0));
     }
     
+    @GwtIncompatible
     public static Datetime getInstance(LocalDateTime datetime) {
     	if (datetime == null)
     		return null;
@@ -134,17 +125,17 @@ public class Datetime implements Serializable, Comparable<Datetime> {
         return timestamp;
     }
     
-   
+    @GwtIncompatible
     public LocalDate getLocalDate() {
     	return LocalDate.of(year+1900,month+1,date);
     }
     
-   
+    @GwtIncompatible
     public LocalTime getLocalTime() {
     	return LocalTime.of(timestamp.getHours(), timestamp.getMinutes(),0);
     }
     
-   
+    @GwtIncompatible
     public LocalDateTime getLocalDateTime() {
     	return LocalDateTime.of(year+1900,month+1,date,timestamp.getHours(),timestamp.getMinutes(),0);
     }

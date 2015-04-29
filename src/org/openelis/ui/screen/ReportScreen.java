@@ -495,7 +495,7 @@ public abstract class ReportScreen<T> extends Screen {
 		d.setWidth(w + "px");
 
 
-		t = new Table.Builder(10).column(new Column.Builder(w).build()).build();
+		t = new Table.Builder().column(new Column.Builder(w).build()).build();
 
 		d.setPopupContext(t);
 		

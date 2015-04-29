@@ -23,7 +23,7 @@ public class TestLabelCell {
     @Before
     public void preArrange() {
         editor = GWT.create(Label.class);
-        cell = new LabelCell(editor);
+        cell = new LabelCell();
     }
     
     @Test
@@ -49,7 +49,7 @@ public class TestLabelCell {
     @Test 
     public void validate_invalidValue() {
         Label<Integer> editor = GWT.create(Label.class);
-        cell = new LabelCell(editor);
+        cell = new LabelCell();
         when(editor.getHelper()).thenReturn(new IntegerHelper());
         assertFalse(cell.validate("12d").isEmpty());
     }

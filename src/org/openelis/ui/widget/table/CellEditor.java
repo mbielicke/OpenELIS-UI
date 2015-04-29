@@ -58,7 +58,7 @@ public interface CellEditor {
      * Pulls the edited value from the editor and returns it.  If in Query mode and QueryData object will be returned 
      * @return
      */
-    public Object finishEditing();
+    public Object finishEditing() throws Exception;
     
     /**
      * Returns whether the passed key should be ignored by the KeyHandler when editing;

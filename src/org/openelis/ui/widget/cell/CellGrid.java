@@ -167,7 +167,9 @@ public class CellGrid  extends FlexTable {
 		
 		public void removeHandler(Element td) {
 			mouseOverHandlers.remove(td);
+			DOM.sinkEvents(td, DOM.getEventsSunk(td) & (~Event.ONMOUSEOVER));
 			mouseOutHandlers.remove(td);
+			DOM.sinkEvents(td, DOM.getEventsSunk(td) & (~Event.ONMOUSEOUT));
 		}
 		
 		protected HandlerRegistration addHandler(final Element td, final int event) {

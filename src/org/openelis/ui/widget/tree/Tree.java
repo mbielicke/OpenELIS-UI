@@ -603,7 +603,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
     protected void open(int row, NativeEvent event) {
         finishEditing();
         
-        selectNodeAt(row,event);
+        if(event != null)
+        	selectNodeAt(row,event);
         
         Node node;
         int pos;
@@ -669,7 +670,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         finishEditing();
         
-        selectNodeAt(row,event);
+        if(event != null)
+        	selectNodeAt(row,event);
         
         Node node;
         int pos;
@@ -1326,11 +1328,12 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public Node removeNodeAt(int index) {
         int adj = 0;
-        Node node;
+        Node node,parent;
+        boolean lastChild;
 
         finishEditing();
         
-        unselectNodeAt(index);
+        unselectAll();
 
         node = getNodeAt(index);
 
@@ -1344,7 +1347,9 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         adjustNodeIndexes(index,adj);
         
-        node.removeFromParent();
+        lastChild = node.isLastChild();
+        parent = node.getParent();
+        parent.remove(node);
 
         view.removeNodes(index, 1 + (node.isOpen ? node.getChildCount() : 0));
         
@@ -1363,6 +1368,14 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         
         fireRowDeletedEvent(index, node);
          
+        if (parent != root && parent.isOpen && lastChild) {
+        	close(parent);
+        	open(parent);
+        } else {
+        	if (parent != root) {
+        		view.renderView(nodeIndex.get(parent).index,nodeIndex.get(parent).index);
+        	}
+        }
 
         return node;
     }
@@ -1414,6 +1427,16 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public Integer[] getSelectedNodes() {
         return selections.toArray(new Integer[] {});
+    }
+    
+    public ArrayList<Node> getAllSelectedNodes() {
+    	ArrayList<Node> nodes;
+    	
+    	nodes = new ArrayList<Node>();
+    	for (Integer index : selections) {
+    		nodes.add(getNodeAt(index));
+    	}
+    	return nodes;
     }
 
     /**

@@ -11,6 +11,8 @@ public abstract class CellDataProvider<T,V> {
 	
 	public abstract V getValue(T data);
 	
+	public abstract void setValue(T data, V value);
+	
 	protected void render(T data) {
 		cell.render(getValue(data));
 	}

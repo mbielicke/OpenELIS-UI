@@ -31,6 +31,10 @@ import java.util.Iterator;
 
 import org.openelis.ui.widget.Label;
 import org.openelis.ui.widget.MenuItem;
+import org.openelis.ui.widget.cell.Cell;
+import org.openelis.ui.widget.cell.CellLabel;
+import org.openelis.ui.widget.cell.EditableCell;
+import org.openelis.ui.widget.cell.FinishedEditingEvent;
 
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -49,7 +53,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     /**
      * Reference to the Table containing this column
      */
-    protected Table        table;
+    protected Controller    controller;
+    protected View    view;
     
     /**
      * Filter used for this column
@@ -65,12 +70,12 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     /**
      * Editor widget used for this column
      */
-    protected CellEditor   editor;
+    protected EditableCell<?>   editor;
 
     /**
      * Render widget used for this column
      */
-	protected CellRenderer renderer = new LabelCell(new Label<String>());
+	protected Cell<?> renderer = new CellLabel<String>();
     
     /**
      * name used to reference column and label for the Header
@@ -99,7 +104,7 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     	boolean enabled = true,
     	        resizable = true,
     	        isSortable, isFilterable, required,display = true;
-    	CellRenderer renderer;
+    	Cell<?> renderer;
     	
     	public Builder(int width) {
     		this.width = width;
@@ -150,7 +155,7 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     		return this;
     	}
     	
-    	public Builder renderer(CellRenderer renderer) {
+    	public Builder renderer(Cell<?> renderer) {
     		this.renderer = renderer;
     		return this;
     	}
@@ -186,8 +191,9 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     	
     }
     
-	public CellEditor getCellEditor() {
-        return editor;
+	@SuppressWarnings("unchecked")
+	public <T> EditableCell<T> getCellEditor() {
+        return (EditableCell<T>)editor;
     }
 
     /**
@@ -198,12 +204,12 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      * 
      * @param editor
      */
-	public void setCellEditor(CellEditor editor) {
+	public void setCellEditor(EditableCell<?> editor) {
         this.editor = editor;
     }
     
     
-	public CellRenderer getCellRenderer() {
+	public Cell<?> getCellRenderer() {
         return renderer;
     }
 
@@ -212,12 +218,18 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      * @param renderer
      */
 	@UiChild(limit=1,tagname="renderer")
-	public void setCellRenderer(CellRenderer renderer) {
+	public void setCellRenderer(Cell<?> renderer) {
         this.renderer = renderer;
-        renderer.setColumn(this);
         
-        if (renderer instanceof CellEditor) 
-            editor = (CellEditor)renderer;
+        if (renderer instanceof EditableCell) { 
+            editor = (EditableCell<?>)renderer;
+            editor.addFinishedEditingHandler(new FinishedEditingEvent.Handler() {
+				@Override
+				public void onFinishEditing(FinishedEditingEvent event) {
+					controller.finishEditing();
+				}
+			});
+        }
     }
 
     /**
@@ -225,8 +237,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      * 
      * @return
      */
-    public Table getTable() {
-        return table;
+    public Controller getController() {
+        return controller;
     }
 
     /**
@@ -234,8 +246,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      * 
      * @param table
      */
-    public void setTable(Table table) {
-        this.table = table;
+    public void setController(Controller table) {
+        this.controller = table;
     }
 
     /**
@@ -272,14 +284,14 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public void setLabel(String label) {
         this.label = label;
-        if(table != null && table.view != null && table.view.getHeader() != null)
-        	table.view.getHeader().layout();
+        if(controller != null && view != null && view.getHeader() != null)
+        	view.getHeader().layout();
     }
 
     public void setStyle(String style) {
     	this.style = style;
-    	if(table != null)
-    		table.layout();
+    	if(controller != null)
+    		controller.layout();
     }
     
     public String getStyle() {
@@ -295,19 +307,19 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 
         int totalWidth, lastColumn;
 
-        if (table == null)
+        if (controller == null)
             return minWidth;
 
         /*
          * If this is the last column calculate its width if the overall width 
          * will be less then the set width of the table
          */
-        lastColumn = table.getColumnCount() - 1;
-        if (lastColumn >= 0 && table.getColumnAt(lastColumn) == this) {
-            totalWidth = table.getXForColumn(lastColumn);
+        lastColumn = controller.getColumnCount() - 1;
+        if (lastColumn >= 0 && controller.getColumnAt(lastColumn) == this) {
+            totalWidth = controller.getXForColumn(lastColumn);
             //if (totalWidth + width < table.getWidthWithoutScrollbar())
                 int w;
-                return ((((w = (table.getWidthWithoutScrollbar()) - totalWidth))) < width) ? width : w;
+                return ((((w = (controller.getWidthWithoutScrollbar()) - totalWidth))) < width) ? width : w;
         }
      
         return width;
@@ -320,8 +332,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public void setWidth(int width) {
         this.width = Math.max(width, minWidth);
-        if(table != null)
-        	table.resize();
+        if(controller != null)
+        	controller.resize();
     }
 
     /**
@@ -486,20 +498,20 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     
     public void setDisplay(boolean display) {
     	this.display = display;
-    	table.layout();
+    	controller.layout();
     }
 
 	@Override
 	public void finishEditing() {
-		table.finishEditing();
+		controller.finishEditing();
 	}
 
 	
 	@Override
 	public void add(IsWidget w) {
-		assert w instanceof CellRenderer;
+		assert w instanceof Cell;
 
-		setCellRenderer((CellRenderer)w);
+		setCellRenderer((Cell<?>)w);
 	}
 	
 	
@@ -537,8 +549,9 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 
 	@Override
 	public void add(Widget w) {
-		// TODO Auto-generated method stub
-		
+		assert w instanceof Cell;
+
+		setCellRenderer((Cell<?>)w);
 	}
 	
 	public void addMenuItem(MenuItem item) {

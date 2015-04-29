@@ -26,7 +26,7 @@ public class LeafColumn implements ColumnInt,IsWidget, HasWidgets.ForIsWidget {
     /**
      * Render widget used for this column
      */
-    protected CellRenderer renderer = new LabelCell(new Label<String>());
+    protected CellRenderer renderer = new LabelCell<String>();
     
     /**
      * Returns the Editor currently being used by this Column

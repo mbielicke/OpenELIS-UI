@@ -26,6 +26,7 @@
 package org.openelis.ui.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -497,5 +498,10 @@ public class DataBaseUtil {
             return "";
 
         return obj.toString();
+    }
+    
+    @SafeVarargs
+	public static <T> List<T> asList(T... elements) {
+    	return Arrays.asList(elements);
     }
 }

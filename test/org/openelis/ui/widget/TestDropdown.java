@@ -530,7 +530,7 @@ public class TestDropdown {
         setSearchModel();
         
         when(drop.table.getSelectedRow()).thenReturn(-1);
-        when(drop.table.getModel()).thenReturn(getTableModel());
+        when(drop.table.<Row>getModel()).thenReturn(getTableModel());
         when(drop.table.getRowCount()).thenReturn(drop.getModel().size());
         Integer[] selection = new Integer[]{0};
         when(drop.table.isAnyRowSelected()).thenReturn(true);
@@ -548,7 +548,7 @@ public class TestDropdown {
         setSearchModel();
         
         when(drop.table.getSelectedRow()).thenReturn(3);
-        when(drop.table.getModel()).thenReturn(getTableModel());
+        when(drop.table.<Row>getModel()).thenReturn(getTableModel());
         when(drop.table.getRowCount()).thenReturn(drop.getModel().size());
         Integer[] selection = new Integer[]{4};
         when(drop.table.isAnyRowSelected()).thenReturn(true);
@@ -563,7 +563,7 @@ public class TestDropdown {
     
     @Test 
     public void onKeyPress_downArrowFirstItemDisabled() {
-        ArrayList<Row> tableModel = getTableModel();
+        ArrayList<Item<Integer>> tableModel = getTableModel();
         setSearchModel();
         ((Item<Integer>)tableModel.get(0)).enabled = false;
         when(drop.table.getSelectedRow()).thenReturn(-1);
@@ -582,7 +582,7 @@ public class TestDropdown {
     
     @Test 
     public void onKeyPress_downArrowAllRowsDisabled() {
-        ArrayList<Row> tableModel = getTableModel();
+        ArrayList<Item<Integer>> tableModel = getTableModel();
         setSearchModel();
         for(Row row : tableModel)
             ((Item<Integer>)row).enabled = false;
@@ -601,7 +601,7 @@ public class TestDropdown {
         setSearchModel();
         
         when(drop.table.getSelectedRow()).thenReturn(-1);
-        when(drop.table.getModel()).thenReturn(getTableModel());
+        when(drop.table.<Row>getModel()).thenReturn(getTableModel());
         when(drop.table.getRowCount()).thenReturn(drop.getModel().size());
         Integer[] selection = new Integer[]{9};
         when(drop.table.isAnyRowSelected()).thenReturn(true);
@@ -634,11 +634,11 @@ public class TestDropdown {
     
     @Test 
     public void onKeyPress_upArrowFirstItemDisabled() {
-        ArrayList<Row> tableModel = getTableModel();
+        ArrayList<Item<Integer>> tableModel = getTableModel();
         setSearchModel();
         ((Item<Integer>)tableModel.get(9)).enabled = false;
         when(drop.table.getSelectedRow()).thenReturn(-1);
-        when(drop.table.getModel()).thenReturn(tableModel);
+        when(drop.table.<Row>getModel()).thenReturn(tableModel);
         when(drop.table.getRowCount()).thenReturn(drop.getModel().size());
         Integer[] selection = new Integer[]{8};
         when(drop.table.isAnyRowSelected()).thenReturn(true);
@@ -653,12 +653,12 @@ public class TestDropdown {
     
     @Test 
     public void onKeyPress_upArrowAllRowsDisabled() {
-        ArrayList<Row> tableModel = getTableModel();
+        ArrayList<Item<Integer>> tableModel = getTableModel();
         setSearchModel();
         for(Row row : tableModel)
             ((Item<Integer>)row).enabled = false;
         when(drop.table.getSelectedRow()).thenReturn(-1);
-        when(drop.table.getModel()).thenReturn(tableModel);
+        when(drop.table.<Row>getModel()).thenReturn(tableModel);
         when(drop.table.getRowCount()).thenReturn(drop.getModel().size());
         when(drop.table.isAnyRowSelected()).thenReturn(false);
         
@@ -743,8 +743,8 @@ public class TestDropdown {
         drop.createKeyHash(model);
     }
     
-    private ArrayList<Row> getTableModel() {
-        ArrayList<Row> model = new ArrayList<Row>();
+    private ArrayList<Item<Integer>> getTableModel() {
+        ArrayList<Item<Integer>> model = new ArrayList<Item<Integer>>();
         model.add(new Item<Integer>(0,"Aligator"));
         model.add(new Item<Integer>(1,"Alabama"));
         model.add(new Item<Integer>(2,"Ferret"));
