@@ -130,7 +130,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	@UiField
 	protected Button     				            button;
 	protected Button                                checkAll,uncheckAll,close;
-	protected Table                 				table;
+	protected Table<Item<T>>           				table;
 	protected PopupPanel      					    popup;
 	protected int                   			    cellHeight = 19, itemCount = 10, width, maxDisplay = 3;
 	protected boolean 					            required,queryMode,showingOptions,enabled;
@@ -221,7 +221,7 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 		
 		setCSS(UIResources.INSTANCE.dropdown());
 		
-		setPopupContext(new Table.Builder(10).column(new Column.Builder(100).renderer(new SelectionCell()).build()).build());
+		setPopupContext(new Table.Builder().column(new Column.Builder(100).renderer(new SelectionCell()).build()).build());
         setHelper((WidgetHelper)new IntegerHelper());
         
         textbox.setReadOnly(true);
@@ -507,9 +507,6 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	public void setVisibleItems(int itemCount) {
 		this.itemCount = itemCount;
-
-		if(table != null) 
-			table.setVisibleRows(itemCount);
 	}
 
 	/**

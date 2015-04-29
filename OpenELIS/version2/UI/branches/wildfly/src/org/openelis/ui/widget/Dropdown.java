@@ -125,7 +125,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
     @UiField
     protected Button                     button;
     protected Button                     checkAll, uncheckAll, close;
-    protected Table                      table;
+    protected Table<Item<T>>             table;
     protected PopupPanel                 popup;
     protected int                        cellHeight   = 19, itemCount = 10, width, maxDisplay = 3;
     protected boolean                    required, queryMode, showingOptions, enabled;
@@ -567,9 +567,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      */
     public void setVisibleItems(int itemCount) {
         this.itemCount = itemCount;
-
-        if (table != null)
-            table.setVisibleRows(itemCount);
     }
 
     /**
@@ -878,6 +875,30 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
         setDisplay();
 
     }
+    
+    public void disableItem(T key) {
+    	setItemEnabled(key,false);
+    }
+    
+    public void enableItem(T key) {
+    	setItemEnabled(key, true);
+    }
+    
+    public void setItemEnabled(T key, boolean enabled) {
+    	int index = -1;
+    	Item<T> item;
+    	
+    	if (keyHash.containsKey(key)) {
+    		index = keyHash.get(key);
+    		item = getModel().get(index);
+    		if (item.enabled != enabled) {
+    			item.setEnabled(enabled);
+    			table.setRowAt(index, item);
+    		}
+    	}
+    }
+    
+   
 
     // *************** Search methods ******************
 

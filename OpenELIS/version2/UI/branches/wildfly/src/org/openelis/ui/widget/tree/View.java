@@ -683,7 +683,11 @@ public class View extends Composite {
 
         cellEditor = tree.getCellEditor(r,c);
 
-        return cellEditor.finishEditing();
+        try {
+        	return cellEditor.finishEditing();
+        } catch (Exception e) {
+        	return null;
+        }
     }
 
     /**

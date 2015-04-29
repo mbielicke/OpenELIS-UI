@@ -15,7 +15,7 @@ public interface UIResources extends ClientBundle {
 	@Source("css/general.css")
 	GeneralCSS general();
 	
-	@Source("css/button.gss")
+	@Source("css/button.css")
 	ButtonCSS button();
 	
 	@Source("css/atozButton.css")

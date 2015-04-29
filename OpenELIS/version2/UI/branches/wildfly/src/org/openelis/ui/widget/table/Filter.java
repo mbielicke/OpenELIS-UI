@@ -45,7 +45,7 @@ public interface Filter {
      * @param model
      * @return
      */
-    public ArrayList<FilterChoice> getChoices(ArrayList<? extends Row> model);
+    public ArrayList<FilterChoice> getChoices(ArrayList<?> model);
     
     /**
      * Method used to set the column that this Filter should be applied to

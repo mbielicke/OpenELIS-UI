@@ -26,288 +26,62 @@
 package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.CheckboxCSS;
-import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Check;
-import org.openelis.ui.widget.CheckBox;
+import org.openelis.ui.widget.AutoCompleteValue;
+import org.openelis.ui.widget.cell.CellCheckbox;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class is used by Table to edit and render columns that use CheckBox 
  * @author tschmidt
  *
  */
-public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidgets.ForIsWidget {
+@Deprecated
+public class CheckBoxCell extends CellCheckbox implements CellEditor, CellRenderer {
+	
+	@Override
+	public void startEditing(Object value, Container container,NativeEvent event) {
+		startEditing(container.getElement(),(String)value,event);
+	}
 
-    /**
-     * Widget used to edit the cell
-     */
-    private CheckBox  editor;
-    private boolean   query;
-    private ColumnInt column;
-    private String    align = "center";
-    
-    protected CheckboxCSS css;
-    
-    public CheckBoxCell() {
-    	setEditor(new CheckBox());
-    }
-    
-    /**
-     * Constructor that takes the editor to be used for the cell.
-     * 
-     * @param editor
-     */
-    public CheckBoxCell(CheckBox editor) {
-    	setEditor(editor);
-    }
-    
-    public void setEditor(CheckBox editor) {
-        this.editor = editor;
-        
-        css = UIResources.INSTANCE.checkbox();
-        css.ensureInjected();
-        
-        editor.setEnabled(true);
-        //editor.addBlurHandler(new BlurHandler() {
-		//	public void onBlur(BlurEvent event) {
-		//		column.finishEditing();
-	//		}
-	//	});
-    }
-    
-    public Object finishEditing() {
-        if(query){
-            return editor.getQuery();
-        }
-        return editor.getValue();
-    }
+	@Override
+	public void startEditingQuery(QueryData qd, Container container,NativeEvent event) {
+		startEditing(container.getElement(),qd,event);
+	}
 
-    public ArrayList<Exception> validate(Object value) {
-        if (query){
-            return editor.getValidateExceptions();
-        }        
-        return editor.getValidateExceptions();
-    }
-    
-    /**
-     * Returns the current widget set as this cells editor.
-     */
-    @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
-        query = false;
-        editor.setQueryMode(false);
-        editor.setValue((String)value);
-        
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-        	ClickEvent.fireNativeEvent(event, editor.getCheck());
-   	        column.finishEditing();
-        }
+	@Override
+	public String display(Object value) {
+		return asString((String)value);
+	}
 
-        container.setEditor(editor);
-        DOM.setStyleAttribute(container.getElement(), "align", align); 
-        editor.setFocus(true);
-    }
-    
-    @SuppressWarnings("rawtypes")
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {        
-        query = true;
-        editor.setQueryMode(true);
-        editor.setQuery(qd);
-       
-        if(Event.getTypeInt(event.getType()) == Event.ONCLICK) { 
-            ClickEvent.fireNativeEvent(event, editor.getCheck());
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            
-                @Override
-                public void execute() {
-                    column.finishEditing();
-                }
-            });
-        } else {
-            container.setEditor(editor);
-            DOM.setStyleAttribute(container.getElement(), "align", align); 
-        }
-    }
-    
-    /**
-     * Gets Formatted value from editor and sets it as the cells display
-     */
-    public void render(HTMLTable table, int row, int col, Object value) {
-        
-        query = false;
-        editor.setQueryMode(false);
-        
-        if(editor.getMode() == Check.Mode.TWO_STATE && value == null)
-        	value = "N";
-        
-        render((String)value,table,row,col);
-    }
-    
-    public String display(Object value) {
-        return null;
-    }
+	@Override
+	public SafeHtml bulkRender(Object value) {
+		return asHtml((String)value);
+	}
 
-    /**
-     * Sets the QueryData to the editor and sets the Query string into the cell
-     * text
-     */
-    public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
-        String value;
-        
-        query = true;
-        editor.setQueryMode(true);
-        
-        
-        if(qd == null)
-        	value = null;
-        else 
-        	value = qd.getQuery();
-        
-        editor.setValue(value);
-        
-        render(value,table,row,col);
-    }
+	@Override
+	public void render(HTMLTable table, int row, int col, Object value) {
+		render(table.getCellFormatter().getElement(row, col),(String)value);
+	}
 
-    public boolean ignoreKey(int keyCode) {
-        switch(keyCode) {
-            case KeyCodes.KEY_ENTER :
-                return true;
-            default :
-                return false;
-        }
-    }
-    
-    public Widget getWidget() {
-    	return editor;
-    }
-    
+	@Override
+	public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
+		render(table.getCellFormatter().getElement(row, col),qd);
+	}
+
 	@Override
 	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
-	
-	private void render(String value, HTMLTable table, int row, int col) {
-
-		
-		table.setWidget(row, col, getCheckDiv(value));
-		
-        if(align.equalsIgnoreCase("left"))
-            table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_LEFT);
-        else if(align.equalsIgnoreCase("right"))
-            table.getCellFormatter().setHorizontalAlignment(row, col, HasHorizontalAlignment.ALIGN_RIGHT);
-        else
-            table.getCellFormatter().setHorizontalAlignment(row, col,HasHorizontalAlignment.ALIGN_CENTER);
-            
-	}
-	
-	public SafeHtml bulkRender(Object value) {
-	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
-	    String algn;
-	    
-	    if(align.equalsIgnoreCase("left"))
-            algn = HasHorizontalAlignment.ALIGN_LEFT.getTextAlignString();
-        else if(align.equalsIgnoreCase("right"))
-            algn = HasHorizontalAlignment.ALIGN_RIGHT.getTextAlignString();
-        else
-            algn = HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString();
-	    
-	    builder.appendHtmlConstant("<td align='"+algn+"'>");
-	    builder.appendHtmlConstant(getCheckDiv((String)value).getElement().getString());
-	    builder.appendHtmlConstant("</td>");
-	    
-	    return builder.toSafeHtml();
-	}
-
-	private AbsolutePanel getCheckDiv(String value) {
-	    String style;
-	    AbsolutePanel div;
-	        
-	    if(value == null)
-            style = css.Unknown();
-        else if("Y".equals(value))
-            style = css.Checked();
-        else
-            style = css.Unchecked();
-            
-        div = new AbsolutePanel();
-        div.setStyleName(style);
-        
-        return div;
-	}
-	
-	public void setCss(CheckboxCSS css) {
-		this.css = css;
-		css.ensureInjected();
-	}
-	
-	public void setAlign(String align) {
-	    this.align = align;
-	}
-	
-	@Override
-	public void add(Widget w) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
+	public ArrayList<Exception> validate(Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void add(IsWidget w) {
-		assert w instanceof CheckBox;
-		
-		setEditor((CheckBox)w);
-	}
-
-	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-  
 
 }

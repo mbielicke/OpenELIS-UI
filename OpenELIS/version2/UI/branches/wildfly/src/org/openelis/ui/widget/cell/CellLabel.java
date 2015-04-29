@@ -8,12 +8,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CellLabel<V> extends Cell<V> {
 	
-	Label<V> editor;
+	protected Label<V> editor;
+	
+	public CellLabel(Label<V> editor) {
+		this.editor = editor; 
+	}
 	
 	public CellLabel() {
 		editor = new Label<V>();
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Widget w) {
@@ -24,7 +28,12 @@ public class CellLabel<V> extends Cell<V> {
 
 	@Override
 	public SafeHtml asHtml(V value) {
-		return new SafeHtmlBuilder().appendEscaped(editor.getHelper().format(value)).toSafeHtml();
+		return new SafeHtmlBuilder().appendEscaped(asString(value)).toSafeHtml();
+	}
+
+	@Override
+	public String asString(V value) {
+		return editor.getHelper().format(value);
 	}
 
 }

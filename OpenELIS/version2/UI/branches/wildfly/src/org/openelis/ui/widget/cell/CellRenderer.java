@@ -25,6 +25,8 @@
 */
 package org.openelis.ui.widget.cell;
 
+import org.openelis.ui.common.data.QueryData;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -38,7 +40,10 @@ public interface CellRenderer<V> {
 
     public SafeHtml asHtml(V value);
     
+    public String asString(V value);
+        
     public void render(V value);
-    
+   
     public void render(Element element, V value);
+    
 }

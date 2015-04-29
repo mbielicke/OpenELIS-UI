@@ -1,0 +1,16 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:table="urn:import:org.openelis.ui.widget.table"
+  xmlns:shl="urn:import:org.openelis.ui.widget" xmlns:cell="urn:import:org.openelis.ui.widget.cell">
+
+
+    <g:LayoutPanel ui:field="inner">
+      <g:layer top="0px" height="20px" left="0px" right="0px">
+        <table:TableHeader ui:field="header"/>
+      </g:layer>
+      <g:layer top="25px" bottom="0px" left="0px" right="0px">
+        <g:ScrollPanel ui:field="scrollView">
+          <cell:CellGrid ui:field="grid" />
+        </g:ScrollPanel>
+      </g:layer>
+    </g:LayoutPanel>
+
+</ui:UiBinder>

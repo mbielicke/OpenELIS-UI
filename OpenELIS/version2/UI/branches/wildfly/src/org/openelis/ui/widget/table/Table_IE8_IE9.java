@@ -32,17 +32,17 @@ import java.util.ArrayList;
  *  browsers can not support the new bulk rendering 
  *
  */
-public class Table_IE8_IE9 extends Table {
+public class Table_IE8_IE9<T> extends Table<T> {
 	
 	@Override
     @SuppressWarnings("unchecked")
-    public void setModel(ArrayList<? extends Row> model) {
+    public void setModel(ArrayList<T> model) {
         finishEditing();
         unselectAll();
         
-        this.model = (ArrayList<Row>)model;
-        modelView = this.model;
-        rowIndex = null;
+        this.model = model;
+        modelView = null;
+		rowIndex = null;
         
         checkExceptions();
 

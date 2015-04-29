@@ -47,7 +47,7 @@ public class Row {
      *
      */
     public Row() {
-        cells = new ArrayList<Object>();
+        cells = new ArrayList<>();
     }
     
     /**
@@ -63,7 +63,7 @@ public class Row {
      * @param size
      */
     public Row(int size) {
-        cells = new ArrayList<Object>(size);
+        cells = new ArrayList<>(size);
         for(int i = 0; i < size; i++) {
             cells.add(null);
         }
@@ -82,7 +82,7 @@ public class Row {
     public Row(Row row) {
         data = row.data;
         
-        cells = new ArrayList<Object>(row.cells.size());
+        cells = new ArrayList<>(row.cells.size());
         
         for(Object cell : row.cells)
             cells.add(cell);
@@ -109,7 +109,7 @@ public class Row {
      * @param index
      * @param value
      */
-    public void setCell(int index, Object value) {
+    public <T extends Object> void setCell(int index,  T value) {
         cells.set(index,value);
     }
 
@@ -127,7 +127,7 @@ public class Row {
      * Method called to attach a data object to this Row.
      * @param data
      */
-    public void setData(Object data) {
+    public <T> void setData(T data) {
         this.data = data;
     }
     

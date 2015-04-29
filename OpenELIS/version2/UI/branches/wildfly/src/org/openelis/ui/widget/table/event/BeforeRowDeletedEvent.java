@@ -4,23 +4,23 @@ import org.openelis.ui.widget.table.Row;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-public class BeforeRowDeletedEvent extends GwtEvent<BeforeRowDeletedHandler> {
+public class BeforeRowDeletedEvent<T> extends GwtEvent<BeforeRowDeletedHandler> {
 	
 	private static Type<BeforeRowDeletedHandler> TYPE;
 	private int index;
-	private Row row;
+	private T row;
 	private boolean cancelled;
 	
-	public static BeforeRowDeletedEvent fire(HasBeforeRowDeletedHandlers source, int index, Row row) {
+	public static <T> BeforeRowDeletedEvent<T> fire(HasBeforeRowDeletedHandlers source, int index, T row) {
 		if(TYPE != null) {
-			BeforeRowDeletedEvent event = new BeforeRowDeletedEvent(index, row);
+			BeforeRowDeletedEvent<T> event = new BeforeRowDeletedEvent<T>(index, row);
 			source.fireEvent(event);
 			return event;
 		}
 		return null;
 	}
 	
-	protected BeforeRowDeletedEvent(int index, Row row) {
+	protected BeforeRowDeletedEvent(int index, T row) {
 		this.row = row;
 		this.index = index;
 	}
@@ -43,7 +43,7 @@ public class BeforeRowDeletedEvent extends GwtEvent<BeforeRowDeletedHandler> {
 		return TYPE;
 	}
 	
-	public Row getRow() {
+	public T getRow() {
 		return row;
 	}
 	

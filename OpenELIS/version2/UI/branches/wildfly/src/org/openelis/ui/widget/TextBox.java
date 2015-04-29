@@ -91,6 +91,7 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 			public void onFocus(FocusEvent event) {
 				if (isEnabled()) {
 					textbox.addStyleName(css.Focus());
+					GWT.log("In TextBox Focus added");
 					Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                         
                         @Override

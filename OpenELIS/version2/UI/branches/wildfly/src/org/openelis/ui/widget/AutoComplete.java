@@ -124,7 +124,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     protected LayoutPanel                           display;
 	@UiField
     protected Button                                button;
-    protected Table                                 table;
+    protected Table<Item<Integer>>                  table;
     protected PopupPanel                            popup;
     protected int                                   cellHeight = 19, delay = 350, itemCount = 10, width;
     protected Timer                                 timer;
@@ -222,7 +222,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
         
         setCSS(UIResources.INSTANCE.dropdown());
         
-        setPopupContext(new Table.Builder(10).column(new Column.Builder(10).build()).build());
+        setPopupContext(new Table.Builder().column(new Column.Builder(10).build()).build());
         
         setWidth("150px");
         
@@ -264,13 +264,9 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     	if(bgme != null && bgme.isCancelled())
     		return;
     	
+    	textbox.setFocus(true);
+    	
         GetMatchesEvent.fire(this, textbox.getText());
-        /*
-         * Call showPopup because the textbox will have lost focus so
-         * showMatches will not call.
-         */
-        showPopup();
-        textbox.setFocus(true);
     }
     
     @UiHandler("button")
@@ -300,6 +296,7 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
             popup.addCloseHandler(new CloseHandler<PopupPanel>() {
                 public void onClose(CloseEvent<PopupPanel> event) {
                 	showingOptions = false;
+                	setDisplay();
                 	setFocus(true);
                 }
             });

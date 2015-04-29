@@ -27,7 +27,7 @@
 	font-size: inherit;
 	cursor: pointer;
 	/*	padding: 0px 2px 2px 2px;  fixed row cellpadding*/
-	padding: 0px 2px 2px;
+	/*padding: 0px 2px 2px;*/
 }
 
 .Table>tbody>tr>td.InputError {

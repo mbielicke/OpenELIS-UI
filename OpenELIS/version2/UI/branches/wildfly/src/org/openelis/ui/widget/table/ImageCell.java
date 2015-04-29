@@ -27,14 +27,11 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
+import org.openelis.ui.widget.cell.CellImage;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class implements the CellRenderer and CellEditor interfaces and is used
@@ -43,60 +40,45 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class ImageCell implements CellRenderer,IsWidget {
-    
-    
-    /**
-     * Constructor that takes the editor to be used for the cell.
-     * 
-     * @param editor
-     */
-    public ImageCell() {
-    }
-    
-    /**
-     * Gets Formatted value from editor and sets it as the cells display
-     */
-    public void render(HTMLTable table, int row, int col, Object value) {
-        table.getCellFormatter().addStyleName(row,col,(String)value);
-    }
-    
-    public String display(Object value) {
-        return value.toString();
-    }
-    
-    public SafeHtml bulkRender(Object value) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        
-        builder.appendHtmlConstant("<td class='"+DataBaseUtil.toString(value)+"'/>");
-        
-        return builder.toSafeHtml();
-                        
-    }
-
-    public void renderQuery(HTMLTable table,
-                            int frow,
-                            int col,
-                            QueryData qd) {
-        
-    }
-
+@Deprecated
+public class ImageCell extends CellImage implements CellRenderer {
+	
 	@Override
-	public ArrayList<Exception> validate(Object value) {
-		return null;
+	public String display(Object value) {
+		return asString((String)value);
 	}
 
 	@Override
-	public Widget asWidget() {
+	public SafeHtml bulkRender(Object value) {
+		return asHtml((String)value);
+	}
+
+	@Override
+	public void render(HTMLTable table, int row, int col, Object value) {
+		render(table.getCellFormatter().getElement(row, col),(String)value);
+	}
+
+	@Override
+	public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<Exception> validate(Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-    @Override
-    public void setColumn(ColumnInt col) {
-        // TODO Auto-generated method stub
-        
-    }
+	@Override
+	public void setColumn(ColumnInt col) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    
+	
+
+	
+
+     
 }

@@ -26,18 +26,12 @@
 package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.widget.Label;
+import org.openelis.ui.widget.cell.CellLabel;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class implements the CellRenderer and CellEditor interfaces and is used
@@ -46,111 +40,39 @@ import com.google.gwt.user.client.ui.Widget;
  * @author tschmidt
  * 
  */
-public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget {
-    
-    /**
-     * Widget used to edit the cell
-     */
-    private Label  editor;
-    
-    
-    public LabelCell() {
-    	this.editor = new Label<String>();
-    }
-    
-    /**
-     * Constructor that takes the editor to be used for the cell.
-     * 
-     * @param editor
-     */
-    public LabelCell(Label editor) {
-        this.editor = editor;
-    }
-    
-    /**
-     * Gets Formatted value from editor and sets it as the cells display
-     */
-    public void render(HTMLTable table, int row, int col, Object value) {
-   		table.setText(row,col,display(value));
-    }
-    
-    public String display(Object value) {
-        if(editor.getHelper().isCorrectType(value))
-        	return editor.getHelper().format(value);
-        else
-        	return DataBaseUtil.toString(value);
-    }
-    
-    public SafeHtml bulkRender(Object value) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        
-        builder.appendHtmlConstant("<td>");
-        builder.appendEscaped(display(value));
-        builder.appendHtmlConstant("</td>");
-        
-        return builder.toSafeHtml();
-    }
+@Deprecated
+public class LabelCell<T> extends CellLabel<T> implements CellRenderer {
 
-    public void renderQuery(HTMLTable table,
-                            int frow,
-                            int col,
-                            QueryData qd) {
-    	table.setText(frow, col, "");
-        
-    }
+	@Override
+	public String display(Object value) {
+		return asString((T)value);
+	}
+
+	@Override
+	public SafeHtml bulkRender(Object value) {
+		return asHtml((T)value);
+	}
+
+	@Override
+	public void render(HTMLTable table, int row, int col, Object value) {
+		render(table.getCellFormatter().getElement(row, col),(T)value);
+	}
+
+	@Override
+	public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
+		
+	}
 
 	@Override
 	public ArrayList<Exception> validate(Object value) {
-
-		 return editor.getHelper().validate(value);
-	}
-
-	@Override
-	public void add(Widget w) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean remove(Widget w) {
+	public void setColumn(ColumnInt col) {
 		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void add(IsWidget w) {
-		assert w instanceof Label;
 		
-		this.editor = (Label)w;
 	}
-
-	@Override
-	public boolean remove(IsWidget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Widget asWidget() {
-		return new Label("");
-	}
-
-    @Override
-    public void setColumn(ColumnInt col) {
-        // TODO Auto-generated method stub
-        
-    }
-    
+           
 }

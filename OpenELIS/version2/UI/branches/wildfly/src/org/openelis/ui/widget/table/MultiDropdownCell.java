@@ -26,25 +26,13 @@
 package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import org.openelis.ui.common.DataBaseUtil;
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.TableDropdownCSS;
-import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.MultiDropdown;
+import org.openelis.ui.widget.cell.CellMultiDropdown;
 
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This class implements the CellRenderer and CellEditor interfaces and is used
@@ -54,166 +42,49 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @param <T>
  */
-public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidgets {
+@Deprecated
+public class MultiDropdownCell<V> extends CellMultiDropdown<V> implements CellRenderer, CellEditor {
 
-    /**
-     * Widget used to edit the cell
-     */
-    private MultiDropdown<Integer>      editor;
+	@Override
+	public void startEditing(Object value, Container container,	NativeEvent event) {
+		startEditing(container.getElement(),(ArrayList<V>)value,event);
+	}
 
-    private boolean       query;
-    
-    private ColumnInt     column;
+	@Override
+	public void startEditingQuery(QueryData qd, Container container,NativeEvent event) {
+		startEditing(container.getElement(),qd,event);
+	}
 
-    public MultiDropdownCell() {
-    	this(new MultiDropdown<String>());
-    	
-    }
-    /**
-     * Constructor that takes the editor to be used for the cell.
-     * 
-     * @param editor
-     */
-    public MultiDropdownCell(MultiDropdown editor) {
-        setEditor(editor);
-    }
-    
-    public void setEditor(MultiDropdown editor) {
-        TableDropdownCSS css = UIResources.INSTANCE.tableDropdown();
-        this.editor = editor;
-        editor.setEnabled(true);
-        editor.setCSS(css);
-        editor.addBlurHandler(new BlurHandler() {
-			public void onBlur(BlurEvent event) {
-				column.finishEditing();
-			}
-		});
-    }
+	@Override
+	public String display(Object value) {
+		return asString((ArrayList<V>)value);
+	}
 
-    public Object finishEditing() {
-    	editor.finishEditing();
-        if (query) 
-            return editor.getQuery();
-        
-        return editor.getValue();
-    }
+	@Override
+	public SafeHtml bulkRender(Object value) {
+		return asHtml((ArrayList<V>)value);
+	}
 
-    public ArrayList<Exception> validate(Object value) {
-    	
-    	//if(!query) 
-    		//return editor.getHelper().validate(value);
-    	        	
-        return null;
-    }
+	@Override
+	public void render(HTMLTable table, int row, int col, Object value) {
+		render(table.getCellFormatter().getElement(row,col),(ArrayList<V>)value);
+	}
 
-    /**
-     * Gets Formatted value from editor and sets it as the cells display
-     */
-    public void render(HTMLTable table, int row, int col, Object value) {
-        editor.setQueryMode(false);
-       	table.setText(row, col, display(value));
-    }
+	@Override
+	public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
+		render(table.getCellFormatter().getElement(row, col),qd);
+	}
 
-    public String display(Object value) {
-    	if(value != null && value instanceof List) {
-   			editor.setValue((ArrayList<Integer>)value);
-        	return editor.getDisplay();
-    	}else {
-    		return DataBaseUtil.toString(value);
-    	}
-    }
-    
-    public SafeHtml bulkRender(Object value) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        
-        builder.appendHtmlConstant("<td>");
-        builder.appendEscaped(display(value));
-        builder.appendHtmlConstant("</td>");
-        
-        return builder.toSafeHtml();
-    }
-
-    /**
-     * Sets the QueryData to the editor and sets the Query string into the cell
-     * text
-     */
-    public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
-        query = true;
-        editor.setQueryMode(true);
-        editor.setQuery(qd);
-        table.setText(row, col, editor.getDisplay());
-    }
-
-    /**
-     * Returns the current widget set as this cells editor.
-     */
-	public void startEditing(Object value, Container container, NativeEvent event) {
-        query = false;
-        editor.setQueryMode(false);
-        editor.setValue((ArrayList<Integer>)value);
-        editor.setWidth(container.getWidth()+"px");
-        editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
-    }
-
-	public void startEditingQuery(QueryData qd, Container container, NativeEvent event) {
-        query = true;
-        editor.setQueryMode(true);
-        editor.setQuery(qd);
-        editor.setWidth(container.getWidth()+"px");
-        editor.setHeight(container.getHeight()+"px");
-        container.setEditor(editor);
-    }
-    
-    public boolean ignoreKey(int keyCode) {
-        switch(keyCode) {
-            case KeyCodes.KEY_ENTER :
-            case KeyCodes.KEY_DOWN :
-            case KeyCodes.KEY_UP :
-                return true;
-            default :
-                return false;
-        }
-    }
-    
-    public Widget getWidget() {
-    	return editor;
-    }
-    
 	@Override
 	public void setColumn(ColumnInt col) {
-		this.column = col;
-	}
-
-	@Override
-	public Widget asWidget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public void setWidth(int width) {
-		editor.setWidth(width+"px");
-	}
-	@Override
-	public void add(Widget w) {
-		if(w instanceof MultiDropdown) {
-		    setEditor((MultiDropdown)w);
-		}
-	}
-	
-	@Override
-	public void clear() {
 		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
-	public Iterator<Widget> iterator() {
+	public ArrayList<Exception> validate(Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 }

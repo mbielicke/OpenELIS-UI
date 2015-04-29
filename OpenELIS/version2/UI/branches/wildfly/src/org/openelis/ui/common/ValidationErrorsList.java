@@ -26,6 +26,7 @@
 package org.openelis.ui.common;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openelis.ui.common.Warning;
 
@@ -48,6 +49,13 @@ public class ValidationErrorsList extends Exception {
         hasErrors = false;
         hasWarnings = false;
         hasCautions = false;
+    }
+    
+    public ValidationErrorsList(List<Exception> excs) {
+    	this();
+    	for (Exception exc : excs) {
+    		add(exc);
+    	}
     }
     
     public void add(Exception ex){

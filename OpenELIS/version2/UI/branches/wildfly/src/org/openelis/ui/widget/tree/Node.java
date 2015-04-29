@@ -196,14 +196,19 @@ public class Node extends Row {
     
     public void remove(int index) {
         children.remove(index);
+        if (children.isEmpty()) {
+        	children = null;
+        	isOpen = false;
+        }
     }
     
     public void remove(Node node) {
-        children.remove(node);
+        remove(children.indexOf(node));
     }
     
     public void removeAllChildren() {
         children = null;
+        isOpen = false;
     }
     
     public void removeFromParent() {

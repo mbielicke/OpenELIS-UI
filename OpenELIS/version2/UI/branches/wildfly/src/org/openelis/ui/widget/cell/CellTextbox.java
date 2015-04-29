@@ -1,6 +1,9 @@
 package org.openelis.ui.widget.cell;
 
-import org.openelis.ui.common.DataBaseUtil;
+import java.util.ArrayList;
+
+import org.openelis.ui.common.ValidationErrorsList;
+import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.widget.TextBox;
 
 import com.google.gwt.dom.client.Element;
@@ -8,16 +11,20 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
+public class CellTextbox<V> extends EditableCell<V> {
 	
-	TextBox<V> editor;
-	boolean editing;
+	protected TextBox<V> editor;
 
 	public CellTextbox() {
 		initEditor(new TextBox<V>());
 	}
+	
+    public CellTextbox(TextBox<V> editor) {
+    	initEditor(editor);
+    }
 	
 	public void initEditor(TextBox<V> editor) {
 		this.editor = editor;
@@ -25,58 +32,101 @@ public class CellTextbox<V> extends Cell<V> implements CellEditor<V> {
 		editor.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
-				finishEditing();
+				fireEvent(new FinishedEditingEvent());
 			}
 		});
+		editor.setVisible(false);
+		RootPanel.get().add(editor);
 	}
-	
-	@SuppressWarnings("unchecked")
+		
 	@Override
-	public void add(Widget w) {
-		if(w instanceof TextBox)
-			initEditor((TextBox<V>)w);
-	}
-	
-	@Override
-	public boolean isEditing() {
-		return editing;
-	}
-	
-	@Override
-	public void startEditing(V value) {
-		startEditing(getElement().getParentElement(),value);		
-	}
-	
 	public void startEditing(Element container, V value) {
-		if(editing)
+		if (isEditing()) {
 			return;
-		editor.setValue(value);
-		sizeEditor(editor,container);
-		setEditor(editor);
-		container.removeAllChildren();
-		container.appendChild(getElement());
-		editor.setFocus(true);		
+		}
+		boolean invalidInput = value == null && container.getInnerText() != null;
+		editor.setQueryMode(false);
+		if (invalidInput) {
+			editor.setText(container.getInnerText());
+		} else {
+			editor.setValue(value);
+		}
+		setEditor(editor,container);
 		editing = true;
 	}
 
 	@Override
-	public Object finishEditing() {
-		V value = editor.getValue();
-		remove(editor);
-		render(value);
+	public V finishEditing() throws ValidationErrorsList {
+		V value = null;
+		editor.finishEditing();
 		editing = false;
+		if (!isValid()) {
+			renderUserInput();
+			throw new ValidationErrorsList(editor.getValidateExceptions());
+		}
+		if (!editor.isQueryMode()) {
+			value = editor.getValue();
+			render(getEditingElement(),value);
+		} else {
+			renderUserInput();
+		}
 		return value;
+	}
+	
+	private Element getEditingElement() {
+		return editor.getElement().getParentElement();
+	}
+	
+	private void renderUserInput() {
+		String text = editor.getText();
+		Element element = getEditingElement();
+		element.removeAllChildren();
+		element.setInnerText(text);
 	}
 
 	@Override
 	public SafeHtml asHtml(V value) {
-		if(editor == null)
-			return new SafeHtmlBuilder().appendEscaped(DataBaseUtil.toString(value)).toSafeHtml();
-        editor.setQueryMode(false);
-        if(editor.getHelper().isCorrectType(value))
-        	return new SafeHtmlBuilder().appendEscaped(editor.getHelper().format(value)).toSafeHtml();
-        else
-        	return new SafeHtmlBuilder().appendEscaped(DataBaseUtil.toString(value)).toSafeHtml();
+       	return new SafeHtmlBuilder().appendEscaped(asString(value)).toSafeHtml();
 	}
 
+	@Override
+	public String asString(V value) {
+		return editor.getHelper().format(value);
+	}
+
+	@Override
+	public void startEditing(Element element, QueryData qd) {
+		if (isEditing()) {
+			return;
+		}
+		editor.setQueryMode(true);
+		editor.setQuery(qd);
+		setEditor(editor,element);
+		editing = true;
+	}
+	
+    public ArrayList<Exception> validate(Object value) {        
+        return editor.getHelper().validate(value);
+    }
+    
+    protected boolean isValid() {
+    	return editor.getValidateExceptions() == null || editor.getValidateExceptions().isEmpty();
+    }
+    
+    public QueryData getQuery() {
+    	return (QueryData)editor.getQuery();
+    }
+    
+	@SuppressWarnings("unchecked")
+	@Override
+	public void add(Widget w) {
+		if (w instanceof TextBox) {
+			initEditor((TextBox<V>)w);
+		}
+	}
+	
+	@Override
+	public Widget getWidget() {
+		return editor;
+	}
 }

@@ -33,7 +33,7 @@ public class CellView<T> extends HTMLPanel {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void add(final CellDataProvider<T,?> cell) {
 		cells.add(cell);
-		if(cell.cell instanceof CellEditor) {
+		if(cell.cell instanceof EditableCell) {
 			DOM.setEventListener(cell.cell.getElement().getParentElement(), new EventListener() {
 				@Override
 				public void onBrowserEvent(Event event) {
@@ -42,6 +42,18 @@ public class CellView<T> extends HTMLPanel {
 				}
 			});
 			DOM.sinkEvents(cell.cell.getElement().getParentElement(),Event.ONCLICK);
+			
+			((EditableCell)cell.cell).addFinishedEditingHandler(new FinishedEditingEvent.Handler() {
+				
+				@Override
+				public void onFinishEditing(FinishedEditingEvent event) {
+					try {
+						((EditableCell)event.getSource()).finishEditing();
+					} catch (Exception e) {
+						
+					}
+				}
+			});
 		}
 	}
 	

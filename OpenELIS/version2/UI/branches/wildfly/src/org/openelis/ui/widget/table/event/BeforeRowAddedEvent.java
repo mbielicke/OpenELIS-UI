@@ -1,7 +1,5 @@
 package org.openelis.ui.widget.table.event;
 
-import org.openelis.ui.widget.table.Row;
-
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
@@ -9,23 +7,23 @@ import com.google.gwt.event.shared.GwtEvent;
  * @author tschmidt
  *
  */
-public class BeforeRowAddedEvent extends GwtEvent<BeforeRowAddedHandler> {
+public class BeforeRowAddedEvent<T> extends GwtEvent<BeforeRowAddedHandler> {
 	
 	private static Type<BeforeRowAddedHandler> TYPE;
 	private int index;
-	private Row row;
+	private T row;
 	private boolean cancelled;
 	
-	public static BeforeRowAddedEvent fire(HasBeforeRowAddedHandlers source, int index, Row row) {
+	public static <T> BeforeRowAddedEvent<T> fire(HasBeforeRowAddedHandlers source, int index, T row) {
 		if(TYPE != null) {
-			BeforeRowAddedEvent event = new BeforeRowAddedEvent(index, row);
+			BeforeRowAddedEvent<T> event = new BeforeRowAddedEvent<T>(index, row);
 			source.fireEvent(event);
 			return event;
 		}
 		return null;
 	}
 	
-	protected BeforeRowAddedEvent(int index, Row row) {
+	protected BeforeRowAddedEvent(int index, T row) {
 		this.row = row;
 		this.index = index;
 	}
@@ -48,7 +46,7 @@ public class BeforeRowAddedEvent extends GwtEvent<BeforeRowAddedHandler> {
 		return TYPE;
 	}
 	
-	public Row getRow() {
+	public T getRow() {
 		return row;
 	}
 	
