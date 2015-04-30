@@ -2,25 +2,24 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.widget.cell.CellDataProvider;
-
 public class TableDataProvider<T> {
 
-	ArrayList<CellDataProvider> providers = new ArrayList<>();
+	ArrayList<DataProvider<T,?>> providers = new ArrayList<>();
 	
+	@SuppressWarnings("unchecked")
 	public <V> V getValue(int col, T data) {
 		return (V)providers.get(col).getValue(data);
 	}
 
 	public <V> void setValue(int col, T data, V value) {
-		providers.get(col).setValue(data, value);
+		providers.get(col).setCellValue(data, value);
 	}
 
-	public <V> void addColumnProvider(CellDataProvider<T,V> provider) {
+	public void addColumnProvider(DataProvider<T,?> provider) {
 		addColumnProvider(provider,providers.size());
 	}
 	
-	public <V> void addColumnProvider(CellDataProvider<T,V> provider,int index) {		
+	public void addColumnProvider(DataProvider<T,?> provider,int index) {		
 		providers.add(index,provider);
 	}
 
