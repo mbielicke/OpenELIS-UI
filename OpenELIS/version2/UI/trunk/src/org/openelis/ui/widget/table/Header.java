@@ -27,6 +27,7 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
+import org.openelis.ui.common.Util;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.TableCSS;
@@ -35,6 +36,7 @@ import org.openelis.ui.widget.CheckMenuItem;
 import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.widget.PopupMenuPanel;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -281,12 +283,15 @@ public class Header extends FocusPanel {
     protected void renderView(int start, int end) {
         Column column;
         String header;
+        String left;
         
         if(start < 0)
             start = 0;
         
         if(end < 0)
             end = table.getColumnCount()-1;
+        
+        left = getElement().getStyle().getLeft();
         
         for (int i = start; i <= end; i++ ) {
             column = table.getColumnAt(i);
@@ -312,6 +317,8 @@ public class Header extends FocusPanel {
         
         while(flexTable.getCellCount(0) > table.getColumnCount())
         	flexTable.removeCell(0, flexTable.getCellCount(0) -1);
+        
+        getElement().getStyle().setLeft(Util.stripUnits(left), Unit.PX);
     }
 
     /**
