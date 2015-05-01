@@ -2,9 +2,9 @@ package org.openelis.ui.widget.table.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-public class RowAddedEvent<T> extends GwtEvent<RowAddedHandler> {
+public class RowAddedEvent<T> extends GwtEvent<RowAddedHandler<T>> {
 	
-	private static Type<RowAddedHandler> TYPE;
+	private static Type<RowAddedHandler<?>> TYPE;
 	private int index;
 	private T row;
 	
@@ -21,19 +21,19 @@ public class RowAddedEvent<T> extends GwtEvent<RowAddedHandler> {
 	}
 
 	@Override
-	protected void dispatch(RowAddedHandler handler) {
+	protected void dispatch(RowAddedHandler<T> handler) {
 		handler.onRowAdded(this);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<RowAddedHandler> getAssociatedType() {
+	public com.google.gwt.event.shared.GwtEvent.Type<RowAddedHandler<T>> getAssociatedType() {
 		return (Type) TYPE;
 	}
 	
-	public static Type<RowAddedHandler> getType() {
+	public static Type<RowAddedHandler<?>> getType() {
 		if(TYPE == null) {
-			TYPE = new Type<RowAddedHandler>();
+			TYPE = new Type<RowAddedHandler<?>>();
 		}
 		return TYPE;
 	}

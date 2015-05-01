@@ -125,7 +125,7 @@ public abstract class View<T extends Controller> extends ResizeComposite {
 
     @UiHandler("scrollView")
     protected void handleScroll(ScrollEvent event) {
-    	header.getElement().getStyle().setProperty("left",-scrollView.getHorizontalScrollPosition(),Unit.PX);
+    	alignHeader();
     }
     
     @UiHandler("grid")
@@ -195,6 +195,7 @@ public abstract class View<T extends Controller> extends ResizeComposite {
             header.layout();
             inner.setWidgetTopHeight(header,0, Unit.PX,header.getWidget().getElement().getOffsetHeight(),Unit.PX);
             inner.setWidgetTopBottom(scrollView, CSSUtils.getHeight(header), Unit.PX, 0, Unit.PX);
+            alignHeader();
         } else {
             UIObject.setVisible(inner.getWidgetContainerElement(header), false);
             header.setVisible(false);
@@ -202,6 +203,15 @@ public abstract class View<T extends Controller> extends ResizeComposite {
         }
     }
 
+    protected void alignHeader() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			@Override
+			public void execute() {
+				header.getElement().getStyle().setProperty("left",-scrollView.getHorizontalScrollPosition(),Unit.PX);
+			}
+		});
+    }
+    
     protected void createRow(int row) {
         grid.insertRow(row);
         for(int i = 0; i < controller.getColumnCount(); i++) {

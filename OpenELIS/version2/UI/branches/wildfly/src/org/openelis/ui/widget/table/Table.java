@@ -88,8 +88,6 @@ import com.google.gwt.user.client.ui.Widget;
  * This class is used by screens and widgets such as AutoComplete and Dropdown
  * to display information in a Table grid format
  * 
- * @author tschmidt
- * 
  */
 public class Table<T> extends Controller implements ScreenWidgetInt, Queryable,		
 												 RequiresResize,  HasBeforeRowAddedHandlers,
