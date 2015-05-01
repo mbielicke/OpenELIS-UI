@@ -283,16 +283,13 @@ public class Header extends FocusPanel {
     protected void renderView(int start, int end) {
         Column column;
         String header;
-        String left;
         
         if(start < 0)
             start = 0;
         
         if(end < 0)
             end = table.getColumnCount()-1;
-        
-        left = getElement().getStyle().getLeft();
-        
+                
         for (int i = start; i <= end; i++ ) {
             column = table.getColumnAt(i);
             if(column.getLabel() !=  null)
@@ -316,9 +313,7 @@ public class Header extends FocusPanel {
         }
         
         while(flexTable.getCellCount(0) > table.getColumnCount())
-        	flexTable.removeCell(0, flexTable.getCellCount(0) -1);
-        
-        getElement().getStyle().setLeft(Util.stripUnits(left), Unit.PX);
+        	flexTable.removeCell(0, flexTable.getCellCount(0) -1);        
     }
 
     /**

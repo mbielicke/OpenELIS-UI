@@ -145,12 +145,9 @@ public class StaticView extends ViewInt {
 
 
         scrollView.addScrollHandler(new ScrollHandler() {
-
             @Override
             public void onScroll(ScrollEvent event) {
-                DOM.setStyleAttribute(header.getElement(),
-                                      "left",
-                                      (0 - scrollView.getHorizontalScrollPosition()) + "px");
+              alignHeader();
             }
         });
         
@@ -243,11 +240,23 @@ public class StaticView extends ViewInt {
             header.setVisible(true);
             header.layout();
             inner.setWidgetTopBottom(scrollView, CSSUtils.getHeight(header), Unit.PX, 0, Unit.PX);
+            alignHeader();
         } else {
             UIObject.setVisible(inner.getWidgetContainerElement(header), false);
             header.setVisible(false);
             inner.setWidgetTopBottom(scrollView, 0, Unit.PX, 0, Unit.PX);
         }
+    }
+    
+    protected void alignHeader() {
+    	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+			@Override
+			public void execute() {
+                DOM.setStyleAttribute(header.getElement(),
+                        "left",
+                        (0 - scrollView.getHorizontalScrollPosition()) + "px");
+			}
+		});
     }
 
     /**
