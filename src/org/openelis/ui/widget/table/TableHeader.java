@@ -27,6 +27,7 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
+import org.openelis.ui.common.Util;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.TableCSS;
@@ -35,6 +36,7 @@ import org.openelis.ui.widget.CheckMenuItem;
 import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.widget.PopupMenuPanel;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -283,13 +285,15 @@ public class TableHeader extends FocusPanel {
      */
     protected void renderView(int start, int end) {
         Column column;
-        String header;
-        
+        String header,left;
+       
         if(start < 0)
             start = 0;
         
         if(end < 0)
             end = table.getColumnCount()-1;
+        
+        //left = getElement().getStyle().getProperty("left");
         
         for (int i = start; i <= end; i++ ) {
             column = table.getColumnAt(i);
@@ -315,6 +319,8 @@ public class TableHeader extends FocusPanel {
         
         while(flexTable.getCellCount(0) > table.getColumnCount())
         	flexTable.removeCell(0, flexTable.getCellCount(0) -1);
+        
+        //getElement().getStyle().setProperty("left",Util.stripPX(left),Unit.PX);
     }
 
     /**
@@ -599,7 +605,8 @@ public class TableHeader extends FocusPanel {
      * @param dir
      */
     private void doSort(int col, int dir) {
-        
+    	Column column;
+    
         table.applySort(col,dir,table.getColumnAt(col).sort);
         
         /*
@@ -617,7 +624,18 @@ public class TableHeader extends FocusPanel {
          * 
          * Changed to call for all columns so sorts and filter indicators will be synced
          */
-        renderView(-1, -1);
+        for (int i = 0; i < table.getColumnCount(); i++ ) {
+            column = table.getColumnAt(i);
+            if(column.isFiltered())
+            	flexTable.getCellFormatter().addStyleName(0,i,css.Filtered());
+            else
+            	flexTable.getCellFormatter().removeStyleName(0, i, css.Filtered());
+        
+            if(column.isSorted()) 
+            	flexTable.getCellFormatter().addStyleName(0,i,css.Sorted());
+            else
+            	flexTable.getCellFormatter().removeStyleName(0, i, css.Sorted());
+        }
     }
 
 }

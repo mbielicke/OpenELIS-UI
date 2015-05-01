@@ -1,12 +1,10 @@
 package org.openelis.ui.widget.table.event;
 
-import org.openelis.ui.widget.table.Row;
-
 import com.google.gwt.event.shared.GwtEvent;
 
-public class RowDeletedEvent<T> extends GwtEvent<RowDeletedHandler> {
+public class RowDeletedEvent<T> extends GwtEvent<RowDeletedHandler<T>> {
 	
-	private static Type<RowDeletedHandler> TYPE;
+	private static Type<RowDeletedHandler<?>> TYPE;
 	private int index;
 	private T row;
 	
@@ -23,19 +21,19 @@ public class RowDeletedEvent<T> extends GwtEvent<RowDeletedHandler> {
 	}
 
 	@Override
-	protected void dispatch(RowDeletedHandler handler) {
+	protected void dispatch(RowDeletedHandler<T> handler) {
 		handler.onRowDeleted(this);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public com.google.gwt.event.shared.GwtEvent.Type<RowDeletedHandler> getAssociatedType() {
+	public com.google.gwt.event.shared.GwtEvent.Type<RowDeletedHandler<T>> getAssociatedType() {
 		return (Type) TYPE;
 	}
 	
-	public static Type<RowDeletedHandler> getType() {
+	public static Type<RowDeletedHandler<?>> getType() {
 		if(TYPE == null) {
-			TYPE = new Type<RowDeletedHandler>();
+			TYPE = new Type<RowDeletedHandler<?>>();
 		}
 		return TYPE;
 	}
