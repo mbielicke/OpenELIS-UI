@@ -481,6 +481,8 @@ public class StaticView extends ViewInt {
         style = table.getRowAt(r).getStyle(r);
         if (style != null)
             flexTable.getRowFormatter().setStyleName(r, style);
+        else
+        	flexTable.getRowFormatter().setStyleName(r, "");
 
         if (table.isRowSelected(r))
             flexTable.getRowFormatter().addStyleName(r, css.Selection());
