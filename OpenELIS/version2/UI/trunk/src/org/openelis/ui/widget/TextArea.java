@@ -237,7 +237,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     	if(exceptions.getValidateExceptions() != null)
     		return true;
     	  
-    	if (required && getValue() == null) {
+    	if (!queryMode && required && getValue() == null) {
             addValidateException(new Exception(Messages.get().exc_fieldRequired()));
             Balloon.checkExceptionHandlers(this);
     	}
