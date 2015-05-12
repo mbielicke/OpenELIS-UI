@@ -9,6 +9,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic.Kind;
 
@@ -131,7 +132,7 @@ public class ServiceProcessor extends Processor {
 	
 	private void writeAsyncMethod(ExecutableElement method) {
 		print("public void {0}(",method.getSimpleName());
-		for (VariableElement param : method.getParameters()) {
+		for (VariableElement param : method.getParameters()) {			
 			print("{0} {1}, ",param.asType().toString(),param.getSimpleName());
 		}
 		String returnType = method.getReturnType().toString();
@@ -157,7 +158,17 @@ public class ServiceProcessor extends Processor {
 			if (i > 0) {
 				print(",");
 			}
-			print("{0} {1} ",param.asType().toString(),param.getSimpleName());
+			if (param.asType().getKind() == TypeKind.ARRAY) {
+				if (method.isVarArgs() && method.getParameters().indexOf(param) == method.getParameters().size()-1) {
+					String type = param.asType().toString();
+					type = type.substring(0, type.length()-2);
+					print("{0}... {1}",type,param.getSimpleName());
+				} else {
+					print("{0} {1} ",param.asType().toString(),param.getSimpleName());
+				}
+			} else {
+				print("{0} {1} ",param.asType().toString(),param.getSimpleName());
+			}
 		}
 		println(") throws Exception {");
 		indent();
