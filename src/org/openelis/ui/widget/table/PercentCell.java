@@ -79,9 +79,8 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 
 	@Override
 	public void add(Widget w) {
-		assert w instanceof PercentBar;
+		// TODO Auto-generated method stub
 		
-		this.editor = (PercentBar)w;
 	}
 
 	@Override

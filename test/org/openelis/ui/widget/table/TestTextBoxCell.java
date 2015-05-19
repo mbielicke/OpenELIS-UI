@@ -41,10 +41,21 @@ public class TestTextBoxCell {
         verifyEnabled(editor);
     }
     
+    @Test
+    public void display() {        
+        assertEquals("value",cell.display("value"));
+        verify(editor).setQueryMode(false);
+    }
+    
     @Test 
     public void display_wrongType() {        
         assertEquals("123",cell.display(new Integer(123)));
         verify(editor).setQueryMode(false);
+    }
+    
+    @Test
+    public void bulkRender() {
+        assertEquals(("<td>value</td>"),cell.bulkRender("value").asString());
     }
     
     @Test

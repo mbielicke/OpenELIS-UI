@@ -70,8 +70,7 @@ public class ReportServlet extends HttpServlet {
 
             attachment = req.getParameter("attachment");
             if ( !DataBaseUtil.isEmpty(attachment))
-                resp.setHeader("Content-Disposition", "attachment;filename=\"" + removeCRLF(attachment) +
-                               "\"");
+                resp.setHeader("Content-Disposition", "attachment;filename=\"" + attachment + "\"");
             else
                 resp.setHeader("Content-Disposition", "filename=\"" + status.getMessage() + "\"");
 
@@ -149,12 +148,5 @@ public class ReportServlet extends HttpServlet {
             return "image/png";
         else
             return "application/octet-stream";
-    }
-    
-    /**
-     * Remove cr/lf from attachment
-     */
-    protected String removeCRLF(String attachment) {
-        return attachment.replaceAll("[\n\r]", "");
     }
 }
