@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
+import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
@@ -40,6 +41,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
 													HasValueChangeHandlers<String>, 
 													HasValue<String>,  
 													HasExceptions,
+													Queryable,
 													HasBalloon {
 
     /**
@@ -210,7 +212,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     /**
      * Method used to validate the inputed query string by the user.
      */
-    protected void validateQuery() {
+    public void validateQuery() {
         try {
             exceptions.clearValidateExceptions();
             helper.validateQuery(textarea.getText());
@@ -453,4 +455,16 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     public Balloon.Options getBalloonOptions() {
         return options;
     }
+
+	@Override
+	public void setQuery(QueryData qd) {
+		if (qd != null) {
+			textarea.setText(qd.getQuery());
+		}
+	}
+
+	@Override
+	public boolean isQueryMode() {
+		return queryMode;
+	}
 }
