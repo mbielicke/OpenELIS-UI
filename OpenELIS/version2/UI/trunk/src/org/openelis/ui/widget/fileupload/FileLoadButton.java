@@ -63,7 +63,7 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
   /**
    * An abstract class which is the base for specific browser implementations.
    */
-  private static class FileLoadButtonImpl {
+  protected static class FileLoadButtonImpl {
 
     protected Widget button;
     protected AbsolutePanel container;
@@ -252,7 +252,7 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
   protected AbsolutePanel container;
   protected FileUploadWithMouseEvents input = new FileUploadWithMouseEvents();
   protected boolean reuseButton = false;
-  private FileLoadButtonImpl impl;
+  protected FileLoadButtonImpl impl;
 
   public FileLoadButton() {
     impl = GWT.create(FileLoadButtonImpl.class);
