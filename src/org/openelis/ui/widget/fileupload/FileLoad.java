@@ -37,7 +37,6 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -45,7 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
  * as the diplay to open the browser file dialog.  
  *
  */
-public class FileLoad extends ResizeComposite implements HasWidgets {
+public class FileLoad extends Composite implements HasWidgets {
 	
 	protected FileLoadButton upload;
 	protected FormPanel form;
@@ -152,11 +151,5 @@ public class FileLoad extends ResizeComposite implements HasWidgets {
     @Override
     public boolean remove(Widget w) {
         return false;
-    }
-    
-    @Override
-    public void onResize() {
-       super.onResize();
-       upload.impl.resize();
     }
 }
