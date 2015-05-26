@@ -50,7 +50,7 @@ public class FileLoad extends ResizeComposite implements HasWidgets {
 	protected FileLoadButton upload;
 	protected FormPanel form;
 	protected AbsolutePanel panel;
-    protected Hidden service,method;
+    //protected Hidden service,method;
 	
 	public FileLoad() {
 		form = new FormPanel();
@@ -69,13 +69,13 @@ public class FileLoad extends ResizeComposite implements HasWidgets {
 		upload.setName("file");
 		
 		// Hidden fields in form to define service and method to call on upload
-		service = new Hidden("service");
-		method = new Hidden("method");
+		//service = new Hidden("service");
+		//method = new Hidden("method");
 		
 		panel = new AbsolutePanel();
 		panel.add(upload);
-		panel.add(service);
-		panel.add(method);
+		//panel.add(service);
+		//panel.add(method);
 		form.add(panel);
 		
 		initWidget(form);
@@ -108,14 +108,14 @@ public class FileLoad extends ResizeComposite implements HasWidgets {
 	 * the file is received on the server.   
 	 */
 	public void setService(String service) {
-		this.service.setValue(service);
+		//this.service.setValue(service);
 	}
 	
 	/**
 	 * Method called in the reflected service class to process the uploaded file.
 	 */
 	public void setMethod(String method) {
-		this.method.setValue(method);
+		//this.method.setValue(method);
 	}
 	
 	/**
