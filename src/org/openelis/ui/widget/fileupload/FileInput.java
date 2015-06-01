@@ -23,6 +23,7 @@ public class FileInput extends FocusWidget implements HasWidgets {
 	boolean enabled;
 	protected FormData formData;
 	protected String sendUrl;
+	protected FormData.Callback callback;
 	
 	public FileInput() {
 		getFileLoad();
@@ -59,7 +60,11 @@ public class FileInput extends FocusWidget implements HasWidgets {
 				for(File file : files) {
 					formData.append("file", file, file.name());
 				}
-				formData.send(sendUrl);
+				if (callback != null) {
+					formData.send(sendUrl,callback);
+				} else {
+					formData.send(sendUrl);
+				}
 			}
 		});
 	}
@@ -85,6 +90,10 @@ public class FileInput extends FocusWidget implements HasWidgets {
 	 */
 	public String getSendUrl() {
 		return sendUrl;
+	}
+	
+	public void addFormDataCallback(FormData.Callback callback) {
+		this.callback = callback;
 	}
 
 	@Override
