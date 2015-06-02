@@ -1,7 +1,5 @@
 package org.openelis.ui.widget.fileupload;
 
-import java.util.Iterator;
-
 import org.openelis.ui.widget.ScreenWidgetInt;
 
 import com.google.gwt.dom.client.Document;
@@ -11,16 +9,21 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FocusWidget;
-import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FileInput extends FocusWidget implements HasWidgets {
+/**
+ * 
+ * This widget wraps another widget for display and will bring up the file 
+ * open dialog when enabled and clicked.
+ *
+ */
+public class FileInput extends FocusPanel {
 	
-	FileUpload element;
-	ScreenWidgetInt widget;
-	boolean enabled;
+	protected FileUpload fileLoad;
+	protected ScreenWidgetInt widget;
+	protected boolean enabled;
 	protected FormData formData;
 	protected String sendUrl;
 	protected FormData.Callback callback;
@@ -31,32 +34,37 @@ public class FileInput extends FocusWidget implements HasWidgets {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (enabled) {
-					element.click();
+					fileLoad.click();
 				}
 			}
 		});
 	}
 	
+	/*
+	 * We set one <input type="file"> element in a document.  This method gets the 
+	 * element from the document and wraps it to receive events if present, or creates
+	 * the element and puts it in the document. 
+	 */
 	private void getFileLoad() {
 		Element el;
 		
 		el = Document.get().getElementById("fileload");
 		if (el != null) {
-			element = element.wrap(el);
+			fileLoad = FileUpload.wrap(el);
 		} else {
-			element = new FileUpload();
-			RootPanel.get().add(element);
-			element.getElement().setId("fileload");
-			element.setVisible(false);
+			fileLoad = new FileUpload();
+			RootPanel.get().add(fileLoad);
+			fileLoad.getElement().setId("fileload");
+			fileLoad.setVisible(false);
 		}
 		
-		element.addChangeHandler(new ChangeHandler() {
+		fileLoad.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				File[] files = FileDrop.getFiles(element.getElement().cast());
+				File[] files;
 				
+				files = File.getFiles(fileLoad.getElement().cast());
 				formData = FormData.create();
-				
 				for(File file : files) {
 					formData.append("file", file, file.name());
 				}
@@ -69,6 +77,10 @@ public class FileInput extends FocusWidget implements HasWidgets {
 		});
 	}
 	
+	/**
+	 * This method will also disable or enable the wrapped widget if it implements
+	 * ScreenWidgetInt.
+	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		if (widget != null) {
@@ -98,27 +110,10 @@ public class FileInput extends FocusWidget implements HasWidgets {
 
 	@Override
 	public void add(Widget w) {
-		setElement(w.getElement());
+		super.add(w);
 		if (w instanceof ScreenWidgetInt) {
 			widget = (ScreenWidgetInt)w;
 		}
 	}
 
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Iterator<Widget> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean remove(Widget w) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

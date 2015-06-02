@@ -37,19 +37,23 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
+ * Class has been deprecatead by FileInput. 
+ * 
  * This class will create a HTML form that will allow upload of a single file.  A widget is used
  * as the diplay to open the browser file dialog.  
  *
  */
-public class FileLoad extends Composite implements HasWidgets {
+@Deprecated
+public class FileLoad extends ResizeComposite implements HasWidgets {
 	
 	protected FileLoadButton upload;
 	protected FormPanel form;
 	protected AbsolutePanel panel;
-    //protected Hidden service,method;
+    protected Hidden service,method;
 	
 	public FileLoad() {
 		form = new FormPanel();
@@ -68,15 +72,14 @@ public class FileLoad extends Composite implements HasWidgets {
 		upload.setName("file");
 		
 		// Hidden fields in form to define service and method to call on upload
-		//service = new Hidden("service");
-		//method = new Hidden("method");
+		service = new Hidden("service");
+		method = new Hidden("method");
 		
 		panel = new AbsolutePanel();
 		panel.add(upload);
-		//panel.add(service);
-		//panel.add(method);
+		panel.add(service);
+		panel.add(method);
 		form.add(panel);
-		
 		initWidget(form);
 	}
 	
@@ -107,14 +110,14 @@ public class FileLoad extends Composite implements HasWidgets {
 	 * the file is received on the server.   
 	 */
 	public void setService(String service) {
-		//this.service.setValue(service);
+		this.service.setValue(service);
 	}
 	
 	/**
 	 * Method called in the reflected service class to process the uploaded file.
 	 */
 	public void setMethod(String method) {
-		//this.method.setValue(method);
+		this.method.setValue(method);
 	}
 	
 	/**
@@ -152,4 +155,21 @@ public class FileLoad extends Composite implements HasWidgets {
     public boolean remove(Widget w) {
         return false;
     }
+    
+    @Override
+    public void onResize() {
+    	super.onResize();
+    	upload.onResize();
+    }
+    
+    @Override
+    public void setWidth(String width) {
+    	upload.setWidth(width);
+    }
+    
+    @Override
+    public void setHeight(String height) {
+    	upload.setHeight(height);
+    }
+    
 }

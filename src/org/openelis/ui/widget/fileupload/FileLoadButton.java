@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -58,12 +59,13 @@ import java.util.HashMap;
  * A decorated file upload is a widget which hides a FileUpload showing
  * a clickable and customizable Widget, normally a button.
  */
-public class FileLoadButton extends Composite implements HasText, HasName, HasChangeHandlers {
+@Deprecated
+public class FileLoadButton extends ResizeComposite implements HasText, HasName, HasChangeHandlers {
 
   /**
    * An abstract class which is the base for specific browser implementations.
    */
-  protected static class FileLoadButtonImpl {
+  private static class FileLoadButtonImpl {
 
     protected Widget button;
     protected AbsolutePanel container;
@@ -105,7 +107,10 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
     public void setEnabled(boolean enabled) {
     	this.enabled = enabled;
     }
+    
+  
   }
+ 
 
   /**
    * Implementation for browsers which support the click() method:
@@ -252,7 +257,7 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
   protected AbsolutePanel container;
   protected FileUploadWithMouseEvents input = new FileUploadWithMouseEvents();
   protected boolean reuseButton = false;
-  protected FileLoadButtonImpl impl;
+  private FileLoadButtonImpl impl;
 
   public FileLoadButton() {
     impl = GWT.create(FileLoadButtonImpl.class);
@@ -265,6 +270,14 @@ public class FileLoadButton extends Composite implements HasText, HasName, HasCh
   public FileLoadButton(Widget button) {
     this();
     setButton(button);
+  }
+  
+  @Override
+  public void onResize() {
+  	super.onResize();
+  	if (button instanceof ResizeComposite) {
+  		((ResizeComposite)button).onResize();
+  	}
   }
 
   public HandlerRegistration addChangeHandler(ChangeHandler handler) {
