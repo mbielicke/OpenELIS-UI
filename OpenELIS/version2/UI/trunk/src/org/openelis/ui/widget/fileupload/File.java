@@ -26,4 +26,7 @@ public class File extends JavaScriptObject {
 		return this.type;
 	}-*/;
 	
+    protected static native File[] getFiles(JavaScriptObject transfer) /*-{
+		return transfer.files;
+	}-*/;
 }
