@@ -126,9 +126,7 @@ public class MultiDropdownCell implements CellRenderer, CellEditor, IsWidget, Ha
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
-        builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
-        builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }

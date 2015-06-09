@@ -44,6 +44,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.Style.Unit;
@@ -361,7 +362,12 @@ public class StaticView extends ViewInt {
                               (style != null ? " class='"+style+"'>" : ">"));
             for(int j = 0; j < table.getColumnCount(); j++) {
                 renderer = table.getColumnAt(j).getCellRenderer();
+                if (table.getColumnAt(j).display)
+                    tb.appendHtmlConstant("<td>");
+                else
+                	tb.appendHtmlConstant("<td style=\"display : none;\">)");
                 tb.append(renderer.bulkRender(table.getValueAt(i,j)));
+                tb.appendHtmlConstant("</td>"); 
             }
             tb.appendHtmlConstant("</tr>");
         }
@@ -550,8 +556,13 @@ public class StaticView extends ViewInt {
         }
         
 
-        flexTable.getCellFormatter().setVisible(r, c, table.getColumnAt(c).isDisplayed());
-        
+        flexTable.getCellFormatter().setVisible(r, c, table.getColumnAt(c).isDisplayed());   
+    }
+    
+    protected void setColumnDisplay(int c, boolean display) {
+    	for (int r = 0; r < flexTable.getRowCount(); r++) {
+    		flexTable.getCellFormatter().setVisible(r, c, display);
+    	}
     }
 
     protected void bulkExceptions(HashMap<Row,HashMap<Integer, ArrayList<Exception>>> exceptions) {

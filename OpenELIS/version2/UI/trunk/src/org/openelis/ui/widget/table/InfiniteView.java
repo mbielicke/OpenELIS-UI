@@ -838,4 +838,10 @@ public class InfiniteView extends ViewInt {
         
         table.setVisibleRows((outer.getWidgetContainerElement(scrollView).getOffsetHeight() - header.getOffsetHeight() - NativeHorizontalScrollbar.getNativeScrollbarHeight()) / rowHeight);
     }
+
+	@Override
+	void setColumnDisplay(int c, boolean display) {
+		// TODO Auto-generated method stub
+		
+	}
 }

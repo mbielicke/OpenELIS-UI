@@ -58,7 +58,7 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
 	    
 	    editor.setPercent((Double)value);
-	    builder.appendHtmlConstant("<td>"+editor.getElement().getString()+"</td>");
+	    builder.appendHtmlConstant(editor.getElement().getString());
 	    
 	    return builder.toSafeHtml();
 	}
