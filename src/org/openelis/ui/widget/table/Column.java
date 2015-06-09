@@ -486,7 +486,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     
     public void setDisplay(boolean display) {
     	this.display = display;
-    	table.layout();
+    	if (table != null)
+    		table.view.setColumnDisplay(table.getColumn(this),display);
     }
 
 	@Override

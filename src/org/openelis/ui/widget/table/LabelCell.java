@@ -84,9 +84,7 @@ public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
-        builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
-        builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }

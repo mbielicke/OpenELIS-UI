@@ -84,7 +84,7 @@ public class SelectionCell implements CellRenderer,IsWidget, HasWidgets.ForIsWid
         editor.getCellFormatter().getElement(0, 1).getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
         editor.getCellFormatter().getElement(0, 1).getStyle().setWhiteSpace(WhiteSpace.PRE);
         
-        builder.appendHtmlConstant("<td>"+editor.getElement().getString()+"</td>");
+        builder.appendHtmlConstant(editor.getElement().getString());
         
         return builder.toSafeHtml();
     }

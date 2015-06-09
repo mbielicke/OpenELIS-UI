@@ -136,9 +136,7 @@ public class AutoCompleteCell implements CellRenderer,
         SafeHtmlBuilder builder;
         
         builder = new SafeHtmlBuilder();
-        builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
-        builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }

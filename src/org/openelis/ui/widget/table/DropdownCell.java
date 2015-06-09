@@ -135,9 +135,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
         query = false;
         editor.setQueryMode(false);
         
-        builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
-        builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }

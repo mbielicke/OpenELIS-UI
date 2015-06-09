@@ -215,7 +215,7 @@ public class CheckCell implements CellEditor, CellRenderer, IsWidget, HasWidgets
 	   public SafeHtml bulkRender(Object value) {
 	        SafeHtmlBuilder builder = new SafeHtmlBuilder();
 	        
-	        builder.appendHtmlConstant("<td align='"+HasAlignment.ALIGN_CENTER.getTextAlignString()+"'>"+getCheckDiv((String)value).getElement().getString()+"</td>");
+	        builder.appendHtmlConstant("<span align='"+HasAlignment.ALIGN_CENTER.getTextAlignString()+"'>"+getCheckDiv((String)value).getElement().getString()+"</span>");
 	        
 	        return builder.toSafeHtml();
 	    }
