@@ -217,7 +217,9 @@ public class CheckLabelCell implements CellEditor, CellRenderer, IsWidget, HasWi
 	  
 	    CheckLabelValue val = (CheckLabelValue)value;
 	    
+	    builder.appendHtmlConstant("<td>");
 	    builder.appendHtmlConstant(getCheckDiv(((CheckLabelValue)value).getChecked(),((CheckLabelValue)value).label).toString());
+	    builder.appendHtmlConstant("</td>");
 	    
 	    return builder.toSafeHtml();
 	}

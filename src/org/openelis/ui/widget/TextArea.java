@@ -4,12 +4,9 @@ import java.util.ArrayList;
 
 import org.openelis.ui.common.Exceptions;
 import org.openelis.ui.common.Util;
-import org.openelis.ui.common.data.QueryData;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.TextCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Balloon.Options;
-import org.openelis.ui.widget.Balloon.Placement;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -27,7 +24,6 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -40,9 +36,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
 													HasFocusHandlers, 
 													HasValueChangeHandlers<String>, 
 													HasValue<String>,  
-													HasExceptions,
-													Queryable,
-													HasBalloon {
+													HasExceptions {
 
     /**
      * Wrapped GWT TextBox
@@ -73,8 +67,6 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     
     protected TextCSS                             css;
 
-    protected Balloon.Options options;
-    
     /**
      * The Constructor now sets the wrapped GWT TextBox as the element widget of
      * this composite and adds an anonymous ValueCahngeHandler to handle input
@@ -212,7 +204,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     /**
      * Method used to validate the inputed query string by the user.
      */
-    public void validateQuery() {
+    protected void validateQuery() {
         try {
             exceptions.clearValidateExceptions();
             helper.validateQuery(textarea.getText());
@@ -239,7 +231,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     	if(exceptions.getValidateExceptions() != null)
     		return true;
     	  
-    	if (!queryMode && required && getValue() == null) {
+    	if (required && getValue() == null) {
             addValidateException(new Exception(Messages.get().exc_fieldRequired()));
             Balloon.checkExceptionHandlers(this);
     	}
@@ -427,44 +419,4 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     	this.css = css;
         textarea.setStyleName(css.ScreenTextArea());
     }
-
-    public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
-                options = new Balloon.Options(this);
-            options.setTip(text);
-         }else if(text == null && options != null) {
-            options.destroy();
-            options = null;
-        }
-    }
-    
-    public void setTipPlacement(Placement placement) {
-        if(options == null)
-            options = new Balloon.Options(this);
-        
-        options.setPlacement(placement);
-    }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
-    public void setBalloonOptions(Balloon.Options tip) {
-        this.options = tip;
-        options.setTarget(this);
-    }
-    
-    public Balloon.Options getBalloonOptions() {
-        return options;
-    }
-
-	@Override
-	public void setQuery(QueryData qd) {
-		if (qd != null) {
-			textarea.setText(qd.getQuery());
-		}
-	}
-
-	@Override
-	public boolean isQueryMode() {
-		return queryMode;
-	}
 }

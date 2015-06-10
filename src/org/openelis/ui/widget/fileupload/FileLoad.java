@@ -37,18 +37,14 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Class has been deprecatead by FileInput. 
- * 
  * This class will create a HTML form that will allow upload of a single file.  A widget is used
  * as the diplay to open the browser file dialog.  
  *
  */
-@Deprecated
-public class FileLoad extends ResizeComposite implements HasWidgets {
+public class FileLoad extends Composite implements HasWidgets {
 	
 	protected FileLoadButton upload;
 	protected FormPanel form;
@@ -80,6 +76,7 @@ public class FileLoad extends ResizeComposite implements HasWidgets {
 		panel.add(service);
 		panel.add(method);
 		form.add(panel);
+		
 		initWidget(form);
 	}
 	
@@ -155,21 +152,4 @@ public class FileLoad extends ResizeComposite implements HasWidgets {
     public boolean remove(Widget w) {
         return false;
     }
-    
-    @Override
-    public void onResize() {
-    	super.onResize();
-    	upload.onResize();
-    }
-    
-    @Override
-    public void setWidth(String width) {
-    	upload.setWidth(width);
-    }
-    
-    @Override
-    public void setHeight(String height) {
-    	upload.setHeight(height);
-    }
-    
 }

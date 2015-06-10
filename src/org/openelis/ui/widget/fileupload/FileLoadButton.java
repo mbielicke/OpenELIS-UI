@@ -49,7 +49,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -59,8 +58,7 @@ import java.util.HashMap;
  * A decorated file upload is a widget which hides a FileUpload showing
  * a clickable and customizable Widget, normally a button.
  */
-@Deprecated
-public class FileLoadButton extends ResizeComposite implements HasText, HasName, HasChangeHandlers {
+public class FileLoadButton extends Composite implements HasText, HasName, HasChangeHandlers {
 
   /**
    * An abstract class which is the base for specific browser implementations.
@@ -107,10 +105,7 @@ public class FileLoadButton extends ResizeComposite implements HasText, HasName,
     public void setEnabled(boolean enabled) {
     	this.enabled = enabled;
     }
-    
-  
   }
- 
 
   /**
    * Implementation for browsers which support the click() method:
@@ -270,14 +265,6 @@ public class FileLoadButton extends ResizeComposite implements HasText, HasName,
   public FileLoadButton(Widget button) {
     this();
     setButton(button);
-  }
-  
-  @Override
-  public void onResize() {
-  	super.onResize();
-  	if (button instanceof ResizeComposite) {
-  		((ResizeComposite)button).onResize();
-  	}
   }
 
   public HandlerRegistration addChangeHandler(ChangeHandler handler) {

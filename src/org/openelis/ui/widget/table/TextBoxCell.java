@@ -107,8 +107,9 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
-
+        builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
+        builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }

@@ -40,7 +40,6 @@
 		<jar destfile="ui.jar">
 			<fileset dir="src"/>
 			<fileset dir="bin"/>
-			<metainf dir="META-INF" includes="services/*"/>
 		</jar>
 	</target>
 		

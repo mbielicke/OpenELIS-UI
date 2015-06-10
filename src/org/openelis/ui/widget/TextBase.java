@@ -541,7 +541,7 @@ public class TextBase extends Composite {
     }
     
     public void setText(String text) {
-    	text = applyMask(text == null ? "" : text);
+    	text = applyMask(text);
     	
     	if(getMaxLength() > -1)
     		text = text.substring(0,getMaxLength());

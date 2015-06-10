@@ -232,9 +232,9 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         else
             algn = HasHorizontalAlignment.ALIGN_CENTER.getTextAlignString();
 	    
-	    builder.appendHtmlConstant("<span align='"+algn+"'>");
+	    builder.appendHtmlConstant("<td align='"+algn+"'>");
 	    builder.appendHtmlConstant(getCheckDiv((String)value).getElement().getString());
-	    builder.appendHtmlConstant("</span>");
+	    builder.appendHtmlConstant("</td>");
 	    
 	    return builder.toSafeHtml();
 	}

@@ -68,7 +68,7 @@ public class ImageCell implements CellRenderer,IsWidget {
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
-        builder.appendHtmlConstant("<span class='"+DataBaseUtil.toString(value)+"'/>");
+        builder.appendHtmlConstant("<td class='"+DataBaseUtil.toString(value)+"'/>");
         
         return builder.toSafeHtml();
                         

@@ -1,5 +1,6 @@
 package org.openelis.ui.widget.fileupload;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
@@ -77,7 +78,7 @@ public class FileDrop extends Widget implements DropHandler, DragEnterHandler, D
 		
 		over = false;
 
-		File[] files = File.getFiles(event.getDataTransfer());
+		File[] files = getFiles(event.getDataTransfer());
 		
 		if(sendAuto)
 			formData = FormData.create();
@@ -102,16 +103,10 @@ public class FileDrop extends Widget implements DropHandler, DragEnterHandler, D
 		}
 	}
 	
-	/**
-	 * Override this method to handle successful upload to the server
-	 */
 	public void onDropSuccess() {
 		
 	}
 	
-	/**
-	 * Override this method to handle failures to upload to the server
-	 */
 	public void onDropFailure() {
 		
 	}
@@ -219,6 +214,10 @@ public class FileDrop extends Widget implements DropHandler, DragEnterHandler, D
 		return sendAuto;
 	}
 	
+    protected static native File[] getFiles(JavaScriptObject transfer) /*-{
+    	return transfer.files;
+    }-*/;
+
 
     private void getCoordinates() {
     	x0 = dropArea.getAbsoluteLeft();
