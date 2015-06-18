@@ -349,8 +349,11 @@ public class StaticView extends ViewInt {
                         tb.appendHtmlConstant("<td>");
                         tb.appendHtmlConstant(treeGrid.getElement().getString());
                         tb.appendHtmlConstant("</td>");
-                    }else
+                    }else {
+                        tb.appendHtmlConstant("<td>");
                         tb.append(renderer.bulkRender(tree.getValueAt(r,c)));
+                        tb.appendHtmlConstant("</td>");
+                    }
                 } else {
                     tb.appendHtmlConstant("<td/>");
                 }                
