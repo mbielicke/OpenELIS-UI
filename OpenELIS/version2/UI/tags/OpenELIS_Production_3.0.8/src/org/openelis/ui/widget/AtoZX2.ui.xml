@@ -1,0 +1,41 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+			 xmlns:g='urn:import:com.google.gwt.user.client.ui' 
+	         xmlns:w='urn:import:org.openelis.ui.widget'>
+  
+  <ui:with type="org.openelis.ui.resources.UIResources" field="res"/>
+  
+  <g:HorizontalPanel>
+    <g:AbsolutePanel styleName="{res.atozButton.ButtonPanel}">
+      <w:Button text="*" action="*"  enabled="true" css="{res.atozButton}"/>
+      <w:Button text="A" action="A*|a*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="B" action="B*|b*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="C" action="C*|c*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="D" action="D*|d*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="E" action="E*|e*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="F" action="F*|f*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="G" action="G*|g*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="H" action="H*|h*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="I" action="I*|i*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="J" action="J*|j*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="K" action="K*|k*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="L" action="L*|l*" enabled="true" css="{res.atozButton}"/>
+    </g:AbsolutePanel>
+    <g:AbsolutePanel styleName="{res.atozButton.ButtonPanel}">
+      <w:Button text="M" action="M*|m*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="N" action="N*|n*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="O" action="O*|o*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="P" action="P*|p*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="Q" action="Q*|q*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="R" action="R*|r*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="S" action="S*|s*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="T" action="T*|t*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="U" action="U*|u*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="V" action="V*|v*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="W" action="W*|w*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="X" action="X*|x*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="Y" action="Y*|y*" enabled="true" css="{res.atozButton}"/>
+      <w:Button text="Z" action="Z*|z*" enabled="true" css="{res.atozButton}"/>
+    </g:AbsolutePanel>
+  </g:HorizontalPanel>
+
+</ui:UiBinder>
