@@ -868,10 +868,4 @@ public class View extends ViewInt {
     TableCSS css() {
         return css;
     }
-
-	@Override
-	void setColumnDisplay(int c, boolean display) {
-		// TODO Auto-generated method stub
-		
-	}
 }

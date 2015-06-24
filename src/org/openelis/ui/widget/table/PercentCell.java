@@ -58,7 +58,7 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
 	    
 	    editor.setPercent((Double)value);
-	    builder.appendHtmlConstant(editor.getElement().getString());
+	    builder.appendHtmlConstant("<td>"+editor.getElement().getString()+"</td>");
 	    
 	    return builder.toSafeHtml();
 	}
@@ -79,9 +79,8 @@ public class PercentCell implements CellRenderer,IsWidget,HasWidgets.ForIsWidget
 
 	@Override
 	public void add(Widget w) {
-		assert w instanceof PercentBar;
+		// TODO Auto-generated method stub
 		
-		this.editor = (PercentBar)w;
 	}
 
 	@Override

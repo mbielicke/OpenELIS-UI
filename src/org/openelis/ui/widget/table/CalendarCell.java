@@ -152,7 +152,9 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
+        builder.appendHtmlConstant("<td>");
         builder.appendEscaped(display(value));
+        builder.appendHtmlConstant("</td>");
         
         return builder.toSafeHtml();
     }

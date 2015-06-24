@@ -37,7 +37,7 @@ public class LinkCell implements CellRenderer, IsWidget {
     public SafeHtml bulkRender(Object value) {
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         
-        builder.appendHtmlConstant(new Link((Link.Details)value).getElement().getString());
+        builder.appendHtmlConstant("<td>"+new Link((Link.Details)value).getElement().getString()+"</td>");
         
         return builder.toSafeHtml();
     }
