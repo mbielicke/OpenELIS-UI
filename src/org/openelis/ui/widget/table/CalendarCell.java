@@ -93,6 +93,7 @@ public class CalendarCell implements CellRenderer, CellEditor, IsWidget, HasWidg
      */
     @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
+    	editor.clearExceptions();
         if(value instanceof Datetime)
         	editor.setValue((Datetime)value);
         else
