@@ -2857,8 +2857,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         	return;
         }
         
-        validateExceptions = null;
-        
         validateNode(required, root);
         
         if(validateExceptions != null) {
