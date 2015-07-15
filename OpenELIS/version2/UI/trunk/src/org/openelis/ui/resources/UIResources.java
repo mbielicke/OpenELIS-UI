@@ -487,4 +487,13 @@ public interface UIResources extends ClientBundle {
     
     @Source("images/attention.png")
     ImageResource attention();
+    
+    @Source("images/door_open.gif")
+    ImageResource doorOpen();
+    
+    @Source("images/savebuttonimage.gif")
+    ImageResource saveButtonImage();
+    
+    @Source("images/savebuttonimagedisabled.gif")
+    ImageResource saveButtonImageDisabled();
 }

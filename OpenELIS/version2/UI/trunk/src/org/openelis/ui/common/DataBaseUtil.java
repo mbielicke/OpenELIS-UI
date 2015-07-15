@@ -26,6 +26,7 @@
 package org.openelis.ui.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -134,7 +135,7 @@ public class DataBaseUtil {
      */
     public static boolean isDifferent(Object a, Object b) {
         if (a instanceof String && b instanceof String)
-            return !((String)a).trim().equals(((String)b).trim());
+            return ! ((String)a).trim().equals( ((String)b).trim());
         return (a == null && b != null) || (a != null && !a.equals(b));
     }
 
@@ -319,8 +320,7 @@ public class DataBaseUtil {
      * @return true if object is the same; otherwise false
      */
     public static boolean isSame(Object a, Object b) {
-        return (a == null && b == null) ||
-               (a != null && a.equals(b));
+        return (a == null && b == null) || (a != null && a.equals(b));
     }
 
     /**
@@ -365,12 +365,31 @@ public class DataBaseUtil {
     }
 
     /**
-     * Convert a List to ArrayList
+     * Convert a Collection to ArrayList
      */
-    public static <T> ArrayList<T> toArrayList(List<T> from) {
+    public static <T> ArrayList<T> toArrayList(Collection<T> from) {
         if (from instanceof ArrayList)
             return (ArrayList<T>)from;
         return new ArrayList<T>(from);
+    }
+
+    /**
+     * Returns a list of numbers where each number is the start of a subset of
+     * elements in another list; the passed value is the size of the other list;
+     * the numbers are separated by 250 unless a subset doesn't have that many
+     * elements; assumes that the size is greater than zero
+     */
+    public static ArrayList<Integer> createSubsetRange(int size) {
+        int i;
+        ArrayList<Integer> range;
+
+        range = new ArrayList<Integer>(size / 250 + 2);
+        for (i = 0; i < size; i += 250)
+            range.add(i);
+
+        if (range.get(range.size() - 1) != size)
+            range.add(size);
+        return range;
     }
 
     /**
@@ -387,7 +406,7 @@ public class DataBaseUtil {
                 mergeException(list, el.get(i));
         } else if (e instanceof FieldErrorException) {
             fe = (FieldErrorException)e;
-            if (!isEmpty(fe.getFieldName()))
+            if ( !isEmpty(fe.getFieldName()))
                 list.add(fe);
             else
                 list.add(new FormErrorException(fe.getMessage()));
@@ -429,8 +448,11 @@ public class DataBaseUtil {
                 mergeException(list, el.get(i), table, key1, key2);
         } else if (e instanceof FieldErrorException) {
             fe = (FieldErrorException)e;
-            list.add(new GridFieldErrorException(fe.getMessage(), key1, key2,
-                                                 fe.getFieldName(), table));
+            list.add(new GridFieldErrorException(fe.getMessage(),
+                                                 key1,
+                                                 key2,
+                                                 fe.getFieldName(),
+                                                 table));
         } else if (e instanceof FormErrorException) {
             list.add(e);
         } else {
