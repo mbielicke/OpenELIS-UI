@@ -2,7 +2,7 @@ package org.openelis.ui.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/home/tschmidt/luna/workspace/OpenELIS-UI/bin/org/openelis/ui/messages/UIMessages.properties'.
+ * 	/home/akampoow/workspace/OpenELIS-UI/bin/org/openelis/ui/messages/UIMessages.properties'.
  */
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   
@@ -10,7 +10,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Please close at least one window before opening another.".
    * 
    * @return translated "Please close at least one window before opening another."
-  
    */
   @DefaultMessage("Please close at least one window before opening another.")
   @Key("browser.tooManyWindows")
@@ -20,7 +19,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Abort".
    * 
    * @return translated "Abort"
-  
    */
   @DefaultMessage("Abort")
   @Key("btn.abort")
@@ -30,7 +28,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Add".
    * 
    * @return translated "Add"
-  
    */
   @DefaultMessage("Add")
   @Key("btn.add")
@@ -40,7 +37,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Commit".
    * 
    * @return translated "Commit"
-  
    */
   @DefaultMessage("Commit")
   @Key("btn.commit")
@@ -50,7 +46,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Delete".
    * 
    * @return translated "Delete"
-  
    */
   @DefaultMessage("Delete")
   @Key("btn.delete")
@@ -60,7 +55,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Duplicate".
    * 
    * @return translated "Duplicate"
-  
    */
   @DefaultMessage("Duplicate")
   @Key("btn.duplicateRecord")
@@ -70,7 +64,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Duplicate the current record".
    * 
    * @return translated "Duplicate the current record"
-  
    */
   @DefaultMessage("Duplicate the current record")
   @Key("btn.duplicateRecordDescription")
@@ -80,7 +73,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Next".
    * 
    * @return translated "Next"
-  
    */
   @DefaultMessage("Next")
   @Key("btn.next")
@@ -90,7 +82,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Options".
    * 
    * @return translated "Options"
-  
    */
   @DefaultMessage("Options")
   @Key("btn.options")
@@ -100,7 +91,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Previous".
    * 
    * @return translated "Previous"
-  
    */
   @DefaultMessage("Previous")
   @Key("btn.previous")
@@ -110,7 +100,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Query".
    * 
    * @return translated "Query"
-  
    */
   @DefaultMessage("Query")
   @Key("btn.query")
@@ -120,7 +109,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Reset".
    * 
    * @return translated "Reset"
-  
    */
   @DefaultMessage("Reset")
   @Key("btn.reset")
@@ -130,7 +118,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Run Report".
    * 
    * @return translated "Run Report"
-  
    */
   @DefaultMessage("Run Report")
   @Key("btn.runReport")
@@ -140,7 +127,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Update".
    * 
    * @return translated "Update"
-  
    */
   @DefaultMessage("Update")
   @Key("btn.update")
@@ -150,7 +136,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Jan".
    * 
    * @return translated "Jan"
-  
    */
   @DefaultMessage("Jan")
   @Key("cal.abrvMonth0")
@@ -160,7 +145,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Feb".
    * 
    * @return translated "Feb"
-  
    */
   @DefaultMessage("Feb")
   @Key("cal.abrvMonth1")
@@ -170,7 +154,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Nov".
    * 
    * @return translated "Nov"
-  
    */
   @DefaultMessage("Nov")
   @Key("cal.abrvMonth10")
@@ -180,7 +163,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Dec".
    * 
    * @return translated "Dec"
-  
    */
   @DefaultMessage("Dec")
   @Key("cal.abrvMonth11")
@@ -190,7 +172,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Mar".
    * 
    * @return translated "Mar"
-  
    */
   @DefaultMessage("Mar")
   @Key("cal.abrvMonth2")
@@ -200,7 +181,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Apr".
    * 
    * @return translated "Apr"
-  
    */
   @DefaultMessage("Apr")
   @Key("cal.abrvMonth3")
@@ -210,7 +190,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "May".
    * 
    * @return translated "May"
-  
    */
   @DefaultMessage("May")
   @Key("cal.abrvMonth4")
@@ -220,7 +199,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Jun".
    * 
    * @return translated "Jun"
-  
    */
   @DefaultMessage("Jun")
   @Key("cal.abrvMonth5")
@@ -230,7 +208,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Jul".
    * 
    * @return translated "Jul"
-  
    */
   @DefaultMessage("Jul")
   @Key("cal.abrvMonth6")
@@ -240,7 +217,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Aug".
    * 
    * @return translated "Aug"
-  
    */
   @DefaultMessage("Aug")
   @Key("cal.abrvMonth7")
@@ -250,7 +226,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Sep".
    * 
    * @return translated "Sep"
-  
    */
   @DefaultMessage("Sep")
   @Key("cal.abrvMonth8")
@@ -260,7 +235,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Oct".
    * 
    * @return translated "Oct"
-  
    */
   @DefaultMessage("Oct")
   @Key("cal.abrvMonth9")
@@ -270,7 +244,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "S".
    * 
    * @return translated "S"
-  
    */
   @DefaultMessage("S")
   @Key("cal.day0")
@@ -280,7 +253,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "M".
    * 
    * @return translated "M"
-  
    */
   @DefaultMessage("M")
   @Key("cal.day1")
@@ -290,7 +262,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "T".
    * 
    * @return translated "T"
-  
    */
   @DefaultMessage("T")
   @Key("cal.day2")
@@ -300,7 +271,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "W".
    * 
    * @return translated "W"
-  
    */
   @DefaultMessage("W")
   @Key("cal.day3")
@@ -310,7 +280,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "T".
    * 
    * @return translated "T"
-  
    */
   @DefaultMessage("T")
   @Key("cal.day4")
@@ -320,7 +289,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "F".
    * 
    * @return translated "F"
-  
    */
   @DefaultMessage("F")
   @Key("cal.day5")
@@ -330,7 +298,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "S ".
    * 
    * @return translated "S "
-  
    */
   @DefaultMessage("S ")
   @Key("cal.day6")
@@ -340,7 +307,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "January".
    * 
    * @return translated "January"
-  
    */
   @DefaultMessage("January")
   @Key("cal.month0")
@@ -350,7 +316,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "February".
    * 
    * @return translated "February"
-  
    */
   @DefaultMessage("February")
   @Key("cal.month1")
@@ -360,7 +325,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "November".
    * 
    * @return translated "November"
-  
    */
   @DefaultMessage("November")
   @Key("cal.month10")
@@ -370,7 +334,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "December".
    * 
    * @return translated "December"
-  
    */
   @DefaultMessage("December")
   @Key("cal.month11")
@@ -380,7 +343,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "March".
    * 
    * @return translated "March"
-  
    */
   @DefaultMessage("March")
   @Key("cal.month2")
@@ -390,7 +352,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "April".
    * 
    * @return translated "April"
-  
    */
   @DefaultMessage("April")
   @Key("cal.month3")
@@ -400,7 +361,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "May".
    * 
    * @return translated "May"
-  
    */
   @DefaultMessage("May")
   @Key("cal.month4")
@@ -410,7 +370,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "June".
    * 
    * @return translated "June"
-  
    */
   @DefaultMessage("June")
   @Key("cal.month5")
@@ -420,7 +379,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "July".
    * 
    * @return translated "July"
-  
    */
   @DefaultMessage("July")
   @Key("cal.month6")
@@ -430,7 +388,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "August".
    * 
    * @return translated "August"
-  
    */
   @DefaultMessage("August")
   @Key("cal.month7")
@@ -440,7 +397,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "September".
    * 
    * @return translated "September"
-  
    */
   @DefaultMessage("September")
   @Key("cal.month8")
@@ -450,7 +406,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "October".
    * 
    * @return translated "October"
-  
    */
   @DefaultMessage("October")
   @Key("cal.month9")
@@ -460,7 +415,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Busy;".
    * 
    * @return translated "Busy;"
-  
    */
   @DefaultMessage("Busy;")
   @Key("confirm.busy")
@@ -470,7 +424,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Error".
    * 
    * @return translated "Error"
-  
    */
   @DefaultMessage("Error")
   @Key("confirm.error")
@@ -480,7 +433,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Question".
    * 
    * @return translated "Question"
-  
    */
   @DefaultMessage("Question")
   @Key("confirm.question")
@@ -490,7 +442,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "warning".
    * 
    * @return translated "warning"
-  
    */
   @DefaultMessage("warning")
   @Key("confirm.warning")
@@ -500,7 +451,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Check All".
    * 
    * @return translated "Check All"
-  
    */
   @DefaultMessage("Check All")
   @Key("drop.check")
@@ -510,7 +460,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Drop your files to instantly upload them".
    * 
    * @return translated "Drop your files to instantly upload them"
-  
    */
   @DefaultMessage("Drop your files to instantly upload them")
   @Key("drop.dropFilesToUpload")
@@ -520,7 +469,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "options selected".
    * 
    * @return translated "options selected"
-  
    */
   @DefaultMessage("options selected")
   @Key("drop.optionsSelected")
@@ -530,7 +478,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Uncheck All".
    * 
    * @return translated "Uncheck All"
-  
    */
   @DefaultMessage("Uncheck All")
   @Key("drop.uncheck")
@@ -539,10 +486,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   /**
    * Translated "This record is locked by {0} until {1,time,full}".
    * 
-   * @param arg0 "{0}"
-   * @param arg1 "{1,time,full}"
    * @return translated "This record is locked by {0} until {1,time,full}"
-  
    */
   @DefaultMessage("This record is locked by {0} until {1,time,full}")
   @Key("exc.entityLock")
@@ -552,7 +496,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Your Lock on this record has expired; Please abort and try again".
    * 
    * @return translated "Your Lock on this record has expired; Please abort and try again"
-  
    */
   @DefaultMessage("Your Lock on this record has expired; Please abort and try again")
   @Key("exc.expiredLock")
@@ -562,7 +505,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Date is too far in the future".
    * 
    * @return translated "Date is too far in the future"
-  
    */
   @DefaultMessage("Date is too far in the future")
   @Key("exc.fieldFuture")
@@ -572,7 +514,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Field exceeded maximum length".
    * 
    * @return translated "Field exceeded maximum length"
-  
    */
   @DefaultMessage("Field exceeded maximum length")
   @Key("exc.fieldMaxLength")
@@ -582,7 +523,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Field exceeded maximum value".
    * 
    * @return translated "Field exceeded maximum value"
-  
    */
   @DefaultMessage("Field exceeded maximum value")
   @Key("exc.fieldMaxValue")
@@ -592,7 +532,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Field is below minimum length".
    * 
    * @return translated "Field is below minimum length"
-  
    */
   @DefaultMessage("Field is below minimum length")
   @Key("exc.fieldMinLength")
@@ -602,7 +541,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Field is below minimum value".
    * 
    * @return translated "Field is below minimum value"
-  
    */
   @DefaultMessage("Field is below minimum value")
   @Key("exc.fieldMinValue")
@@ -612,7 +550,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Date is too far in the past".
    * 
    * @return translated "Date is too far in the past"
-  
    */
   @DefaultMessage("Date is too far in the past")
   @Key("exc.fieldPast")
@@ -622,7 +559,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Field is required".
    * 
    * @return translated "Field is required"
-  
    */
   @DefaultMessage("Field is required")
   @Key("exc.fieldRequired")
@@ -632,7 +568,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "A record with this value already exists. Please enter a unique value for this field".
    * 
    * @return translated "A record with this value already exists. Please enter a unique value for this field"
-  
    */
   @DefaultMessage("A record with this value already exists. Please enter a unique value for this field")
   @Key("exc.fieldUnique")
@@ -642,7 +577,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Please enter a unique value for this field".
    * 
    * @return translated "Please enter a unique value for this field"
-  
    */
   @DefaultMessage("Please enter a unique value for this field")
   @Key("exc.fieldUniqueOnly")
@@ -652,7 +586,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "The entered text is not a valid date".
    * 
    * @return translated "The entered text is not a valid date"
-  
    */
   @DefaultMessage("The entered text is not a valid date")
   @Key("exc.invalidDate")
@@ -662,7 +595,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "The entered text is not a valid numeric".
    * 
    * @return translated "The entered text is not a valid numeric"
-  
    */
   @DefaultMessage("The entered text is not a valid numeric")
   @Key("exc.invalidNumeric")
@@ -672,7 +604,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Input is not a valid query.".
    * 
    * @return translated "Input is not a valid query."
-  
    */
   @DefaultMessage("Input is not a valid query.")
   @Key("exc.invalidQuery")
@@ -682,7 +613,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "The wrong type of Object was passed to the cell".
    * 
    * @return translated "The wrong type of Object was passed to the cell"
-  
    */
   @DefaultMessage("The wrong type of Object was passed to the cell")
   @Key("exc.invalidType")
@@ -691,10 +621,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   /**
    * Translated "You do not have {0} permission in {1}".
    * 
-   * @param arg0 "{0}"
-   * @param arg1 "{1}"
    * @return translated "You do not have {0} permission in {1}"
-  
    */
   @DefaultMessage("You do not have {0} permission in {1}")
   @Key("exc.modulePerm")
@@ -703,9 +630,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   /**
    * Translated "You do not have permission to access {0}".
    * 
-   * @param arg0 "{0}"
    * @return translated "You do not have permission to access {0}"
-  
    */
   @DefaultMessage("You do not have permission to access {0}")
   @Key("exc.screenPerm")
@@ -714,10 +639,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   /**
    * Translated "You do not have permission to {0} for section {1}".
    * 
-   * @param arg0 "{0}"
-   * @param arg1 "{1}"
    * @return translated "You do not have permission to {0} for section {1}"
-  
    */
   @DefaultMessage("You do not have permission to {0} for section {1}")
   @Key("exc.sectionPerm")
@@ -727,7 +649,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "\"Select\" permission must not be unchecked for a module".
    * 
    * @return translated "\"Select\" permission must not be unchecked for a module"
-  
    */
   @DefaultMessage("\"Select\" permission must not be unchecked for a module")
   @Key("exc.selectPermRequired")
@@ -737,7 +658,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "\"View\" permission must not be unchecked for a section".
    * 
    * @return translated "\"View\" permission must not be unchecked for a section"
-  
    */
   @DefaultMessage("\"View\" permission must not be unchecked for a section")
   @Key("exc.viewPermRequired")
@@ -747,7 +667,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Active".
    * 
    * @return translated "Active"
-  
    */
   @DefaultMessage("Active")
   @Key("gen.active")
@@ -757,7 +676,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Add".
    * 
    * @return translated "Add"
-  
    */
   @DefaultMessage("Add")
   @Key("gen.addPerm")
@@ -767,7 +685,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Add Row".
    * 
    * @return translated "Add Row"
-  
    */
   @DefaultMessage("Add Row")
   @Key("gen.addRow")
@@ -777,7 +694,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Application".
    * 
    * @return translated "Application"
-  
    */
   @DefaultMessage("Application")
   @Key("gen.application")
@@ -787,7 +703,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Applications".
    * 
    * @return translated "Applications"
-  
    */
   @DefaultMessage("Applications")
   @Key("gen.applications")
@@ -797,7 +712,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Asn".
    * 
    * @return translated "Asn"
-  
    */
   @DefaultMessage("Asn")
   @Key("gen.assignPerm")
@@ -807,7 +721,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Authentication Failure".
    * 
    * @return translated "Authentication Failure"
-  
    */
   @DefaultMessage("Authentication Failure")
   @Key("gen.authFailure")
@@ -817,7 +730,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Cncl".
    * 
    * @return translated "Cncl"
-  
    */
   @DefaultMessage("Cncl")
   @Key("gen.cancelPerm")
@@ -827,7 +739,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Clause".
    * 
    * @return translated "Clause"
-  
    */
   @DefaultMessage("Clause")
   @Key("gen.clause")
@@ -837,7 +748,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Cmp".
    * 
    * @return translated "Cmp"
-  
    */
   @DefaultMessage("Cmp")
   @Key("gen.completePerm")
@@ -847,7 +757,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Could not call the application server; please call your sysadmin".
    * 
    * @return translated "Could not call the application server; please call your sysadmin"
-  
    */
   @DefaultMessage("Could not call the application server; please call your sysadmin")
   @Key("gen.couldNotCall")
@@ -857,7 +766,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Date".
    * 
    * @return translated "Date"
-  
    */
   @DefaultMessage("Date")
   @Key("gen.date")
@@ -867,7 +775,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "9999-99-99".
    * 
    * @return translated "9999-99-99"
-  
    */
   @DefaultMessage("9999-99-99")
   @Key("gen.dateMask")
@@ -877,7 +784,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "yyyy-MM-dd".
    * 
    * @return translated "yyyy-MM-dd"
-  
    */
   @DefaultMessage("yyyy-MM-dd")
   @Key("gen.datePattern")
@@ -887,7 +793,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "9999-99-99 99:99".
    * 
    * @return translated "9999-99-99 99:99"
-  
    */
   @DefaultMessage("9999-99-99 99:99")
   @Key("gen.dateTimeMask")
@@ -897,7 +802,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "yyyy-MM-dd HH:mm".
    * 
    * @return translated "yyyy-MM-dd HH:mm"
-  
    */
   @DefaultMessage("yyyy-MM-dd HH:mm")
   @Key("gen.dateTimePattern")
@@ -907,7 +811,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "yyyy-MM-dd HH:mm:ss".
    * 
    * @return translated "yyyy-MM-dd HH:mm:ss"
-  
    */
   @DefaultMessage("yyyy-MM-dd HH:mm:ss")
   @Key("gen.dateTimeSecondPattern")
@@ -917,7 +820,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "EEE MMM d, yyyy".
    * 
    * @return translated "EEE MMM d, yyyy"
-  
    */
   @DefaultMessage("EEE MMM d, yyyy")
   @Key("gen.dayInYearPattern")
@@ -927,7 +829,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Del".
    * 
    * @return translated "Del"
-  
    */
   @DefaultMessage("Del")
   @Key("gen.deletePerm")
@@ -937,7 +838,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Description".
    * 
    * @return translated "Description"
-  
    */
   @DefaultMessage("Description")
   @Key("gen.description")
@@ -947,7 +847,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Id".
    * 
    * @return translated "Id"
-  
    */
   @DefaultMessage("Id")
   @Key("gen.id")
@@ -957,7 +856,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Modules".
    * 
    * @return translated "Modules"
-  
    */
   @DefaultMessage("Modules")
   @Key("gen.modules")
@@ -967,7 +865,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Name".
    * 
    * @return translated "Name"
-  
    */
   @DefaultMessage("Name")
   @Key("gen.name")
@@ -977,7 +874,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Password:".
    * 
    * @return translated "Password:"
-  
    */
   @DefaultMessage("Password:")
   @Key("gen.password")
@@ -987,7 +883,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "999/999-9999".
    * 
    * @return translated "999/999-9999"
-  
    */
   @DefaultMessage("999/999-9999")
   @Key("gen.phonePattern")
@@ -997,7 +892,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "999/999-9999.9999".
    * 
    * @return translated "999/999-9999.9999"
-  
    */
   @DefaultMessage("999/999-9999.9999")
   @Key("gen.phoneWithExtensionPattern")
@@ -1007,7 +901,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Rls".
    * 
    * @return translated "Rls"
-  
    */
   @DefaultMessage("Rls")
   @Key("gen.releasePerm")
@@ -1017,7 +910,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Remove Row".
    * 
    * @return translated "Remove Row"
-  
    */
   @DefaultMessage("Remove Row")
   @Key("gen.removeRow")
@@ -1027,7 +919,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Section".
    * 
    * @return translated "Section"
-  
    */
   @DefaultMessage("Section")
   @Key("gen.section")
@@ -1037,7 +928,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Sections".
    * 
    * @return translated "Sections"
-  
    */
   @DefaultMessage("Sections")
   @Key("gen.sections")
@@ -1047,7 +937,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Select Application".
    * 
    * @return translated "Select Application"
-  
    */
   @DefaultMessage("Select Application")
   @Key("gen.selectApplication")
@@ -1057,7 +946,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Sel".
    * 
    * @return translated "Sel"
-  
    */
   @DefaultMessage("Sel")
   @Key("gen.selectPerm")
@@ -1067,7 +955,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Sign In".
    * 
    * @return translated "Sign In"
-  
    */
   @DefaultMessage("Sign In")
   @Key("gen.signin")
@@ -1077,7 +964,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "System User".
    * 
    * @return translated "System User"
-  
    */
   @DefaultMessage("System User")
   @Key("gen.systemUser")
@@ -1087,7 +973,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Template".
    * 
    * @return translated "Template"
-  
    */
   @DefaultMessage("Template")
   @Key("gen.template")
@@ -1097,7 +982,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Templates".
    * 
    * @return translated "Templates"
-  
    */
   @DefaultMessage("Templates")
   @Key("gen.templates")
@@ -1107,7 +991,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "99:99".
    * 
    * @return translated "99:99"
-  
    */
   @DefaultMessage("99:99")
   @Key("gen.timeMask")
@@ -1117,7 +1000,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "HH:mm".
    * 
    * @return translated "HH:mm"
-  
    */
   @DefaultMessage("HH:mm")
   @Key("gen.timePattern")
@@ -1127,7 +1009,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Extend Time".
    * 
    * @return translated "Extend Time"
-  
    */
   @DefaultMessage("Extend Time")
   @Key("gen.timeoutExtendTime")
@@ -1137,7 +1018,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Timeout Warning".
    * 
    * @return translated "Timeout Warning"
-  
    */
   @DefaultMessage("Timeout Warning")
   @Key("gen.timeoutHeader")
@@ -1147,7 +1027,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Logout".
    * 
    * @return translated "Logout"
-  
    */
   @DefaultMessage("Logout")
   @Key("gen.timeoutLogout")
@@ -1157,7 +1036,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Your session is about to expire, do you want to\nlogout or extend your session".
    * 
    * @return translated "Your session is about to expire, do you want to\nlogout or extend your session"
-  
    */
   @DefaultMessage("Your session is about to expire, do you want to\nlogout or extend your session")
   @Key("gen.timeoutWarning")
@@ -1167,7 +1045,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Upd".
    * 
    * @return translated "Upd"
-  
    */
   @DefaultMessage("Upd")
   @Key("gen.updatePerm")
@@ -1177,7 +1054,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Username:".
    * 
    * @return translated "Username:"
-  
    */
   @DefaultMessage("Username:")
   @Key("gen.username")
@@ -1187,7 +1063,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "View".
    * 
    * @return translated "View"
-  
    */
   @DefaultMessage("View")
   @Key("gen.viewPerm")
@@ -1197,7 +1072,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "99999-9999".
    * 
    * @return translated "99999-9999"
-  
    */
   @DefaultMessage("99999-9999")
   @Key("gen.zipcodePattern")
@@ -1207,7 +1081,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Ascending".
    * 
    * @return translated "Ascending"
-  
    */
   @DefaultMessage("Ascending")
   @Key("header.ascending")
@@ -1217,7 +1090,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Descending".
    * 
    * @return translated "Descending"
-  
    */
   @DefaultMessage("Descending")
   @Key("header.descending")
@@ -1227,7 +1099,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "All".
    * 
    * @return translated "All"
-  
    */
   @DefaultMessage("All")
   @Key("log.all")
@@ -1237,7 +1108,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Config".
    * 
    * @return translated "Config"
-  
    */
   @DefaultMessage("Config")
   @Key("log.config")
@@ -1247,7 +1117,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Fine".
    * 
    * @return translated "Fine"
-  
    */
   @DefaultMessage("Fine")
   @Key("log.fine")
@@ -1257,7 +1126,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Finer".
    * 
    * @return translated "Finer"
-  
    */
   @DefaultMessage("Finer")
   @Key("log.finer")
@@ -1267,7 +1135,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Finest".
    * 
    * @return translated "Finest"
-  
    */
   @DefaultMessage("Finest")
   @Key("log.finest")
@@ -1277,7 +1144,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Info".
    * 
    * @return translated "Info"
-  
    */
   @DefaultMessage("Info")
   @Key("log.info")
@@ -1287,7 +1153,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Logging".
    * 
    * @return translated "Logging"
-  
    */
   @DefaultMessage("Logging")
   @Key("log.name")
@@ -1297,7 +1162,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Severe".
    * 
    * @return translated "Severe"
-  
    */
   @DefaultMessage("Severe")
   @Key("log.severe")
@@ -1307,7 +1171,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Warning".
    * 
    * @return translated "Warning"
-  
    */
   @DefaultMessage("Warning")
   @Key("log.warning")
@@ -1317,7 +1180,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Add aborted".
    * 
    * @return translated "Add aborted"
-  
    */
   @DefaultMessage("Add aborted")
   @Key("msg.addAborted")
@@ -1327,7 +1189,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Adding...".
    * 
    * @return translated "Adding..."
-  
    */
   @DefaultMessage("Adding...")
   @Key("msg.adding")
@@ -1337,7 +1198,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Adding...Complete".
    * 
    * @return translated "Adding...Complete"
-  
    */
   @DefaultMessage("Adding...Complete")
   @Key("msg.addingComplete")
@@ -1347,7 +1207,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Canceling changes ...".
    * 
    * @return translated "Canceling changes ..."
-  
    */
   @DefaultMessage("Canceling changes ...")
   @Key("msg.cancelChanges")
@@ -1357,7 +1216,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Please correct the errors indicated, then press Commit".
    * 
    * @return translated "Please correct the errors indicated, then press Commit"
-  
    */
   @DefaultMessage("Please correct the errors indicated, then press Commit")
   @Key("msg.correctErrors")
@@ -1367,7 +1225,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Delete Aborted".
    * 
    * @return translated "Delete Aborted"
-  
    */
   @DefaultMessage("Delete Aborted")
   @Key("msg.deleteAborted")
@@ -1377,7 +1234,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Delete...Complete".
    * 
    * @return translated "Delete...Complete"
-  
    */
   @DefaultMessage("Delete...Complete")
   @Key("msg.deleteComplete")
@@ -1387,7 +1243,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Pressing commit will delete the current record from the database".
    * 
    * @return translated "Pressing commit will delete the current record from the database"
-  
    */
   @DefaultMessage("Pressing commit will delete the current record from the database")
   @Key("msg.deleteMessage")
@@ -1397,7 +1252,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Deleting...".
    * 
    * @return translated "Deleting..."
-  
    */
   @DefaultMessage("Deleting...")
   @Key("msg.deleting")
@@ -1407,7 +1261,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Enter fields to query by then press Commit".
    * 
    * @return translated "Enter fields to query by then press Commit"
-  
    */
   @DefaultMessage("Enter fields to query by then press Commit")
   @Key("msg.enterFieldsToQuery")
@@ -1417,7 +1270,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Enter information in the fields, then press Commit.".
    * 
    * @return translated "Enter information in the fields, then press Commit."
-  
    */
   @DefaultMessage("Enter information in the fields, then press Commit.")
   @Key("msg.enterInformationPressCommit")
@@ -1427,7 +1279,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Error: Could not retrieve the record".
    * 
    * @return translated "Error: Could not retrieve the record"
-  
    */
   @DefaultMessage("Error: Could not retrieve the record")
   @Key("msg.fetchFailed")
@@ -1437,7 +1288,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Fetching ...".
    * 
    * @return translated "Fetching ..."
-  
    */
   @DefaultMessage("Fetching ...")
   @Key("msg.fetching")
@@ -1447,7 +1297,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Locking record for Update...".
    * 
    * @return translated "Locking record for Update..."
-  
    */
   @DefaultMessage("Locking record for Update...")
   @Key("msg.lockForUpdate")
@@ -1457,7 +1306,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "You must Commit or Abort changes first".
    * 
    * @return translated "You must Commit or Abort changes first"
-  
    */
   @DefaultMessage("You must Commit or Abort changes first")
   @Key("msg.mustCommitOrAbort")
@@ -1467,7 +1315,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "No more records in this direction".
    * 
    * @return translated "No more records in this direction"
-  
    */
   @DefaultMessage("No more records in this direction")
   @Key("msg.noMoreRecordInDir")
@@ -1477,7 +1324,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "No records found".
    * 
    * @return translated "No records found"
-  
    */
   @DefaultMessage("No records found")
   @Key("msg.noRecordsFound")
@@ -1487,7 +1333,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Query aborted".
    * 
    * @return translated "Query aborted"
-  
    */
   @DefaultMessage("Query aborted")
   @Key("msg.queryAborted")
@@ -1497,7 +1342,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Query Failed".
    * 
    * @return translated "Query Failed"
-  
    */
   @DefaultMessage("Query Failed")
   @Key("msg.queryFailed")
@@ -1507,7 +1351,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Querying....".
    * 
    * @return translated "Querying...."
-  
    */
   @DefaultMessage("Querying....")
   @Key("msg.querying")
@@ -1517,7 +1360,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Querying...Complete".
    * 
    * @return translated "Querying...Complete"
-  
    */
   @DefaultMessage("Querying...Complete")
   @Key("msg.queryingComplete")
@@ -1527,7 +1369,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Update aborted".
    * 
    * @return translated "Update aborted"
-  
    */
   @DefaultMessage("Update aborted")
   @Key("msg.updateAborted")
@@ -1537,7 +1378,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Updating...".
    * 
    * @return translated "Updating..."
-  
    */
   @DefaultMessage("Updating...")
   @Key("msg.updating")
@@ -1547,7 +1387,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Updating...Complete".
    * 
    * @return translated "Updating...Complete"
-  
    */
   @DefaultMessage("Updating...Complete")
   @Key("msg.updatingComplete")
@@ -1557,7 +1396,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Confirm Password:".
    * 
    * @return translated "Confirm Password:"
-  
    */
   @DefaultMessage("Confirm Password:")
   @Key("pass.conPass")
@@ -1567,7 +1405,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "New Password:".
    * 
    * @return translated "New Password:"
-  
    */
   @DefaultMessage("New Password:")
   @Key("pass.newPass")
@@ -1577,7 +1414,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Old Password:".
    * 
    * @return translated "Old Password:"
-  
    */
   @DefaultMessage("Old Password:")
   @Key("pass.oldPass")
@@ -1587,7 +1423,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Generating report....".
    * 
    * @return translated "Generating report...."
-  
    */
   @DefaultMessage("Generating report....")
   @Key("report.generatingReport")
@@ -1597,7 +1432,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Done".
    * 
    * @return translated "Done"
-  
    */
   @DefaultMessage("Done")
   @Key("window.done")
@@ -1607,7 +1441,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
    * Translated "Loading...".
    * 
    * @return translated "Loading..."
-  
    */
   @DefaultMessage("Loading...")
   @Key("window.loading")
