@@ -293,8 +293,8 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
      */
     public int getWidth() {
 
-        int totalWidth, lastColumn;
-
+        int totalWidth,lastColumn;
+        
         if (table == null)
             return minWidth;
 
@@ -302,12 +302,12 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
          * If this is the last column calculate its width if the overall width 
          * will be less then the set width of the table
          */
-        lastColumn = table.getColumnCount() - 1;
-        if (lastColumn >= 0 && table.getColumnAt(lastColumn) == this) {
+        lastColumn = lastVisibleColumn();
+        if (lastColumn > -1 && table.getColumnAt(lastColumn) == this) {
             totalWidth = table.getXForColumn(lastColumn);
             //if (totalWidth + width < table.getWidthWithoutScrollbar())
-                int w;
-                return ((((w = (table.getWidthWithoutScrollbar()) - totalWidth))) < width) ? width : w;
+                int w = ((((w = (table.getWidthWithoutScrollbar()) - totalWidth))) < width) ? width : w;
+                return w;
         }
      
         return width;
@@ -486,8 +486,9 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
     
     public void setDisplay(boolean display) {
     	this.display = display;
-    	if (table != null)
-    		table.view.setColumnDisplay(table.getColumn(this),display);
+    	if (table != null) {
+    		((StaticView)table.view).setColumnDisplay(table.getColumn(this),display);
+    	}
     }
 
 	@Override
@@ -551,6 +552,14 @@ public class Column implements ColumnInt, IsWidget, HasWidgets.ForIsWidget {
 	
 	public ArrayList<MenuItem> getMenuItems() {
 	    return menus;
+	}
+	
+	public int lastVisibleColumn() {
+		int i = table.getColumnCount() - 1;
+		while (i > -1 && !table.getColumnAt(i).isDisplayed()) { 
+			i--;
+		}
+		return i;
 	}
 	
 

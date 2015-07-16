@@ -71,7 +71,7 @@ public class TestDropdownCell {
     public void bulkRender() {
         when(editor.isValidKey(any(Integer.class))).thenReturn(true);
         when(editor.getDisplay()).thenReturn("Item 1");
-        assertEquals("<td>Item 1</td>",cell.bulkRender(new Integer(1)).asString());
+        assertEquals("Item 1",cell.bulkRender(new Integer(1)).asString());
     }
     
     @Test

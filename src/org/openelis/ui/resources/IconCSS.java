@@ -36,6 +36,7 @@ public interface IconCSS extends CssResource {
     String PreviousPageButtonImage();
     String NextPageButtonImage();
     String backImage();
+    String TableMenu();
     String OpenButtonImage();
     String SaveButtonImage();
     String SaveButtonImageDisabled();

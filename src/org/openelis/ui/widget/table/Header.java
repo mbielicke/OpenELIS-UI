@@ -27,7 +27,6 @@ package org.openelis.ui.widget.table;
 
 import java.util.ArrayList;
 
-import org.openelis.ui.common.Util;
 import org.openelis.ui.messages.Messages;
 import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.TableCSS;
@@ -36,7 +35,6 @@ import org.openelis.ui.widget.CheckMenuItem;
 import org.openelis.ui.widget.MenuItem;
 import org.openelis.ui.widget.PopupMenuPanel;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -129,7 +127,7 @@ public class Header extends FocusPanel {
         flexTable = new FlexTable();
         flexTable.setStyleName(css.Header());
         setWidget(flexTable);
-
+       
         /*
          * Mouse handler for determining to allow resizing or filter based on 
          * mouse position
@@ -269,9 +267,16 @@ public class Header extends FocusPanel {
         
 
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
-        flexTable.getCellFormatter().setHeight(0, 0, headerHeight+"px");
+       
         
-        flexTable.getCellFormatter().addStyleName(0, 0, css.First());
+        for (int i = 0; i < table.getColumnCount(); i++) {
+        	if(table.getColumnAt(i).isDisplayed()) {
+        		flexTable.getCellFormatter().addStyleName(0, i, css.First());
+        		flexTable.getCellFormatter().setHeight(0, i, headerHeight+"px");
+        		break;
+        	}
+        }
+        	
     }
     
     /**
@@ -310,10 +315,12 @@ public class Header extends FocusPanel {
                 flexTable.getCellFormatter().addStyleName(0,i,css.Sorted());
             else
                 flexTable.getCellFormatter().removeStyleName(0, i, css.Sorted());
+            
+            flexTable.getCellFormatter().removeStyleName(0, i, css.First());
         }
         
         while(flexTable.getCellCount(0) > table.getColumnCount())
-        	flexTable.removeCell(0, flexTable.getCellCount(0) -1);        
+        	flexTable.removeCell(0, flexTable.getCellCount(0) -1);      
     }
 
     /**
