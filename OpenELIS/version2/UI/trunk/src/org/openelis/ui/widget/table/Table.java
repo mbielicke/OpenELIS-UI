@@ -75,6 +75,7 @@ import org.openelis.ui.widget.table.event.UnselectionEvent;
 import org.openelis.ui.widget.table.event.UnselectionHandler;
 
 import com.allen_sauer.gwt.dnd.client.drop.DropController;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -164,7 +165,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Table state values
      */
     protected boolean                                              enabled, multiSelect, editing,
-                    hasFocus, queryMode, hasHeader, unitTest, fixScrollBar = true, ctrlDefault;
+                    hasFocus, queryMode, hasHeader, hasMenu, unitTest, fixScrollBar = true, ctrlDefault;
 
     /**
      * Enum representing the state of when the scroll bar should be shown.
@@ -215,7 +216,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         final int         visibleRows;
         int               rowHeight        = 16;
         Integer           width;
-        boolean           multiSelect, hasHeader, fixScroll = true;
+        boolean           multiSelect, hasHeader, hasMenu, fixScroll = true;
         Scrolling         verticalScroll   = Scrolling.ALWAYS;
         Scrolling         horizontalScroll = Scrolling.ALWAYS;
         ArrayList<Column> columns          = new ArrayList<Column>(5);
@@ -247,6 +248,11 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         public Builder hasHeader(boolean hasHeader) {
             this.hasHeader = hasHeader;
             return this;
+        }
+        
+        public Builder hasMenu(boolean hasMenu) {
+        	this.hasMenu = hasMenu;
+        	return this;
         }
 
         public Builder column(Column col) {
@@ -288,6 +294,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         horizontalScroll = builder.horizontalScroll;
         fixScrollBar = builder.fixScroll;
         hasHeader = builder.hasHeader;
+        hasMenu = builder.hasMenu;
         view = new StaticView(this);
         setWidget(view);
 
@@ -1042,6 +1049,14 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      */
     public boolean hasHeader() {
         return hasHeader;
+    }
+    
+    public void setMenu(boolean hasMenu){
+    	this.hasMenu = hasMenu;
+    }
+    
+    public boolean hasMenu() {
+    	return hasMenu;
     }
 
     /**
@@ -1978,7 +1993,7 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * Method computes the XForColumn and ColumForX arrays and set the
      * totoalColumnWidth
      */
-    private void computeColumnsWidth() {
+    protected void computeColumnsWidth() {
         int from, to;
 
         //
@@ -1991,8 +2006,8 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
             if (getColumnAt(i).isDisplayed()) {
                 xForColumn[i] = (short)xmark;
                 xmark += getColumnAt(i).getWidth();
+                totalColumnWidth += getColumnAt(i).getWidth();
             }
-            totalColumnWidth += getColumnAt(i).getWidth();
         }
         //
         // mark the array
@@ -2986,7 +3001,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
         hp.add(((StaticView)view).scrollView.getWidget());
         ((StaticView)view).scrollView.setWidget(hp);
     }
-
    
 
 }

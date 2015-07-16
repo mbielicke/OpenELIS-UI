@@ -233,3 +233,7 @@
 @sprite .Disabled .SaveButtonImageDisabled{
     gwt-image:'saveButtonImageDisabled';
 }
+
+@sprite .TableMenu {
+	gwt-image:'menu';
+}

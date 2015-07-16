@@ -38,7 +38,7 @@ public class TestLabelCell {
     
     @Test
     public void bulkRender() {
-        assertEquals(("<td>value</td>"),cell.bulkRender("value").asString());
+        assertEquals(("value"),cell.bulkRender("value").asString());
     }
     
     @Test

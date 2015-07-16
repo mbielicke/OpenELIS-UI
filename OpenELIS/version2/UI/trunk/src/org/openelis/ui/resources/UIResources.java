@@ -496,4 +496,7 @@ public interface UIResources extends ClientBundle {
     
     @Source("images/savebuttonimagedisabled.gif")
     ImageResource saveButtonImageDisabled();
+
+    @Source("images/menu.png")
+    ImageResource menu();
 }

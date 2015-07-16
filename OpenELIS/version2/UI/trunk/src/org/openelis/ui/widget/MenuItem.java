@@ -238,7 +238,7 @@ public class MenuItem extends Composite implements ScreenWidgetInt,HasMouseOverH
     }
     
     public void setAutoClose(boolean autoClose) {
-        this.autoClose = autoClose();
+        this.autoClose = autoClose;
     }
     
     public void setTipPlacement(Placement placement) {
