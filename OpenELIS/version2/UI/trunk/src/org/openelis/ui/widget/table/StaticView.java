@@ -866,8 +866,8 @@ public class StaticView extends ViewInt {
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(table.getElement()) + "px");
 
-                    if (CSSUtils.getHeight(inner) > 0) {
-                        int height = CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
+                    if (CSSUtils.getHeight(outer) > 0) {
+                        int height = CSSUtils.getHeight(outer) -  CSSUtils.getHeight(header) -
                                         CSSUtils.getAddedBorderHeight(table.getElement());
                         /*
                          * This check is here only for Unit Testing.  If not done Unit test on the
