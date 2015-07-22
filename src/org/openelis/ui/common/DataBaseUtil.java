@@ -135,7 +135,7 @@ public class DataBaseUtil {
      */
     public static boolean isDifferent(Object a, Object b) {
         if (a instanceof String && b instanceof String)
-            return ! ((String)a).trim().equals( ((String)b).trim());
+            return !((String)a).trim().equals(((String)b).trim());
         return (a == null && b != null) || (a != null && !a.equals(b));
     }
 
@@ -406,7 +406,7 @@ public class DataBaseUtil {
                 mergeException(list, el.get(i));
         } else if (e instanceof FieldErrorException) {
             fe = (FieldErrorException)e;
-            if ( !isEmpty(fe.getFieldName()))
+            if (!isEmpty(fe.getFieldName()))
                 list.add(fe);
             else
                 list.add(new FormErrorException(fe.getMessage()));
