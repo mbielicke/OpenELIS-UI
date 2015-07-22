@@ -1,0 +1,18 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+       xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+  
+  <ui:with type="org.openelis.ui.resources.UIResources" field="res"/>
+  
+  <g:LayoutPanel>
+    <g:layer top="0px" height="10px">
+      <g:FocusPanel ui:field="up"/>
+    </g:layer>
+    <g:layer top="10px" bottom="10px">
+      <g:VerticalPanel ui:field="panel"/>
+    </g:layer>
+    <g:layer bottom="0px" height="10px">
+      <g:FocusPanel ui:field="down"/>
+    </g:layer>
+  </g:LayoutPanel>
+  
+</ui:UiBinder>
