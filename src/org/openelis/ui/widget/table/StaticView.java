@@ -29,15 +29,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.openelis.ui.common.data.QueryData;
-import org.openelis.ui.resources.MenuCSS;
 import org.openelis.ui.resources.TableCSS;
 import org.openelis.ui.resources.UIResources;
-import org.openelis.ui.widget.Button;
 import org.openelis.ui.widget.CSSUtils;
-import org.openelis.ui.widget.CheckMenuItem;
 import org.openelis.ui.widget.DragItem;
 import org.openelis.ui.widget.Balloon;
-import org.openelis.ui.widget.PopupMenuPanel;
 import org.openelis.ui.widget.table.event.CellMouseOutEvent;
 import org.openelis.ui.widget.table.event.CellMouseOverEvent;
 
@@ -48,20 +44,13 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -71,13 +60,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.NativeVerticalScrollbar;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -112,12 +98,6 @@ public class StaticView extends ViewInt {
      */
     @UiField(provided = true)
     protected Header                 header;
-    
-    @UiField
-    protected FocusPanel              menu;
-    
-   // @UiField 
-   // protected Grid                   menuGrid;
 
     /**
      * Scrollable area that contains flexTable and possibly header for
@@ -127,7 +107,7 @@ public class StaticView extends ViewInt {
     protected ScrollPanel            scrollView;
 
     @UiField
-    protected LayoutPanel            outer,inner;
+    protected LayoutPanel            inner;
 
     /**
      * Flag used to determine if the table has been attached to know when to do
@@ -141,7 +121,6 @@ public class StaticView extends ViewInt {
     private Container                container;
 
     protected TableCSS               css;
-    protected MenuCSS                menuCss;
 
     protected StaticView             source   = this;
 
@@ -161,17 +140,17 @@ public class StaticView extends ViewInt {
         
         setCSS(UIResources.INSTANCE.table());
         
-        menuCss = UIResources.INSTANCE.menuCss();
-        menuCss.ensureInjected();
-        
         container = new Container();
         container.setStyleName(css.CellContainer());
 
 
         scrollView.addScrollHandler(new ScrollHandler() {
+
             @Override
             public void onScroll(ScrollEvent event) {
-              alignHeader();
+                DOM.setStyleAttribute(header.getElement(),
+                                      "left",
+                                      (0 - scrollView.getHorizontalScrollPosition()) + "px");
             }
         });
         
@@ -185,32 +164,6 @@ public class StaticView extends ViewInt {
             }
         });
         
-    
-    	menu.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				final PopupMenuPanel panel = new PopupMenuPanel();
-				panel.setStyleName(menuCss.MenuPanel());
-				for(int i = 0; i < table.getColumnCount(); i++) {
-					CheckMenuItem item = new CheckMenuItem(table.getColumnAt(i).label,"",false);
-					item.setCheck(table.getColumnAt(i).isDisplayed());
-					item.setEnabled(true);
-					panel.addItem(item);
-				}
-				panel.setPopupPosition(menu.getAbsoluteLeft(),menu.getAbsoluteTop());
-				panel.show();
-				panel.getElement().getStyle().setZIndex(1000);
-				panel.addCloseHandler(new CloseHandler<PopupPanel>() {
-					public void onClose(CloseEvent<PopupPanel> event) {
-						for(int i = 0; i < table.getColumnCount(); i++) {
-							CheckMenuItem item = (CheckMenuItem)panel.getWidget(i);
-							if (item.isChecked() != table.getColumnAt(i).isDisplayed()) {
-								table.getColumnAt(i).setDisplay(item.isChecked());
-							}
-						}
-					}
-				});
-			}
-		});
     }
 
     
@@ -289,34 +242,12 @@ public class StaticView extends ViewInt {
             UIObject.setVisible(inner.getWidgetContainerElement(header), true);
             header.setVisible(true);
             header.layout();
-            outer.setWidgetTopBottom(scrollView, CSSUtils.getHeight(header), Unit.PX, 0, Unit.PX);
-            alignHeader();
+            inner.setWidgetTopBottom(scrollView, CSSUtils.getHeight(header), Unit.PX, 0, Unit.PX);
         } else {
             UIObject.setVisible(inner.getWidgetContainerElement(header), false);
             header.setVisible(false);
-            outer.setWidgetTopBottom(scrollView, 0, Unit.PX, 0, Unit.PX);
+            inner.setWidgetTopBottom(scrollView, 0, Unit.PX, 0, Unit.PX);
         }
-        
-        if (table.hasHeader && table.hasMenu()) {
-        	UIObject.setVisible(inner.getWidgetContainerElement(menu), true);
-        	menu.setVisible(true);
-        	menu.setHeight(header.getOffsetHeight()-2+"px");
-
-        } else {
-        	UIObject.setVisible(inner.getWidgetContainerElement(menu), false);
-        	menu.setVisible(false);
-        }
-    }
-    
-    protected void alignHeader() {
-    	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-			@Override
-			public void execute() {
-                DOM.setStyleAttribute(header.getElement(),
-                        "left",
-                        (0 - scrollView.getHorizontalScrollPosition()) + "px");
-			}
-		});
     }
 
     /**
@@ -421,12 +352,7 @@ public class StaticView extends ViewInt {
                               (style != null ? " class='"+style+"'>" : ">"));
             for(int j = 0; j < table.getColumnCount(); j++) {
                 renderer = table.getColumnAt(j).getCellRenderer();
-                if (table.getColumnAt(j).display)
-                    tb.appendHtmlConstant("<td>");
-                else
-                	tb.appendHtmlConstant("<td style=\"display : none;\">)");
                 tb.append(renderer.bulkRender(table.getValueAt(i,j)));
-                tb.appendHtmlConstant("</td>"); 
             }
             tb.appendHtmlConstant("</tr>");
         }
@@ -546,8 +472,6 @@ public class StaticView extends ViewInt {
         style = table.getRowAt(r).getStyle(r);
         if (style != null)
             flexTable.getRowFormatter().setStyleName(r, style);
-        else
-        	flexTable.getRowFormatter().setStyleName(r, "");
 
         if (table.isRowSelected(r))
             flexTable.getRowFormatter().addStyleName(r, css.Selection());
@@ -615,18 +539,8 @@ public class StaticView extends ViewInt {
         }
         
 
-        flexTable.getCellFormatter().setVisible(r, c, table.getColumnAt(c).isDisplayed());   
-    }
-    
-    protected void setColumnDisplay(int c, boolean display) {
-    	table.computeColumnsWidth();
-    	header.flexTable.getColumnFormatter().getElement(c).getStyle().setDisplay(Display.NONE);
-    	header.layout();
-    	flexTable.getColumnFormatter().getElement(c).getStyle().setDisplay(Display.NONE);
-    	for (int r = 0; r < flexTable.getRowCount(); r++) {
-    		flexTable.getCellFormatter().setVisible(r, c, display);
-    	}
-    	table.resize();
+        flexTable.getCellFormatter().setVisible(r, c, table.getColumnAt(c).isDisplayed());
+        
     }
 
     protected void bulkExceptions(HashMap<Row,HashMap<Integer, ArrayList<Exception>>> exceptions) {
@@ -762,7 +676,7 @@ public class StaticView extends ViewInt {
             @Override
             public void execute() {
                 flexTable.setVisible(true);
-                Element svEl = outer.getWidgetContainerElement(scrollView);
+                Element svEl = inner.getWidgetContainerElement(scrollView);
                 
                 if (scrollView.getMaximumVerticalScrollPosition() == 0)
                     table.setWidth(CSSUtils.getWidth(svEl) - 1);
@@ -858,7 +772,7 @@ public class StaticView extends ViewInt {
             
             @Override
             public void execute() {
-                Element svEl = outer.getWidgetContainerElement(scrollView);
+                Element svEl = inner.getWidgetContainerElement(scrollView);
                 
 
                 if (CSSUtils.getWidth(svEl) > 0) {
@@ -866,8 +780,8 @@ public class StaticView extends ViewInt {
                     scrollView.setWidth(CSSUtils.getWidth(svEl) -
                                         CSSUtils.getAddedBorderWidth(table.getElement()) + "px");
 
-                    if (CSSUtils.getHeight(outer) > 0) {
-                        int height = CSSUtils.getHeight(outer) -  CSSUtils.getHeight(header) -
+                    if (CSSUtils.getHeight(inner) > 0) {
+                        int height = CSSUtils.getHeight(inner) -  CSSUtils.getHeight(header) -
                                         CSSUtils.getAddedBorderHeight(table.getElement());
                         /*
                          * This check is here only for Unit Testing.  If not done Unit test on the

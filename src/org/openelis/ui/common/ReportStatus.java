@@ -40,7 +40,7 @@ public class ReportStatus implements Serializable {
     protected Status status;
         
     public enum Status {
-        RUNNING, SAVED, PRINTED, FAXED, CANCEL
+        RUNNING, SAVED, PRINTED, FAXED
     };
     
     public ReportStatus() {

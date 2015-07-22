@@ -105,7 +105,9 @@ public class TimeCell implements CellRenderer, CellEditor, IsWidget {
 	public SafeHtml bulkRender(Object value) {
 	    SafeHtmlBuilder builder = new SafeHtmlBuilder();
 	    
+	    builder.appendHtmlConstant("<td>");
 	    builder.appendEscaped(display(value));
+	    builder.appendHtmlConstant("</td>");
 	    
 	    return builder.toSafeHtml();
 	}
