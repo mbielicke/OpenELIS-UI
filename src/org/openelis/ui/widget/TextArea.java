@@ -33,16 +33,9 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-
-public class TextArea  extends Composite implements ScreenWidgetInt, 
-													Focusable, 
-													HasBlurHandlers, 
-													HasFocusHandlers, 
-													HasValueChangeHandlers<String>, 
-													HasValue<String>,  
-													HasExceptions,
-													Queryable,
-													HasBalloon {
+public class TextArea extends Composite implements ScreenWidgetInt, Focusable, HasBlurHandlers,
+                                       HasFocusHandlers, HasValueChangeHandlers<String>,
+                                       HasValue<String>, HasExceptions, Queryable, HasBalloon {
 
     /**
      * Wrapped GWT TextBox
@@ -52,29 +45,29 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     /**
      * Textbox attributes
      */
-    protected TextAlignment                        alignment = TextAlignment.LEFT;
+    protected TextAlignment                          alignment = TextAlignment.LEFT;
 
     /**
      * Exceptions list
      */
-    protected Exceptions                           exceptions;
+    protected Exceptions                             exceptions;
 
     /**
      * Data moved from Field to the widget
      */
-    protected boolean                                queryMode,required;
+    protected boolean                                queryMode, required;
     protected String                                 value;
 
     /**
      * This class replaces the functionality that Field used to provide but now
      * in a static way.
      */
-    protected WidgetHelper<String>                   helper = new StringHelper();
-    
-    protected TextCSS                             css;
+    protected WidgetHelper<String>                   helper    = new StringHelper();
 
-    protected Balloon.Options options;
-    
+    protected TextCSS                                css;
+
+    protected Balloon.Options                        options;
+
     /**
      * The Constructor now sets the wrapped GWT TextBox as the element widget of
      * this composite and adds an anonymous ValueCahngeHandler to handle input
@@ -83,34 +76,34 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     public TextArea() {
         init();
     }
-    
+
     public void init() {
-    	
+
         textarea = new com.google.gwt.user.client.ui.TextArea();
-        	
+
         addFocusHandler(new FocusHandler() {
-        	public void onFocus(FocusEvent event) {
-        		if(isEnabled()) {
-        			//textarea.selectAll();
-        			addStyleName(css.Focus());
-        		}
-        	}
+            public void onFocus(FocusEvent event) {
+                if (isEnabled()) {
+                    // textarea.selectAll();
+                    addStyleName(css.Focus());
+                }
+            }
         });
-        
-        addBlurHandler(new BlurHandler() {			
-			@Override
-			public void onBlur(BlurEvent event) {
-				//textarea.setSelectionRange(0,0);
-				removeStyleName(css.Focus());
-				finishEditing();
+
+        addBlurHandler(new BlurHandler() {
+            @Override
+            public void onBlur(BlurEvent event) {
+                // textarea.setSelectionRange(0,0);
+                removeStyleName(css.Focus());
+                finishEditing();
             }
 
         });
-       
+
         initWidget(textarea);
-        
+
         setCSS(UIResources.INSTANCE.text());
-        
+
         exceptions = new Exceptions();
     }
 
@@ -123,15 +116,15 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
         this.alignment = alignment;
         textarea.setAlignment(alignment);
     }
-    
+
     public int getCursorPos() {
-    	return textarea.getCursorPos();
+        return textarea.getCursorPos();
     }
-    
+
     public void setSelectionRange(int pos, int length) {
-    	textarea.setSelectionRange(pos, length);
+        textarea.setSelectionRange(pos, length);
     }
-    
+
     // ************** Implementation of ScreenWidgetInt ********************
 
     /**
@@ -162,6 +155,7 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
             queryMode = false;
             textarea.setAlignment(TextAlignment.LEFT);
         }
+        textarea.setText("");
     }
 
     /**
@@ -172,11 +166,11 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     public Object getQuery() {
         return helper.getQuery(textarea.getText());
     }
-    
+
     public void setHelper(WidgetHelper<String> helper) {
         this.helper = helper;
     }
-    
+
     public WidgetHelper<String> getHelper() {
         return null;
     }
@@ -190,25 +184,25 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
      * @param fireEvents
      */
     public void finishEditing() {
-    	exceptions.clearValidateExceptions();
-        
-        if(isEnabled()) {
-        	if(queryMode)
-        		validateQuery();
-        	else {
-        
-        		try {
-        			setValue(helper.getValue(textarea.getText()), true);
-        			if(required && value == null)
-        				addValidateException(new Exception(Messages.get().exc_fieldRequired()));
-        		} catch (Exception e) {
-        			addValidateException(e);
-        		}
-        		Balloon.checkExceptionHandlers(this);
-        	}
+        exceptions.clearValidateExceptions();
+
+        if (isEnabled()) {
+            if (queryMode)
+                validateQuery();
+            else {
+
+                try {
+                    setValue(helper.getValue(textarea.getText()), true);
+                    if (required && value == null)
+                        addValidateException(new Exception(Messages.get().exc_fieldRequired()));
+                } catch (Exception e) {
+                    addValidateException(e);
+                }
+                Balloon.checkExceptionHandlers(this);
+            }
         }
     }
-    
+
     /**
      * Method used to validate the inputed query string by the user.
      */
@@ -221,12 +215,11 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
         }
         Balloon.checkExceptionHandlers(this);
     }
-   
-    
+
     public void setRequired(boolean required) {
         this.required = required;
     }
-    
+
     // ********** Implementation of HasException interface ***************
     /**
      * Convenience method to check if a widget has exceptions so we do not need
@@ -236,69 +229,69 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
      * @return
      */
     public boolean hasExceptions() {
-    	if(exceptions.getValidateExceptions() != null)
-    		return true;
-    	  
-    	if (!queryMode && required && getValue() == null) {
+        if (exceptions.getValidateExceptions() != null)
+            return true;
+
+        if ( !queryMode && required && getValue() == null) {
             addValidateException(new Exception(Messages.get().exc_fieldRequired()));
             Balloon.checkExceptionHandlers(this);
-    	}
-    	  
-    	return getEndUserExceptions() != null || getValidateExceptions() != null;
+        }
+
+        return getEndUserExceptions() != null || getValidateExceptions() != null;
     }
 
-	/**
-	 * Adds a manual Exception to the widgets exception list.
-	 */
-	public void addException(Exception error) {
-		exceptions.addException(error);
-		Balloon.checkExceptionHandlers(this);
-	}
+    /**
+     * Adds a manual Exception to the widgets exception list.
+     */
+    public void addException(Exception error) {
+        exceptions.addException(error);
+        Balloon.checkExceptionHandlers(this);
+    }
 
-	protected void addValidateException(Exception error) {
-		exceptions.addValidateException(error);
+    protected void addValidateException(Exception error) {
+        exceptions.addValidateException(error);
 
-	}
+    }
 
-	/**
-	 * Combines both exceptions list into a single list to be displayed on the
-	 * screen.
-	 */
-	public ArrayList<Exception> getValidateExceptions() {
-		return exceptions.getValidateExceptions();
-	}
+    /**
+     * Combines both exceptions list into a single list to be displayed on the
+     * screen.
+     */
+    public ArrayList<Exception> getValidateExceptions() {
+        return exceptions.getValidateExceptions();
+    }
 
-	public ArrayList<Exception> getEndUserExceptions() {
-		return exceptions.getEndUserExceptions();
-	}
+    public ArrayList<Exception> getEndUserExceptions() {
+        return exceptions.getEndUserExceptions();
+    }
 
-	/**
-	 * Clears all manual and validate exceptions from the widget.
-	 */
-	public void clearExceptions() {
-		exceptions.clearExceptions();
-		removeExceptionStyle();
-		Balloon.clearExceptionHandlers(this);
-	}
+    /**
+     * Clears all manual and validate exceptions from the widget.
+     */
+    public void clearExceptions() {
+        exceptions.clearExceptions();
+        removeExceptionStyle();
+        Balloon.clearExceptionHandlers(this);
+    }
 
-	public void clearEndUserExceptions() {
-		exceptions.clearEndUserExceptions();
-		Balloon.checkExceptionHandlers(this);
-	}
+    public void clearEndUserExceptions() {
+        exceptions.clearEndUserExceptions();
+        Balloon.checkExceptionHandlers(this);
+    }
 
-	public void clearValidateExceptions() {
-		exceptions.clearValidateExceptions();
-		Balloon.checkExceptionHandlers(this);
-	}
+    public void clearValidateExceptions() {
+        exceptions.clearValidateExceptions();
+        Balloon.checkExceptionHandlers(this);
+    }
 
     /**
      * Will add the style to the widget.
      */
     public void addExceptionStyle() {
-    	if(Balloon.isWarning(this))
-    		addStyleName(css.InputWarning());
-    	else
-    		addStyleName(css.InputError());
+        if (Balloon.isWarning(this))
+            addStyleName(css.InputWarning());
+        else
+            addStyleName(css.InputError());
     }
 
     /**
@@ -332,9 +325,9 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
      */
     public void setValue(String value, boolean fireEvents) {
 
-        if(!Util.isDifferent(this.value, value))
+        if ( !Util.isDifferent(this.value, value))
             return;
-        
+
         this.value = value;
         if (value != null) {
             textarea.setText(helper.format(value));
@@ -346,39 +339,37 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
             ValueChangeEvent.fire(this, value);
         }
     }
-    
+
     // ************* Implementation of Focusable ******************
-    
+
     /**
-     * Method only implemented to satisfy Focusable interface. 
+     * Method only implemented to satisfy Focusable interface.
      */
     public int getTabIndex() {
         return -1;
     }
-    
+
     /**
-     * Method only implemented to satisfy Focusable interface. 
+     * Method only implemented to satisfy Focusable interface.
      */
     public void setTabIndex(int index) {
-        
+
     }
 
     /**
-     * Method only implemented to satisfy Focusable interface. 
+     * Method only implemented to satisfy Focusable interface.
      */
     public void setAccessKey(char key) {
-        
+
     }
 
     /**
-     * This is need for Focusable interface and to allow programmatic setting
-     * of focus to this widget.  We use the wrapped TextBox to make this work.
+     * This is need for Focusable interface and to allow programmatic setting of
+     * focus to this widget. We use the wrapped TextBox to make this work.
      */
     public void setFocus(boolean focused) {
         textarea.setFocus(true);
     }
-
-
 
     // ************ Handler Registration methods *********************
 
@@ -417,54 +408,54 @@ public class TextArea  extends Composite implements ScreenWidgetInt,
     public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
         return addDomHandler(handler, MouseOutEvent.getType());
     }
-    
+
     public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
         return addDomHandler(handler, KeyUpEvent.getType());
     }
-    
+
     public void setCSS(TextCSS css) {
-    	css.ensureInjected();
-    	this.css = css;
+        css.ensureInjected();
+        this.css = css;
         textarea.setStyleName(css.ScreenTextArea());
     }
 
     public void setTip(String text) {
-        if(text != null) {
-            if(options == null) 
+        if (text != null) {
+            if (options == null)
                 options = new Balloon.Options(this);
             options.setTip(text);
-         }else if(text == null && options != null) {
+        } else if (text == null && options != null) {
             options.destroy();
             options = null;
         }
     }
-    
+
     public void setTipPlacement(Placement placement) {
-        if(options == null)
+        if (options == null)
             options = new Balloon.Options(this);
-        
+
         options.setPlacement(placement);
     }
-            
-    @UiChild(tagname="balloonOptions",limit=1)
+
+    @UiChild(tagname = "balloonOptions", limit = 1)
     public void setBalloonOptions(Balloon.Options tip) {
         this.options = tip;
         options.setTarget(this);
     }
-    
+
     public Balloon.Options getBalloonOptions() {
         return options;
     }
 
-	@Override
-	public void setQuery(QueryData qd) {
-		if (qd != null) {
-			textarea.setText(qd.getQuery());
-		}
-	}
+    @Override
+    public void setQuery(QueryData qd) {
+        if (qd != null) {
+            textarea.setText(qd.getQuery());
+        }
+    }
 
-	@Override
-	public boolean isQueryMode() {
-		return queryMode;
-	}
+    @Override
+    public boolean isQueryMode() {
+        return queryMode;
+    }
 }
