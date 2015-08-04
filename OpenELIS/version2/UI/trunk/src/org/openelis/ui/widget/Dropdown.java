@@ -768,9 +768,6 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      */
     @Override
     public void setQueryMode(boolean query) {
-        if (query == queryMode)
-            return;
-
         queryMode = query;
 
         popup = null;
