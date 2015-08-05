@@ -55,7 +55,5 @@ public abstract class ViewInt extends ResizeComposite {
     abstract void setCSS(TableCSS css);
     
     abstract void createRow(int row);
-    
-    abstract void setColumnDisplay(int c, boolean display);
 
 }

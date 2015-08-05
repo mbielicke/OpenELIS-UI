@@ -45,7 +45,6 @@ import org.openelis.ui.widget.Balloon.Placement;
 import org.openelis.ui.widget.table.CellEditor;
 import org.openelis.ui.widget.table.CellRenderer;
 import org.openelis.ui.widget.table.CellTipProvider;
-import org.openelis.ui.widget.table.Row;
 import org.openelis.ui.widget.table.event.BeforeCellEditedEvent;
 import org.openelis.ui.widget.table.event.BeforeCellEditedHandler;
 import org.openelis.ui.widget.table.event.CellClickedEvent;
@@ -446,8 +445,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         this.root = root;
         
         getDisplayedRows();
-        
-        checkExceptions();
 
         ((StaticView)view).bulkRender();
         
@@ -480,30 +477,6 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
             nodeIndex.put(child, new NodeIndex(modelView.size() - 1));
         }
 
-    }
-    
-
-    public void checkExceptions() {
-        if(endUserExceptions != null) {
-            for(Node node : endUserExceptions.keySet()) {
-                if(modelView == null || !modelView.contains(node))
-                    endUserExceptions.remove(node);
-            }
-            
-            if(endUserExceptions.size() == 0) 
-                endUserExceptions = null;
-        }
-        
-        if(validateExceptions != null) {
-            for(Node node : validateExceptions.keySet()) {
-                if(modelView == null || !modelView.contains(node))
-                    validateExceptions.remove(node);
-            }
-            
-            if(validateExceptions.size() == 0) 
-                validateExceptions = null;
-        }
-        
     }
     
     public int getNodeViewIndex(Node node) {
@@ -2856,6 +2829,8 @@ public class Tree extends FocusPanel implements ScreenWidgetInt, Queryable,
         if (required.isEmpty()) {
         	return;
         }
+        
+        validateExceptions = null;
         
         validateNode(required, root);
         

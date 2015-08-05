@@ -184,6 +184,9 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * resume any format restrictions
 	 */
 	public void setQueryMode(boolean query) {
+		if (queryMode == query)
+			return;
+
 		queryMode = query;
 		textbox.enforceMask(!query);
 		if (maxLength > 0)

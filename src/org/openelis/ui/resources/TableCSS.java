@@ -32,5 +32,4 @@ public interface TableCSS extends CssResource {
 	String YellowStatus();
 	String RedStatus();
 	String LargeFont();
-	String Menu();
 }

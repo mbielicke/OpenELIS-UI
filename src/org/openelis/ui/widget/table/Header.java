@@ -127,7 +127,7 @@ public class Header extends FocusPanel {
         flexTable = new FlexTable();
         flexTable.setStyleName(css.Header());
         setWidget(flexTable);
-       
+
         /*
          * Mouse handler for determining to allow resizing or filter based on 
          * mouse position
@@ -267,16 +267,9 @@ public class Header extends FocusPanel {
         
 
         flexTable.setWidth(table.getTotalColumnWidth() + "px");
-       
+        flexTable.getCellFormatter().setHeight(0, 0, headerHeight+"px");
         
-        for (int i = 0; i < table.getColumnCount(); i++) {
-        	if(table.getColumnAt(i).isDisplayed()) {
-        		flexTable.getCellFormatter().addStyleName(0, i, css.First());
-        		flexTable.getCellFormatter().setHeight(0, i, headerHeight+"px");
-        		break;
-        	}
-        }
-        	
+        flexTable.getCellFormatter().addStyleName(0, 0, css.First());
     }
     
     /**
@@ -294,7 +287,7 @@ public class Header extends FocusPanel {
         
         if(end < 0)
             end = table.getColumnCount()-1;
-                
+        
         for (int i = start; i <= end; i++ ) {
             column = table.getColumnAt(i);
             if(column.getLabel() !=  null)
@@ -315,12 +308,10 @@ public class Header extends FocusPanel {
                 flexTable.getCellFormatter().addStyleName(0,i,css.Sorted());
             else
                 flexTable.getCellFormatter().removeStyleName(0, i, css.Sorted());
-            
-            flexTable.getCellFormatter().removeStyleName(0, i, css.First());
         }
         
         while(flexTable.getCellCount(0) > table.getColumnCount())
-        	flexTable.removeCell(0, flexTable.getCellCount(0) -1);      
+        	flexTable.removeCell(0, flexTable.getCellCount(0) -1);
     }
 
     /**

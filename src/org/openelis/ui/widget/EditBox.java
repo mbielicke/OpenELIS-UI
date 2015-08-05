@@ -312,7 +312,9 @@ public class EditBox extends Composite implements ScreenWidgetInt,
      * resume any format restrictions
      */
     public void setQueryMode(boolean query) {
-    	if (query) {
+        if (queryMode == query) {
+            return;
+        } else if (query) {
             queryMode = true;
             textbox.enforceMask = false;
             textbox.setMaxLength(255);

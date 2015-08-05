@@ -217,23 +217,3 @@
 @sprite .backImage {
 	gwt-image:'backImage';
 }
-
-@sprite .OpenButtonImage {
-    gwt-image:'doorOpen';
-}
-
-@sprite .Pressed .OpenButtonImage {
-    gwt-image: 'doorOpen';
-}
-
-@sprite .SaveButtonImage{
-    gwt-image:'saveButtonImage';
-}
-
-@sprite .Disabled .SaveButtonImageDisabled{
-    gwt-image:'saveButtonImageDisabled';
-}
-
-@sprite .TableMenu {
-	gwt-image:'menu';
-}
