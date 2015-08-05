@@ -128,7 +128,9 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         }
 
         container.setEditor(editor);
-        container.getElement().getParentElement().setAttribute("align",align);
+        if (container.getElement().getParentElement() != null) {
+        	container.getElement().getParentElement().setAttribute("align",align);
+        }
         editor.setFocus(true);
     }
     
