@@ -36,6 +36,8 @@ import org.openelis.ui.widget.CheckBox;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -115,7 +117,7 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
      * Returns the current widget set as this cells editor.
      */
     @SuppressWarnings("rawtypes")
-	public void startEditing(Object value, Container container, NativeEvent event) {
+	public void startEditing(Object value, final Container container, NativeEvent event) {
         query = false;
         editor.setQueryMode(false);
         editor.setValue((String)value);
@@ -126,7 +128,7 @@ public class CheckBoxCell implements CellEditor, CellRenderer, IsWidget, HasWidg
         }
 
         container.setEditor(editor);
-        DOM.setStyleAttribute(container.getElement(), "align", align); 
+        container.getElement().getParentElement().setAttribute("align",align);
         editor.setFocus(true);
     }
     
