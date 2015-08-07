@@ -716,11 +716,14 @@ public class MultiDropdown<T> extends Composite implements ScreenWidgetInt,
 	 */
 	@Override
 	public void setQueryMode(boolean query) {
-		queryMode = query;
 		
-        value = null;
-        textbox.setText("");
-        table.unselectAll();
+		if (queryMode != query) {
+			value = null;
+			textbox.setText("");
+			table.unselectAll();
+		}
+        
+        queryMode = query;
 		
 	}
 

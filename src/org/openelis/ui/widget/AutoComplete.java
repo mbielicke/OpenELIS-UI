@@ -552,10 +552,13 @@ public class AutoComplete extends Composite implements ScreenWidgetInt,
     @Override
     public void setQueryMode(boolean query) {
 
+    	if (queryMode != query) {
+    		value = null;
+    		textbox.setText("");
+    		table.unselectAll();
+    	}
+        
     	queryMode = query;
-    	value = null;
-    	textbox.setText("");
-        table.unselectAll();
     	
     	if(query)
     		unsinkEvents(Event.ONKEYDOWN | Event.ONKEYPRESS);
