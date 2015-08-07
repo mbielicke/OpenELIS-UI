@@ -184,16 +184,13 @@ public class TextBox<T> extends Composite implements ScreenWidgetInt,
 	 * resume any format restrictions
 	 */
 	public void setQueryMode(boolean query) {
+		if( queryMode != query) {
+			textbox.setText("");
+		}
 		queryMode = query;
 		textbox.enforceMask(!query);
 		if (maxLength > 0)
 			textbox.setMaxLength(query ? 255 : maxLength);
-		/*
-		 * When coming in and out of query mode the setValue will not
-		 * override the the text in the widget since query mode does not change
-		 * the value of the widget
-		 */
-		textbox.setText("");
 	}
 
 	/**
