@@ -118,6 +118,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
      */
     @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
+    	editor.setQueryMode(false);
     	if(!editor.getHelper().isCorrectType(value))
     		editor.setText(DataBaseUtil.toString(value));
     	else 
