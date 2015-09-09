@@ -105,9 +105,8 @@ public class LabelCell implements CellRenderer, IsWidget, HasWidgets.ForIsWidget
 
 	@Override
 	public void add(Widget w) {
-		assert w instanceof Label;
+		// TODO Auto-generated method stub
 		
-		this.editor = (Label)w;
 	}
 
 	@Override

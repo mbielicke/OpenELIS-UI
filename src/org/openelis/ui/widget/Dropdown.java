@@ -768,15 +768,16 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
      */
     @Override
     public void setQueryMode(boolean query) {
-        if (queryMode != query) {
-        	popup = null;
-        	value = null;
-        	textbox.setText("");
-        	table.unselectAll();
-        }
+        if (query == queryMode)
+            return;
 
         queryMode = query;
-        
+
+        popup = null;
+        value = null;
+        textbox.setText("");
+        table.unselectAll();
+
         if (queryMode) {
             /*
              * If switching to multi select add checkbox column at position 0
@@ -792,6 +793,7 @@ public class Dropdown<T> extends Composite implements ScreenWidgetInt, Queryable
              * will remove the column from the model
              */
             table.addStyleName(UIResources.INSTANCE.dropTable().Single());
+            textbox.setText("");
             textbox.setReadOnly(false);
             table.setAllowMultipleSelection(false);
         }

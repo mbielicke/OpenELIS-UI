@@ -146,12 +146,16 @@ public class TextArea extends Composite implements ScreenWidgetInt, Focusable, H
      * resume any format restrictions
      */
     public void setQueryMode(boolean query) {
-    	if(queryMode != query) {
-    		textarea.setText("");
-    		textarea.setAlignment(TextAlignment.LEFT);
-    	}
-    	
-    	queryMode = query;
+        if (queryMode == query) {
+            return;
+        } else if (query) {
+            queryMode = true;
+            textarea.setAlignment(TextAlignment.LEFT);
+        } else {
+            queryMode = false;
+            textarea.setAlignment(TextAlignment.LEFT);
+        }
+        textarea.setText("");
     }
 
     /**
