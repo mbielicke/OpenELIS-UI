@@ -43,7 +43,7 @@ public class OpenELISUserPropertiesModule extends UsersRolesLoginModule {
 
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-        //addValidOptions(new String[] {"loginLockoutTime", "loginIPRetryCount", "loginNameRetryCount"});
+        addValidOptions(new String[] {"loginLockoutTime", "loginIPRetryCount", "loginNameRetryCount"});
         super.initialize(subject, callbackHandler, sharedState, options);
 
         if (options.containsKey("loginLockoutTime"))
