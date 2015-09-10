@@ -39,7 +39,7 @@
       
       <!-- JBoss 7.1.1 EE 6.0 -->
       <dependency org="org.jboss.spec" name="jboss-javaee-6.0" rev="3.0.2.Final"/>
-      <dependency org="org.picketbox" name="picketbox" rev="4.0.7.Final"/>
+      <dependency org="org.picketbox" name="picketbox" rev="4.0.20.Final"/>
      
       <!-- Wildfly 9.0.1 EE 7.0 
       <dependency org="org.jboss.spec" name="jboss-javaee-7.0" rev="1.0.3.Final" />
