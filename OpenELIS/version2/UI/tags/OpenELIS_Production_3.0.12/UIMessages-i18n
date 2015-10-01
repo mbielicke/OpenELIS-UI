@@ -1,0 +1,4 @@
+#!/bin/sh
+APPDIR=`dirname $0`;
+$JAVA/bin/java -cp "$PROJECTPATH" com.google.gwt.i18n.tools.I18NSync -out $APPDIR/src org.openelis.ui.messages.UIMessages -createMessages ;
+
