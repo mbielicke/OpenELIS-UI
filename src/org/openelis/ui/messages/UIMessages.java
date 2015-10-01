@@ -2,7 +2,7 @@ package org.openelis.ui.messages;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/home/dshirazi/workspace/OpenELIS-UI/bin/org/openelis/ui/messages/UIMessages.properties'.
+ * 	/home/akampoow/workspace/OpenELIS-UI/bin/org/openelis/ui/messages/UIMessages.properties'.
  */
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
   

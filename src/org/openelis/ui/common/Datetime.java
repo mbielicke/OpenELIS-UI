@@ -158,13 +158,8 @@ public class Datetime implements Serializable, Comparable<Datetime> {
         if(compDate == null)
             return false;
         
-        if (endCode < HOUR) {
+        if (endCode < HOUR)
             return new Date(year, month, date).equals(compDate);
-        }
-        
-        if (startCode > DAY) {
-        	return new Date(0,0,0,timestamp.getHours(),timestamp.getMinutes(),timestamp.getSeconds()).equals(compDate);
-        }
 
         return timestamp.equals(compDate);
     }
