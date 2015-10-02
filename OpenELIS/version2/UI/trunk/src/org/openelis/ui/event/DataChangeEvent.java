@@ -34,14 +34,23 @@ import com.google.gwt.event.shared.GwtEvent;
  * will be ignored. 
  *
  */
-public class DataChangeEvent extends GwtEvent<DataChangeEvent.Handler>{
-	
+public class DataChangeEvent<T> extends GwtEvent<DataChangeEvent.Handler>{
 	private static Type<DataChangeEvent.Handler> TYPE;
+	
+	T data;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Type<DataChangeEvent.Handler> getAssociatedType() {
 		return (Type) TYPE;
+	}
+	
+	public DataChangeEvent() {
+		
+	}
+	
+	public DataChangeEvent(T data) {
+		this.data = data;
 	}
 	
     @Override
@@ -56,10 +65,13 @@ public class DataChangeEvent extends GwtEvent<DataChangeEvent.Handler>{
 	    return TYPE;
 	 }
 	
-	public static interface Handler extends EventHandler {
-	    public void onDataChange(DataChangeEvent event);
+	public static interface Handler<T> extends EventHandler {
+	    public void onDataChange(DataChangeEvent<T> event);
 	}
-
+	
+	public T getData() {
+		return data;
+	}
 
 	
 	
