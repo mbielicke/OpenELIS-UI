@@ -236,7 +236,7 @@ public class GwtTree extends GWTTestCase {
     	assertTrue(test.view.table().getCellFormatter().getStyleName(0, 0).contains(((StaticView)test.view).css.InputError()));
     	
     	test.setValueAt(0,0,5);
-    	assertEquals(5,test.getValueAt(0,0));
+    	assertEquals(5,(int)test.getValueAt(0,0));
     	assertEquals("5",((TreeGrid)test.view.table().getWidget(0,0)).getText(0, 3));
     	assertFalse(test.hasExceptions(0,0));
     	assertFalse(test.view.table().getCellFormatter().getStyleName(0, 0).contains(((StaticView)test.view).css.InputError()));
@@ -249,7 +249,7 @@ public class GwtTree extends GWTTestCase {
 		test.setRowAt(2,new Node(7,"F",null).setType("top"));
 		
 		assertEquals(5,test.getRowCount());
-		assertEquals(7,test.getValueAt(2,0));
+		assertEquals(7,(int)test.getValueAt(2,0));
 		assertEquals("F",test.view.table().getText(2, 1));
 	}
 	
@@ -278,7 +278,7 @@ public class GwtTree extends GWTTestCase {
 		((TextBox)test.getNodeDefinition("top").get(0).getCellEditor().getWidget()).setText("10");
 		test.finishEditing();
 		assertFalse(test.isEditing());
-		assertEquals(10,test.getValueAt(0,0));
+		assertEquals(10,(int)test.getValueAt(0,0));
 		
 		test.startEditing(0,0);
 		assertTrue(test.isEditing());
