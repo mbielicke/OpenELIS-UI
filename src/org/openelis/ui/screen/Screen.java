@@ -63,6 +63,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -77,7 +78,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class Screen extends ResizeComposite implements FocusHandler, BlurHandler, HasDataChangeHandlers,
-                                           HasStateChangeHandlers, Focusable, ScreenWidgetInt, HasFocusHandlers, HasBlurHandlers {
+                                           HasStateChangeHandlers, Focusable, ScreenWidgetInt,  HasBlurHandlers {
 
     protected Focusable                         focused;
 
@@ -150,7 +151,8 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
 
       	if (nextWidget != null)
        		nextWidget.setFocus(true);
-
+      	else 
+      		this.setFocus(true);
     }
 
     public void onFocus(final FocusEvent event) {
@@ -161,7 +163,7 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
          	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
          	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 				public void execute() {
-					focused.setFocus(true);	
+					focused.setFocus(true);
 				}
 			});
         }
@@ -577,7 +579,7 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
 		setTabIndex(0);
 	}
 
-	@Override
+	//@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
 		return addDomHandler(handler, FocusEvent.getType());
 	}
