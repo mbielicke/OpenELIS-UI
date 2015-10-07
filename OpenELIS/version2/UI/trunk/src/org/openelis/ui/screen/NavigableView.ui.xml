@@ -1,0 +1,55 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder' xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:w='urn:import:org.openelis.ui.widget'
+  xmlns:t='urn:import:org.openelis.ui.widget.table' xmlns:c="urn:import:org.openelis.ui.widget.calendar" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <ui:with type="org.openelis.ui.resources.UIResources" field="res" />
+  <ui:with type="org.openelis.ui.messages.UIMessages" field="msg" />
+
+  <g:SplitLayoutPanel>
+    <g:west>
+      <g:LayoutPanel>
+        <g:layer top="0px" left="0px" bottom="0px" width="20px">
+          <w:AtoZButtons ui:field="atozButtons" multiColumn="false" />
+        </g:layer>
+        <g:layer top="0px" bottom="0px" left="20px" right="0px">
+          <g:LayoutPanel>
+            <g:layer top="0px" bottom="25px">
+              <t:Table ui:field="atozTable" styleName="{res.table.ScreenTableWithSides}" header="true">
+                <t:Column label="{msg.gen_name}" width="175">
+                  <t:LabelCell />
+                </t:Column>
+              </t:Table>
+            </g:layer>
+            <g:layer bottom="0px" height="25px">
+              <g:HorizontalPanel horizontalAlignment="CENTER" width="100%">
+                <g:HorizontalPanel>
+                 <w:Button ui:field="loadResults" image="{res.nextPage}"
+										disabledImage="{res.nextPageDisabled}" enabled="false"
+										css="{res.atozButton}" />
+                </g:HorizontalPanel>
+              </g:HorizontalPanel>
+            </g:layer>
+          </g:LayoutPanel>
+        </g:layer>
+      </g:LayoutPanel>
+    </g:west>
+    <g:center>
+      <g:LayoutPanel ui:field="centerPanel">
+        <g:layer top="0px" height="30px">
+          <g:AbsolutePanel styleName="{res.buttonPanel.ButtonPanelContainer}" width="100%">
+            <g:HorizontalPanel>
+              <w:Button css="{res.buttonPanel}" ui:field="query" leftIcon="{res.icon.QueryButtonImage}" text="{msg.btn_query}" toggles="true" />
+              <w:Button css="{res.buttonPanel}" ui:field="previous" leftIcon="{res.icon.PreviousButtonImage}" text="{msg.btn_previous}"/>
+              <w:Button css="{res.buttonPanel}" ui:field="next" leftIcon="{res.icon.NextButtonImage}" text="{msg.btn_next}" />
+              <g:AbsolutePanel styleName="{res.buttonPanel.ButtonDivider}" />
+              <w:Button css="{res.buttonPanel}" ui:field="add" leftIcon="{res.icon.AddButtonImage}" text="{msg.btn_add}" toggles="true" />
+              <w:Button css="{res.buttonPanel}" ui:field="update" leftIcon="{res.icon.UpdateButtonImage}" text="{msg.btn_update}" toggles="true"/>
+              <g:AbsolutePanel styleName="{res.buttonPanel.ButtonDivider}" />
+              <w:Button css="{res.buttonPanel}" ui:field="commit" leftIcon="{res.icon.CommitButtonImage}" text="{msg.btn_commit}"/>
+              <w:Button css="{res.buttonPanel}" ui:field="abort" leftIcon="{res.icon.AbortButtonImage}" text="{msg.btn_abort}"/>
+            </g:HorizontalPanel>
+          </g:AbsolutePanel>
+        </g:layer>
+      </g:LayoutPanel>
+    </g:center>
+  </g:SplitLayoutPanel>
+</ui:UiBinder>
