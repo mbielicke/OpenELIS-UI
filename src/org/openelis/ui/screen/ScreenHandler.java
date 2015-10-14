@@ -15,7 +15,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateChangeEvent.Handler, DataChangeEvent.Handler {
+public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateChangeEvent.Handler, DataChangeEvent.Handler<T> {
 	
 	public Widget widget;
 	
@@ -23,7 +23,7 @@ public abstract class ScreenHandler<T> implements ValueChangeHandler<T>, StateCh
 		
 	}
 
-	public void onDataChange(DataChangeEvent event) {
+	public void onDataChange(DataChangeEvent<T> event) {
 	    if(widget instanceof Screen)
 	        ((Screen)widget).fireDataChange();
 		
