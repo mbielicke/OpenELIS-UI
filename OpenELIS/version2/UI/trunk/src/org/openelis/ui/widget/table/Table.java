@@ -681,6 +681,13 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         return i;
     }
+    
+    public int convertModelIndexToView(int modelIndex) {
+    	if (rowIndex != null && modelIndex >=0) {
+    		return convertModelIndexToView(model.get(modelIndex));
+    	}
+    	return modelIndex;
+    }
 
     /**
      * This method will take the passed model index of a row and return the
@@ -690,16 +697,17 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param modelIndex
      * @return
      */
-    public int convertModelIndexToView(int modelIndex) {
-        int i = modelIndex;
+    public int convertModelIndexToView(Row row) {
+    	int i = -1;
         RowIndexes rowInd;
 
-        if (rowIndex != null && modelIndex >= 0) {
-            rowInd = rowIndex.get(model.get(modelIndex));
-            if (rowInd != null)
+        if (rowIndex != null) {
+            rowInd = rowIndex.get(row);
+            if (rowInd != null) {
                 i = rowInd.view;
-            else
-                i = -1;
+            }
+        } else {
+        	i = model.indexOf(row);
         }
 
         return i;
