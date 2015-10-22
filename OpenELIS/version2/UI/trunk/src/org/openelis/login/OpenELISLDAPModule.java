@@ -43,7 +43,11 @@ public class OpenELISLDAPModule extends LdapExtLoginModule {
 
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-    	addValidOptions(new String[]{"loginLockoutTime","loginIPRetryCount","loginNameRetryCount"});
+        try {
+            addValidOptions(new String[]{"loginLockoutTime","loginIPRetryCount","loginNameRetryCount"});
+        } catch (NoSuchMethodError nsmE) {
+            // jboss7 uses and older picketbox library that does not have this method
+        }
         super.initialize(subject, callbackHandler, sharedState, options);
 
         if (options.containsKey("loginLockoutTime"))
