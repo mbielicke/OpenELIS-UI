@@ -47,15 +47,11 @@ import org.openelis.ui.widget.ScreenWidgetInt;
 import org.openelis.ui.widget.WindowInt;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.HasFocusHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -63,7 +59,6 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -77,8 +72,8 @@ import com.google.gwt.user.client.ui.Widget;
  * is presented to the user.
  * 
  */
-public class Screen extends ResizeComposite implements FocusHandler, BlurHandler, HasDataChangeHandlers,
-                                           HasStateChangeHandlers, Focusable, ScreenWidgetInt,  HasBlurHandlers {
+public class Screen extends ResizeComposite implements FocusHandler, HasDataChangeHandlers,
+                                           HasStateChangeHandlers, Focusable, ScreenWidgetInt {
 
     protected Focusable                         focused;
 
@@ -99,7 +94,6 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
     protected WindowCSS css;
     protected WindowInt window;
     protected State     state;
-    protected Screen    source = this;
 
     public Screen() {
         css = UIResources.INSTANCE.window();
@@ -151,11 +145,10 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
 
       	if (nextWidget != null)
        		nextWidget.setFocus(true);
-      	else 
-      		this.setFocus(true);
+
     }
 
-    public void onFocus(final FocusEvent event) {
+    public void onFocus(FocusEvent event) {
         focused = (Focusable)event.getSource();
         
         //Focus window if not the focused window the browser
@@ -163,16 +156,10 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
          	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
          	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 				public void execute() {
-					focused.setFocus(true);
+					focused.setFocus(true);	
 				}
 			});
         }
-        FocusEvent.fireNativeEvent(event.getNativeEvent(),source);
-    }
-    
-    public void onBlur(final BlurEvent event) {
-    	focused = null;
-    	BlurEvent.fireNativeEvent(event.getNativeEvent(), source);
     }
 
     public void finishEditing() {
@@ -281,10 +268,6 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
 
         if (widget instanceof HasFocusHandlers)
             ((HasFocusHandlers)widget).addFocusHandler(this);
-        
-        if (widget instanceof HasBlurHandlers) {
-        	((HasBlurHandlers)widget).addBlurHandler(this);
-        }
 
         screenHandler.widget = widget;
 
@@ -578,19 +561,6 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
 		super.onAttach();
 		setTabIndex(0);
 	}
-
-	//@Override
-	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return addDomHandler(handler, FocusEvent.getType());
-	}
-
-	@Override
-	public HandlerRegistration addBlurHandler(BlurHandler handler) {
-		return addDomHandler(handler,BlurEvent.getType());
-	}
 	
-	public Focusable getFocused() {
-		return focused;
-	}
 
 }
