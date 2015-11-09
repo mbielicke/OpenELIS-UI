@@ -1,0 +1,1078 @@
+commit 752513582a4631322510eb68fba731ccd950ba56
+Author: Travis Schmidt <travis.schmidt@gmail.com>
+Date:   Mon Nov 9 12:34:30 2015 -0800
+
+    files changed for SyncCallback, Visible Events and Messages
+
+diff --git a/common.ant.xml b/common.ant.xml
+index 7bdf6ee..c3020c4 100755
+--- a/common.ant.xml
++++ b/common.ant.xml
+@@ -28,7 +28,7 @@
+ 
+   <!-- Global Properties -->
+   <property environment="env"/>
+-  <condition property="gwt.version" value="${env.GWT_VERSION}" else="0.0.0">
++  <condition property="gwt.version" value="${env.GWT_VERSION}" else="2.7.0">
+     <isset property="env.GWT_VERSION"/>
+   </condition>
+   <condition property="gwt.tools.check" value="${env.GWT_TOOLS}" else="${gwt.root}/../tools">
+@@ -56,8 +56,8 @@
+   <property name="javac.debug" value="true"/>
+   <property name="javac.debuglevel" value="lines,vars,source"/>
+   <property name="javac.encoding" value="utf-8"/>
+-  <property name="javac.source" value="1.6"/>
+-  <property name="javac.target" value="1.6"/>
++  <property name="javac.source" value="1.7"/>
++  <property name="javac.target" value="1.7"/>
+   <property name="javac.nowarn" value="true"/>
+   <property name="junit.out" location="${project.build}/test"/>
+   <property name="emma.dir" value="${gwt.tools.redist}/emma"/>
+diff --git a/user/src/com/google/gwt/event/logical/shared/HasVisibleHandlers.java b/user/src/com/google/gwt/event/logical/shared/HasVisibleHandlers.java
+new file mode 100644
+index 0000000..228a258
+--- /dev/null
++++ b/user/src/com/google/gwt/event/logical/shared/HasVisibleHandlers.java
+@@ -0,0 +1,33 @@
++/*
++ * Copyright 2008 Google Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
++ * use this file except in compliance with the License. You may obtain a copy of
++ * the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++ * License for the specific language governing permissions and limitations under
++ * the License.
++ */
++package com.google.gwt.event.logical.shared;
++
++import com.google.gwt.event.shared.HandlerRegistration;
++import com.google.gwt.event.shared.HasHandlers;
++
++/**
++ * A widget that implements this interface is a public source of
++ * {@link AttachEvent} events.
++ */
++public interface HasVisibleHandlers extends HasHandlers {
++  /**
++   * Adds an {@link AttachEvent} handler.
++   *
++   * @param handler the handler
++   * @return the handler registration
++   */
++  HandlerRegistration addVisibleHandler(VisibleEvent.Handler handler);
++}
+diff --git a/user/src/com/google/gwt/event/logical/shared/VisibleEvent.java b/user/src/com/google/gwt/event/logical/shared/VisibleEvent.java
+new file mode 100644
+index 0000000..6ea1a9e
+--- /dev/null
++++ b/user/src/com/google/gwt/event/logical/shared/VisibleEvent.java
+@@ -0,0 +1,102 @@
++/*
++ * Copyright 2010 Google Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
++ * use this file except in compliance with the License. You may obtain a copy of
++ * the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++ * License for the specific language governing permissions and limitations under
++ * the License.
++ */
++
++package com.google.gwt.event.logical.shared;
++
++import com.google.gwt.event.shared.EventHandler;
++import com.google.gwt.event.shared.GwtEvent;
++
++/**
++ * Fired when the event source is attached to the browser's document
++ * or detached from it.
++ */
++public class VisibleEvent extends GwtEvent<VisibleEvent.Handler> {
++
++  /**
++   * Implemented by objects that handle {@link AttachEvent}.
++   */
++  public interface Handler extends EventHandler {
++    void onVisibleOrInvisible(VisibleEvent event);
++  }
++
++  /**
++   * The event type.
++   */
++  static Type<VisibleEvent.Handler> TYPE;
++
++  /**
++   * Fires an {@link AttachEvent} on all registered handlers in the handler
++   * source.
++   *
++   * @param <S> The handler source type
++   * @param source the source of the handlers
++   * @param attached whether to announce an attach or detach
++   */
++  public static <S extends HasVisibleHandlers> void fire(S source,
++      boolean visible) {
++    if (TYPE != null) {
++      VisibleEvent event = new VisibleEvent(visible);
++      source.fireEvent(event);
++    }
++  }
++
++  /**
++   * Ensures the existence of the handler hook and then returns it.
++   *
++   * @return returns a handler hook
++   */
++  public static Type<VisibleEvent.Handler> getType() {
++    if (TYPE == null) {
++      TYPE = new Type<VisibleEvent.Handler>();
++    }
++    return TYPE;
++  }
++
++  private final boolean visible;
++
++  /**
++   * Construct a new {@link AttachEvent}.
++   *
++   * @param attached true if the source has been attached
++   */
++  protected VisibleEvent(boolean visible) {
++    this.visible = visible;
++  }
++
++  @Override
++  public final Type<VisibleEvent.Handler> getAssociatedType() {
++    return TYPE;
++  }
++
++  /**
++   * Returns true if this event announces that the source has been attached,
++   * false if it has been detached.
++   */
++  public boolean isVisible() {
++    return visible;
++  }
++
++  @Override
++  public String toDebugString() {
++    assertLive();
++    return super.toDebugString() + " visible = " + visible;
++  }
++
++  @Override
++  protected void dispatch(VisibleEvent.Handler handler) {
++    handler.onVisibleOrInvisible(this);
++  }
++}
+diff --git a/user/src/com/google/gwt/http/client/RequestBuilder.java b/user/src/com/google/gwt/http/client/RequestBuilder.java
+index 3168a8d..b75003b 100644
+--- a/user/src/com/google/gwt/http/client/RequestBuilder.java
++++ b/user/src/com/google/gwt/http/client/RequestBuilder.java
+@@ -239,7 +239,12 @@ public class RequestBuilder {
+    */
+   public Request send() throws RequestException {
+     StringValidator.throwIfNull("callback", callback);
+-    return doSend(requestData, callback);
++    return doSend(requestData, callback,true);
++  }
++  
++  public Request send(boolean isAsync) throws RequestException {
++	StringValidator.throwIfNull("callback", callback);
++	return doSend(requestData, callback, isAsync);
+   }
+ 
+   /**
+@@ -258,7 +263,7 @@ public class RequestBuilder {
+   public Request sendRequest(String requestData, RequestCallback callback)
+       throws RequestException {
+     StringValidator.throwIfNull("callback", callback);
+-    return doSend(requestData, callback);
++    return doSend(requestData, callback, true);
+   }
+ 
+   /**
+@@ -378,17 +383,17 @@ public class RequestBuilder {
+    * @throws NullPointerException if request data has not been set
+    * @throws NullPointerException if a request callback has not been set
+    */
+-  private Request doSend(String requestData, final RequestCallback callback)
++  private Request doSend(String requestData, final RequestCallback callback, boolean isAsync)
+       throws RequestException {
+     XMLHttpRequest xmlHttpRequest = XMLHttpRequest.create();
+ 
+     try {
+       if (user != null && password != null) {
+-        xmlHttpRequest.open(httpMethod, url, user, password);
++        xmlHttpRequest.open(httpMethod, url, user, password, isAsync);
+       } else if (user != null) {
+-        xmlHttpRequest.open(httpMethod, url, user);
++        xmlHttpRequest.open(httpMethod, url, user, isAsync);
+       } else {
+-        xmlHttpRequest.open(httpMethod, url);
++        xmlHttpRequest.open(httpMethod, url, isAsync);
+       }
+     } catch (JavaScriptException e) {
+       RequestPermissionException requestPermissionException = new RequestPermissionException(
+@@ -415,7 +420,10 @@ public class RequestBuilder {
+     });
+ 
+     try {
+-      xmlHttpRequest.send(requestData);
++    	if(isAsync)
++    		xmlHttpRequest.send(requestData);
++    	else
++    		xmlHttpRequest.sendSync(xmlHttpRequest, request, requestData, callback);
+     } catch (JavaScriptException e) {
+       throw new RequestException(e.getMessage());
+     }
+diff --git a/user/src/com/google/gwt/i18n/rebind/AbstractLocalizableInterfaceCreator.java b/user/src/com/google/gwt/i18n/rebind/AbstractLocalizableInterfaceCreator.java
+index 8d1d141..96dcdb0 100644
+--- a/user/src/com/google/gwt/i18n/rebind/AbstractLocalizableInterfaceCreator.java
++++ b/user/src/com/google/gwt/i18n/rebind/AbstractLocalizableInterfaceCreator.java
+@@ -183,6 +183,13 @@ public abstract class AbstractLocalizableInterfaceCreator {
+   public void genSimpleMethodDecl(String key, String defaultValue) {
+     genMethodDecl("String", defaultValue, key);
+   }
++  
++  protected String formatKey(String key) {
++    for (ResourceKeyFormatter formatter : formatters) {
++      key = formatter.format(key);
++    }
++    return key;
++  }
+ 
+   /**
+    * Create method args based upon the default value.
+@@ -250,11 +257,15 @@ public abstract class AbstractLocalizableInterfaceCreator {
+               + resourceFile
+               + "' cannot be used to generate message classes, as it has no key/value pairs defined.");
+     }
++    generateMethods(p,keys);
++    composer.commit(new PrintWriterTreeLogger());
++  }
++  
++  void generateMethods(LocalizedProperties properties, String[] keys) {
+     for (String key : keys) {
+-      String value = p.getProperty(key);
++      String value = properties.getProperty(key);
+       genSimpleMethodDecl(key, value);
+     }
+-    composer.commit(new PrintWriterTreeLogger());
+   }
+ 
+   private void addFormatters() {
+@@ -265,13 +276,8 @@ public abstract class AbstractLocalizableInterfaceCreator {
+     formatters.add(new RenameDuplicates());
+   }
+ 
+-  private String formatKey(String key) {
+-    for (ResourceKeyFormatter formatter : formatters) {
+-      key = formatter.format(key);
+-    }
+-    return key;
+-  }
+ 
++  
+   private void genMethodDecl(String type, String defaultValue, String key) {
+     composer.beginJavaDocComment();
+     String escaped = makeJavaString(defaultValue);
+@@ -286,7 +292,7 @@ public abstract class AbstractLocalizableInterfaceCreator {
+     genMethodArgs(defaultValue);
+     composer.print(");\n");
+   }
+-
++  
+   private void setup(String packageName, String className, File resourceBundle,
+       File targetLocation, Class<? extends Localizable> interfaceClass)
+       throws IOException {
+diff --git a/user/src/com/google/gwt/i18n/rebind/MessagesInterfaceCreator.java b/user/src/com/google/gwt/i18n/rebind/MessagesInterfaceCreator.java
+index 9c84209..6ba237f 100644
+--- a/user/src/com/google/gwt/i18n/rebind/MessagesInterfaceCreator.java
++++ b/user/src/com/google/gwt/i18n/rebind/MessagesInterfaceCreator.java
+@@ -1,53 +1,54 @@
+ /*
+  * Copyright 2008 Google Inc.
+  * 
+- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+- * use this file except in compliance with the License. You may obtain a copy of
+- * the License at
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++ * in compliance with the License. You may obtain a copy of the License at
+  * 
+  * http://www.apache.org/licenses/LICENSE-2.0
+  * 
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+- * License for the specific language governing permissions and limitations under
++ * Unless required by applicable law or agreed to in writing, software distributed under the License
++ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++ * or implied. See the License for the specific language governing permissions and limitations under
+  * the License.
+  */
+ package com.google.gwt.i18n.rebind;
+ 
++import com.google.gwt.i18n.client.Localizable;
+ import com.google.gwt.i18n.client.Messages;
+-import com.google.gwt.i18n.rebind.MessageFormatParser.ArgumentChunk;
+-import com.google.gwt.i18n.rebind.MessageFormatParser.TemplateChunk;
++import com.google.gwt.i18n.server.MessageFormatUtils;
++import com.google.gwt.i18n.server.MessageFormatUtils.ArgumentChunk;
++import com.google.gwt.i18n.server.MessageFormatUtils.TemplateChunk;
++
++import org.apache.tapestry.util.text.LocalizedProperties;
+ 
+ import java.io.File;
+ import java.io.IOException;
+ import java.text.ParseException;
+-import java.util.HashSet;
+-import java.util.Set;
++import java.util.Collections;
++import java.util.HashMap;
++import java.util.Map;
+ 
+ /**
+  * Creates a MessagesInterface from a Resource file.
+  */
+-public class MessagesInterfaceCreator extends
+-    AbstractLocalizableInterfaceCreator {
++public class MessagesInterfaceCreator extends AbstractLocalizableInterfaceCreator {
+ 
+   /**
+-   * Searches for MessageFormat-style args in the template string and returns
+-   * a set of argument indices seen.
++   * Searches for MessageFormat-style args in the template string and returns a map of of argument
++   * indices seen.
+    * 
+    * @param template template to parse
+    * @return set of argument indices seen
+    * @throws ParseException if the template is incorrect.
+    */
+-  private static Set<Integer> numberOfMessageArgs(String template)
+-      throws ParseException {
+-    Set<Integer> seenArgs = new HashSet<Integer>();
+-    for (TemplateChunk chunk : MessageFormatParser.parse(template)) {
++  private static Map<Integer, ArgumentChunk> getMessageArgs(String template) throws ParseException {
++    HashMap<Integer, ArgumentChunk> args = new HashMap<>();
++    for (TemplateChunk chunk : MessageFormatUtils.MessageStyle.MESSAGE_FORMAT.parse(template)) {
+       if (chunk instanceof ArgumentChunk) {
+-        seenArgs.add(((ArgumentChunk) chunk).getArgumentNumber());
++        args.put(((ArgumentChunk) chunk).getArgumentNumber(), (ArgumentChunk) chunk);
+       }
+     }
+-    return seenArgs;
++    return args;
+   }
+ 
+   /**
+@@ -59,34 +60,71 @@ public class MessagesInterfaceCreator extends
+    * @param targetLocation target location
+    * @throws IOException
+    */
+-  public MessagesInterfaceCreator(String className, String packageName,
+-      File resourceBundle, File targetLocation) throws IOException {
+-    super(className, packageName, resourceBundle, targetLocation,
+-      Messages.class);
++  public MessagesInterfaceCreator(String className, String packageName, File resourceBundle,
++      File targetLocation) throws IOException {
++    super(className, packageName, resourceBundle, targetLocation, Messages.class);
++  }
++
++  public MessagesInterfaceCreator(String className, String packageName, File resourceBundle,
++      File targetLocation, Class<? extends Localizable> extendsClass) throws IOException {
++    super(className, packageName, resourceBundle, targetLocation, extendsClass);
++  }
++  
++  @Override
++  void generateMethods(LocalizedProperties properties, String[] keys) {
++    for (int i = 0; i < keys.length; i++) {
++      String key = keys[i];
++      String value = properties.getProperty(key);
++      Map<String, String> plurals = new HashMap<>();
++      while (i + 1 < keys.length && isNextPlural(key, keys[i + 1])) {
++        i++;
++        plurals.put(keys[i], properties.getProperty(keys[i]));
++      }
++      genMethodDecl(value, key, plurals);
++    }
+   }
+ 
+   @Override
+   protected void genMethodArgs(String defaultValue) {
+-    try {
+-      Set<Integer> seenArgs = numberOfMessageArgs(defaultValue);
+-      int maxArgSeen = -1;
+-      for (int arg : seenArgs) {
+-        if (arg > maxArgSeen) {
+-          maxArgSeen = arg;
+-        }
++  }
++
++  private boolean isNextPlural(String key, String nextKey) {
++    return nextKey.matches(".*\\[.*\\]$") && nextKey.startsWith(key);
++  }
++
++  private void genMethodArgs(Map<Integer, ArgumentChunk> args) {
++    for (int i = 0; i <= Collections.max(args.keySet()); i++) {
++      if (i > 0) {
++        composer.print(",  ");
+       }
+-      for (int i = 0; i <= maxArgSeen; i++) {
+-        if (i > 0) {
+-          composer.print(",  ");
+-        }
+-        if (!seenArgs.contains(i)) {
+-          composer.print("@Optional ");
+-        }
+-        composer.print("String arg" + i);
++      if (!args.containsKey(i)) {
++        composer.print("@Optional String arg" + i);
++        continue;
+       }
+-    } catch (ParseException e) {
+-      throw new RuntimeException(defaultValue
+-        + " could not be parsed as a MessageFormat string.", e);
++      String format = (format = args.get(i).getFormat()) != null ? format : "string";
++      String subFormat = (subFormat = args.get(i).getSubFormat()) != null ? subFormat : "";
++      if (args.get(i).isList()) {
++        composer.print("java.util.List<");
++      }
++      switch (format) {
++        case "number":
++          determineNumberType(subFormat);
++          break;
++        case "date":
++        case "time":
++        case "localdatetime":
++          composer.print("java.util.Date");
++          break;
++        case "safehtml":
++          composer.print("com.google.gwt.safehtml.shared.SafeHtml");
++          break;
++        default:
++          composer.print("String");
++      }
++      if (args.get(i).isList()) {
++        composer.print(">");
++      }
++      composer.print(" arg" + i);
+     }
+   }
+ 
+@@ -97,7 +135,98 @@ public class MessagesInterfaceCreator extends
+ 
+   @Override
+   protected String javaDocComment(String path) {
+-    return "Interface to represent the messages contained in resource bundle:\n\t"
+-      + path + "'.";
++    return "Interface to represent the messages contained in resource bundle:\n\t" + path + "'.";
++  }
++
++  private void determineNumberType(String subFormat) {
++    switch (subFormat) {
++      case "integer":
++        composer.print("Integer");
++        break;
++      case "currency":
++      case "percent":
++      default:
++        if(subFormat.contains(".")) {
++          composer.print("Double");
++        } else {
++          composer.print("Integer");
++        }
++    }
+   }
++
++  private String determineReturnType(Map<Integer, ArgumentChunk> args) {
++    for (ArgumentChunk arg : args.values()) {
++      if ("safehtml".equals(arg.getFormat())) {
++        return "com.google.gwt.safehtml.shared.SafeHtml";
++      }
++    }
++    return "String";
++  }
++
++  private void genPluralsAnnotation(Map<String, String> plurals) {
++    composer.print("@AlternateMessage({");
++    String[] keys = plurals.keySet().toArray(new String[] {});
++    if (keys.length > 1) {
++      composer.println("");
++      composer.indent();
++    }
++    for (int i = 0; i < keys.length; i++) {
++      String key = keys[i];
++      if (i > 0) {
++        composer.println(",");
++      }
++      composer.print("\"" + key.substring(key.indexOf('[') + 1, key.length() - 1) + "\", ");
++      composer.print("\"" + plurals.get(key) + "\"");
++    }
++    if (keys.length > 1) {
++      composer.println("");
++      composer.outdent();
++    }
++    composer.println("})");
++  }
++
++  private void genMethodDecl(String defaultValue, String key, Map<String, String> plurals) {
++    try {
++      Map<Integer, ArgumentChunk> args = getMessageArgs(defaultValue);
++      genMethodJavaDoc(defaultValue, args);
++      genValueAnnotation(defaultValue);
++      if (!plurals.isEmpty()) {
++        genPluralsAnnotation(plurals);
++      }
++      composer.println("@Key(" + makeJavaString(key) + ")");
++      String methodName = formatKey(key);
++      String type = determineReturnType(args);
++      composer.print(type + " " + methodName);
++      composer.print("(");
++      if (!plurals.isEmpty()) {
++        composer.print("@PluralCount ");
++      }
++      if (!args.isEmpty()) {
++        genMethodArgs(args);
++      }
++      composer.print(");\n");
++    } catch (ParseException e) {
++      throw new RuntimeException(defaultValue + " could not be parsed as a MessageFormat string.",
++          e);
++    }
++  }
++
++  private void genMethodJavaDoc(String defaultValue, Map<Integer, ArgumentChunk> args) {
++    composer.beginJavaDocComment();
++    String escaped = makeJavaString(defaultValue);
++    composer.println("Translated " + escaped + ".\n");
++    if (!args.isEmpty()) {
++      for (int i = 0; i <= Collections.max(args.keySet()); i++) {
++        composer.print("@param arg" + i);
++        if (args.containsKey(i)) {
++          composer.println(" " + makeJavaString(args.get(i).getAsMessageFormatString()));
++        } else {
++          composer.println(" optional");
++        }
++      }
++    }
++    composer.println("@return translated " + escaped);
++    composer.endJavaDocComment();
++  }
++
+ }
+diff --git a/user/src/com/google/gwt/i18n/tools/I18NSync.java b/user/src/com/google/gwt/i18n/tools/I18NSync.java
+index 787b299..b22059c 100644
+--- a/user/src/com/google/gwt/i18n/tools/I18NSync.java
++++ b/user/src/com/google/gwt/i18n/tools/I18NSync.java
+@@ -116,6 +116,48 @@ public class I18NSync extends ToolBase {
+       return true;
+     }
+   }
++  
++  private class extendsHandler extends ArgHandlerString {
++	    @Override
++	    public String getPurpose() {
++	      return "Sets Messages interface this generator should extend.";
++	    }
++
++	    @Override
++	    public String getTag() {
++	      return "-extends";
++	    }
++
++	    @Override
++	    public String[] getTagArgs() {
++	      String[] resourceArgs = {"fileName"};
++	      return resourceArgs;
++	    }
++
++	    @Override
++	    public boolean isRequired() {
++	      return false;
++	    }
++
++	    @Override
++	    public boolean setString(String str) {
++
++	      // We wish to use the same sets of checks for validity whether the user
++	      // calls the static method to create localizable classes or uses the
++	      // command line, as the java call must throw IOException, here we must
++	      // catch it and convert it to a System.err message.
++	      extendsInt = str;
++	      /*
++	      try {
++	        checkValidSourceDir(outDirArg);
++	      } catch (IOException e) {
++	        System.err.println("Error: " + e.getMessage());
++	        return false;
++	      }
++	      */
++	      return true;
++	    }
++	  }
+ 
+   /**
+    * Creates a <code>Constants</code> interface from a class name. The
+@@ -166,10 +208,10 @@ public class I18NSync extends ToolBase {
+    * @throws IOException
+    */
+   public static void createInterfaceFromClassName(String className,
+-      File sourceDir, Class<? extends Localizable> interfaceType)
++      File sourceDir, String extendsInt, Class<? extends Localizable> interfaceType)
+       throws IOException {
+     if (interfaceType == Messages.class) {
+-      createMessagesInterfaceFromClassName(className, sourceDir);
++      createMessagesInterfaceFromClassName(className, sourceDir, extendsInt);
+     } else {
+       if (!Constants.class.isAssignableFrom(interfaceType)) {
+         throw new RuntimeException(
+@@ -190,7 +232,7 @@ public class I18NSync extends ToolBase {
+    */
+   public static void createMessagesInterfaceFromClassName(String className)
+       throws IOException {
+-    createMessagesInterfaceFromClassName(className, null);
++    createMessagesInterfaceFromClassName(className, null,null);
+   }
+ 
+   /**
+@@ -202,7 +244,7 @@ public class I18NSync extends ToolBase {
+    * @throws IOException
+    */
+   public static void createMessagesInterfaceFromClassName(String className,
+-      File sourceDir) throws IOException {
++      File sourceDir, String extendsInt) throws IOException {
+     File resource = urlToResourceFile(className);
+     File source;
+     if (sourceDir == null) {
+@@ -221,8 +263,19 @@ public class I18NSync extends ToolBase {
+     int classDiv = className.lastIndexOf(".");
+     String packageName = className.substring(0, classDiv);
+     String name = className.substring(classDiv + 1);
++    
++    Class<? extends Messages> extendsClass = Messages.class;
++    
++    if(extendsInt != null) {
++    	try {
++    		extendsClass = (Class<? extends Messages>)Class.forName(extendsInt);
++    	}catch(ClassNotFoundException e) {
++    		extendsClass = Messages.class;
++    	}
++    }
++    
+     AbstractLocalizableInterfaceCreator creator = new MessagesInterfaceCreator(
+-        name, packageName, resource, source);
++        name, packageName, resource, source, extendsClass);
+     creator.generate();
+   }
+ 
+@@ -335,10 +388,12 @@ public class I18NSync extends ToolBase {
+   private ArgHandlerValueChooser chooser;
+   private String classNameArg;
+   private File outDirArg;
++  private String extendsInt;
+ 
+   private I18NSync() {
+     registerHandler(new classNameArgHandler());
+     registerHandler(new outDirHandler());
++    registerHandler(new extendsHandler());
+     chooser = new ArgHandlerValueChooser();
+     registerHandler(chooser.getConstantsWithLookupArgHandler());
+     registerHandler(chooser.getMessagesArgHandler());
+@@ -351,7 +406,7 @@ public class I18NSync extends ToolBase {
+    */
+   protected boolean run() {
+     try {
+-      createInterfaceFromClassName(classNameArg, outDirArg,
++      createInterfaceFromClassName(classNameArg, outDirArg, extendsInt,
+           chooser.getArgValue());
+       return true;
+     } catch (Throwable e) {
+diff --git a/user/src/com/google/gwt/user/client/rpc/SyncCallback.java b/user/src/com/google/gwt/user/client/rpc/SyncCallback.java
+new file mode 100644
+index 0000000..4e11d8d
+--- /dev/null
++++ b/user/src/com/google/gwt/user/client/rpc/SyncCallback.java
+@@ -0,0 +1,7 @@
++package com.google.gwt.user.client.rpc;
++
++public interface SyncCallback<T> extends AsyncCallback<T> {
++   
++    boolean isAsync = false;
++
++}
+\ No newline at end of file
+diff --git a/user/src/com/google/gwt/user/client/rpc/impl/RemoteServiceProxy.java b/user/src/com/google/gwt/user/client/rpc/impl/RemoteServiceProxy.java
+index d2efbfc..a6b17a6 100644
+--- a/user/src/com/google/gwt/user/client/rpc/impl/RemoteServiceProxy.java
++++ b/user/src/com/google/gwt/user/client/rpc/impl/RemoteServiceProxy.java
+@@ -21,6 +21,7 @@ import com.google.gwt.http.client.RequestBuilder;
+ import com.google.gwt.http.client.RequestCallback;
+ import com.google.gwt.http.client.RequestException;
+ import com.google.gwt.user.client.rpc.AsyncCallback;
++import com.google.gwt.user.client.rpc.SyncCallback;
+ import com.google.gwt.user.client.rpc.HasRpcToken;
+ import com.google.gwt.user.client.rpc.InvocationException;
+ import com.google.gwt.user.client.rpc.RpcRequestBuilder;
+@@ -369,7 +370,10 @@ public abstract class RemoteServiceProxy implements SerializationStreamFactory,
+         statsContext, requestData, callback);
+ 
+     try {
+-      return rb.send();
++    	if(callback instanceof SyncCallback)
++    		return rb.send(false);
++    	else
++    		return rb.send(true);
+     } catch (RequestException ex) {
+       InvocationException iex = new InvocationException(
+           "Unable to initiate the asynchronous service invocation (" +
+diff --git a/user/src/com/google/gwt/user/client/ui/PopupPanel.java b/user/src/com/google/gwt/user/client/ui/PopupPanel.java
+index 04614e7..64614ed 100644
+--- a/user/src/com/google/gwt/user/client/ui/PopupPanel.java
++++ b/user/src/com/google/gwt/user/client/ui/PopupPanel.java
+@@ -956,6 +956,7 @@ public class PopupPanel extends SimplePanel implements SourcesPopupEvents,
+     if (glass != null) {
+       glass.getStyle().setProperty("visibility", visible ? "visible" : "hidden");
+     }
++    UIObject.fireVisible(getElement(),visible);
+   }
+ 
+   @Override
+diff --git a/user/src/com/google/gwt/user/client/ui/UIObject.java b/user/src/com/google/gwt/user/client/ui/UIObject.java
+index da140e4..2e31306 100644
+--- a/user/src/com/google/gwt/user/client/ui/UIObject.java
++++ b/user/src/com/google/gwt/user/client/ui/UIObject.java
+@@ -21,6 +21,13 @@ import com.google.gwt.core.shared.impl.StringCase;
+ import com.google.gwt.debug.client.DebugInfo;
+ import com.google.gwt.dom.client.Element;
+ import com.google.gwt.user.client.DOM;
++import com.google.gwt.event.logical.shared.VisibleEvent;
++import com.google.gwt.event.logical.shared.HasVisibleHandlers;
++import java.util.HashMap;
++import com.google.gwt.event.shared.HandlerRegistration;
++import com.google.gwt.event.shared.HandlerManager;
++import com.google.gwt.event.shared.EventHandler;
++import com.google.gwt.event.shared.GwtEvent;
+ 
+ /**
+  * The superclass for all user-interface objects. It simply wraps a DOM element,
+@@ -125,13 +132,15 @@ import com.google.gwt.user.client.DOM;
+  * 
+  * Style names can be space or comma separated.
+  */
+-public abstract class UIObject implements HasVisibility {
++public abstract class UIObject implements HasVisibility, HasVisibleHandlers  {
+ 
+   /**
+    * Stores a regular expression object to extract float values from the
+    * leading portion of an input string.
+    */
+   private static JavaScriptObject numberRegex;
++  
++  private static HashMap<Element,HasVisibleHandlers> sources;
+ 
+   /*
+    * WARNING: For historical reasons, there are two Element classes being used
+@@ -248,7 +257,7 @@ public abstract class UIObject implements HasVisibility {
+    * {@code setVisible(elem, true)}.
+    * </p>
+    */
+-  public static native void setVisible(Element elem, boolean visible) /*-{
++  public static native void setVisibleNative(Element elem, boolean visible) /*-{
+     elem.style.display = visible ? '' : 'none';
+     if (visible) {
+       elem.removeAttribute('aria-hidden');
+@@ -256,6 +265,32 @@ public abstract class UIObject implements HasVisibility {
+       elem.setAttribute('aria-hidden', 'true');
+     }
+   }-*/;
++  
++  public static void setVisible(Element elem, boolean visible) {
++       setVisibleNative(elem,visible);
++       fireVisible(elem,visible);
++      }
++      
++      protected static void fireVisible(Element elem, boolean visible) {
++       if(sources != null) {
++        for(Element src : sources.keySet()) {
++           if(DOM.isOrHasChild(elem.<com.google.gwt.user.client.Element> cast(),src.<com.google.gwt.user.client.Element> cast()))  
++             VisibleEvent.fire(sources.get(src),visible);
++         }
++       }
++      }
++      
++      public HandlerRegistration addVisibleHandler(VisibleEvent.Handler handler) {
++       if(sources == null) 
++         sources = new HashMap<Element,HasVisibleHandlers>();
++       sources.put(element,this);
++       return addHandler(handler, VisibleEvent.getType());
++      }
++      
++      public void removeVisibleHandler() {
++       if(sources != null)
++         sources.remove(element);
++      }
+ 
+   /**
+    * Set the debug id of a specific element. The id will be appended to the end
+@@ -387,6 +422,8 @@ public abstract class UIObject implements HasVisibility {
+   }-*/;
+ 
+   private Element element;
++  
++  private HandlerManager handlerManager;
+ 
+   /**
+    * Adds a dependent style name by specifying the style name's suffix. The
+@@ -972,4 +1009,28 @@ public abstract class UIObject implements HasVisibility {
+     p.insertBefore(newNode, node);
+     p.removeChild(node);
+   }-*/;
++  
++  public final <H extends EventHandler> HandlerRegistration addHandler(final H handler, GwtEvent.Type<H> type) {
++	  return ensureHandlers().addHandler(type,handler);
++  }
++  
++  HandlerManager ensureHandlers() {
++	  return handlerManager == null ? handlerManager = new HandlerManager(this) : handlerManager;
++  }
++  
++  HandlerManager getHandlerManager() {
++	  return handlerManager;
++  }
++  
++  public void fireEvent(GwtEvent<?> event) {
++	  if(handlerManager != null) {
++		  handlerManager.fireEvent(event);
++	  }
++  }
++  
++  protected int getHandlerCount(GwtEvent.Type<?> type) {
++	  if(handlerManager == null)
++		  return 0;
++	  return handlerManager.getHandlerCount(type);
++  }
+ }
+diff --git a/user/src/com/google/gwt/user/client/ui/Widget.java b/user/src/com/google/gwt/user/client/ui/Widget.java
+index d127991..bb26742 100644
+--- a/user/src/com/google/gwt/user/client/ui/Widget.java
++++ b/user/src/com/google/gwt/user/client/ui/Widget.java
+@@ -107,28 +107,7 @@ public class Widget extends UIObject implements EventListener, HasAttachHandlers
+     return ensureHandlers().addHandler(type, handler);
+   }
+ 
+-  /**
+-   * Adds this handler to the widget.
+-   *
+-   * @param <H> the type of handler to add
+-   * @param type the event type
+-   * @param handler the handler
+-   * @return {@link HandlerRegistration} used to remove the handler
+-   */
+-  public final <H extends EventHandler> HandlerRegistration addHandler(
+-      final H handler, GwtEvent.Type<H> type) {
+-    return ensureHandlers().addHandler(type, handler);
+-  }
+ 
+-  public Widget asWidget() {
+-    return this;
+-  }
+-
+-  public void fireEvent(GwtEvent<?> event) {
+-    if (handlerManager != null) {
+-      handlerManager.fireEvent(event);
+-    }
+-  }
+ 
+   /**
+    * Gets the panel-defined layout data associated with this widget.
+@@ -302,10 +281,11 @@ public class Widget extends UIObject implements EventListener, HasAttachHandlers
+    * @param type the event type
+    * @return the number of registered handlers
+    */
++  /*
+   protected int getHandlerCount(GwtEvent.Type<?> type) {
+     return handlerManager == null ? 0 : handlerManager.getHandlerCount(type);
+   }
+-
++  */
+   /**
+    * Has this widget ever been attached?
+    *
+@@ -314,6 +294,15 @@ public class Widget extends UIObject implements EventListener, HasAttachHandlers
+   protected final boolean isOrWasAttached() {
+     return eventsToSink == -1;
+   }
++  
++  public boolean isWidgetVisible() {
++	  Widget wid = this;
++	  
++	  while(wid.isVisible() && wid.getParent() != null)
++		  wid = wid.getParent();
++	  
++	  return wid.isVisible();
++  }
+ 
+   /**
+    * <p>
+@@ -425,6 +414,7 @@ public class Widget extends UIObject implements EventListener, HasAttachHandlers
+    *
+    * @return the handler manager
+    * */
++  /*
+   HandlerManager ensureHandlers() {
+     return handlerManager == null ? handlerManager = createHandlerManager()
+         : handlerManager;
+@@ -433,7 +423,7 @@ public class Widget extends UIObject implements EventListener, HasAttachHandlers
+   HandlerManager getHandlerManager() {
+     return handlerManager;
+   }
+-
++  */
+   @Override
+   void replaceElement(com.google.gwt.dom.client.Element elem) {
+     if (isAttached()) {
+@@ -487,4 +477,9 @@ public class Widget extends UIObject implements EventListener, HasAttachHandlers
+       }
+     }
+   }
++
++  @Override
++  public Widget asWidget() {
++    return this;
++  }
+ }
+diff --git a/user/src/com/google/gwt/xhr/XMLHttpRequest.gwt.xml b/user/src/com/google/gwt/xhr/XMLHttpRequest.gwt.xml
+index 433f744..e06b961 100644
+--- a/user/src/com/google/gwt/xhr/XMLHttpRequest.gwt.xml
++++ b/user/src/com/google/gwt/xhr/XMLHttpRequest.gwt.xml
+@@ -20,6 +20,7 @@
+ <module>
+   <inherits name="com.google.gwt.core.Core"/>
+   <inherits name="com.google.gwt.typedarrays.TypedArrays"/>
++  <inherits name="com.google.gwt.http.HTTP"/>
+   <source path="client" />
+   <public path="public" />
+ </module>
+diff --git a/user/src/com/google/gwt/xhr/client/XMLHttpRequest.java b/user/src/com/google/gwt/xhr/client/XMLHttpRequest.java
+index 2fc9ce5..c9e643a 100644
+--- a/user/src/com/google/gwt/xhr/client/XMLHttpRequest.java
++++ b/user/src/com/google/gwt/xhr/client/XMLHttpRequest.java
+@@ -17,6 +17,9 @@ package com.google.gwt.xhr.client;
+ 
+ import com.google.gwt.core.client.JavaScriptObject;
+ import com.google.gwt.typedarrays.shared.ArrayBuffer;
++import com.google.gwt.http.client.Request;
++import com.google.gwt.http.client.RequestCallback;
++
+ 
+ /**
+  * The native XMLHttpRequest object. Most applications should use the higher-
+@@ -253,6 +256,10 @@ public class XMLHttpRequest extends JavaScriptObject {
+   public final native void open(String httpMethod, String url) /*-{
+     this.open(httpMethod, url, true);
+   }-*/;
++  
++  public final native void open(String httpMethod, String url, boolean isAsync) /*-{
++    this.open(httpMethod, url, isAsync);
++  }-*/;
+ 
+   /**
+    * Opens an asynchronous connection.
+@@ -267,6 +274,10 @@ public class XMLHttpRequest extends JavaScriptObject {
+   public final native void open(String httpMethod, String url, String user) /*-{
+     this.open(httpMethod, url, true, user);
+   }-*/;
++  
++  public final native void open(String httpMethod, String url, String user, boolean isAsync) /*-{
++    this.open(httpMethod, url, isAsync, user); 
++  }-*/;
+ 
+   /**
+    * Opens an asynchronous connection.
+@@ -283,6 +294,11 @@ public class XMLHttpRequest extends JavaScriptObject {
+       String password) /*-{
+     this.open(httpMethod, url, true, user, password);
+   }-*/;
++  
++  public final native void open(String httpMethod, String url, String user,
++	  String password, boolean isAsync) /*-{
++	 this.open(httpMethod, url, isAsync, user, password);
++   }-*/;
+ 
+   /**
+    * Initiates a request with no request data. This simply calls
+@@ -304,6 +320,35 @@ public class XMLHttpRequest extends JavaScriptObject {
+   public final native void send(String requestData) /*-{
+     this.send(requestData);
+   }-*/;
++  
++  public final native void sendSync(JavaScriptObject xmlHttpRequest, Request httpRequest,
++          String requestData, RequestCallback callback) /*-{
++	var ua = navigator.userAgent.toLowerCase();
++	nullFunc = function() { return null;}
++	callbackfunc = function() {
++
++		if (xmlHttpRequest.readyState == @com.google.gwt.xhr.client.XMLHttpRequest::DONE) {
++			$wnd.setTimeout(function() {
++				xmlHttpRequest.onreadystatechange = nullFunc;
++			}, 0);
++			httpRequest.@com.google.gwt.http.client.Request::fireOnResponseReceived(Lcom/google/gwt/http/client/RequestCallback;)(callback);
++		}
++	};
++	if(ua.indexOf("msie") < 0) {
++		xmlHttpRequest.onload = callbackfunc;
++		//xmlHttpRequest.onreadystatechange = callbackfunc;
++	}else
++		xmlHttpRequest.onreadystatechange = callbackfunc;
++	try {
++		xmlHttpRequest.send(requestData);
++	return;
++	} catch (e) {
++		if(ua.indexOf("msie") < 0)
++		xmlHttpRequest.onload = nullFunc;
++	else
++		xmlHttpRequest.onreadystatechange = nullFunc;	      
++	}
++  }-*/;
+ 
+   /**
+    * Sets the {@link ReadyStateChangeHandler} to be notified when the object's
+diff --git a/user/test/com/google/gwt/i18n/tools/I18NSyncTest_.java b/user/test/com/google/gwt/i18n/tools/I18NSyncTest_.java
+index 389359d..6583f9f 100644
+--- a/user/test/com/google/gwt/i18n/tools/I18NSyncTest_.java
++++ b/user/test/com/google/gwt/i18n/tools/I18NSyncTest_.java
+@@ -58,7 +58,7 @@ public class I18NSyncTest_ extends TestCase {
+   
+   public void testFileIsDirCase() {
+     try {
+-      I18NSync.createMessagesInterfaceFromClassName(CLIENT_SOURCE_PACKAGE, null);
++      I18NSync.createMessagesInterfaceFromClassName(CLIENT_SOURCE_PACKAGE, null,null);
+       fail("Should have thrown IOException");
+     } catch (IOException e) {
+       assertEquals(-1, e.getMessage().indexOf("directory"));
+@@ -79,12 +79,12 @@ public class I18NSyncTest_ extends TestCase {
+ 
+   public void testMessageCreation() throws IOException {
+     String className = CLIENT_SOURCE_PACKAGE + "TestMessages";
+-    I18NSync.createMessagesInterfaceFromClassName(className, CLIENT_SOURCE_DIR);
++    I18NSync.createMessagesInterfaceFromClassName(className, CLIENT_SOURCE_DIR,null);
+   }
+ 
+   public void testMessagesQuoting() throws IOException  {
+     String className = CLIENT_SOURCE_PACKAGE + "TestMessagesQuoting";
+-    I18NSync.createMessagesInterfaceFromClassName(className, CLIENT_SOURCE_DIR);
++    I18NSync.createMessagesInterfaceFromClassName(className, CLIENT_SOURCE_DIR, null);
+   }
+ 
+   public void testMethodRenaming() throws IOException {
