@@ -531,23 +531,9 @@ public class Header extends FocusPanel {
                 column.setFilter(filter);
             }
             
-            if (column.getCellEditor() instanceof CheckBoxCell) {
-            	FilterChoice choice;
-            	choices = new ArrayList<FilterChoice>();
-            	choice = new FilterChoice();
-            	choice.setDisplay("Checked");
-            	choice.setValue("Y");
-            	choice.setSelected(false);
-            	choices.add(choice);
-            	choice = new FilterChoice();
-            	choice.setDisplay("Unchecked");
-            	choice.setSelected(false);
-            	choice.setValue("N");
-                choices.add(choice);
-            } else {
-            	choices = column.getFilter().getChoices(table.getModel());
-            }
-            
+           
+            choices = column.getFilter().getChoices(table.getModel());
+           
             for(final FilterChoice choice : choices) {
             	filterItem = new CheckMenuItem(choice.getDisplay(),"",false);
 
