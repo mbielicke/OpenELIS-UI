@@ -2830,16 +2830,32 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
             }
 
             renderer = getColumnAt(column).getCellRenderer();
-            for (Row row : model) {
-                value = row.getCell(column);
-                if ( !values.containsKey(value)) {
-                    choice = new FilterChoice();
-                    values.put(value, choice);
-                    choice.setValue(value);
-                    choice.setDisplay(renderer.display(value));
-                    choices.add(choice);
-                }
+            if (values.isEmpty() && renderer instanceof CheckBoxCell) {
+            	choice = new FilterChoice();
+            	choice.setDisplay("Checked");
+            	choice.setValue("Y");
+            	choice.setSelected(false);
+            	choices.add(choice);
+            	values.put("Y",choice);
+            	choice = new FilterChoice();
+            	choice.setDisplay("Unchecked");
+            	choice.setSelected(false);
+            	choice.setValue("N");
+                choices.add(choice);
+                values.put("N",choice);
+            } else {
+            	for (Row row : model) {
+            		value = row.getCell(column);
+            		if ( !values.containsKey(value)) {
+            			choice = new FilterChoice();
+            			values.put(value, choice);
+            			choice.setValue(value);
+            			choice.setDisplay(renderer.display(value));
+            			choices.add(choice);
+            		}
+            	}
             }
+            
             return choices;
         }
 
