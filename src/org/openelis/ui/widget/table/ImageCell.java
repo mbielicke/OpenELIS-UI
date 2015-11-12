@@ -46,9 +46,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ImageCell implements CellRenderer,IsWidget {
     
     
-	
-	protected ColumnInt column;
-	
     /**
      * Constructor that takes the editor to be used for the cell.
      * 
@@ -61,7 +58,7 @@ public class ImageCell implements CellRenderer,IsWidget {
      * Gets Formatted value from editor and sets it as the cells display
      */
     public void render(HTMLTable table, int row, int col, Object value) {
-        table.getCellFormatter().setStyleName(row,col,(String)value);
+        table.getCellFormatter().addStyleName(row,col,(String)value);
     }
     
     public String display(Object value) {
@@ -97,7 +94,8 @@ public class ImageCell implements CellRenderer,IsWidget {
 
     @Override
     public void setColumn(ColumnInt col) {
-        this.column = col;
+        // TODO Auto-generated method stub
+        
     }
 
     

@@ -681,13 +681,6 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
 
         return i;
     }
-    
-    public int convertModelIndexToView(int modelIndex) {
-    	if (rowIndex != null && modelIndex >=0) {
-    		return convertModelIndexToView(model.get(modelIndex));
-    	}
-    	return modelIndex;
-    }
 
     /**
      * This method will take the passed model index of a row and return the
@@ -697,17 +690,16 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
      * @param modelIndex
      * @return
      */
-    public int convertModelIndexToView(Row row) {
-    	int i = -1;
+    public int convertModelIndexToView(int modelIndex) {
+        int i = modelIndex;
         RowIndexes rowInd;
 
-        if (rowIndex != null) {
-            rowInd = rowIndex.get(row);
-            if (rowInd != null) {
+        if (rowIndex != null && modelIndex >= 0) {
+            rowInd = rowIndex.get(model.get(modelIndex));
+            if (rowInd != null)
                 i = rowInd.view;
-            }
-        } else {
-        	i = model.indexOf(row);
+            else
+                i = -1;
         }
 
         return i;
@@ -2830,32 +2822,16 @@ public class Table extends FocusPanel implements ScreenWidgetInt, Queryable,
             }
 
             renderer = getColumnAt(column).getCellRenderer();
-            if (values.isEmpty() && renderer instanceof CheckBoxCell) {
-            	choice = new FilterChoice();
-            	choice.setDisplay("Checked");
-            	choice.setValue("Y");
-            	choice.setSelected(false);
-            	choices.add(choice);
-            	values.put("Y",choice);
-            	choice = new FilterChoice();
-            	choice.setDisplay("Unchecked");
-            	choice.setSelected(false);
-            	choice.setValue("N");
-                choices.add(choice);
-                values.put("N",choice);
-            } else {
-            	for (Row row : model) {
-            		value = row.getCell(column);
-            		if ( !values.containsKey(value)) {
-            			choice = new FilterChoice();
-            			values.put(value, choice);
-            			choice.setValue(value);
-            			choice.setDisplay(renderer.display(value));
-            			choices.add(choice);
-            		}
-            	}
+            for (Row row : model) {
+                value = row.getCell(column);
+                if ( !values.containsKey(value)) {
+                    choice = new FilterChoice();
+                    values.put(value, choice);
+                    choice.setValue(value);
+                    choice.setDisplay(renderer.display(value));
+                    choices.add(choice);
+                }
             }
-            
             return choices;
         }
 

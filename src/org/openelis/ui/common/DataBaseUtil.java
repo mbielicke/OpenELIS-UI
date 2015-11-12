@@ -203,6 +203,116 @@ public class DataBaseUtil {
         return isDifferent(toHM(a), toHM(b));
     }
 
+    public static Double getPercentHoldingUsed(Datetime startedDate, Datetime collectionDate,
+                                               Datetime collectionTime, Integer timeHolding) {
+        Long hour, diff;
+        Double numHrs;
+        Date scd;
+        Datetime stdt;
+
+        if (collectionDate == null)
+            return 0.0;
+
+        scd = collectionDate.getDate();
+        if (collectionTime == null) {
+            scd.setHours(0);
+            scd.setMinutes(0);
+        } else {
+            scd.setHours(collectionTime.getDate().getHours());
+            scd.setMinutes(collectionTime.getDate().getMinutes());
+        }
+
+        stdt = startedDate != null ? startedDate : Datetime.getInstance();
+        diff = (stdt.getDate().getTime() - scd.getTime());
+        hour = 3600000L;
+        numHrs = diff.doubleValue() / hour.doubleValue();
+
+        return (numHrs / timeHolding.doubleValue()) * 100;
+    }
+
+    public static Double getPercentExpectedCompletion(Datetime collectionDate,
+                                                      Datetime collectionTime,
+                                                      Datetime receivedDate, Integer priority,
+                                                      Integer timeTaAverage) {
+        Long day, diff;
+        Double numDays, factor;
+        Date scd;
+        Datetime now, begin;
+
+        if (collectionDate == null && receivedDate == null)
+            return 0.0;
+
+        if (collectionDate != null) {
+            scd = collectionDate.getDate();
+            if (collectionTime == null) {
+                scd.setHours(0);
+                scd.setMinutes(0);
+            } else {
+                scd.setHours(collectionTime.getDate().getHours());
+                scd.setMinutes(collectionTime.getDate().getMinutes());
+            }
+            begin = collectionDate;
+        } else {
+            begin = receivedDate;
+        }
+
+        now = Datetime.getInstance();
+        diff = now.getDate().getTime() - begin.getDate().getTime();
+        day = 86400000L;
+        numDays = diff.doubleValue() / day.doubleValue();
+
+        factor = priority != null ? priority.doubleValue() : timeTaAverage.doubleValue();
+
+        return (numDays / factor) * 100;
+    }
+
+    /*
+     * Compute the number of days before the analysis is expected to be finshed
+     */
+    public static Integer getDueDays(Datetime received, Integer expectedDays) {
+        long due;
+        Datetime now, expectedDate;
+
+        if (received == null || expectedDays == null)
+            return null;
+
+        now = Datetime.getInstance(Datetime.YEAR, Datetime.MINUTE);
+
+        expectedDate = received.add(expectedDays);
+
+        due = expectedDate.getDate().getTime() - now.getDate().getTime();
+
+        // convert from milliseconds to days
+        due = due / 1000 / 60 / 60 / 24;
+
+        return (int)due;
+    }
+
+    /*
+     * Compute the Datetime after which the sample is no longer viable for
+     * analysis
+     */
+    public static Datetime getExpireDate(Datetime collectionDate, Datetime collectionTime,
+                                         int holdingHours) {
+        Date tempDate;
+        Datetime expireDate;
+
+        expireDate = null;
+        if (collectionDate != null) {
+            tempDate = collectionDate.getDate();
+            if (collectionTime != null) {
+                tempDate.setHours(collectionTime.get(Datetime.HOUR));
+                tempDate.setMinutes(collectionTime.get(Datetime.MINUTE));
+            } else {
+                tempDate.setHours(0);
+                tempDate.setMinutes(0);
+            }
+            tempDate.setTime(tempDate.getTime() + holdingHours * 60 * 60 * 1000);
+            expireDate = new Datetime(Datetime.YEAR, Datetime.MINUTE, tempDate);
+        }
+
+        return expireDate;
+    }
 
     /**
      * Compares the two parameters to see if they are the same
