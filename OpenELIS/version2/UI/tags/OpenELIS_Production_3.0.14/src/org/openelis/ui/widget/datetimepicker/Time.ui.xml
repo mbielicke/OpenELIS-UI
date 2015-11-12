@@ -1,0 +1,95 @@
+<!--
+Exhibit A - UIRF Open-source Based Public Software License.
+  
+The contents of this file are subject to the UIRF Open-source Based
+Public Software License(the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+openelis.uhl.uiowa.edu
+  
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+  
+The Original Code is OpenELIS code.
+  
+The Initial Developer of the Original Code is The University of Iowa.
+Portions created by The University of Iowa are Copyright 2006-2008. All
+Rights Reserved.
+  
+Contributor(s): ______________________________________.
+  
+Alternatively, the contents of this file marked
+"Separately-Licensed" may be used under the terms of a UIRF Software
+license ("UIRF Software License"), in which case the provisions of a
+UIRF Software License are applicable instead of those above. 
+  -->
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+       ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             ui:generateLocales="default"
+             xmlns:w="urn:import:org.openelis.ui.widget"
+             xmlns:cal="urn:import:org.openelis.ui.widget.calendar">
+      
+      <ui:with field="res" type="org.openelis.ui.resources.UIResources"/>
+      <ui:with field="msg" type="org.openelis.ui.messages.UIMessages"/>
+      
+      <g:HTMLPanel>
+        <div class="{res.cal.cal_view}" ui:field="view">
+          <div class="{res.cal.time_header}">
+            <div class="{res.cal.cal_hours}">Hours</div>
+            <div class="{res.cal.cal_minutes}">Minutes</div>
+          </div>
+          <div class="{res.cal.cal_body}" ui:field="body">
+            <div class="{res.cal.hours}" ui:field="hours">
+              <div cell="00" class="{res.cal.hour_block}">00</div>
+              <div cell="01" class="{res.cal.hour_block}">01</div>
+              <div cell="02" class="{res.cal.hour_block}">02</div>
+              <div cell="03" class="{res.cal.hour_block}">03</div>
+              <div cell="04" class="{res.cal.hour_block}">04</div>
+              <div cell="05" class="{res.cal.hour_block}">05</div>
+              <div cell="06" class="{res.cal.hour_block}">06</div>
+              <div cell="07" class="{res.cal.hour_block}">07</div>
+              <div cell="08" class="{res.cal.hour_block}">08</div>
+              <div cell="09" class="{res.cal.hour_block}">09</div>
+              <div cell="10" class="{res.cal.hour_block}">10</div>
+              <div cell="11" class="{res.cal.hour_block}">11</div>
+              <div cell="12" class="{res.cal.hour_block}">12</div>
+              <div cell="13" class="{res.cal.hour_block}">13</div>
+              <div cell="14" class="{res.cal.hour_block}">14</div>
+              <div cell="15" class="{res.cal.hour_block}">15</div>
+              <div cell="16" class="{res.cal.hour_block}">16</div>
+              <div cell="17" class="{res.cal.hour_block}">17</div>
+              <div cell="18" class="{res.cal.hour_block}">18</div>
+              <div cell="19" class="{res.cal.hour_block}">19</div>
+              <div cell="20" class="{res.cal.hour_block}">20</div>
+              <div cell="21" class="{res.cal.hour_block}">21</div>
+              <div cell="22" class="{res.cal.hour_block}">22</div>
+              <div cell="23" class="{res.cal.hour_block}">23</div>              
+            </div>
+            <div class="{res.cal.minutes}" ui:field="minutes">
+              <div cell="00" class="{res.cal.minute_block}">00</div>
+              <div cell="05" class="{res.cal.minute_block}">05</div>
+              <div cell="10" class="{res.cal.minute_block}">10</div>
+              <div cell="15" class="{res.cal.minute_block}">15</div>
+              <div cell="20" class="{res.cal.minute_block}">20</div>
+              <div cell="25" class="{res.cal.minute_block}">25</div>
+              <div cell="30" class="{res.cal.minute_block}">30</div>
+              <div cell="35" class="{res.cal.minute_block}">35</div>
+              <div cell="40" class="{res.cal.minute_block}">40</div>
+              <div cell="45" class="{res.cal.minute_block}">45</div>
+              <div cell="50" class="{res.cal.minute_block}">50</div>
+              <div cell="55" class="{res.cal.minute_block}">55</div>
+            </div>
+          </div>
+          <div class="{res.cal.cal_time}" ui:field="time">
+            <div class="{res.cal.cal_clock}"/>
+            <div class="{res.cal.cal_time_display}" ui:field="timeDisplay">00:00</div>
+          </div>
+          <div class="{res.cal.cal_time}" ui:field="doneDiv">
+            <input ui:field="done" type="button" style="width:100%" class="{res.cal.cal_done}" value="Done"/>
+          </div>
+        </div>
+      </g:HTMLPanel>
+</ui:UiBinder>

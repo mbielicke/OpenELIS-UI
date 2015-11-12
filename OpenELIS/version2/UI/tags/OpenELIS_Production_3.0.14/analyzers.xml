@@ -1,0 +1,30 @@
+<project name="UI" default="findbugs" basedir=".">
+  
+  <property name="checkstyle.home" location="/usr/local/java/checkstyle-5.7" />
+  <property name="findbugs.home" location="/usr/local/java/findbugs-2.0.3" />
+
+  <taskdef name="findbugs" classpath="${findbugs.home}/lib/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
+      
+  <target name="findbugs">
+    <mkdir dir="reports/findbugs" />
+
+    <findbugs home="${findbugs.home}" output="xml" outputFile="reports/findbugs/fb.xml">
+      <sourcePath path="src" />
+      <class location="bin" />      
+    </findbugs>
+  </target>
+
+  <target name="checkstyle" description="Generate a report of code convention violations.">
+    <taskdef resource="checkstyletask.properties" classpath="${checkstyle.home}/checkstyle-5.7-all.jar" />
+
+    <mkdir dir="reports/checkstyle" />
+
+    <checkstyle config="${checkstyle.home}/shl_checks.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+      <formatter type="xml" tofile="reports/checkstyle/checkstyle_report.xml" />
+      <fileset dir="src" includes="**/*.java" />
+    </checkstyle>
+
+    <style in="reports/checkstyle/checkstyle_report.xml" out="reports/checkstyle/checkstyle_report.html" style="${checkstyle.home}/contrib/checkstyle-noframes.xsl" />
+  </target>
+
+</project>
