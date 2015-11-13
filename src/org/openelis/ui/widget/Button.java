@@ -39,6 +39,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.OutlineStyle;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -242,7 +243,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	}
 	
 	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().setDisplay(Display.TABLE_CELL);
+		div.getStyle().setDisplay(Display.TABLE);
 		div.appendChild(element);		
 	}
 	
@@ -268,8 +269,11 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	private DivElement createTextElement(String text) {
 		DivElement label = Document.get().createDivElement();
 		label.setInnerText(text);
+		label.getStyle().setDisplay(Display.TABLE_CELL);
 		label.getStyle().setTextAlign(TextAlign.CENTER);
 		label.getStyle().setWhiteSpace(WhiteSpace.PRE);
+		label.getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+		label.getStyle().setHeight(100.0, Unit.PCT);
 		return label;
 	}
 	
