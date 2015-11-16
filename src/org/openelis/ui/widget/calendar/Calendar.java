@@ -371,6 +371,14 @@ public class Calendar extends Composite implements ScreenWidgetInt,
         setDefaultMask();
     }
     
+    public int getBegin() {
+    	return ((DateHelper)helper).getBegin();
+    }
+    
+    public int getEnd() {
+    	return ((DateHelper)helper).getEnd();
+    }
+    
     private void setDefaultMask() {
     	DateHelper dh;
     	
