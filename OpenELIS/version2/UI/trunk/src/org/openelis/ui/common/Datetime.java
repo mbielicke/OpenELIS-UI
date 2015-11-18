@@ -88,7 +88,7 @@ public class Datetime implements Serializable, Comparable<Datetime> {
     @SuppressWarnings("deprecation")
 	public Date getDate() {
         if (endCode < HOUR)
-            return new Date(year, month, date);
+            return new Date(year, month, date,0,0,0);
         return timestamp;
     }
 
@@ -159,7 +159,7 @@ public class Datetime implements Serializable, Comparable<Datetime> {
             return false;
         
         if (endCode < HOUR) {
-            return new Date(year, month, date).equals(compDate);
+            return new Date(year, month, date,0,0,0).equals(compDate);
         }
         
         if (startCode > DAY) {
