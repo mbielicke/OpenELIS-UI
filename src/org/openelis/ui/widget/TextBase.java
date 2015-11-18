@@ -308,7 +308,7 @@ public class TextBase extends Composite {
 			 * Set new Text and cursor position into widget
 			 */
 			box.setText(applied.toString());
-			box.setCursorPos(cursor > -1 ? cursor : 0);
+			box.setCursorPos(cursor > -1 && cursor < applied.length() ? cursor : 0);
 			
 		    /*
     	     * KeyPressEvent occurs before the browser applies changes to the textbox.
