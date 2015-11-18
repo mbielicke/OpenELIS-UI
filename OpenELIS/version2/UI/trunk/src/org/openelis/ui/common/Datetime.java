@@ -159,7 +159,9 @@ public class Datetime implements Serializable, Comparable<Datetime> {
             return false;
         
         if (endCode < HOUR) {
-            return new Date(year, month, date,0,0,0).equals(compDate);
+            return compDate.getYear() == year &&
+            	   compDate.getMonth() == month &&
+            	   compDate.getDate() == date;
         }
         
         if (startCode > DAY) {
