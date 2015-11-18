@@ -165,7 +165,14 @@ public class Datetime implements Serializable, Comparable<Datetime> {
         }
         
         if (startCode > DAY) {
-        	return new Date(0,0,0,timestamp.getHours(),timestamp.getMinutes(),timestamp.getSeconds()).equals(compDate);
+        	if (endCode < SECOND) {
+        		return compDate.getHours() == timestamp.getHours() &&
+        			   compDate.getMinutes() == timestamp.getMinutes();
+        	} else {
+        		return compDate.getHours() == timestamp.getHours() &&
+ 			           compDate.getMinutes() == timestamp.getMinutes() &&
+ 			           compDate.getSeconds() == timestamp.getSeconds();
+        	}
         }
 
         return timestamp.equals(compDate);
