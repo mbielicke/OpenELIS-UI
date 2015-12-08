@@ -8,8 +8,9 @@
     color:inherit;
     text-shadow: 0 1px white;
     background:white;
-    display : flex;
+    display : inline-flex;
     height : 18px;
+    margin : 1px;
 }
 
  .Button > div{
