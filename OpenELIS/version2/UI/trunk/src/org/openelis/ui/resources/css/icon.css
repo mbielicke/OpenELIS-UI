@@ -183,6 +183,14 @@
 	gwt-image:'arrowDownButtonImageDisabled';
 }
 
+@sprite .arrowLeftImage {
+    gwt-image:'arrowLeftImage';
+}
+
+@sprite .arrowRightImage {
+    gwt-image:'arrowRightImage';
+}
+
 @sprite .refreshButtonImage {
 	gwt-image: 'refresh';
 	width: 20px;
