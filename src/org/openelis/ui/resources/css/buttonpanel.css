@@ -6,10 +6,10 @@
     color:inherit;
     font-family:inherit;
     font-size:inherit;
-    display : flex;
+    display : inline-block;
     text-shadow: 0 1px white;
 	height : 18px;
-	padding : 2px;
+	padding : 1px;
 }
 
 .Button > div {

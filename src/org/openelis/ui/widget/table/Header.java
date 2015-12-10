@@ -484,6 +484,7 @@ public class Header extends FocusPanel {
         final Column column;
         final ArrayList<FilterChoice> choices;
         Filter filter;
+        
                
         panel = new PopupMenuPanel();
         panel.setStyleName(menuCss.MenuPanel());
@@ -530,33 +531,29 @@ public class Header extends FocusPanel {
                 filter.setColumn(col);
                 column.setFilter(filter);
             }
-            
-           
             choices = column.getFilter().getChoices(table.getModel());
-           
             for(final FilterChoice choice : choices) {
-            	filterItem = new CheckMenuItem(choice.getDisplay(),"",false);
-
-            	/*
-            	 * 	Listen for Filter Value change and set the change in the choices list 
-            	 * and set the filterSChanged flag to true;
-            	 */
-            	filterItem.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            		public void onValueChange(ValueChangeEvent<Boolean> event) {
-            			choice.setSelected(event.getValue());
-            			doFilter(column, choices);
-            		} 
-            	});
-
-            	/*
-            	 * 	If filter is in force already set the filterMenu to checked.
-            	 */
-            	filterItem.setCheck(choice.selected);
-
-            	panel.addItem(filterItem);
+                filterItem = new CheckMenuItem(choice.getDisplay(),"",false);
+                
+                /*
+                 * Listen for Filter Value change and set the change in the choices list 
+                 * and set the filterSChanged flag to true;
+                 */
+                filterItem.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        choice.setSelected(event.getValue());
+                        doFilter(column, choices);
+                    } 
+                });
+                
+                /*
+                 * If filter is in force already set the filterMenu to checked.
+                 */
+                filterItem.setCheck(choice.selected);
+                
+                panel.addItem(filterItem);
             }
         }
-       
         
         if(column.getMenuItems() != null) {
             for(MenuItem colItem : column.getMenuItems()) {

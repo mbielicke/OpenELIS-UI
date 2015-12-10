@@ -31,10 +31,6 @@ import javax.ejb.ApplicationException;
 public class EntityLockedException extends Exception {
 
     private static final long serialVersionUID = 1L;
-    
-    private String userName;
-
-    private long expires; 
 
     public EntityLockedException() {
         super();
@@ -43,18 +39,5 @@ public class EntityLockedException extends Exception {
     public EntityLockedException(String message) {
         super(message);
     }
-    
-    public EntityLockedException(String message, String userName, long expires) {
-        super(message);
-        this.userName = userName;
-        this.expires = expires;
-    }
-    
-    public String getUserName() {
-        return userName;
-    }
 
-    public long getExpires() {
-        return expires;
-    }
 }
