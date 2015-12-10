@@ -1,0 +1,82 @@
+
+.Button {
+	border:1px solid transparent;
+	-moz-border-radius:2px;
+	border-radius:4px;
+    color:inherit;
+    font-family:inherit;
+    font-size:inherit;
+    display : inline-block;
+    text-shadow: 0 1px white;
+	height : 18px;
+	padding : 1px;
+}
+
+.Button > div {
+	padding : 1px;
+	margin : 0px;
+}
+
+.ButtonPanelContainer {
+	height: 26px;
+	background-color:#d8e4f2;
+	border-bottom:1px solid #a9bfd3;
+	padding : 3px;
+}
+
+.BottomButtonPanelContainer {
+	height: 26px;
+	background-color:#d0def0;
+	border-bottom:1px solid #a9bfd3;
+}
+
+@Sprite .ButtonDivider {
+	width: 2px;
+	height: 13px;
+	margin: 6px 2px 0 2px;
+	gwt-image: 'buttonDivider';
+}
+
+.Button:hover, .Pressed {
+	border:1px solid #7293be;
+	background:#e7f0f7;
+	cursor:pointer; 
+    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
+    outline : none;
+    height : 18px;
+}
+.Pressed:hover {
+	cursor:default; 
+}
+
+@if user.agent gecko1_8 {
+	.Button:hover, .Pressed{ 
+	}
+}@elif user.agent ie6 ie8 ie9 {
+	.Button:hover, .Pressed {
+	}	
+}@elif user.agent safari {
+	.Button:hover, .Pressed {
+	}
+}
+
+.Disabled {
+	color : gray;
+}
+
+.Disabled:hover {
+	border:1px solid transparent;
+	background:none;
+	cursor:auto;
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0, .0), inset 1px 1px 1px rgba(255,255,255, .0);
+	-webkit-box-shadow: 1px 1px 1px rgba(0,0,0, .0), inset 1px 1px 1px rgba(255,255,255, .0);
+	box-shadow: 1px 1px 1px rgba(0,0,0, .0), inset 1px 1px 1px rgba(255,255,255, .0);
+}
+
+ .Focus {
+	border:1px solid #7293be;
+	background:#e7f0f7;
+	cursor:pointer; 
+    box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #b4c9e2 inset;
+}
+
