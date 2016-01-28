@@ -36,11 +36,9 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.OutlineStyle;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -230,16 +228,12 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	
 	public void setTopText(String text) {
 		DivElement div = createTextElement(text);
-		div.getStyle().setDisplay(Display.BLOCK);
 		center.insertFirst(div);
-		center.getStyle().setDisplay(Display.BLOCK);
 	}
 	
 	public void setBottomText(String text) {
 		DivElement div = createTextElement(text);
-		div.getStyle().setDisplay(Display.BLOCK);
 		center.appendChild(div);
-		center.getStyle().setDisplay(Display.BLOCK);
 	}
 	
 	public void setTopOffset(int topOffset) {
@@ -248,7 +242,7 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	}
 	
 	private void setButtonElement(final DivElement div, Element element) {
-		div.getStyle().setProperty("display","flex");
+		div.getStyle().setDisplay(Display.TABLE_CELL);
 		div.appendChild(element);		
 	}
 	
@@ -274,8 +268,6 @@ public class Button extends FocusPanel implements ScreenWidgetInt, HasBalloon {
 	private DivElement createTextElement(String text) {
 		DivElement label = Document.get().createDivElement();
 		label.setInnerText(text);
-		label.getStyle().setProperty("display", "flex");
-		label.getStyle().setProperty("margin", "auto");
 		label.getStyle().setTextAlign(TextAlign.CENTER);
 		label.getStyle().setWhiteSpace(WhiteSpace.PRE);
 		return label;

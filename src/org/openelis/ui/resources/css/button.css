@@ -1,6 +1,6 @@
 
 .Button {
-	padding: 2px;
+	margin: 2px;
 	border:1px solid #7293be;
 	border-radius : 4px;
 	font-family:inherit;
@@ -8,9 +8,8 @@
     color:inherit;
     text-shadow: 0 1px white;
     background:white;
-    display : inline-flex;
+    display : inline-block;
     height : 18px;
-    margin : 1px;
 }
 
  .Button > div{
