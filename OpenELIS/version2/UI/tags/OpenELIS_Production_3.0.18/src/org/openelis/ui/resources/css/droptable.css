@@ -1,0 +1,263 @@
+.Table {
+	background: #d8d8d8;
+	table-layout: fixed;
+	spacing: 0px;
+	padding: 0px;
+	border-collapse: collapse;
+	border: 0px solid white;
+}
+
+.Table tr:hover {
+	cursor: pointer;
+	color: white;
+}
+
+@if user.agent gecko1_8 {
+	.Table tr:hover {
+		background-image: -moz-linear-gradient(center top, rgba(99, 136, 246, 1),
+			rgba(34, 94, 243, 1) );
+	}
+}
+
+@elif user.agent ie6 ie8 ie9 {
+	.Table tr:hover {
+		background-image: -ms-linear-gradient(top, #ebf3fd, #d9e8fb);
+	}
+}
+
+@elif user.agent safari {
+	.Table tr:hover {
+		background-image: -webkit-linear-gradient(top, #ebf3fd, #d9e8fb);
+	}
+}
+
+.Table>tbody>tr>td {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: pre;
+	color: inherit;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+.Table>tbody>tr.Disabled>td {
+	color: grey;
+}
+
+.Table>tbody>tr>td.InputError {
+	border-bottom: 1px red dashed;
+}
+
+.Table>tbody>tr>td.InputWarning {
+	border-bottom: 1px #f5d852 dashed;
+}
+
+.Table>tbody>tr.Selection>td.InputError {
+	border-bottom: 1px red dashed;
+}
+
+.Table>tbody>tr.Selection {
+	background-color: #d8e4f2;
+}
+
+.Table>tbody>tr.Selection>td {
+	border-color: #FFFFFF #A9BFD3 #A9BFD3;
+	border-style: solid;
+	border-width: 0px 0px 0px 0px;
+}
+
+.Table>tbody>tr.SubHeader td {
+	border: 1px solid #B5B8C8;
+	border-right: 1px solid grey;
+	border-width: 1 1 1 0;
+	background: #B5B8C8;
+	color: white;
+}
+
+.Table>tbody>tr.LargeFont td {
+	
+}
+
+.Table>tbody>tr>td.GreenStatus {
+	
+}
+
+.Table>tbody>tr>td.YellowStatus {
+	
+}
+
+.Table>tbody>tr>td.RedStatus {
+	
+}
+
+.Header {
+	table-layout: fixed;
+	spacing: 0px;
+	padding: 0;
+	border-collapse: collapse;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+.Header tr {
+	
+}
+
+.Header td {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	border-color: #B5B8C8;
+	border-style: solid;
+	border-width: 0px 0px 1px 1px;
+	padding: 0px 2px 2px 2px;
+	background-color: #f1f2f4;
+	color: grey;
+	cursor: pointer;
+}
+
+.Header td.First {
+	border-width: 0px 0px 1px 0px;
+	border-color: #B5B8C8;
+}
+
+.Header td.Filtered {
+	text-decoration: underline;
+}
+
+.Header td.Sorted {
+	font-style: italic;
+}
+
+.Header td.ResizeCol {
+	cursor: col-resize;
+}
+
+.DropdownTable {
+	background: #d8d8d8;
+	table-layout: fixed;
+	spacing: 1px;
+	padding: 0;
+	border-collapse: collapse;
+}
+
+.DropdownTable tr {
+	background: white;
+}
+
+.DropdownTable tr.Disabled td {
+	color: grey;
+}
+
+.DropdownTable tr.Selection {
+	background: #f0f0f0;
+}
+
+.DropdownTable td {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: black;
+	cursor: pointer;
+	padding: 1px 1px 0px;
+}
+
+.CellContainer {
+	border: 1px solid #63B159;
+	padding: 0px;
+	margin: 0 -2px -2px -2px;
+}
+
+@sprite .FilterButton {
+	width: 16px;
+	height: 19px;
+	border-left: 1px solid #d8d8d8;
+	gwt-image: 'autoArrow';
+	background-position: 3px 6px;
+}
+
+.FilterButton:hover {
+	cursor: pointer;
+	border: 1px solid #7293BE;
+	border-width: 0 0 0 1px;
+	box-shadow: 0 1px 3px #FFFFFF inset, 0 -9px #B4C9E2 inset;
+}
+
+.DropdownPopup {
+	overflow: hidden;
+	margin-left: 0;
+}
+
+.TableCalendar {
+	spacing: 0;
+	padding: 0px;
+	margin-left: -2px;
+}
+
+@
+sprtite .TableCalendar .CalendarButton {
+	width: 14px;
+	gwt-image: 'dateTrigger';
+}
+
+.TableCalendar .TextboxSelected {
+	border: none;
+	color: #000000;
+	background: #ffffff;
+	font-weight: normal;
+	cursor: default;
+}
+
+.TableCalendar .TextboxUnselected {
+	border: none;
+	color: #000000;
+	font-weight: normal;
+	cursor: default;
+}
+
+@sprite .WarnIcon {
+	width: 16px;
+	height: 17px;
+	gwt-image: 'iconWarning';
+}
+
+@sprite .ErrorIcon {
+	width: 16px;
+	height: 17px;
+	gwt-image: 'iconError';
+}
+
+.ScreenTableWithSides {
+	border: 1px solid #D8D8D8;
+	background: white;
+}
+
+.TableWithPadding {
+	
+}
+
+.Single .Table>tbody>tr .SelectionCell {
+	display: none;
+}
+
+@sprite .Table>tbody>tr .SelectionCell {
+	height: 13px;
+	width: 13px;
+	gwt-image: 'unapply';
+	cursor: pointer;
+	border: 1px solid white;
+}
+
+@sprite .Table>tbody>tr.Selection .SelectionCell {
+	height: 13px;
+	width: 13px;
+	gwt-image: 'apply';
+	cursor: pointer;
+	border: 1px solid white;
+}
+
+.Menu {
+	
+}
