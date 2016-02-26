@@ -420,29 +420,15 @@ public class Calendar extends Composite implements ScreenWidgetInt,
      * the value is different than what is currently stored.
      */
     public void setValue(Datetime value, boolean fireEvents) {
+        boolean diff;
     	
-        if(!Util.isDifferent(this.value, value)) {
-        	if(value != null)
-        		textbox.setText(helper.format(value));
-        	else { 
-        	    // Here to make sure text and exceptions are cleared
-        	    // when null is set to calendar with invalid data
-        	    textbox.setText("");
-        	    clearExceptions();
-        	}
-            return;
-        }
-        
+        diff = Util.isDifferent(this.value, value);
         this.value = value;
-        if (value != null) {
-            textbox.setText(helper.format(value));
-        } else {
-            textbox.setText("");
-        }
-
-        if (fireEvents) 
-            ValueChangeEvent.fire(this, value);
-        
+        textbox.setText(helper.format(value));
+       
+        clearValidateExceptions();
+        if (fireEvents && diff)
+            ValueChangeEvent.fire(this, value);        
     }
 
     /**
