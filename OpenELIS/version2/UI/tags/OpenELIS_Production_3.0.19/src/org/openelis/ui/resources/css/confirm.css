@@ -1,0 +1,72 @@
+    
+@sprite .largeWarnIcon{
+	height:32;
+	width:32;
+	gwt-image:'iconWarning';
+}
+@sprite .largeErrorIcon{
+	height:32;
+	width:32;
+	gwt-image:'iconError';
+}
+@sprite .largeQuestionIcon{
+	height:32;
+	width:32;
+	gwt-image:'iconQuestion';
+}
+
+@sprite .CloseButton {
+	gwt-image: 'closeButton';
+	width:20px;
+    height:20px;
+    cursor:pointer;
+}
+
+@sprite .MinimizeButton {
+   padding-top:5px;
+   gwt-image: 'minimizeButton';
+   width:20px;
+   height:20px;
+   cursor:pointer;
+}
+
+@sprite .MaximizeButton {
+	gwt-image:'maxRestore';
+	width:20px;
+	height:20px;
+	cursor:pointer;
+}
+
+@sprite .RestoreButton {
+	gwt-image:'restore';
+	width:20px;
+	height:20px;
+	cursor:pointer;
+}
+
+.WindowBody{
+	background-color:#edf2f4;
+}
+
+.WindowPanel{
+	box-shadow: 4px 4px 5px 3px #000055;
+    border:1px solid winColor;
+	border-radius: 5px 5px 5px 5px;
+}
+
+@sprite .spinnerIcon {
+	width:16px; 
+	height:16px;
+	gwt-image:'spinner';
+}
+
+.ScreenWindowLabel{
+	color:#486095;
+	font-family:Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size:11px;
+	font-weight:bold;
+}
+
+.top {
+	background-color:#c4d3e5;
+}
