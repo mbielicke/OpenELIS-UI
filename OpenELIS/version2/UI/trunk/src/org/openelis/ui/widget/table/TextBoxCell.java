@@ -95,6 +95,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     }
 
     public String display(Object value) {
+        query = false;
         editor.setQueryMode(false);
         if (editor.getHelper().isCorrectType(value)) {
         	editor.setValue(value);
@@ -118,8 +119,8 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
      */
     @SuppressWarnings("rawtypes")
 	public void startEditing(Object value, Container container, NativeEvent event) {
-    	editor.setQueryMode(false);
-    	query = false;
+        query = false;
+        editor.setQueryMode(false);
     	if(!editor.getHelper().isCorrectType(value))
     		editor.setText(DataBaseUtil.toString(value));
     	else 
@@ -135,6 +136,7 @@ public class TextBoxCell implements CellRenderer, CellEditor, IsWidget, HasWidge
     }
 
     public void renderQuery(HTMLTable table, int row, int col, QueryData qd) {
+        query = true;
         editor.setQueryMode(true);
         editor.setQuery(qd);
         table.setText(row, col, editor.getText());

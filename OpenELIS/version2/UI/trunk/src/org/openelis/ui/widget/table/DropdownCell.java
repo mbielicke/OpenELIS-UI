@@ -120,6 +120,7 @@ public class DropdownCell implements CellRenderer, CellEditor, IsWidget, HasWidg
     }
 
     public String display(Object value) {
+        query = false;
         editor.setQueryMode(false);
     	if(value != null && editor.getHelper().isCorrectType(value) && editor.isValidKey(value)) {
    			editor.setValue(value);
