@@ -27,9 +27,9 @@ package org.openelis.ui.scriptlet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
-import com.google.gwt.dev.util.collect.HashSet;
 
 /**
  * This class is used to manage data between screens, beans and scriptlets. The
@@ -50,7 +50,7 @@ public class ScriptletObject implements Serializable {
 
     public ScriptletObject() {
         changes = new HashSet<Change>();
-        runningScriptletId = 0;
+        runningScriptletId = -1;
         version = 0;
     }
 
