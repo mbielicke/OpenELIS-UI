@@ -163,7 +163,8 @@ public class Screen extends ResizeComposite implements FocusHandler, BlurHandler
          	FocusEvent.fireNativeEvent(event.getNativeEvent(),window);
          	Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 				public void execute() {
-					focused.setFocus(true);
+				    if (focused != null)
+				        focused.setFocus(true);
 				}
 			});
         }
